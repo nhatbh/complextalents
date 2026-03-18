@@ -11,7 +11,8 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class WarriorOrigin {
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("complextalents", "warrior");
-    public static final ResourceLocation STYLE_RESOURCE_ID = ResourceLocation.fromNamespaceAndPath("complextalents", "style");
+    public static final ResourceLocation STYLE_RESOURCE_ID = ResourceLocation.fromNamespaceAndPath("complextalents",
+            "style");
 
     public static void register() {
         // Register Style resource type
@@ -20,7 +21,8 @@ public class WarriorOrigin {
         // Build and register Warrior origin
         OriginBuilder.create(ID)
                 .displayName("Warrior")
-                .description("A master of combat who thrives in battle by building Style. Style ranks (D to SSS) provide massive damage multipliers (up to 1.5x at level 5). High Style also resets shield breaks.")
+                .description(
+                        "A master of combat who thrives in battle by building Style. Style ranks (D to SSS) provide massive damage multipliers (up to 1.5x at level 5). High Style also resets shield breaks.")
                 .resourceType(styleType)
                 .maxLevel(5)
                 // Passive Skill: Vanguard's Momentum - Damage Scaling
@@ -33,12 +35,13 @@ public class WarriorOrigin {
                 .scaledStat("momentumDamage_SSS", new double[] { 1.1, 1.2, 1.3, 1.4, 1.5 })
                 // Vanguard's Momentum - Shield Break Reset (Style Points)
                 .scaledStat("shieldBreakReset", new double[] { 250, 450, 700, 850, 900 })
-                
+
                 .passiveStack("sss_shield", com.complextalents.passive.PassiveStackDef.create("SSS Shield")
                         .maxStacks(1)
                         .displayName("SSS Shield")
                         .build())
-                .passiveSkill("Vanguard's Momentum", "Using abilities and attacking generates Style. High Style grants massive damage multipliers and resets shield breaks.")
+                .passiveSkill("Vanguard's Momentum",
+                        "Using abilities and attacking generates Style. High Style grants massive damage multipliers and resets shield breaks.")
                 .activeSkill("Challenger's Retribution", "A devastating strike that builds Style.", null)
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "challengers_retribution"))
                 .renderer(new com.complextalents.impl.warrior.client.WarriorRenderer())
@@ -46,7 +49,7 @@ public class WarriorOrigin {
                     com.lowdragmc.lowdraglib.gui.widget.WidgetGroup group = new com.lowdragmc.lowdraglib.gui.widget.WidgetGroup();
                     group.setSize(330, 45);
                     group.setBackground(com.lowdragmc.lowdraglib.gui.texture.ResourceBorderTexture.BUTTON_COMMON);
-                    
+
                     com.lowdragmc.lowdraglib.gui.widget.LabelWidget title = new com.lowdragmc.lowdraglib.gui.widget.LabelWidget();
                     title.setSelfPosition(5, 5);
                     title.setText("§6Warrior Style");
@@ -56,8 +59,9 @@ public class WarriorOrigin {
                     styleLbl.setSelfPosition(5, 20);
                     styleLbl.setTextProvider(() -> {
                         double points = com.complextalents.origin.client.ClientOriginData.getResourceValue();
-                        com.complextalents.impl.warrior.WarriorOriginHandler.StyleRank rank = com.complextalents.impl.warrior.WarriorOriginHandler.StyleRank.getRank(points);
-                        return "Current Style: §f" + (int)points + " §7(Rank " + rank.name + ")";
+                        com.complextalents.impl.warrior.WarriorOriginHandler.StyleRank rank = com.complextalents.impl.warrior.WarriorOriginHandler.StyleRank
+                                .getRank(points);
+                        return "Current Style: §f" + (int) points + " §7(Rank " + rank.name + ")";
                     });
                     group.addWidget(styleLbl);
 
@@ -71,7 +75,7 @@ public class WarriorOrigin {
                 .cost(StatType.AP, 4)
                 .cost(StatType.ARMOR_PEN, 2)
                 .cost(StatType.LUCK_CRIT, 3)
-                .cost(StatType.MAX_HP, 1)
+                .cost(StatType.MAX_HP, 2)
                 .cost(StatType.MAX_MANA, 4)
                 .cost(StatType.MOBILITY, 2)
                 .cost(StatType.CDR, 3);

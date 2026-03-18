@@ -27,7 +27,8 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
     private final Map<ResourceLocation, WeaponPath> weaponToPathMap = new HashMap<>();
     private final Map<ResourceLocation, Integer> weaponToRequiredRankMap = new HashMap<>();
 
-    private WeaponMasteryManager() {}
+    private WeaponMasteryManager() {
+    }
 
     public static WeaponMasteryManager getInstance() {
         return INSTANCE;
@@ -84,7 +85,8 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
 
     private int mapSkillLevelToRankValue(String skillLevel) {
         // Maps the Rank string to the starting level required
-        // Novice implies Levels 1-5 (Starts requiring Rank 1, or level > 0 depending on implementation. Let's say Novice is index 0)
+        // Novice implies Levels 1-5 (Starts requiring Rank 1, or level > 0 depending on
+        // implementation. Let's say Novice is index 0)
         // Novice = 0
         // Apprentice = 5
         // Adept = 10
@@ -109,30 +111,31 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
     }
 
     // --- Damage Milestone Methods ---
-    
+
     /**
      * Gets the total damage required to fully complete a sub-level.
      * Starts from Level 1 (index 0) to Level 25.
      * Level represents current level, starting at 0 to 25.
      */
     public double getDamageRequiredForNextLevel(int currentLevel) {
-        if (currentLevel >= 25) return Double.MAX_VALUE; // Maxed out
-        
+        if (currentLevel >= 25)
+            return Double.MAX_VALUE; // Maxed out
+
         if (currentLevel < 5) {
             // Novice 1-5
-            return 1000.0 * (currentLevel + 1); // 1000 to 5000 max
+            return 500.0 * (currentLevel + 1); // 500 to 2500 max
         } else if (currentLevel < 10) {
             // Apprentice
-            return 5000.0 + (4000.0 * (currentLevel - 4)); // 9000 to 25000 max
+            return 2500.0 + (1500.0 * (currentLevel - 4)); // 4000 to 10000 max
         } else if (currentLevel < 15) {
             // Adept
-            return 25000.0 + (15000.0 * (currentLevel - 9)); // 40000 to 100000 max
+            return 10000.0 + (3500.0 * (currentLevel - 9)); // 13500 to 27500 max
         } else if (currentLevel < 20) {
             // Expert
-            return 100000.0 + (50000.0 * (currentLevel - 14)); // 150000 to 350000 max
+            return 27500.0 + (7500.0 * (currentLevel - 14)); // 35000 to 65000 max
         } else {
             // Master
-            return 350000.0 + (130000.0 * (currentLevel - 19)); // 480000 to 1000000 max
+            return 65000.0 + (15000.0 * (currentLevel - 19)); // 80000 to 140000 max
         }
     }
 
@@ -150,15 +153,21 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
 
     /**
      * SP Cost to purchase the NEXT level (0 -> 1 costs Novice amount).
+     * 
      * @param currentLevel Current level (0-24)
      * @return SP cost
      */
     public int getSPCostForNextLevel(int currentLevel) {
-        if (currentLevel < 5) return 1;
-        if (currentLevel < 10) return 2;
-        if (currentLevel < 15) return 2;
-        if (currentLevel < 20) return 3;
-        if (currentLevel < 25) return 4;
+        if (currentLevel < 5)
+            return 1;
+        if (currentLevel < 10)
+            return 2;
+        if (currentLevel < 15)
+            return 2;
+        if (currentLevel < 20)
+            return 3;
+        if (currentLevel < 25)
+            return 4;
         return 0; // Maxed
     }
 }

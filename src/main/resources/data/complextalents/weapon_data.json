@@ -1,4 +1,4 @@
-[
+﻿[
     {
         "id": 1,
         "item_id": "alexscaves:extinction_spear",
@@ -471,7 +471,7 @@
         "id": 79,
         "item_id": "aquamirae:divider",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 80,
@@ -513,7 +513,7 @@
         "id": 86,
         "item_id": "cataclysm:ceraunus",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 87,
@@ -525,55 +525,55 @@
         "id": 88,
         "item_id": "cataclysm:gauntlet_of_bulwark",
         "path": "brawler",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 89,
         "item_id": "cataclysm:gauntlet_of_guard",
         "path": "brawler",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 90,
         "item_id": "cataclysm:gauntlet_of_maelstrom",
         "path": "brawler",
-        "skill_level": "novice"
+        "skill_level": "master"
     },
     {
         "id": 91,
         "item_id": "cataclysm:infernal_forge",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "master"
     },
     {
         "id": 92,
         "item_id": "cataclysm:meat_shredder",
         "path": "juggernaut",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 93,
         "item_id": "cataclysm:soul_render",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "master"
     },
     {
         "id": 94,
         "item_id": "cataclysm:the_incinerator",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "master"
     },
     {
         "id": 95,
         "item_id": "cataclysm:tidal_claws",
         "path": "brawler",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 96,
         "item_id": "cataclysm:void_forge",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "master"
     },
     {
         "id": 97,
@@ -699,13 +699,13 @@
         "id": 117,
         "item_id": "cdmoveset:great_tachi",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 118,
         "item_id": "cdmoveset:katana",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 119,
@@ -921,13 +921,13 @@
         "id": 154,
         "item_id": "cdmoveset:yamato",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 155,
         "item_id": "efn:air_tachi",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "expert"
     },
     {
         "id": 156,
@@ -939,13 +939,13 @@
         "id": 157,
         "item_id": "efn:broadblade",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "expert"
     },
     {
         "id": 158,
         "item_id": "efn:co_tachi",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "expert"
     },
     {
         "id": 159,
@@ -963,79 +963,79 @@
         "id": 161,
         "item_id": "efn:hf_murasama",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "master"
     },
     {
         "id": 162,
         "item_id": "efn:kusabimaru",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 163,
         "item_id": "efn:nf_claw",
         "path": "brawler",
-        "skill_level": "novice"
+        "skill_level": "expert"
     },
     {
         "id": 164,
         "item_id": "efn:nf_dual_sword",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "expert"
     },
     {
         "id": 165,
         "item_id": "efn:nf_shortsword",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 166,
         "item_id": "efn:nf_shortsword_2",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 167,
         "item_id": "efn:ruinsgreatsword",
         "path": "colossus",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 168,
         "item_id": "efn:sword_of_pioneer",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 169,
         "item_id": "efn:thornwheel",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 170,
         "item_id": "efn:yamato_dmc",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "master"
     },
     {
         "id": 171,
         "item_id": "efn:yamato_dmc4",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "master"
     },
     {
         "id": 172,
         "item_id": "efn:yamato_dmc4_in_sheath",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "master"
     },
     {
         "id": 173,
         "item_id": "efn:yamato_dmc_in_sheath",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "master"
     },
     {
         "id": 174,
@@ -1202,8 +1202,8 @@
     {
         "id": 201,
         "item_id": "epicfight_awaken:darknight_pursuiters",
-        "path": "blademaster",
-        "skill_level": "novice"
+        "path": "reaper",
+        "skill_level": "master"
     },
     {
         "id": 202,
@@ -1245,61 +1245,61 @@
         "id": 208,
         "item_id": "iceandfire:dragonbone_sword",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 209,
         "item_id": "iceandfire:dragonbone_sword_fire",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 210,
         "item_id": "iceandfire:dragonbone_sword_ice",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 211,
         "item_id": "iceandfire:dragonbone_sword_lightning",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 212,
         "item_id": "iceandfire:dragonsteel_fire_axe",
         "path": "juggernaut",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 213,
         "item_id": "iceandfire:dragonsteel_fire_sword",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 214,
         "item_id": "iceandfire:dragonsteel_ice_axe",
         "path": "juggernaut",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 215,
         "item_id": "iceandfire:dragonsteel_ice_sword",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 216,
         "item_id": "iceandfire:dragonsteel_lightning_axe",
         "path": "juggernaut",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 217,
         "item_id": "iceandfire:dragonsteel_lightning_sword",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 218,
@@ -1311,7 +1311,7 @@
         "id": 219,
         "item_id": "iceandfire:dread_queen_sword",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 220,
@@ -1323,7 +1323,7 @@
         "id": 221,
         "item_id": "iceandfire:ghost_sword",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 222,
@@ -1635,25 +1635,25 @@
         "id": 273,
         "item_id": "simplyswords:awakened_lichblade",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "expert"
     },
     {
         "id": 274,
         "item_id": "simplyswords:bramblethorn",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 275,
         "item_id": "simplyswords:brimstone_claymore",
         "path": "colossus",
-        "skill_level": "novice"
+        "skill_level": "expert"
     },
     {
         "id": 276,
         "item_id": "simplyswords:caelestis",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "expert"
     },
     {
         "id": 277,
@@ -1713,25 +1713,25 @@
         "id": 286,
         "item_id": "simplyswords:dormant_relic",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 287,
         "item_id": "simplyswords:emberblade",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 288,
         "item_id": "simplyswords:enigma",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 289,
         "item_id": "simplyswords:frostfall",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 290,
@@ -1923,7 +1923,7 @@
         "id": 321,
         "item_id": "simplyswords:livyatan",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 322,
@@ -1941,13 +1941,13 @@
         "id": 324,
         "item_id": "simplyswords:magispear",
         "path": "vanguard",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 325,
         "item_id": "simplyswords:mjolnir",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 326,
@@ -2019,109 +2019,109 @@
         "id": 337,
         "item_id": "simplyswords:righteous_relic",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 338,
         "item_id": "simplyswords:runic_chakram",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 339,
         "item_id": "simplyswords:runic_claymore",
         "path": "colossus",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 340,
         "item_id": "simplyswords:runic_greataxe",
         "path": "juggernaut",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 341,
         "item_id": "simplyswords:runic_greathammer",
         "path": "juggernaut",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 342,
         "item_id": "simplyswords:runic_katana",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 343,
         "item_id": "simplyswords:runic_longsword",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 344,
         "item_id": "simplyswords:runic_rapier",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 345,
         "item_id": "simplyswords:runic_sai",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 346,
         "item_id": "simplyswords:runic_twinblade",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 347,
         "item_id": "simplyswords:shadowsting",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 348,
         "item_id": "simplyswords:slumbering_lichblade",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 349,
         "item_id": "simplyswords:soulkeeper",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 350,
         "item_id": "simplyswords:soulrender",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "master"
     },
     {
         "id": 351,
         "item_id": "simplyswords:soulstealer",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 352,
         "item_id": "simplyswords:stormbringer",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 353,
         "item_id": "simplyswords:sunfire",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 354,
         "item_id": "simplyswords:sword_on_a_stick",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 355,
@@ -2133,43 +2133,43 @@
         "id": 356,
         "item_id": "simplyswords:tempest",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "expert"
     },
     {
         "id": 357,
         "item_id": "simplyswords:toxic_longsword",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 358,
         "item_id": "simplyswords:waking_lichblade",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 359,
         "item_id": "simplyswords:watcher_claymore",
         "path": "colossus",
-        "skill_level": "novice"
+        "skill_level": "expert"
     },
     {
         "id": 360,
         "item_id": "simplyswords:watching_warglaive",
         "path": "vanguard",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 361,
         "item_id": "simplyswords:waxweaver",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 362,
         "item_id": "simplyswords:whisperwind",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 363,
@@ -2211,7 +2211,7 @@
         "id": 369,
         "item_id": "traveloptics:cursed_wraithblade",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 370,
@@ -2235,7 +2235,7 @@
         "id": 373,
         "item_id": "traveloptics:flames_of_eldritch",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 374,
@@ -2295,7 +2295,7 @@
         "id": 383,
         "item_id": "traveloptics:harbingers_wrath",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 384,
@@ -2337,7 +2337,7 @@
         "id": 390,
         "item_id": "traveloptics:mechanized_wraithblade",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 391,
@@ -2493,13 +2493,13 @@
         "id": 416,
         "item_id": "wom:antitheus",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "expert"
     },
     {
         "id": 417,
         "item_id": "wom:blackstar",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 418,
@@ -2517,13 +2517,13 @@
         "id": 420,
         "item_id": "wom:ender_blaster",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "expert"
     },
     {
         "id": 421,
         "item_id": "wom:evil_tachi",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 422,
@@ -2541,13 +2541,13 @@
         "id": 424,
         "item_id": "wom:herrscher",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 425,
         "item_id": "wom:hollow_longsword",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 426,
@@ -2565,13 +2565,13 @@
         "id": 428,
         "item_id": "wom:jabberwocky",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 429,
         "item_id": "wom:napoleon",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "expert"
     },
     {
         "id": 430,
@@ -2589,31 +2589,31 @@
         "id": 432,
         "item_id": "wom:nova",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 433,
         "item_id": "wom:orbit",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 434,
         "item_id": "wom:ruine",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 435,
         "item_id": "wom:satsujin",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 436,
         "item_id": "wom:solar",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "adept"
     },
     {
         "id": 437,
@@ -2625,7 +2625,7 @@
         "id": 438,
         "item_id": "wom:tormented_mind",
         "path": "blademaster",
-        "skill_level": "novice"
+        "skill_level": "apprentice"
     },
     {
         "id": 439,

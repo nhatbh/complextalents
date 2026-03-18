@@ -29,7 +29,8 @@ public class AssassinOrigin {
     public static void register() {
         OriginBuilder.create("complextalents", "assassin")
                 .displayName("Assassin")
-                .description(net.minecraft.network.chat.Component.literal("Stealth-based burst damage dealer. Melee attacks from behind apply 'Exposed', amplifying damage by up to 80% and granting move speed on disengagement."))
+                .description(net.minecraft.network.chat.Component.literal(
+                        "Stealth-based burst damage dealer. Melee attacks from behind apply 'Exposed', amplifying damage by up to 80% and granting move speed on disengagement."))
                 .maxLevel(5)
                 .renderer(new AssassinRenderer())
                 // Passive: Expose Weakness
@@ -42,13 +43,15 @@ public class AssassinOrigin {
                 .scaledStat("disengageDuration", new double[] { 1.5, 1.5, 2.0, 2.0, 2.5 })
                 .passiveSkill("Expose Weakness", "Melee attacks from behind amplify team damage against the target.")
                 .passiveSkill("The Disengage", "Gain movement speed after striking from stealth or exposing weakness.")
-                .activeSkill("Shadow Walk", "Enter stealth and gain movement speed. Your next attack breaks stealth for bonus damage.", null)
+                .activeSkill("Shadow Walk",
+                        "Enter stealth and gain movement speed. Your next attack breaks stealth for bonus damage.",
+                        null)
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "shadow_walk"))
                 .customUpgradeUI((player) -> {
                     com.lowdragmc.lowdraglib.gui.widget.WidgetGroup group = new com.lowdragmc.lowdraglib.gui.widget.WidgetGroup();
                     group.setSize(330, 45);
                     group.setBackground(com.lowdragmc.lowdraglib.gui.texture.ResourceBorderTexture.BUTTON_COMMON);
-                    
+
                     com.lowdragmc.lowdraglib.gui.widget.LabelWidget title = new com.lowdragmc.lowdraglib.gui.widget.LabelWidget();
                     title.setSelfPosition(5, 5);
                     title.setText("§8Shadow Walk");
@@ -56,7 +59,9 @@ public class AssassinOrigin {
 
                     com.lowdragmc.lowdraglib.gui.widget.LabelWidget gaugeLbl = new com.lowdragmc.lowdraglib.gui.widget.LabelWidget();
                     gaugeLbl.setSelfPosition(5, 20);
-                    gaugeLbl.setTextProvider(() -> "Stealth Gauge: §7" + (int) com.complextalents.impl.assassin.client.ClientAssassinData.getStealthGauge() + " / " + (int) com.complextalents.impl.assassin.client.ClientAssassinData.getMaxStealthGauge());
+                    gaugeLbl.setTextProvider(() -> "Stealth Gauge: §7"
+                            + (int) com.complextalents.impl.assassin.client.ClientAssassinData.getStealthGauge() + " / "
+                            + (int) com.complextalents.impl.assassin.client.ClientAssassinData.getMaxStealthGauge());
                     group.addWidget(gaugeLbl);
 
                     return group;
@@ -65,14 +70,14 @@ public class AssassinOrigin {
 
         ClassCostMatrix.defineCosts(ID)
                 .cost(StatType.FLAT_AD, 1)
-                .cost(StatType.PERCENT_AD, 1)
+                .cost(StatType.PERCENT_AD, 2)
                 .cost(StatType.AP, 4)
                 .cost(StatType.ARMOR_PEN, 1)
                 .cost(StatType.LUCK_CRIT, 1)
-                .cost(StatType.MAX_HP, 3)
+                .cost(StatType.MAX_HP, 4)
                 .cost(StatType.MAX_MANA, 4)
                 .cost(StatType.MOBILITY, 1)
-                .cost(StatType.CDR, 2);
+                .cost(StatType.CDR, 3);
 
         TalentsMod.LOGGER.info("Assassin origin registered");
     }
