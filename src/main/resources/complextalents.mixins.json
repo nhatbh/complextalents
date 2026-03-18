@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.complextalents.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "AbstractSpellMixin",
+    "epicfight.GuardSkillMixin"
+  ],
+  "server": [],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

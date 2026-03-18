@@ -1,0 +1,2636 @@
+[
+    {
+        "id": 1,
+        "item_id": "alexscaves:extinction_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 2,
+        "item_id": "alexscaves:frostmint_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 3,
+        "item_id": "alexscaves:limestone_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 4,
+        "item_id": "alexscaves:ortholance",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 5,
+        "item_id": "alexscaves:sharpened_candy_cane",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 6,
+        "item_id": "aquamirae:coral_lance",
+        "path": "vanguard",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 7,
+        "item_id": "aquamirae:dagger_of_greed",
+        "path": "reaper",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 8,
+        "item_id": "aquamirae:sweet_lance",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 9,
+        "item_id": "aquamirae:whisper_of_the_abyss",
+        "path": "vanguard",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 10,
+        "item_id": "cataclysm:ancient_spear",
+        "path": "vanguard",
+        "skill_level": "adept"
+    },
+    {
+        "id": 11,
+        "item_id": "cataclysm:astrape",
+        "path": "vanguard",
+        "skill_level": "adept"
+    },
+    {
+        "id": 12,
+        "item_id": "cataclysm:athame",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 13,
+        "item_id": "cataclysm:coral_bardiche",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 14,
+        "item_id": "cataclysm:coral_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 15,
+        "item_id": "cataclysm:khopesh",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 16,
+        "item_id": "cataclysm:the_annihilator",
+        "path": "vanguard",
+        "skill_level": "master"
+    },
+    {
+        "id": 17,
+        "item_id": "cataclysm:the_immolator",
+        "path": "vanguard",
+        "skill_level": "master"
+    },
+    {
+        "id": 18,
+        "item_id": "efn:crescent_moon",
+        "path": "reaper",
+        "skill_level": "master"
+    },
+    {
+        "id": 19,
+        "item_id": "efn:crimson_moon",
+        "path": "reaper",
+        "skill_level": "expert"
+    },
+    {
+        "id": 20,
+        "item_id": "efn:exsiliumgladius",
+        "path": "reaper",
+        "skill_level": "expert"
+    },
+    {
+        "id": 21,
+        "item_id": "efn:fire_exsiliumgladius",
+        "path": "reaper",
+        "skill_level": "expert"
+    },
+    {
+        "id": 22,
+        "item_id": "efn:meen_spear",
+        "path": "vanguard",
+        "skill_level": "expert"
+    },
+    {
+        "id": 23,
+        "item_id": "epicfight:diamond_dagger",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 24,
+        "item_id": "epicfight:diamond_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 25,
+        "item_id": "epicfight:iron_dagger",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 26,
+        "item_id": "epicfight:iron_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 27,
+        "item_id": "epicfight:netherite_dagger",
+        "path": "reaper",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 28,
+        "item_id": "epicfight:netherite_spear",
+        "path": "vanguard",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 29,
+        "item_id": "iceandfire:hippogryph_sword",
+        "path": "reaper",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 30,
+        "item_id": "iceandfireartifacts:hydra_dagger",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 31,
+        "item_id": "minecraft:trident",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 32,
+        "item_id": "simplyswords:decaying_relic",
+        "path": "vanguard",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 33,
+        "item_id": "simplyswords:diamond_cutlass",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 34,
+        "item_id": "simplyswords:diamond_glaive",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 35,
+        "item_id": "simplyswords:diamond_halberd",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 36,
+        "item_id": "simplyswords:diamond_scythe",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 37,
+        "item_id": "simplyswords:diamond_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 38,
+        "item_id": "simplyswords:diamond_warglaive",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 39,
+        "item_id": "simplyswords:emberlash",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 40,
+        "item_id": "simplyswords:flamewind",
+        "path": "vanguard",
+        "skill_level": "adept"
+    },
+    {
+        "id": 41,
+        "item_id": "simplyswords:hearthflame",
+        "path": "vanguard",
+        "skill_level": "expert"
+    },
+    {
+        "id": 42,
+        "item_id": "simplyswords:icewhisper",
+        "path": "vanguard",
+        "skill_level": "adept"
+    },
+    {
+        "id": 43,
+        "item_id": "simplyswords:iron_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 44,
+        "item_id": "simplyswords:molten_edge",
+        "path": "reaper",
+        "skill_level": "expert"
+    },
+    {
+        "id": 45,
+        "item_id": "simplyswords:netherite_cutlass",
+        "path": "reaper",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 46,
+        "item_id": "simplyswords:netherite_glaive",
+        "path": "vanguard",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 47,
+        "item_id": "simplyswords:netherite_scythe",
+        "path": "reaper",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 48,
+        "item_id": "simplyswords:netherite_spear",
+        "path": "vanguard",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 49,
+        "item_id": "simplyswords:netherite_warglaive",
+        "path": "vanguard",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 50,
+        "item_id": "simplyswords:runic_cutlass",
+        "path": "reaper",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 51,
+        "item_id": "simplyswords:runic_glaive",
+        "path": "vanguard",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 52,
+        "item_id": "simplyswords:runic_halberd",
+        "path": "vanguard",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 53,
+        "item_id": "simplyswords:runic_scythe",
+        "path": "reaper",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 54,
+        "item_id": "simplyswords:runic_spear",
+        "path": "vanguard",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 55,
+        "item_id": "simplyswords:runic_warglaive",
+        "path": "vanguard",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 56,
+        "item_id": "simplyswords:soulpyre",
+        "path": "reaper",
+        "skill_level": "adept"
+    },
+    {
+        "id": 57,
+        "item_id": "simplyswords:stars_edge",
+        "path": "vanguard",
+        "skill_level": "expert"
+    },
+    {
+        "id": 58,
+        "item_id": "simplyswords:storms_edge",
+        "path": "vanguard",
+        "skill_level": "adept"
+    },
+    {
+        "id": 59,
+        "item_id": "simplyswords:thunderbrand",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 60,
+        "item_id": "simplyswords:twisted_blade",
+        "path": "reaper",
+        "skill_level": "adept"
+    },
+    {
+        "id": 61,
+        "item_id": "simplyswords:wickpiercer",
+        "path": "vanguard",
+        "skill_level": "expert"
+    },
+    {
+        "id": 62,
+        "item_id": "traveloptics:abyssal_tidecaller",
+        "path": "reaper",
+        "skill_level": "master"
+    },
+    {
+        "id": 63,
+        "item_id": "traveloptics:charged_sands",
+        "path": "vanguard",
+        "skill_level": "adept"
+    },
+    {
+        "id": 64,
+        "item_id": "traveloptics:galenic_polarizer",
+        "path": "vanguard",
+        "skill_level": "adept"
+    },
+    {
+        "id": 65,
+        "item_id": "traveloptics:gauntlet_of_extinction",
+        "path": "vanguard",
+        "skill_level": "expert"
+    },
+    {
+        "id": 66,
+        "item_id": "traveloptics:infernal_devastator",
+        "path": "vanguard",
+        "skill_level": "expert"
+    },
+    {
+        "id": 67,
+        "item_id": "traveloptics:scourge_of_the_sands",
+        "path": "vanguard",
+        "skill_level": "adept"
+    },
+    {
+        "id": 68,
+        "item_id": "traveloptics:stellothorn",
+        "path": "reaper",
+        "skill_level": "expert"
+    },
+    {
+        "id": 69,
+        "item_id": "traveloptics:the_obliterator",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 70,
+        "item_id": "traveloptics:thorns_of_oblivion",
+        "path": "vanguard",
+        "skill_level": "adept"
+    },
+    {
+        "id": 71,
+        "item_id": "traveloptics:titanlord_scepter",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 72,
+        "item_id": "traveloptics:trident_of_the_eternal_maelstrom",
+        "path": "vanguard",
+        "skill_level": "adept"
+    },
+    {
+        "id": 73,
+        "item_id": "traveloptics:voidstrike_reaper",
+        "path": "reaper",
+        "skill_level": "adept"
+    },
+    {
+        "id": 74,
+        "item_id": "wom:agony",
+        "path": "vanguard",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 75,
+        "item_id": "wom:moonless",
+        "path": "reaper",
+        "skill_level": "adept"
+    },
+    {
+        "id": 76,
+        "item_id": "alexscaves:desolate_dagger",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 77,
+        "item_id": "alexscaves:primitive_club",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 78,
+        "item_id": "alexscaves:totem_of_possession",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 79,
+        "item_id": "aquamirae:divider",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 80,
+        "item_id": "aquamirae:fin_cutter",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 81,
+        "item_id": "aquamirae:poisoned_blade",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 82,
+        "item_id": "aquamirae:remnants_saber",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 83,
+        "item_id": "aquamirae:terrible_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 84,
+        "item_id": "cataclysm:black_steel_axe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 85,
+        "item_id": "cataclysm:black_steel_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 86,
+        "item_id": "cataclysm:ceraunus",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 87,
+        "item_id": "cataclysm:final_fractal",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 88,
+        "item_id": "cataclysm:gauntlet_of_bulwark",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 89,
+        "item_id": "cataclysm:gauntlet_of_guard",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 90,
+        "item_id": "cataclysm:gauntlet_of_maelstrom",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 91,
+        "item_id": "cataclysm:infernal_forge",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 92,
+        "item_id": "cataclysm:meat_shredder",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 93,
+        "item_id": "cataclysm:soul_render",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 94,
+        "item_id": "cataclysm:the_incinerator",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 95,
+        "item_id": "cataclysm:tidal_claws",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 96,
+        "item_id": "cataclysm:void_forge",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 97,
+        "item_id": "cataclysm:zweiender",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 98,
+        "item_id": "cataclysm_spellbooks:bloom_stone_staff",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 99,
+        "item_id": "cataclysm_spellbooks:coral_staff",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 100,
+        "item_id": "cataclysm_spellbooks:engineers_power_glove",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 101,
+        "item_id": "cataclysm_spellbooks:fake_wudjets_staff",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 102,
+        "item_id": "cataclysm_spellbooks:gauntlet_of_gattling",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 103,
+        "item_id": "cataclysm_spellbooks:gauntlet_of_power",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 104,
+        "item_id": "cataclysm_spellbooks:monstrous_flamberge",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 105,
+        "item_id": "cataclysm_spellbooks:murasama_blade",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 106,
+        "item_id": "cataclysm_spellbooks:soul_brazier",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 107,
+        "item_id": "cataclysm_spellbooks:spirit_sunderer",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 108,
+        "item_id": "cataclysm_spellbooks:the_berserker",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 109,
+        "item_id": "cataclysm_spellbooks:the_combuster",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 110,
+        "item_id": "cataclysm_spellbooks:the_nightstalker",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 111,
+        "item_id": "cataclysm_spellbooks:void_staff",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 112,
+        "item_id": "cataclysm_ut:aspectoftheend",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 113,
+        "item_id": "cataclysm_ut:hammer",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 114,
+        "item_id": "cdmoveset:a_yamato",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 115,
+        "item_id": "cdmoveset:a_yamato_in_sheath",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 116,
+        "item_id": "cdmoveset:a_yamato_sheath",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 117,
+        "item_id": "cdmoveset:great_tachi",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 118,
+        "item_id": "cdmoveset:katana",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 119,
+        "item_id": "cdmoveset:phantom_katana",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 120,
+        "item_id": "cdmoveset:phantom_katana_sheath",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 121,
+        "item_id": "cdmoveset:s_diamond_dagger",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 122,
+        "item_id": "cdmoveset:s_diamond_greatsword",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 123,
+        "item_id": "cdmoveset:s_diamond_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 124,
+        "item_id": "cdmoveset:s_diamond_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 125,
+        "item_id": "cdmoveset:s_diamond_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 126,
+        "item_id": "cdmoveset:s_diamond_tachi",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 127,
+        "item_id": "cdmoveset:s_golden_greatsword",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 128,
+        "item_id": "cdmoveset:s_golden_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 129,
+        "item_id": "cdmoveset:s_golden_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 130,
+        "item_id": "cdmoveset:s_golden_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 131,
+        "item_id": "cdmoveset:s_golden_tachi",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 132,
+        "item_id": "cdmoveset:s_iron_dagger",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 133,
+        "item_id": "cdmoveset:s_iron_greatsword",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 134,
+        "item_id": "cdmoveset:s_iron_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 135,
+        "item_id": "cdmoveset:s_iron_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 136,
+        "item_id": "cdmoveset:s_iron_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 137,
+        "item_id": "cdmoveset:s_iron_tachi",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 138,
+        "item_id": "cdmoveset:s_netherite_dagger",
+        "path": "reaper",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 139,
+        "item_id": "cdmoveset:s_netherite_greatsword",
+        "path": "colossus",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 140,
+        "item_id": "cdmoveset:s_netherite_longsword",
+        "path": "blademaster",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 141,
+        "item_id": "cdmoveset:s_netherite_spear",
+        "path": "vanguard",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 142,
+        "item_id": "cdmoveset:s_netherite_sword",
+        "path": "blademaster",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 143,
+        "item_id": "cdmoveset:s_netherite_tachi",
+        "path": "blademaster",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 144,
+        "item_id": "cdmoveset:s_stone_greatsword",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 145,
+        "item_id": "cdmoveset:s_stone_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 146,
+        "item_id": "cdmoveset:s_stone_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 147,
+        "item_id": "cdmoveset:s_stone_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 148,
+        "item_id": "cdmoveset:s_stone_tachi",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 149,
+        "item_id": "cdmoveset:s_wooden_greatsword",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 150,
+        "item_id": "cdmoveset:s_wooden_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 151,
+        "item_id": "cdmoveset:s_wooden_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 152,
+        "item_id": "cdmoveset:s_wooden_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 153,
+        "item_id": "cdmoveset:s_wooden_tachi",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 154,
+        "item_id": "cdmoveset:yamato",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 155,
+        "item_id": "efn:air_tachi",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 156,
+        "item_id": "efn:arc_tachi",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 157,
+        "item_id": "efn:broadblade",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 158,
+        "item_id": "efn:co_tachi",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 159,
+        "item_id": "efn:excalibur",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 160,
+        "item_id": "efn:flag_bearer",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 161,
+        "item_id": "efn:hf_murasama",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 162,
+        "item_id": "efn:kusabimaru",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 163,
+        "item_id": "efn:nf_claw",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 164,
+        "item_id": "efn:nf_dual_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 165,
+        "item_id": "efn:nf_shortsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 166,
+        "item_id": "efn:nf_shortsword_2",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 167,
+        "item_id": "efn:ruinsgreatsword",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 168,
+        "item_id": "efn:sword_of_pioneer",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 169,
+        "item_id": "efn:thornwheel",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 170,
+        "item_id": "efn:yamato_dmc",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 171,
+        "item_id": "efn:yamato_dmc4",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 172,
+        "item_id": "efn:yamato_dmc4_in_sheath",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 173,
+        "item_id": "efn:yamato_dmc_in_sheath",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 174,
+        "item_id": "epicfight:bokken",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 175,
+        "item_id": "epicfight:diamond_greatsword",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 176,
+        "item_id": "epicfight:diamond_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 177,
+        "item_id": "epicfight:diamond_tachi",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 178,
+        "item_id": "epicfight:glove",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 179,
+        "item_id": "epicfight:golden_dagger",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 180,
+        "item_id": "epicfight:golden_greatsword",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 181,
+        "item_id": "epicfight:golden_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 182,
+        "item_id": "epicfight:golden_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 183,
+        "item_id": "epicfight:golden_tachi",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 184,
+        "item_id": "epicfight:iron_greatsword",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 185,
+        "item_id": "epicfight:iron_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 186,
+        "item_id": "epicfight:iron_tachi",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 187,
+        "item_id": "epicfight:netherite_greatsword",
+        "path": "colossus",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 188,
+        "item_id": "epicfight:netherite_longsword",
+        "path": "blademaster",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 189,
+        "item_id": "epicfight:netherite_tachi",
+        "path": "blademaster",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 190,
+        "item_id": "epicfight:stone_dagger",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 191,
+        "item_id": "epicfight:stone_greatsword",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 192,
+        "item_id": "epicfight:stone_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 193,
+        "item_id": "epicfight:stone_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 194,
+        "item_id": "epicfight:stone_tachi",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 195,
+        "item_id": "epicfight:uchigatana",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 196,
+        "item_id": "epicfight:wooden_dagger",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 197,
+        "item_id": "epicfight:wooden_greatsword",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 198,
+        "item_id": "epicfight:wooden_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 199,
+        "item_id": "epicfight:wooden_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 200,
+        "item_id": "epicfight:wooden_tachi",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 201,
+        "item_id": "epicfight_awaken:darknight_pursuiters",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 202,
+        "item_id": "epicfight_awaken:rage_of_flame",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 203,
+        "item_id": "epicfight_awaken:will_of_king",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 204,
+        "item_id": "iceandfire:amphithere_macuahuitl",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 205,
+        "item_id": "iceandfire:copper_axe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 206,
+        "item_id": "iceandfire:copper_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 207,
+        "item_id": "iceandfire:dragonbone_axe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 208,
+        "item_id": "iceandfire:dragonbone_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 209,
+        "item_id": "iceandfire:dragonbone_sword_fire",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 210,
+        "item_id": "iceandfire:dragonbone_sword_ice",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 211,
+        "item_id": "iceandfire:dragonbone_sword_lightning",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 212,
+        "item_id": "iceandfire:dragonsteel_fire_axe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 213,
+        "item_id": "iceandfire:dragonsteel_fire_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 214,
+        "item_id": "iceandfire:dragonsteel_ice_axe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 215,
+        "item_id": "iceandfire:dragonsteel_ice_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 216,
+        "item_id": "iceandfire:dragonsteel_lightning_axe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 217,
+        "item_id": "iceandfire:dragonsteel_lightning_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 218,
+        "item_id": "iceandfire:dread_knight_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 219,
+        "item_id": "iceandfire:dread_queen_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 220,
+        "item_id": "iceandfire:dread_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 221,
+        "item_id": "iceandfire:ghost_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 222,
+        "item_id": "iceandfire:hippocampus_slapper",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 223,
+        "item_id": "iceandfire:myrmex_desert_axe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 224,
+        "item_id": "iceandfire:myrmex_desert_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 225,
+        "item_id": "iceandfire:myrmex_desert_sword_venom",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 226,
+        "item_id": "iceandfire:myrmex_jungle_axe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 227,
+        "item_id": "iceandfire:myrmex_jungle_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 228,
+        "item_id": "iceandfire:myrmex_jungle_sword_venom",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 229,
+        "item_id": "iceandfire:silver_axe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 230,
+        "item_id": "iceandfire:silver_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 231,
+        "item_id": "iceandfire:stymphalian_bird_dagger",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 232,
+        "item_id": "iceandfire:tide_trident",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 233,
+        "item_id": "iceandfire:troll_weapon_axe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 234,
+        "item_id": "iceandfire:troll_weapon_column",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 235,
+        "item_id": "iceandfire:troll_weapon_column_forest",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 236,
+        "item_id": "iceandfire:troll_weapon_column_frost",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 237,
+        "item_id": "iceandfire:troll_weapon_hammer",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 238,
+        "item_id": "iceandfire:troll_weapon_trunk",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 239,
+        "item_id": "iceandfire:troll_weapon_trunk_frost",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 240,
+        "item_id": "invincible:custom_combo_demo",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 241,
+        "item_id": "invincible:custom_skill_demo",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 242,
+        "item_id": "invincible:debug",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 243,
+        "item_id": "irons_spellbooks:amethyst_rapier",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 244,
+        "item_id": "irons_spellbooks:artificer_cane",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 245,
+        "item_id": "irons_spellbooks:blood_staff",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 246,
+        "item_id": "irons_spellbooks:boreal_blade",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 247,
+        "item_id": "irons_spellbooks:claymore",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 248,
+        "item_id": "irons_spellbooks:decrepit_scythe",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 249,
+        "item_id": "irons_spellbooks:graybeard_staff",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 250,
+        "item_id": "irons_spellbooks:hellrazor",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 251,
+        "item_id": "irons_spellbooks:ice_staff",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 252,
+        "item_id": "irons_spellbooks:keeper_flamberge",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 253,
+        "item_id": "irons_spellbooks:legionnaire_flamberge",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 254,
+        "item_id": "irons_spellbooks:lightning_rod",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 255,
+        "item_id": "irons_spellbooks:magehunter",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 256,
+        "item_id": "irons_spellbooks:misery",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 257,
+        "item_id": "irons_spellbooks:pyrium_staff",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 258,
+        "item_id": "irons_spellbooks:spellbreaker",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 259,
+        "item_id": "irons_spellbooks:twilight_gale",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 260,
+        "item_id": "minecraft:diamond_axe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 261,
+        "item_id": "minecraft:diamond_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 262,
+        "item_id": "minecraft:golden_axe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 263,
+        "item_id": "minecraft:golden_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 264,
+        "item_id": "minecraft:iron_axe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 265,
+        "item_id": "minecraft:iron_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 266,
+        "item_id": "minecraft:netherite_axe",
+        "path": "juggernaut",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 267,
+        "item_id": "minecraft:netherite_sword",
+        "path": "blademaster",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 268,
+        "item_id": "minecraft:stone_axe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 269,
+        "item_id": "minecraft:stone_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 270,
+        "item_id": "minecraft:wooden_axe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 271,
+        "item_id": "minecraft:wooden_sword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 272,
+        "item_id": "simplyswords:arcanethyst",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 273,
+        "item_id": "simplyswords:awakened_lichblade",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 274,
+        "item_id": "simplyswords:bramblethorn",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 275,
+        "item_id": "simplyswords:brimstone_claymore",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 276,
+        "item_id": "simplyswords:caelestis",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 277,
+        "item_id": "simplyswords:diamond_chakram",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 278,
+        "item_id": "simplyswords:diamond_claymore",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 279,
+        "item_id": "simplyswords:diamond_greataxe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 280,
+        "item_id": "simplyswords:diamond_greathammer",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 281,
+        "item_id": "simplyswords:diamond_katana",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 282,
+        "item_id": "simplyswords:diamond_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 283,
+        "item_id": "simplyswords:diamond_rapier",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 284,
+        "item_id": "simplyswords:diamond_sai",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 285,
+        "item_id": "simplyswords:diamond_twinblade",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 286,
+        "item_id": "simplyswords:dormant_relic",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 287,
+        "item_id": "simplyswords:emberblade",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 288,
+        "item_id": "simplyswords:enigma",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 289,
+        "item_id": "simplyswords:frostfall",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 290,
+        "item_id": "simplyswords:gold_chakram",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 291,
+        "item_id": "simplyswords:gold_claymore",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 292,
+        "item_id": "simplyswords:gold_cutlass",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 293,
+        "item_id": "simplyswords:gold_glaive",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 294,
+        "item_id": "simplyswords:gold_greataxe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 295,
+        "item_id": "simplyswords:gold_greathammer",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 296,
+        "item_id": "simplyswords:gold_halberd",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 297,
+        "item_id": "simplyswords:gold_katana",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 298,
+        "item_id": "simplyswords:gold_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 299,
+        "item_id": "simplyswords:gold_rapier",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 300,
+        "item_id": "simplyswords:gold_sai",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 301,
+        "item_id": "simplyswords:gold_scythe",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 302,
+        "item_id": "simplyswords:gold_spear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 303,
+        "item_id": "simplyswords:gold_twinblade",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 304,
+        "item_id": "simplyswords:gold_warglaive",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 305,
+        "item_id": "simplyswords:harbinger",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 306,
+        "item_id": "simplyswords:hiveheart",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 307,
+        "item_id": "simplyswords:iron_chakram",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 308,
+        "item_id": "simplyswords:iron_claymore",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 309,
+        "item_id": "simplyswords:iron_cutlass",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 310,
+        "item_id": "simplyswords:iron_glaive",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 311,
+        "item_id": "simplyswords:iron_greataxe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 312,
+        "item_id": "simplyswords:iron_greathammer",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 313,
+        "item_id": "simplyswords:iron_halberd",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 314,
+        "item_id": "simplyswords:iron_katana",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 315,
+        "item_id": "simplyswords:iron_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 316,
+        "item_id": "simplyswords:iron_rapier",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 317,
+        "item_id": "simplyswords:iron_sai",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 318,
+        "item_id": "simplyswords:iron_scythe",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 319,
+        "item_id": "simplyswords:iron_twinblade",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 320,
+        "item_id": "simplyswords:iron_warglaive",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 321,
+        "item_id": "simplyswords:livyatan",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 322,
+        "item_id": "simplyswords:magiblade",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 323,
+        "item_id": "simplyswords:magiscythe",
+        "path": "reaper",
+        "skill_level": "novice"
+    },
+    {
+        "id": 324,
+        "item_id": "simplyswords:magispear",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 325,
+        "item_id": "simplyswords:mjolnir",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 326,
+        "item_id": "simplyswords:netherite_chakram",
+        "path": "blademaster",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 327,
+        "item_id": "simplyswords:netherite_claymore",
+        "path": "colossus",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 328,
+        "item_id": "simplyswords:netherite_greataxe",
+        "path": "juggernaut",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 329,
+        "item_id": "simplyswords:netherite_greathammer",
+        "path": "juggernaut",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 330,
+        "item_id": "simplyswords:netherite_halberd",
+        "path": "vanguard",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 331,
+        "item_id": "simplyswords:netherite_katana",
+        "path": "blademaster",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 332,
+        "item_id": "simplyswords:netherite_longsword",
+        "path": "blademaster",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 333,
+        "item_id": "simplyswords:netherite_rapier",
+        "path": "blademaster",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 334,
+        "item_id": "simplyswords:netherite_sai",
+        "path": "blademaster",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 335,
+        "item_id": "simplyswords:netherite_twinblade",
+        "path": "blademaster",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 336,
+        "item_id": "simplyswords:ribboncleaver",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 337,
+        "item_id": "simplyswords:righteous_relic",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 338,
+        "item_id": "simplyswords:runic_chakram",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 339,
+        "item_id": "simplyswords:runic_claymore",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 340,
+        "item_id": "simplyswords:runic_greataxe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 341,
+        "item_id": "simplyswords:runic_greathammer",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 342,
+        "item_id": "simplyswords:runic_katana",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 343,
+        "item_id": "simplyswords:runic_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 344,
+        "item_id": "simplyswords:runic_rapier",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 345,
+        "item_id": "simplyswords:runic_sai",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 346,
+        "item_id": "simplyswords:runic_twinblade",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 347,
+        "item_id": "simplyswords:shadowsting",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 348,
+        "item_id": "simplyswords:slumbering_lichblade",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 349,
+        "item_id": "simplyswords:soulkeeper",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 350,
+        "item_id": "simplyswords:soulrender",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 351,
+        "item_id": "simplyswords:soulstealer",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 352,
+        "item_id": "simplyswords:stormbringer",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 353,
+        "item_id": "simplyswords:sunfire",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 354,
+        "item_id": "simplyswords:sword_on_a_stick",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 355,
+        "item_id": "simplyswords:tainted_relic",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 356,
+        "item_id": "simplyswords:tempest",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 357,
+        "item_id": "simplyswords:toxic_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 358,
+        "item_id": "simplyswords:waking_lichblade",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 359,
+        "item_id": "simplyswords:watcher_claymore",
+        "path": "colossus",
+        "skill_level": "novice"
+    },
+    {
+        "id": 360,
+        "item_id": "simplyswords:watching_warglaive",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 361,
+        "item_id": "simplyswords:waxweaver",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 362,
+        "item_id": "simplyswords:whisperwind",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 363,
+        "item_id": "traveloptics:abyssal_tidecaller_level_one",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 364,
+        "item_id": "traveloptics:abyssal_tidecaller_level_three",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 365,
+        "item_id": "traveloptics:abyssal_tidecaller_level_two",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 366,
+        "item_id": "traveloptics:charged_sands_level_one",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 367,
+        "item_id": "traveloptics:charged_sands_level_three",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 368,
+        "item_id": "traveloptics:charged_sands_level_two",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 369,
+        "item_id": "traveloptics:cursed_wraithblade",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 370,
+        "item_id": "traveloptics:cursed_wraithblade_level_one",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 371,
+        "item_id": "traveloptics:cursed_wraithblade_level_three",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 372,
+        "item_id": "traveloptics:cursed_wraithblade_level_two",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 373,
+        "item_id": "traveloptics:flames_of_eldritch",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 374,
+        "item_id": "traveloptics:flames_of_eldritch_level_one",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 375,
+        "item_id": "traveloptics:flames_of_eldritch_level_three",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 376,
+        "item_id": "traveloptics:flames_of_eldritch_level_two",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 377,
+        "item_id": "traveloptics:galenic_polarizer_level_one",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 378,
+        "item_id": "traveloptics:galenic_polarizer_level_three",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 379,
+        "item_id": "traveloptics:galenic_polarizer_level_two",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 380,
+        "item_id": "traveloptics:gauntlet_of_extinction_level_one",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 381,
+        "item_id": "traveloptics:gauntlet_of_extinction_level_three",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 382,
+        "item_id": "traveloptics:gauntlet_of_extinction_level_two",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 383,
+        "item_id": "traveloptics:harbingers_wrath",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 384,
+        "item_id": "traveloptics:harbingers_wrath_level_one",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 385,
+        "item_id": "traveloptics:harbingers_wrath_level_three",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 386,
+        "item_id": "traveloptics:harbingers_wrath_level_two",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 387,
+        "item_id": "traveloptics:infernal_devastator_level_one",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 388,
+        "item_id": "traveloptics:infernal_devastator_level_three",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 389,
+        "item_id": "traveloptics:infernal_devastator_level_two",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 390,
+        "item_id": "traveloptics:mechanized_wraithblade",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 391,
+        "item_id": "traveloptics:mechanized_wraithblade_level_one",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 392,
+        "item_id": "traveloptics:mechanized_wraithblade_level_three",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 393,
+        "item_id": "traveloptics:mechanized_wraithblade_level_two",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 394,
+        "item_id": "traveloptics:scourge_of_the_sands_level_one",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 395,
+        "item_id": "traveloptics:scourge_of_the_sands_level_three",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 396,
+        "item_id": "traveloptics:scourge_of_the_sands_level_two",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 397,
+        "item_id": "traveloptics:staff_of_the_storm_empress",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 398,
+        "item_id": "traveloptics:stellothorn_level_one",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 399,
+        "item_id": "traveloptics:stellothorn_level_three",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 400,
+        "item_id": "traveloptics:stellothorn_level_two",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 401,
+        "item_id": "traveloptics:the_obliterator_level_one",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 402,
+        "item_id": "traveloptics:the_obliterator_level_three",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 403,
+        "item_id": "traveloptics:the_obliterator_level_two",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 404,
+        "item_id": "traveloptics:thorns_of_oblivion_level_one",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 405,
+        "item_id": "traveloptics:thorns_of_oblivion_level_three",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 406,
+        "item_id": "traveloptics:thorns_of_oblivion_level_two",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 407,
+        "item_id": "traveloptics:titanlord_scepter_retro",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 408,
+        "item_id": "traveloptics:titanlord_scepter_tectonic",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 409,
+        "item_id": "traveloptics:trident_of_the_eternal_maelstrom_level_one",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 410,
+        "item_id": "traveloptics:trident_of_the_eternal_maelstrom_level_three",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 411,
+        "item_id": "traveloptics:trident_of_the_eternal_maelstrom_level_two",
+        "path": "vanguard",
+        "skill_level": "novice"
+    },
+    {
+        "id": 412,
+        "item_id": "traveloptics:voidstrike_reaper_level_one",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 413,
+        "item_id": "traveloptics:voidstrike_reaper_level_three",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 414,
+        "item_id": "traveloptics:voidstrike_reaper_level_two",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 415,
+        "item_id": "traveloptics:wand_of_final_light",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 416,
+        "item_id": "wom:antitheus",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 417,
+        "item_id": "wom:blackstar",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 418,
+        "item_id": "wom:diamond_greataxe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 419,
+        "item_id": "wom:diamond_staff",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 420,
+        "item_id": "wom:ender_blaster",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 421,
+        "item_id": "wom:evil_tachi",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 422,
+        "item_id": "wom:golden_greataxe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 423,
+        "item_id": "wom:golden_staff",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 424,
+        "item_id": "wom:herrscher",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 425,
+        "item_id": "wom:hollow_longsword",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 426,
+        "item_id": "wom:iron_greataxe",
+        "path": "juggernaut",
+        "skill_level": "novice"
+    },
+    {
+        "id": 427,
+        "item_id": "wom:iron_staff",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 428,
+        "item_id": "wom:jabberwocky",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 429,
+        "item_id": "wom:napoleon",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 430,
+        "item_id": "wom:netherite_greataxe",
+        "path": "juggernaut",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 431,
+        "item_id": "wom:netherite_staff",
+        "path": "brawler",
+        "skill_level": "apprentice"
+    },
+    {
+        "id": 432,
+        "item_id": "wom:nova",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 433,
+        "item_id": "wom:orbit",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 434,
+        "item_id": "wom:ruine",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 435,
+        "item_id": "wom:satsujin",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 436,
+        "item_id": "wom:solar",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 437,
+        "item_id": "wom:stone_staff",
+        "path": "brawler",
+        "skill_level": "novice"
+    },
+    {
+        "id": 438,
+        "item_id": "wom:tormented_mind",
+        "path": "blademaster",
+        "skill_level": "novice"
+    },
+    {
+        "id": 439,
+        "item_id": "wom:wooden_staff",
+        "path": "brawler",
+        "skill_level": "novice"
+    }
+]

@@ -1,0 +1,51 @@
+{
+  "key.categories.complextalents": "Complex Talents",
+  "key.complextalents.skill_1": "Skill 1",
+  "key.complextalents.skill_2": "Skill 2",
+
+  "reaction.complextalents.vaporize": "Vaporize",
+  "reaction.complextalents.melt": "Melt",
+  "reaction.complextalents.frozen": "Frozen",
+  "reaction.complextalents.overloaded": "Overloaded",
+  "reaction.complextalents.electro_charged": "Electro-Charged",
+  "reaction.complextalents.superconduct": "Superconduct",
+  "reaction.complextalents.burning": "Burning",
+  "reaction.complextalents.bloom": "Bloom",
+  "reaction.complextalents.swirl": "Swirl",
+  "reaction.complextalents.crystallize": "Crystallize",
+  "reaction.complextalents.aggravate": "Aggravate",
+
+  "element.complextalents.pyro": "Pyro",
+  "element.complextalents.hydro": "Hydro",
+  "element.complextalents.cryo": "Cryo",
+  "element.complextalents.electro": "Electro",
+  "element.complextalents.dendro": "Dendro",
+  "element.complextalents.anemo": "Anemo",
+  "element.complextalents.geo": "Geo",
+
+  "sounds.complextalents.highpriest.sword_clang": "Sword Clang",
+  "sounds.complextalents.highpriest.sword_hit": "Sword Hit",
+
+  "origin.complextalents.high_priest": "High Priest",
+  "origin.complextalents.assassin": "Assassin",
+  "origin.complextalents.dark_mage": "Dark Mage",
+  "origin.complextalents.elemental_mage": "Elemental Mage",
+  "origin.complextalents.warrior": "Warrior",
+
+  "skill.complextalents.seraphic_echo": "Seraphic Echo",
+  "skill.complextalents.seraphic_echo.desc": "Divine Orb: Move the seraphic orb to a target location. Damages and slows enemies, while granting speed and absorption to allies on its path. Cast on the orb itself to pull nearby enemies.",
+  
+  "skill.complextalents.shadow_walk": "Shadow Walk",
+  "skill.complextalents.shadow_walk.desc": "Phase into the shadows to become nearly invisible. Gain increased movement speed and a massive damage bonus on your next strike.",
+  
+  "skill.complextalents.blood_pact": "Blood Pact",
+  "skill.complextalents.blood_pact.desc": "Toggle to fuel magic with life force. Grants soul-scaled mana regen and massive power. Phylactery (Death-Defy) is free while active, but dying costs 30% of souls.",
+  
+  "skill.complextalents.harmonic_convergence": "Harmonic Convergence",
+  "skill.complextalents.harmonic_convergence.desc": "Converge your elemental echos to restore mana and supercharge your next spell with increased critical strike chance and damage.",
+  
+  "skill.complextalents.challengers_retribution": "Challenger's Retribution",
+  "skill.complextalents.challengers_retribution.desc": "Adopt a defensive stance, taunting nearby enemies into a magical shield. Release the charge to unleash all absorbed damage in a powerful burst.",
+
+  "entity.complextalents.seraphs_edge": "Seraph's Edge"
+}

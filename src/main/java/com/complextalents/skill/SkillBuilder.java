@@ -1,0 +1,611 @@
+package com.complextalents.skill;
+
+import com.complextalents.passive.PassiveStackDef;
+import com.complextalents.passive.PassiveStackRegistry;
+import com.complextalents.stats.ScaledStat;
+import com.complextalents.targeting.TargetType;
+import net.minecraft.resources.ResourceLocation;
+
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+
+/**
+ * Builder for creating skill definitions.
+ * Provides fluent API for skill registration.
+ */
+public class SkillBuilder {
+    private ResourceLocation id;
+    private net.minecraft.network.chat.Component displayName;
+    private net.minecraft.network.chat.Component description;
+    private SkillNature nature = SkillNature.ACTIVE;
+    private TargetType targetingType = TargetType.NONE;
+    private double maxRange = 32.0;
+    private double activeCooldown = 0.0;
+    private double passiveCooldown = 0.0;
+    private double resourceCost = 0.0;
+    private ResourceLocation resourceType;
+    private boolean toggleable = false;
+    private double toggleCostPerTick = 0.0;
+    private double toggleMaxDuration = 0.0;
+    private Consumer<Object> toggleOffHandler;
+    private boolean allowSelfTarget = false;
+    private boolean targetAllyOnly = false;
+    private boolean targetPlayerOnly = false;
+    private int maxLevel = 1;
+    private ResourceLocation icon = null;
+    private final java.util.Map<String, ScaledStat> scaledStats = new java.util.HashMap<>();
+    private final java.util.Map<String, PassiveStackDef> passiveStacks = new java.util.HashMap<>();
+
+    // Execution handlers
+    private BiConsumer<Skill.ExecutionContext, Object> activeHandler;
+    private Consumer<Object> passiveHandler;
+    private ChanneledHandler channeledHandler;
+    private ReleaseHandler releaseHandler;
+
+    // Validation handler (runs before cast to check if skill can be used)
+    private BiFunction<Skill.ExecutionContext, Object, Boolean> validationHandler;
+
+    // Channeling properties
+    private double minChannelTime = 0.0;
+    private double maxChannelTime = 0.0;
+
+    // Scaling arrays for cooldown, cost, and toggle cost
+    private double[] scaledActiveCooldown = null;
+    private double[] scaledPassiveCooldown = null;
+    private double[] scaledResourceCost = null;
+    private double[] scaledToggleCost = null;
+
+    /**
+     * Handler for channeled skills that receives channel time.
+     */
+    @FunctionalInterface
+    public interface ChanneledHandler {
+        void handle(Skill.ExecutionContext context, Object player, double channelTime);
+    }
+
+    /**
+     * Handler for charge skills that receives the duration of the charge.
+     */
+    @FunctionalInterface
+    public interface ReleaseHandler {
+        void handle(Skill.ExecutionContext context, Object player, double chargeTime);
+    }
+
+    /**
+     * Create a new skill builder.
+     *
+     * @param modId    The mod ID (namespace)
+     * @param skillName The skill name (path)
+     * @return A new SkillBuilder instance
+     */
+    public static SkillBuilder create(String modId, String skillName) {
+        return new SkillBuilder(ResourceLocation.fromNamespaceAndPath(modId, skillName));
+    }
+
+    /**
+     * Create a new skill builder with a ResourceLocation.
+     *
+     * @param id The skill ID
+     * @return A new SkillBuilder instance
+     */
+    public static SkillBuilder create(ResourceLocation id) {
+        return new SkillBuilder(id);
+    }
+
+    private SkillBuilder(ResourceLocation id) {
+        this.id = id;
+    }
+
+    /**
+     * Set the display name for this skill.
+     */
+    public SkillBuilder displayName(String name) {
+        this.displayName = net.minecraft.network.chat.Component.literal(name);
+        return this;
+    }
+
+    /**
+     * Set the description for this skill.
+     */
+    public SkillBuilder description(String desc) {
+        this.description = net.minecraft.network.chat.Component.literal(desc);
+        return this;
+    }
+
+    /**
+     * Set the skill nature (PASSIVE, ACTIVE, BOTH, TOGGLE).
+     */
+    public SkillBuilder nature(SkillNature nature) {
+        this.nature = nature;
+        return this;
+    }
+
+    /**
+     * Set the targeting type for the active component.
+     */
+    public SkillBuilder targeting(TargetType type) {
+        this.targetingType = type;
+        return this;
+    }
+
+    /**
+     * Set the maximum range for targeting (in blocks).
+     */
+    public SkillBuilder maxRange(double range) {
+        this.maxRange = range;
+        return this;
+    }
+
+    /**
+     * Set the cooldown in seconds for the active component.
+     */
+    public SkillBuilder activeCooldown(double seconds) {
+        this.activeCooldown = seconds;
+        return this;
+    }
+
+    /**
+     * Set the cooldown in seconds for the passive trigger (for hybrid skills).
+     */
+    public SkillBuilder passiveCooldown(double seconds) {
+        this.passiveCooldown = seconds;
+        return this;
+    }
+
+    /**
+     * Set the resource cost for active cast.
+     *
+     * @param cost        The amount of resource to consume
+     * @param resourceType The resource ID (e.g., "irons_spellbooks:mana")
+     */
+    public SkillBuilder resourceCost(double cost, String resourceType) {
+        this.resourceCost = cost;
+        this.resourceType = parseResourceLocation(resourceType);
+        return this;
+    }
+
+    /**
+     * Set whether this skill can be toggled.
+     */
+    public SkillBuilder toggleable(boolean toggle) {
+        this.toggleable = toggle;
+        return this;
+    }
+
+    /**
+     * Set the resource cost per tick while toggled on.
+     */
+    public SkillBuilder toggleCost(double costPerTick) {
+        this.toggleCostPerTick = costPerTick;
+        return this;
+    }
+
+    /**
+     * Set the maximum duration for a toggle skill.
+     * When this duration is reached, the toggle will automatically turn off and cooldown will start.
+     * Use 0 for unlimited duration (stays on until manually toggled).
+     *
+     * @param seconds Maximum duration in seconds, or 0 for unlimited
+     * @return this builder
+     */
+    public SkillBuilder toggleMaxDuration(double seconds) {
+        this.toggleMaxDuration = seconds;
+        return this;
+    }
+
+    /**
+     * Register a handler that is called when the skill is toggled off.
+     * This is called for both manual toggle-off and automatic toggle-off (max duration, etc.).
+     * The handler receives the raw ServerPlayer object.
+     *
+     * @param handler The toggle-off handler
+     * @return this builder
+     */
+    public SkillBuilder onToggleOff(Consumer<Object> handler) {
+        this.toggleOffHandler = handler;
+        return this;
+    }
+
+    /**
+     * Register the active execution handler.
+     * This is called when SkillExecuteEvent fires for this skill.
+     * The handler receives a Skill.ExecutionContext containing the player and target data.
+     * The second parameter is the raw ServerPlayer for convenience.
+     */
+    public SkillBuilder onActive(BiConsumer<Skill.ExecutionContext, Object> handler) {
+        this.activeHandler = handler;
+        return this;
+    }
+
+    /**
+     * Register a passive event handler.
+     * For passives that respond to specific Forge events.
+     * The handler receives the Forge event object.
+     */
+    public SkillBuilder onPassive(Consumer<Object> handler) {
+        this.passiveHandler = handler;
+        return this;
+    }
+
+    /**
+     * Set the minimum channel time in seconds.
+     */
+    public SkillBuilder minChannelTime(double seconds) {
+        this.minChannelTime = seconds;
+        return this;
+    }
+
+    /**
+     * Set the maximum channel time in seconds.
+     */
+    public SkillBuilder maxChannelTime(double seconds) {
+        this.maxChannelTime = seconds;
+        return this;
+    }
+
+    /**
+     * Set whether this skill allows targeting the caster.
+     * When true, the player can target themselves with ENTITY targeting.
+     * When false, the player cannot target themselves.
+     *
+     * @param allow true if self-targeting is allowed
+     * @return this builder
+     */
+    public SkillBuilder allowSelfTarget(boolean allow) {
+        this.allowSelfTarget = allow;
+        return this;
+    }
+
+    /**
+     * Set whether this skill can only target allies.
+     * When true, non-allies will be filtered out during targeting.
+     *
+     * @param allyOnly true if only allies can be targeted
+     * @return this builder
+     */
+    public SkillBuilder targetAllyOnly(boolean allyOnly) {
+        this.targetAllyOnly = allyOnly;
+        return this;
+    }
+
+    /**
+     * Set whether this skill can only target players.
+     * When true, mobs and other non-player entities will be filtered out.
+     *
+     * @param playerOnly true if only players can be targeted
+     * @return this builder
+     */
+    public SkillBuilder targetPlayerOnly(boolean playerOnly) {
+        this.targetPlayerOnly = playerOnly;
+        return this;
+    }
+
+    /**
+     * Set the maximum level for this skill.
+     * Default is 1, meaning the skill cannot be leveled up.
+     *
+     * @param maxLevel The maximum level (must be >= 1)
+     * @return this builder
+     * @throws IllegalArgumentException if maxLevel < 1
+     */
+    public SkillBuilder setMaxLevel(int maxLevel) {
+        if (maxLevel < 1) {
+            throw new IllegalArgumentException("Max level must be at least 1, got: " + maxLevel);
+        }
+        this.maxLevel = maxLevel;
+        return this;
+    }
+
+    /**
+     * Add a scaled stat that varies by skill level.
+     * Use the key as the display name.
+     *
+     * @param name   The stat name (used as key and display name)
+     * @param values Array of values per level
+     * @return this builder
+     */
+    public SkillBuilder scaledStat(String name, double[] values) {
+        return scaledStat(name, name, values);
+    }
+
+    /**
+     * Add a scaled stat with separate key and display name.
+     *
+     * @param key         The internal key for the stat
+     * @param displayName The name to show in the UI
+     * @param values      Array of values per level
+     * @return this builder
+     */
+    public SkillBuilder scaledStat(String key, String displayName, double[] values) {
+        if (values == null || values.length == 0) {
+            throw new IllegalArgumentException("Scaled stat values must have at least one element");
+        }
+        this.scaledStats.put(key, new ScaledStat(displayName, values));
+        return this;
+    }
+
+    /**
+     * Add a scaled stat with separate key and display name (Component).
+     *
+     * @param key         The internal key for the stat
+     * @param displayName The component to show in the UI
+     * @param values      Array of values per level
+     * @return this builder
+     */
+    public SkillBuilder scaledStat(String key, net.minecraft.network.chat.Component displayName, double[] values) {
+        if (values == null || values.length == 0) {
+            throw new IllegalArgumentException("Scaled stat values must have at least one element");
+        }
+        this.scaledStats.put(key, new ScaledStat(displayName, values));
+        return this;
+    }
+
+    /**
+     * Register the channeled execution handler.
+     * This is called for channeling skills with the channel time as a parameter.
+     * The handler receives the Skill.ExecutionContext, the raw ServerPlayer, and the channel time in seconds.
+     */
+    public SkillBuilder onChannel(ChanneledHandler handler) {
+        this.channeledHandler = handler;
+        return this;
+    }
+
+    /**
+     * Register the release execution handler.
+     * This is called for CHARGE skills when the player releases the skill key.
+     * The handler receives the Skill.ExecutionContext, the raw ServerPlayer, and the charge time in seconds.
+     */
+    public SkillBuilder onRelease(ReleaseHandler handler) {
+        this.releaseHandler = handler;
+        return this;
+    }
+
+    /**
+     * Register a validation handler that runs before the skill is cast.
+     * This allows custom conditions to be checked before skill execution.
+     * <p>
+     * The validation handler receives the Skill.ExecutionContext and the raw ServerPlayer.
+     * It should return {@code true} if the skill can be cast, or {@code false} to cancel the cast.
+     * <p>
+     * Example use cases:
+     * <ul>
+     *   <li>Checking if player is in a specific biome</li>
+     *   <li>Checking if player is holding a required item</li>
+     *   <li>Checking time of day or weather conditions</li>
+     *   <li>Checking player health or other status</li>
+     * </ul>
+     *
+     * <pre>{@code
+     * SkillBuilder.create("modid", "fireball")
+     *     .validate((context, player) -> {
+     *         // Cannot cast underwater
+     *         if (player.isInWater()) return false;
+     *         // Must have item in hand
+     *         return !player.getMainHandItem().isEmpty();
+     *     })
+     *     .onActive((context, player) -> { ... })
+     *     .register();
+     * }</pre>
+     *
+     * @param handler The validation handler that returns true if casting is allowed
+     * @return this builder
+     */
+    public SkillBuilder validate(BiFunction<Skill.ExecutionContext, Object, Boolean> handler) {
+        this.validationHandler = handler;
+        return this;
+    }
+
+    /**
+     * Add a passive stack type to this skill.
+     * <p>
+     * Passive stacks are tracked per-player and can be used for mechanics like:
+     * - Stacks that build up over time
+     * - Stacks gained/lost on events
+     * - Conditional effects based on stack count
+     * </p>
+     * <p>
+     * The skill's event handlers are responsible for all stack logic
+     * (generation, decay, triggers). This only defines the stack type.
+     * </p>
+     *
+     * @param stackName The unique name for this stack type (e.g., "heat", "charge")
+     * @param def       The stack definition with max stacks and display info
+     * @return this builder
+     */
+    public SkillBuilder passiveStack(String stackName, PassiveStackDef def) {
+        this.passiveStacks.put(stackName, def);
+        return this;
+    }
+
+    /**
+     * Set the icon texture for this skill.
+     *
+     * @param icon The icon texture location, or null for default
+     * @return this builder
+     */
+    public SkillBuilder icon(ResourceLocation icon) {
+        this.icon = icon;
+        return this;
+    }
+
+    /**
+     * Set the icon texture for this skill.
+     *
+     * @param namespace The texture namespace (e.g., "complextalents")
+     * @param path The texture path without extension (e.g., "textures/skill/fireball")
+     * @return this builder
+     */
+    public SkillBuilder icon(String namespace, String path) {
+        this.icon = ResourceLocation.fromNamespaceAndPath(namespace, path);
+        return this;
+    }
+
+    /**
+     * Set the cooldown that scales with skill level.
+     * Values are indexed by level: index 0 = level 1, index 1 = level 2, etc.
+     * If the skill level exceeds the array length, the last value is used.
+     * <p>
+     * If not set, the fixed cooldown from {@link #activeCooldown(double)} is used for all levels.
+     *
+     * @param values Array of cooldown values per level (in seconds, must have at least one value)
+     * @return this builder
+     * @throws IllegalArgumentException if values is null or empty
+     */
+    public SkillBuilder scaledCooldown(double[] values) {
+        if (values == null || values.length == 0) {
+            throw new IllegalArgumentException("Scaled cooldown values must have at least one element");
+        }
+        this.scaledActiveCooldown = values.clone();
+        return this;
+    }
+
+    /**
+     * Set the passive cooldown that scales with skill level.
+     * Values are indexed by level: index 0 = level 1, index 1 = level 2, etc.
+     * If the skill level exceeds the array length, the last value is used.
+     * <p>
+     * If not set, the fixed cooldown from {@link #passiveCooldown(double)} is used for all levels.
+     *
+     * @param values Array of passive cooldown values per level (in seconds, must have at least one value)
+     * @return this builder
+     * @throws IllegalArgumentException if values is null or empty
+     */
+    public SkillBuilder scaledPassiveCooldown(double[] values) {
+        if (values == null || values.length == 0) {
+            throw new IllegalArgumentException("Scaled passive cooldown values must have at least one element");
+        }
+        this.scaledPassiveCooldown = values.clone();
+        return this;
+    }
+
+    /**
+     * Set the resource cost that scales with skill level.
+     * Values are indexed by level: index 0 = level 1, index 1 = level 2, etc.
+     * If the skill level exceeds the array length, the last value is used.
+     * <p>
+     * If not set, the fixed cost from {@link #resourceCost(double, String)} is used for all levels.
+     *
+     * @param values Array of cost values per level (must have at least one value)
+     * @return this builder
+     * @throws IllegalArgumentException if values is null or empty
+     */
+    public SkillBuilder scaledResourceCost(double[] values) {
+        if (values == null || values.length == 0) {
+            throw new IllegalArgumentException("Scaled resource cost values must have at least one element");
+        }
+        this.scaledResourceCost = values.clone();
+        return this;
+    }
+
+    /**
+     * Set the resource cost that scales with skill level, including the resource type.
+     * Values are indexed by level: index 0 = level 1, index 1 = level 2, etc.
+     * If the skill level exceeds the array length, the last value is used.
+     * <p>
+     * This method sets both the resource type and the scaled cost values.
+     *
+     * @param values Array of cost values per level (must have at least one value)
+     * @param resourceType The resource ID (e.g., "complextalents:piety")
+     * @return this builder
+     * @throws IllegalArgumentException if values is null or empty
+     */
+    public SkillBuilder scaledResourceCost(double[] values, String resourceType) {
+        if (values == null || values.length == 0) {
+            throw new IllegalArgumentException("Scaled resource cost values must have at least one element");
+        }
+        this.resourceType = parseResourceLocation(resourceType);
+        this.scaledResourceCost = values.clone();
+        return this;
+    }
+
+    /**
+     * Set the toggle cost per tick that scales with skill level.
+     * Values are indexed by level: index 0 = level 1, index 1 = level 2, etc.
+     * If the skill level exceeds the array length, the last value is used.
+     * <p>
+     * If not set, the fixed cost from {@link #toggleCost(double)} is used for all levels.
+     *
+     * @param values Array of cost per tick values per level (must have at least one value)
+     * @return this builder
+     * @throws IllegalArgumentException if values is null or empty
+     */
+    public SkillBuilder scaledToggleCost(double[] values) {
+        if (values == null || values.length == 0) {
+            throw new IllegalArgumentException("Scaled toggle cost values must have at least one element");
+        }
+        this.scaledToggleCost = values.clone();
+        return this;
+    }
+
+    /**
+     * Build the skill and return a BuiltSkill instance.
+     * Call SkillRegistry.register() with the result to register it.
+     */
+    public BuiltSkill build() {
+        return new BuiltSkill(this);
+    }
+
+    /**
+     * Build and register the skill in one step.
+     * Also registers passive stack definitions with the shared PassiveStackRegistry.
+     *
+     * @return The registered BuiltSkill instance
+     */
+    public BuiltSkill register() {
+        BuiltSkill skill = build();
+        SkillRegistry.getInstance().register(skill);
+
+        // Register passive stack definitions with shared registry
+        for (java.util.Map.Entry<String, PassiveStackDef> entry : passiveStacks.entrySet()) {
+            PassiveStackRegistry.register(skill, entry.getKey(), entry.getValue());
+        }
+
+        return skill;
+    }
+
+    // Package-private getters for BuiltSkill
+    ResourceLocation getId() { return id; }
+    net.minecraft.network.chat.Component getDisplayName() { return displayName; }
+    net.minecraft.network.chat.Component getDescription() { return description; }
+    SkillNature getNature() { return nature; }
+    TargetType getTargetingType() { return targetingType; }
+    double getMaxRange() { return maxRange; }
+    double getActiveCooldown() { return activeCooldown; }
+    double getPassiveCooldown() { return passiveCooldown; }
+    double getResourceCost() { return resourceCost; }
+    ResourceLocation getResourceType() { return resourceType; }
+    boolean isToggleable() { return toggleable; }
+    double getToggleCostPerTick() { return toggleCostPerTick; }
+    double getToggleMaxDuration() { return toggleMaxDuration; }
+    Consumer<Object> getToggleOffHandler() { return toggleOffHandler; }
+    boolean isAllowSelfTarget() { return allowSelfTarget; }
+    boolean isTargetAllyOnly() { return targetAllyOnly; }
+    boolean isTargetPlayerOnly() { return targetPlayerOnly; }
+    double getMinChannelTime() { return minChannelTime; }
+    double getMaxChannelTime() { return maxChannelTime; }
+    BiConsumer<Skill.ExecutionContext, Object> getActiveHandler() { return activeHandler; }
+    Consumer<Object> getPassiveHandler() { return passiveHandler; }
+    ChanneledHandler getChanneledHandler() { return channeledHandler; }
+    ReleaseHandler getReleaseHandler() { return releaseHandler; }
+    BiFunction<Skill.ExecutionContext, Object, Boolean> getValidationHandler() { return validationHandler; }
+    int getMaxLevel() { return maxLevel; }
+    java.util.Map<String, ScaledStat> getScaledStats() { return new java.util.HashMap<>(scaledStats); }
+    java.util.Map<String, PassiveStackDef> getPassiveStacks() { return new java.util.HashMap<>(passiveStacks); }
+    ResourceLocation getIcon() { return icon; }
+    double[] getScaledActiveCooldown() { return scaledActiveCooldown; }
+    double[] getScaledPassiveCooldown() { return scaledPassiveCooldown; }
+    double[] getScaledResourceCost() { return scaledResourceCost; }
+    double[] getScaledToggleCost() { return scaledToggleCost; }
+
+    private ResourceLocation parseResourceLocation(String resourceType) {
+        if (resourceType == null || resourceType.isEmpty()) {
+            return null;
+        }
+        if (resourceType.contains(":")) {
+            return ResourceLocation.tryParse(resourceType);
+        }
+        // Default to irons_spellbooks namespace if none provided
+        return ResourceLocation.fromNamespaceAndPath("irons_spellbooks", resourceType);
+    }
+}
