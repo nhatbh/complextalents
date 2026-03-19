@@ -40,7 +40,7 @@ public class WeaponMasteryCommand {
                         .executes(ctx -> {
                             ServerPlayer player = ctx.getSource().getPlayerOrException();
                             com.complextalents.dev.SimpleUIFactory.INSTANCE.open(player,
-                                    com.complextalents.weaponmastery.client.WeaponMasteryUI.UI_ID);
+                                    com.complextalents.client.PlayerUpgradeUI.UI_ID);
                             return 1;
                         }))
                 .then(Commands.literal("reload")

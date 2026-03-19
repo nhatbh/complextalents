@@ -54,7 +54,7 @@ public class OriginCommand {
                 return 0;
             }
 
-            com.complextalents.dev.SimpleUIFactory.INSTANCE.open(player, com.complextalents.origin.client.OriginUpgradeUI.UI_ID);
+            com.complextalents.dev.SimpleUIFactory.INSTANCE.open(player, com.complextalents.client.PlayerUpgradeUI.UI_ID);
             return 1;
         }
     }

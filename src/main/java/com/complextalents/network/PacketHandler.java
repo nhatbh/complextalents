@@ -38,6 +38,7 @@ import com.complextalents.spellmastery.network.SpellMasterySyncPacket;
 import com.complextalents.spellmastery.network.FinalizeGrimoirePacket;
 import com.complextalents.weaponmastery.network.PurchaseWeaponMasteryPacket;
 import com.complextalents.weaponmastery.network.WeaponMasterySyncPacket;
+import com.complextalents.stats.network.PurchaseStatsPacket;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -330,6 +331,12 @@ public class PacketHandler {
                                 FinalizeGrimoirePacket::new,
                                 FinalizeGrimoirePacket::handle);
 
+                INSTANCE.registerMessage(packetId++,
+                                FinalizePlayerUpgradesPacket.class,
+                                FinalizePlayerUpgradesPacket::encode,
+                                FinalizePlayerUpgradesPacket::new,
+                                FinalizePlayerUpgradesPacket::handle);
+
                 // Weapon Mastery Packets
                 INSTANCE.registerMessage(packetId++,
                                 WeaponMasterySyncPacket.class,
@@ -342,6 +349,13 @@ public class PacketHandler {
                                 PurchaseWeaponMasteryPacket::toBytes,
                                 PurchaseWeaponMasteryPacket::new,
                                 PurchaseWeaponMasteryPacket::handle);
+
+                // Stats packets
+                INSTANCE.registerMessage(packetId++,
+                                PurchaseStatsPacket.class,
+                                PurchaseStatsPacket::toBytes,
+                                PurchaseStatsPacket::new,
+                                PurchaseStatsPacket::handle);
 
                 TalentsMod.LOGGER.info("Network packets registered");
         }

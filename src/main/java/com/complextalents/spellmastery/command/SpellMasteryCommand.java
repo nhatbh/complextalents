@@ -38,7 +38,7 @@ public class SpellMasteryCommand {
                 .then(Commands.literal("gui")
                         .executes(ctx -> {
                             ServerPlayer player = ctx.getSource().getPlayerOrException();
-                            com.complextalents.dev.SimpleUIFactory.INSTANCE.open(player, com.complextalents.spellmastery.client.SpellMasteryUI.UI_ID);
+                            com.complextalents.dev.SimpleUIFactory.INSTANCE.open(player, com.complextalents.client.PlayerUpgradeUI.UI_ID);
                             return 1;
                         }))
         );

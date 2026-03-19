@@ -29,7 +29,11 @@ public class StatsCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("stats")
-                .requires(src -> src.hasPermission(OP_LEVEL))
+                .then(Commands.literal("ui").executes(ctx -> {
+                        ServerPlayer player = ctx.getSource().getPlayerOrException();
+                        com.complextalents.dev.SimpleUIFactory.INSTANCE.open(player, com.complextalents.client.PlayerUpgradeUI.UI_ID);
+                        return 1;
+                }))
                 .then(AddSPCommand.register())
                 .then(SetRankCommand.register())
                 .then(ResetCommand.register())
@@ -39,6 +43,7 @@ public class StatsCommand {
     private static class AddSPCommand {
         static com.mojang.brigadier.builder.ArgumentBuilder<CommandSourceStack, ?> register() {
             return Commands.literal("add_sp")
+                    .requires(src -> src.hasPermission(OP_LEVEL))
                     .then(Commands.argument("amount", IntegerArgumentType.integer())
                             .executes(ctx -> addSP(ctx, Collections.singleton(ctx.getSource().getPlayerOrException()),
                                     IntegerArgumentType.getInteger(ctx, "amount")))
@@ -64,7 +69,7 @@ public class StatsCommand {
 
     private static class SetRankCommand {
         static com.mojang.brigadier.builder.ArgumentBuilder<CommandSourceStack, ?> register() {
-            var statArg = Commands.literal("set_rank");
+            var statArg = Commands.literal("set_rank").requires(src -> src.hasPermission(OP_LEVEL));
             for (StatType type : StatType.values()) {
                 statArg.then(Commands.literal(type.name().toLowerCase())
                         .then(Commands.argument("rank", IntegerArgumentType.integer(0, 9999))
@@ -96,6 +101,7 @@ public class StatsCommand {
     private static class ResetCommand {
         static com.mojang.brigadier.builder.ArgumentBuilder<CommandSourceStack, ?> register() {
             return Commands.literal("reset")
+                    .requires(src -> src.hasPermission(OP_LEVEL))
                     .executes(ctx -> reset(ctx, Collections.singleton(ctx.getSource().getPlayerOrException())))
                     .then(Commands.argument("target", EntityArgument.players())
                             .executes(ctx -> reset(ctx, EntityArgument.getPlayers(ctx, "target"))));
