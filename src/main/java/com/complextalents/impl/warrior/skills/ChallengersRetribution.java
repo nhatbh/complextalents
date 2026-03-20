@@ -74,11 +74,14 @@ public class ChallengersRetribution {
     public static void register() {
         SkillBuilder.create(ID)
                 .displayName("Challenger's Retribution")
-                .description("Defensive stance, taunts enemies within 5-10 blocks. Release to reflect 50%-160% absorbed damage as AoE (by level). Shield health: (5-20 base HP) × rank multiplier + bonus from max health. Charge grants -90% move speed, +100% KB resistance. Max 5s charge; breaking mid-charge cancels reflection.")
-                .icon(ResourceLocation.fromNamespaceAndPath("complextalents", "textures/skill/warrior/challengers_retribution.png"))
+                .description(
+                        "Defensive stance, taunts enemies within 5-10 blocks. Release to reflect 50%-160% absorbed damage as AoE (by level). Shield health: (5-20 base HP) × rank multiplier + bonus from max health. Charge grants -90% move speed, +100% KB resistance. Max 5s charge; breaking mid-charge cancels reflection.")
+                .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
+                        "textures/skill/warrior/challengers_retribution.png"))
                 .nature(SkillNature.CHARGE)
                 .setMaxLevel(5)
                 .maxChannelTime(5.0) // Maximum 5 second charge
+                .scaledCooldown(new double[] { 45.0, 40.0, 35.0, 30.0, 30.0 })
                 .scaledStat("tauntRange", new double[] { 5, 6, 7, 8, 10 })
                 .scaledStat("baseHp", new double[] { 5, 8, 12, 16, 20 })
                 .scaledStat("reflectPercent", new double[] { 0.5, 0.75, 1.0, 1.25, 1.6 })
@@ -188,7 +191,8 @@ public class ChallengersRetribution {
         ServerPlayerPatch playerPatch = EpicFightCapabilities.getEntityPatch(player, ServerPlayerPatch.class);
         if (playerPatch != null) {
             CapabilityItem itemCap = playerPatch.getHoldingItemCapability(InteractionHand.MAIN_HAND);
-            AnimationAccessor<? extends StaticAnimation> anim = itemCap.getGuardMotion(null, yesman.epicfight.skill.guard.GuardSkill.BlockType.GUARD, playerPatch);
+            AnimationAccessor<? extends StaticAnimation> anim = itemCap.getGuardMotion(null,
+                    yesman.epicfight.skill.guard.GuardSkill.BlockType.GUARD, playerPatch);
             if (anim != null) {
                 playerPatch.playAnimationSynchronized(anim, 0.0F);
             }
@@ -221,13 +225,13 @@ public class ChallengersRetribution {
                 double parryXP = XPFormula.calculateWarriorPerfectParryXP(data.absorbedDamage);
                 ChunkPos chunkPos = new ChunkPos(player.blockPosition());
                 XPContext xpContext = XPContext.builder()
-                    .source(XPSource.WARRIOR_PARRY)
-                    .chunkPos(chunkPos)
-                    .rawAmount(parryXP)
-                    .metadata("damageAbsorbed", data.absorbedDamage)
-                    .metadata("shieldMaxHealth", data.maxHealth)
-                    .metadata("shieldRemainingHealth", data.health)
-                    .build();
+                        .source(XPSource.WARRIOR_PARRY)
+                        .chunkPos(chunkPos)
+                        .rawAmount(parryXP)
+                        .metadata("damageAbsorbed", data.absorbedDamage)
+                        .metadata("shieldMaxHealth", data.maxHealth)
+                        .metadata("shieldRemainingHealth", data.health)
+                        .build();
                 LevelingService.getInstance().awardXP(player, parryXP, XPSource.WARRIOR_PARRY, xpContext);
 
                 // Reflect Damage
@@ -314,10 +318,12 @@ public class ChallengersRetribution {
                     player.sendSystemMessage(Component.literal("\u00A7c[SHIELD BROKEN] \u00A77Skill canceled!"));
 
                     // Epic Fight Animation: Play GUARD_BREAK animation
-                    ServerPlayerPatch playerPatch = EpicFightCapabilities.getEntityPatch(player, ServerPlayerPatch.class);
+                    ServerPlayerPatch playerPatch = EpicFightCapabilities.getEntityPatch(player,
+                            ServerPlayerPatch.class);
                     if (playerPatch != null) {
                         CapabilityItem itemCap = playerPatch.getHoldingItemCapability(InteractionHand.MAIN_HAND);
-                        AnimationAccessor<? extends StaticAnimation> anim = itemCap.getGuardMotion(null, yesman.epicfight.skill.guard.GuardSkill.BlockType.GUARD_BREAK, playerPatch);
+                        AnimationAccessor<? extends StaticAnimation> anim = itemCap.getGuardMotion(null,
+                                yesman.epicfight.skill.guard.GuardSkill.BlockType.GUARD_BREAK, playerPatch);
                         if (anim != null) {
                             playerPatch.playAnimationSynchronized(anim, 0.0F);
                         }
