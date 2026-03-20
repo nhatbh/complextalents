@@ -14,11 +14,19 @@ import java.util.Map;
  */
 public class GeneralStatsData implements IGeneralStatsData {
 
-    private final Player player;
+    private Player player;
     private final Map<StatType, Integer> ranks = new EnumMap<>(StatType.class);
     private int skillPoints = 0;
 
+    public GeneralStatsData() {
+        // Default constructor for global storage
+    }
+
     public GeneralStatsData(Player player) {
+        this.player = player;
+    }
+
+    public void setPlayer(Player player) {
         this.player = player;
     }
 
@@ -30,7 +38,7 @@ public class GeneralStatsData implements IGeneralStatsData {
     @Override
     public void setStatRank(StatType type, int rank) {
         ranks.put(type, rank);
-        if (!player.level().isClientSide) {
+        if (player != null && !player.level().isClientSide) {
             applyModifiers();
             sync();
         }
@@ -44,7 +52,7 @@ public class GeneralStatsData implements IGeneralStatsData {
     @Override
     public void setSkillPoints(int points) {
         this.skillPoints = points;
-        if (!player.level().isClientSide) {
+        if (player != null && !player.level().isClientSide) {
             sync();
         }
     }
@@ -96,7 +104,7 @@ public class GeneralStatsData implements IGeneralStatsData {
             }
         }
 
-        if (!player.level().isClientSide) {
+        if (player != null && !player.level().isClientSide) {
             applyModifiers();
         }
     }

@@ -25,13 +25,21 @@ import com.complextalents.util.UUIDHelper;
  */
 public class SpellMasteryData implements ISpellMasteryData {
 
-    private final Player player;
+    private Player player;
     private final Map<ResourceLocation, Integer> learnedSpells = new HashMap<>(); // SpellID -> Max Level Learned
     private final Map<ResourceLocation, Integer> purchasedMasteryLevels = new HashMap<>(); // SchoolID -> Tier
     private int totalSPSpentOnMastery = 0;
     private static final UUID MASTERY_SP_REWARD_UUID = UUIDHelper.generateAttributeModifierUUID("spell_mastery", "mastery_buyup_reward");
 
+    public SpellMasteryData() {
+        // Default constructor for global storage
+    }
+
     public SpellMasteryData(Player player) {
+        this.player = player;
+    }
+
+    public void setPlayer(Player player) {
         this.player = player;
     }
 
@@ -81,7 +89,7 @@ public class SpellMasteryData implements ISpellMasteryData {
     @Override
     public void setMasteryLevel(ResourceLocation schoolId, int level) {
         // No longer used for dynamic calculation, but kept for interface compatibility
-        if (!player.level().isClientSide) {
+        if (player != null && !player.level().isClientSide) {
             sync();
         }
     }
@@ -96,7 +104,7 @@ public class SpellMasteryData implements ISpellMasteryData {
         int currentMax = learnedSpells.getOrDefault(spellId, 0);
         if (level > currentMax) {
             learnedSpells.put(spellId, level);
-            if (!player.level().isClientSide) {
+            if (player != null && !player.level().isClientSide) {
                 sync();
             }
         }

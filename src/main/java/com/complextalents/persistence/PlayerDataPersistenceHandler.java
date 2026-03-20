@@ -10,6 +10,9 @@ import com.complextalents.impl.highpriest.origin.HighPriestOrigin;
 import com.complextalents.origin.capability.OriginDataProvider;
 import com.complextalents.passive.capability.PassiveStackDataProvider;
 import com.complextalents.skill.capability.SkillDataProvider;
+import com.complextalents.weaponmastery.capability.WeaponMasteryDataProvider;
+import com.complextalents.stats.capability.GeneralStatsDataProvider;
+import com.complextalents.spellmastery.capability.SpellMasteryDataProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -102,6 +105,21 @@ public class PlayerDataPersistenceHandler {
             if (cap instanceof com.complextalents.skill.capability.PlayerSkillData psd) psd.syncCooldowns();
         });
         player.getCapability(PassiveStackDataProvider.PASSIVE_STACK_DATA).ifPresent(com.complextalents.passive.capability.IPassiveStackData::sync);
+        
+        player.getCapability(WeaponMasteryDataProvider.WEAPON_MASTERY_DATA).ifPresent(cap -> {
+            if (cap instanceof com.complextalents.weaponmastery.capability.WeaponMasteryData wmd) {
+                wmd.applyStatRewards();
+            }
+            cap.sync();
+        });
+        
+        player.getCapability(GeneralStatsDataProvider.STATS_DATA).ifPresent(cap -> {
+            if (cap instanceof com.complextalents.stats.capability.GeneralStatsData gsd) {
+                gsd.sync(); // This also applies modifiers
+            }
+        });
+        
+        player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(com.complextalents.spellmastery.capability.ISpellMasteryData::sync);
 
         // Origin specific data handlers
         UUID playerId = player.getUUID();

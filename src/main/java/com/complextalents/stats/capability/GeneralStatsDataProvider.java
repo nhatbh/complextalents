@@ -16,6 +16,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.complextalents.persistence.PlayerPersistentData;
 
 /**
  * Provider for the General Stats capability.
@@ -33,9 +34,9 @@ public class GeneralStatsDataProvider implements ICapabilitySerializable<Compoun
     private final IGeneralStatsData instance;
     private final LazyOptional<IGeneralStatsData> lazy;
 
-    public GeneralStatsDataProvider(Player player) {
-        this.instance = new GeneralStatsData(player);
-        this.lazy = LazyOptional.of(() -> instance);
+    public GeneralStatsDataProvider(Player player, IGeneralStatsData instance) {
+        this.instance = instance;
+        this.lazy = LazyOptional.of(() -> this.instance);
     }
 
     @NotNull
@@ -56,8 +57,12 @@ public class GeneralStatsDataProvider implements ICapabilitySerializable<Compoun
 
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof Player player) {
-            event.addCapability(CAPABILITY_ID, new GeneralStatsDataProvider(player));
+        if (event.getObject() instanceof net.minecraft.server.level.ServerPlayer player) {
+            var data = PlayerPersistentData.get(player.getServer()).getGeneralStatsData(player.getUUID());
+            data.setPlayer(player);
+            event.addCapability(CAPABILITY_ID, new GeneralStatsDataProvider(player, data));
+        } else if (event.getObject() instanceof Player player) {
+            event.addCapability(CAPABILITY_ID, new GeneralStatsDataProvider(player, new GeneralStatsData(player)));
         }
     }
 }

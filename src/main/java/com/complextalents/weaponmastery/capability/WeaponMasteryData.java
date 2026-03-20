@@ -18,7 +18,7 @@ import com.complextalents.util.UUIDHelper;
 
 public class WeaponMasteryData implements IWeaponMasteryData {
 
-    private final Player player;
+    private Player player;
     private final Map<WeaponPath, Double> accumulatedDamageMap = new HashMap<>(); // Path -> Damage
     private final Map<WeaponPath, Integer> masteryLevelsMap = new HashMap<>(); // Path -> Level (0-25)
 
@@ -46,13 +46,21 @@ public class WeaponMasteryData implements IWeaponMasteryData {
     private static final UUID BRAWLER_AS = UUIDHelper.generateAttributeModifierUUID("weapon_mastery", "brawler_as");
     private static final UUID BRAWLER_MS = UUIDHelper.generateAttributeModifierUUID("weapon_mastery", "brawler_ms");
 
-    public WeaponMasteryData(Player player) {
-        this.player = player;
-        // Initialize maps
+    public WeaponMasteryData() {
+        // Default constructor for global storage
         for (WeaponPath path : WeaponPath.values()) {
             accumulatedDamageMap.put(path, 0.0);
             masteryLevelsMap.put(path, 0);
         }
+    }
+
+    public WeaponMasteryData(Player player) {
+        this();
+        this.player = player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     @Override
@@ -65,7 +73,7 @@ public class WeaponMasteryData implements IWeaponMasteryData {
         if (path == null || amount <= 0) return;
         double current = accumulatedDamageMap.getOrDefault(path, 0.0);
         accumulatedDamageMap.put(path, current + amount);
-        if (!player.level().isClientSide) {
+        if (player != null && !player.level().isClientSide) {
             sync(); // Sync after adding damage
         }
     }
@@ -80,14 +88,14 @@ public class WeaponMasteryData implements IWeaponMasteryData {
         if (path == null) return;
         masteryLevelsMap.put(path, Math.max(0, Math.min(25, level)));
         
-        if (!player.level().isClientSide) {
+        if (player != null && !player.level().isClientSide) {
             applyStatRewards();
             sync();
         }
     }
 
     public void applyStatRewards() {
-        if (player.level().isClientSide) return;
+        if (player == null || player.level().isClientSide) return;
         
         applyBlademasterRewards();
         applyColossusRewards();

@@ -21,6 +21,9 @@ public class PlayerPersistentData extends SavedData {
     private final Map<UUID, com.complextalents.origin.capability.PlayerOriginData> originData = new ConcurrentHashMap<>();
     private final Map<UUID, com.complextalents.skill.capability.PlayerSkillData> skillData = new ConcurrentHashMap<>();
     private final Map<UUID, com.complextalents.passive.capability.PassiveStackData> passiveData = new ConcurrentHashMap<>();
+    private final Map<UUID, com.complextalents.weaponmastery.capability.WeaponMasteryData> weaponMasteryData = new ConcurrentHashMap<>();
+    private final Map<UUID, com.complextalents.stats.capability.GeneralStatsData> generalStatsData = new ConcurrentHashMap<>();
+    private final Map<UUID, com.complextalents.spellmastery.capability.SpellMasteryData> spellMasteryData = new ConcurrentHashMap<>();
 
     // Map the origin-specific static data to this instance for persistence
     // (We will rework SoulData etc. to use these maps instead of their own static ones)
@@ -84,6 +87,30 @@ public class PlayerPersistentData extends SavedData {
             data.faithData.put(UUID.fromString(uuidStr), faithTag.getCompound(uuidStr));
         }
 
+        CompoundTag weaponMasteryTag = tag.getCompound("weaponMasteryData");
+        for (String uuidStr : weaponMasteryTag.getAllKeys()) {
+            UUID uuid = UUID.fromString(uuidStr);
+            var wmd = new com.complextalents.weaponmastery.capability.WeaponMasteryData();
+            wmd.deserializeNBT(weaponMasteryTag.getCompound(uuidStr));
+            data.weaponMasteryData.put(uuid, wmd);
+        }
+
+        CompoundTag generalStatsTag = tag.getCompound("generalStatsData");
+        for (String uuidStr : generalStatsTag.getAllKeys()) {
+            UUID uuid = UUID.fromString(uuidStr);
+            var gsd = new com.complextalents.stats.capability.GeneralStatsData();
+            gsd.deserializeNBT(generalStatsTag.getCompound(uuidStr));
+            data.generalStatsData.put(uuid, gsd);
+        }
+
+        CompoundTag spellMasteryTag = tag.getCompound("spellMasteryData");
+        for (String uuidStr : spellMasteryTag.getAllKeys()) {
+            UUID uuid = UUID.fromString(uuidStr);
+            var smd = new com.complextalents.spellmastery.capability.SpellMasteryData();
+            smd.deserializeNBT(spellMasteryTag.getCompound(uuidStr));
+            data.spellMasteryData.put(uuid, smd);
+        }
+
         return data;
     }
 
@@ -128,6 +155,24 @@ public class PlayerPersistentData extends SavedData {
         }
         tag.put("faithData", faithTag);
 
+        CompoundTag weaponMasteryTag = new CompoundTag();
+        for (var entry : weaponMasteryData.entrySet()) {
+            weaponMasteryTag.put(entry.getKey().toString(), entry.getValue().serializeNBT());
+        }
+        tag.put("weaponMasteryData", weaponMasteryTag);
+
+        CompoundTag generalStatsTag = new CompoundTag();
+        for (var entry : generalStatsData.entrySet()) {
+            generalStatsTag.put(entry.getKey().toString(), entry.getValue().serializeNBT());
+        }
+        tag.put("generalStatsData", generalStatsTag);
+
+        CompoundTag spellMasteryTag = new CompoundTag();
+        for (var entry : spellMasteryData.entrySet()) {
+            spellMasteryTag.put(entry.getKey().toString(), entry.getValue().serializeNBT());
+        }
+        tag.put("spellMasteryData", spellMasteryTag);
+
         return tag;
     }
 
@@ -143,6 +188,18 @@ public class PlayerPersistentData extends SavedData {
 
     public com.complextalents.passive.capability.PassiveStackData getPassiveData(UUID playerId) {
         return passiveData.computeIfAbsent(playerId, k -> new com.complextalents.passive.capability.PassiveStackData());
+    }
+
+    public com.complextalents.weaponmastery.capability.WeaponMasteryData getWeaponMasteryData(UUID playerId) {
+        return weaponMasteryData.computeIfAbsent(playerId, k -> new com.complextalents.weaponmastery.capability.WeaponMasteryData());
+    }
+
+    public com.complextalents.stats.capability.GeneralStatsData getGeneralStatsData(UUID playerId) {
+        return generalStatsData.computeIfAbsent(playerId, k -> new com.complextalents.stats.capability.GeneralStatsData());
+    }
+
+    public com.complextalents.spellmastery.capability.SpellMasteryData getSpellMasteryData(UUID playerId) {
+        return spellMasteryData.computeIfAbsent(playerId, k -> new com.complextalents.spellmastery.capability.SpellMasteryData());
     }
 
     // --- Legacy/Compatibility methods for transition ---
@@ -178,6 +235,9 @@ public class PlayerPersistentData extends SavedData {
         originData.remove(playerId);
         skillData.remove(playerId);
         passiveData.remove(playerId);
+        weaponMasteryData.remove(playerId);
+        generalStatsData.remove(playerId);
+        spellMasteryData.remove(playerId);
         darkMageData.remove(playerId);
         elementalMageData.remove(playerId);
         faithData.remove(playerId);

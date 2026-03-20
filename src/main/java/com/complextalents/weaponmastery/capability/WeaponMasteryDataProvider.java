@@ -15,6 +15,7 @@ import com.complextalents.TalentsMod;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.complextalents.persistence.PlayerPersistentData;
 
 @Mod.EventBusSubscriber(modid = TalentsMod.MODID)
 public class WeaponMasteryDataProvider implements ICapabilitySerializable<CompoundTag> {
@@ -27,8 +28,9 @@ public class WeaponMasteryDataProvider implements ICapabilitySerializable<Compou
 
     private final Player player;
 
-    public WeaponMasteryDataProvider(Player player) {
+    public WeaponMasteryDataProvider(Player player, IWeaponMasteryData data) {
         this.player = player;
+        this.weaponMasteryData = data;
     }
 
     private IWeaponMasteryData createWeaponMasteryData() {
@@ -58,9 +60,15 @@ public class WeaponMasteryDataProvider implements ICapabilitySerializable<Compou
 
     @SubscribeEvent
     public static void attachCapabilities(AttachCapabilitiesEvent<net.minecraft.world.entity.Entity> event) {
-        if (event.getObject() instanceof Player player) {
+        if (event.getObject() instanceof net.minecraft.server.level.ServerPlayer player) {
             if (!event.getCapabilities().containsKey(IDENTIFIER)) {
-                event.addCapability(IDENTIFIER, new WeaponMasteryDataProvider(player));
+                var data = PlayerPersistentData.get(player.getServer()).getWeaponMasteryData(player.getUUID());
+                data.setPlayer(player);
+                event.addCapability(IDENTIFIER, new WeaponMasteryDataProvider(player, data));
+            }
+        } else if (event.getObject() instanceof Player player) {
+            if (!event.getCapabilities().containsKey(IDENTIFIER)) {
+                event.addCapability(IDENTIFIER, new WeaponMasteryDataProvider(player, new WeaponMasteryData(player)));
             }
         }
     }

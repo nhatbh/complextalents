@@ -16,6 +16,7 @@ import com.complextalents.TalentsMod;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.complextalents.persistence.PlayerPersistentData;
 
 @Mod.EventBusSubscriber(modid = TalentsMod.MODID)
 public class SpellMasteryDataProvider implements ICapabilitySerializable<CompoundTag> {
@@ -25,8 +26,8 @@ public class SpellMasteryDataProvider implements ICapabilitySerializable<Compoun
     private final ISpellMasteryData masteryData;
     private final LazyOptional<ISpellMasteryData> optional;
 
-    public SpellMasteryDataProvider(Player player) {
-        this.masteryData = new SpellMasteryData(player);
+    public SpellMasteryDataProvider(Player player, ISpellMasteryData data) {
+        this.masteryData = data;
         this.optional = LazyOptional.of(() -> masteryData);
     }
 
@@ -50,9 +51,15 @@ public class SpellMasteryDataProvider implements ICapabilitySerializable<Compoun
 
     @SubscribeEvent
     public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof Player player) {
+        if (event.getObject() instanceof net.minecraft.server.level.ServerPlayer player) {
             if (!event.getCapabilities().containsKey(IDENTIFIER)) {
-                event.addCapability(IDENTIFIER, new SpellMasteryDataProvider(player));
+                var data = PlayerPersistentData.get(player.getServer()).getSpellMasteryData(player.getUUID());
+                data.setPlayer(player);
+                event.addCapability(IDENTIFIER, new SpellMasteryDataProvider(player, data));
+            }
+        } else if (event.getObject() instanceof Player player) {
+            if (!event.getCapabilities().containsKey(IDENTIFIER)) {
+                event.addCapability(IDENTIFIER, new SpellMasteryDataProvider(player, new SpellMasteryData(player)));
             }
         }
     }
