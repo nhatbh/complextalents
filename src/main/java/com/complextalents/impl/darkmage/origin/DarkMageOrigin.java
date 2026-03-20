@@ -61,7 +61,7 @@ public class DarkMageOrigin {
     public static void register() {
         OriginBuilder.create("complextalents", "dark_mage")
                 .displayName("Dark Mage")
-                .description(Component.literal("Soul harvester with infinite scaling power and high-risk mechanics. Harvest souls to power Blood Pact. Death-Defy (Phylactery) is free, but actual death results in a 30% soul loss."))
+                .description(Component.literal("Soul harvester with infinite scaling. Harvest souls from kills (enemy max HP / 40). Soul Siphon grants +0.05-0.25% damage/soul and +0.08-0.16% spell crit/soul during Blood Pact. Souls are uncapped. Phylactery auto-triggers on fatal damage (if holding souls), saving at 1 HP, costs 50% souls; 5-min cooldown. Death without souls: 30% loss."))
                 .maxLevel(5)
                 // HP drain rates for Blood Pact: 8%/7%/6%/5%/4% per second
                 .scaledStat("bloodPactHpDrainPercent", "HP Drain/sec", new double[]{0.08, 0.07, 0.06, 0.05, 0.04})
@@ -77,23 +77,6 @@ public class DarkMageOrigin {
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "blood_pact"))
                 // Phylactery cooldown in seconds: 300s (5 min) at all levels
                 .renderer(new DarkMageRenderer())
-                .customUpgradeUI((player) -> {
-                    com.lowdragmc.lowdraglib.gui.widget.WidgetGroup group = new com.lowdragmc.lowdraglib.gui.widget.WidgetGroup();
-                    group.setSize(330, 45);
-                    group.setBackground(com.lowdragmc.lowdraglib.gui.texture.ResourceBorderTexture.BUTTON_COMMON);
-                    
-                    com.lowdragmc.lowdraglib.gui.widget.LabelWidget title = new com.lowdragmc.lowdraglib.gui.widget.LabelWidget();
-                    title.setSelfPosition(5, 5);
-                    title.setText("§5Soul Harvest");
-                    group.addWidget(title);
-
-                    com.lowdragmc.lowdraglib.gui.widget.LabelWidget soulLbl = new com.lowdragmc.lowdraglib.gui.widget.LabelWidget();
-                    soulLbl.setSelfPosition(5, 20);
-                    soulLbl.setTextProvider(() -> "Current Souls: §d" + (int) com.complextalents.impl.darkmage.client.ClientSoulData.getSouls());
-                    group.addWidget(soulLbl);
-
-                    return group;
-                })
                 .register();
 
         ClassCostMatrix.defineCosts(ID)
@@ -105,7 +88,9 @@ public class DarkMageOrigin {
                 .cost(StatType.MAX_HP, 2)
                 .cost(StatType.MAX_MANA, 2)
                 .cost(StatType.MOBILITY, 3)
-                .cost(StatType.CDR, 2);
+                .cost(StatType.CDR, 2)
+                .spellMasteryCostMultiplier(1.0) // Dark Mage normal with spells, 100% cost
+                .weaponMasteryCostMultiplier(2.0); // Dark Mage weak with weapons, 200% cost
 
         TalentsMod.LOGGER.info("Dark Mage origin registered");
     }

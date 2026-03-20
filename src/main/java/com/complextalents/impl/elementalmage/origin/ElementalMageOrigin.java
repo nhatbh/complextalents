@@ -46,7 +46,7 @@ public class ElementalMageOrigin {
 
         OriginBuilder.create("complextalents", "elemental_mage")
                 .displayName("Elemental Mage")
-                .description(Component.literal("Masters of raw elemental magic. Utilize Elemental Resonance as a resource. Deal elemental damage to generate echoes and mastery-scaled regeneration (up to 2.5 + 2.0*Mastery per second)."))
+                .description(Component.literal("Evocation specialist building power through elemental damage. Generate echoes for mana restore: 10-40 base + (Mastery × 5-25) per echo/level. Resonance regen: 1.0-2.5 + (Mastery × 1.0-2.0)/sec. Combine elements (Fire+Ice=Melt, Water+Nature=Growth) for 25 Resonance/reaction. Massive spell hits (10+/30+/50+) trigger \"OP\" reactions."))
                 .resourceType(resonanceType)
                 .maxLevel(5) // Max level is now 5
                 .scaledStat("base_resonance", "Base Resonance", BASE_RES)
@@ -63,51 +63,6 @@ public class ElementalMageOrigin {
                 .activeSkill("Harmonic Convergence", "Unleash stored resonance as a devastating blast.", null)
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "harmonic_convergence"))
                 .renderer(new com.complextalents.impl.elementalmage.client.ElementalMageRenderer())
-                .customUpgradeUI((player) -> {
-                    com.lowdragmc.lowdraglib.gui.widget.WidgetGroup group = new com.lowdragmc.lowdraglib.gui.widget.WidgetGroup();
-                    group.setSize(330, 90);
-                    group.setBackground(com.lowdragmc.lowdraglib.gui.texture.ResourceBorderTexture.BUTTON_COMMON);
-                    
-                    com.lowdragmc.lowdraglib.gui.widget.LabelWidget title = new com.lowdragmc.lowdraglib.gui.widget.LabelWidget();
-                    title.setSelfPosition(5, 5);
-                    title.setText("§bElemental Balance");
-                    group.addWidget(title);
-
-                    java.util.List<ResourceLocation> attrs = java.util.List.of(
-                        ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "fire_spell_power"),
-                        ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "ice_spell_power"),
-                        ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "lightning_spell_power"),
-                        ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "nature_spell_power"),
-                        ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "ender_spell_power"),
-                        ResourceLocation.fromNamespaceAndPath("traveloptics", "aqua_spell_power")
-                    );
-                    
-                    java.util.List<String> elements = java.util.List.of("§cFire", "§bIce", "§eLightning", "§aNature", "§5Ender", "§3Aqua");
-                    java.util.List<Double> values = new java.util.ArrayList<>();
-                    
-                    for (int i = 0; i < attrs.size(); i++) {
-                        net.minecraft.world.entity.ai.attributes.Attribute attr = net.minecraftforge.registries.ForgeRegistries.ATTRIBUTES.getValue(attrs.get(i));
-                        if (attr != null && player.getAttributes().hasAttribute(attr)) {
-                            values.add(player.getAttributeValue(attr));
-                        } else {
-                            values.add(1.0);
-                        }
-                    }
-
-                    for(int i = 0; i < 3; i++) {
-                        com.lowdragmc.lowdraglib.gui.widget.LabelWidget l1 = new com.lowdragmc.lowdraglib.gui.widget.LabelWidget();
-                        l1.setSelfPosition(5, 25 + i * 15);
-                        l1.setText(elements.get(i) + ": §f" + String.format("%.2f", values.get(i)));
-                        group.addWidget(l1);
-                        
-                        com.lowdragmc.lowdraglib.gui.widget.LabelWidget l2 = new com.lowdragmc.lowdraglib.gui.widget.LabelWidget();
-                        l2.setSelfPosition(120, 25 + i * 15);
-                        l2.setText(elements.get(i+3) + ": §f" + String.format("%.2f", values.get(i+3)));
-                        group.addWidget(l2);
-                    }
-
-                    return group;
-                })
                 .register();
 
         ClassCostMatrix.defineCosts(ID)
@@ -119,7 +74,9 @@ public class ElementalMageOrigin {
                 .cost(StatType.MAX_HP, 3)
                 .cost(StatType.MAX_MANA, 1)
                 .cost(StatType.MOBILITY, 2)
-                .cost(StatType.CDR, 1);
+                .cost(StatType.CDR, 1)
+                .spellMasteryCostMultiplier(1.0) // Elemental Mage normal with spells, 100% cost
+                .weaponMasteryCostMultiplier(3.0); // Elemental Mage terrible with weapons, 300% cost
 
         // Register Harmonic Convergence Skill
         com.complextalents.impl.elementalmage.skill.HarmonicConvergenceSkill.register();

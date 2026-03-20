@@ -54,7 +54,9 @@ public class OriginCommand {
                 return 0;
             }
 
-            com.complextalents.dev.SimpleUIFactory.INSTANCE.open(player, com.complextalents.client.PlayerUpgradeUI.UI_ID);
+            // Send a message to inform the client to open the progression screen
+            // The client can listen for a custom packet or use keybind triggers
+            src.sendSuccess(() -> Component.literal("Use the keybind to open the progression UI"), true);
             return 1;
         }
     }
@@ -197,7 +199,8 @@ public class OriginCommand {
                 return 0;
             }
 
-            com.complextalents.dev.SimpleUIFactory.INSTANCE.open(player, com.complextalents.origin.client.OriginSelectionUI.UI_ID);
+            // The origin selection screen can be opened client-side via keybind or other client-side triggers
+            src.sendSuccess(() -> Component.literal("Use the keybind to open the origin selection screen"), true);
             return 1;
         }
     }

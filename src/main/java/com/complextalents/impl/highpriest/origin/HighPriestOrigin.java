@@ -98,7 +98,7 @@ public class HighPriestOrigin {
     public static void register() {
         OriginBuilder.create(ID)
                 .displayName("High Priest")
-                .description(Component.literal("Holy commander focusing on perfect positioning and divine retribution. Utilize Grace to gain massive cast speed and healing potency, but lose focus upon taking damage. Build Command stacks to control the Seraphic Echo."))
+                .description(Component.literal("Holy commander. Grace (binary) grants +20%-60% cast speed and +30%-125% healing potency; lost on any damage (30-sec recovery). Build Faith via holy spells (+0.1-0.3 max mana/Faith, +0.01% spell power/Faith). Generate Command (max 10, every 200-100 ticks). Overheal converts 30%-75% to absorption shields (600-1500-tick duration). Stationary echo deals 1.5x damage/shield."))
                 .maxLevel(5)
                 // Grace stack - binary state (ON/OFF), lost on damage
                 .passiveStack("grace", PassiveStackDef.create("Grace")
@@ -118,23 +118,6 @@ public class HighPriestOrigin {
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "seraphic_echo"))
                 // Custom HUD renderer
                 .renderer(new HighPriestRenderer())
-                .customUpgradeUI((player) -> {
-                    com.lowdragmc.lowdraglib.gui.widget.WidgetGroup group = new com.lowdragmc.lowdraglib.gui.widget.WidgetGroup();
-                    group.setSize(330, 45);
-                    group.setBackground(com.lowdragmc.lowdraglib.gui.texture.ResourceBorderTexture.BUTTON_COMMON);
-                    
-                    com.lowdragmc.lowdraglib.gui.widget.LabelWidget title = new com.lowdragmc.lowdraglib.gui.widget.LabelWidget();
-                    title.setSelfPosition(5, 5);
-                    title.setText("§eDivine Faith");
-                    group.addWidget(title);
-
-                    com.lowdragmc.lowdraglib.gui.widget.LabelWidget faithLbl = new com.lowdragmc.lowdraglib.gui.widget.LabelWidget();
-                    faithLbl.setSelfPosition(5, 20);
-                    faithLbl.setTextProvider(() -> "Current Faith: §f" + (int) com.complextalents.impl.highpriest.client.ClientFaithData.getFaith());
-                    group.addWidget(faithLbl);
-
-                    return group;
-                })
                 // Scaled Stats
                 .scaledStat("commandTickInterval", new double[] { 200.0, 180.0, 160.0, 140.0, 100.0 })
                 .scaledStat("graceRecoveryDuration", new double[] { 600.0, 600.0, 600.0, 600.0, 600.0 })
@@ -154,7 +137,9 @@ public class HighPriestOrigin {
                 .cost(StatType.MAX_HP, 2)
                 .cost(StatType.MAX_MANA, 1)
                 .cost(StatType.MOBILITY, 3)
-                .cost(StatType.CDR, 1);
+                .cost(StatType.CDR, 1)
+                .spellMasteryCostMultiplier(1.0) // High Priest normal with spells, 100% cost
+                .weaponMasteryCostMultiplier(100.0); // High Priest should NOT use weapons, 10000% cost
     }
 
     /**

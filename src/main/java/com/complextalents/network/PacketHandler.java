@@ -3,6 +3,7 @@ package com.complextalents.network;
 import com.complextalents.TalentsMod;
 import com.complextalents.origin.network.OriginDataSyncPacket;
 import com.complextalents.passive.network.PassiveStackSyncPacket;
+import com.complextalents.stats.network.StatsDataSyncPacket;
 import com.complextalents.skill.network.SkillCastPacket;
 import com.complextalents.skill.network.SkillChannelStartPacket;
 import com.complextalents.skill.network.SkillChannelStartResponsePacket;
@@ -30,15 +31,11 @@ import com.complextalents.network.elemental.SpawnVoidfireReactionPacket;
 import com.complextalents.network.darkmage.SoulSyncPacket;
 import com.complextalents.network.assassin.AssassinSyncPacket;
 import com.complextalents.network.assassin.AssassinEntitySyncPacket;
-
 import com.complextalents.network.elementalmage.ElementalMageSyncPacket;
 import com.complextalents.network.highpriest.FaithSyncPacket;
 import com.complextalents.leveling.network.LevelDataSyncPacket;
 import com.complextalents.spellmastery.network.SpellMasterySyncPacket;
-import com.complextalents.spellmastery.network.FinalizeGrimoirePacket;
-import com.complextalents.weaponmastery.network.PurchaseWeaponMasteryPacket;
 import com.complextalents.weaponmastery.network.WeaponMasterySyncPacket;
-import com.complextalents.stats.network.PurchaseStatsPacket;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -222,26 +219,19 @@ public class PacketHandler {
                                 OriginDataSyncPacket::decode,
                                 OriginDataSyncPacket::handle);
 
+                // Stats data sync packet
+                INSTANCE.registerMessage(packetId++,
+                                StatsDataSyncPacket.class,
+                                StatsDataSyncPacket::encode,
+                                StatsDataSyncPacket::decode,
+                                StatsDataSyncPacket::handle);
+
                 // Select Origin packet
                 INSTANCE.registerMessage(packetId++,
                                 com.complextalents.origin.network.SelectOriginPacket.class,
                                 com.complextalents.origin.network.SelectOriginPacket::toBytes,
                                 com.complextalents.origin.network.SelectOriginPacket::new,
                                 com.complextalents.origin.network.SelectOriginPacket::handle);
-
-                // Upgrade Origin packet
-                INSTANCE.registerMessage(packetId++,
-                                com.complextalents.origin.network.UpgradeOriginPacket.class,
-                                com.complextalents.origin.network.UpgradeOriginPacket::toBytes,
-                                com.complextalents.origin.network.UpgradeOriginPacket::new,
-                                com.complextalents.origin.network.UpgradeOriginPacket::handle);
-
-                // Upgrade Origin Skill packet
-                INSTANCE.registerMessage(packetId++,
-                                com.complextalents.origin.network.UpgradeOriginSkillPacket.class,
-                                com.complextalents.origin.network.UpgradeOriginSkillPacket::toBytes,
-                                com.complextalents.origin.network.UpgradeOriginSkillPacket::new,
-                                com.complextalents.origin.network.UpgradeOriginSkillPacket::handle);
 
                 // Passive stack sync packet
                 INSTANCE.registerMessage(packetId++,
@@ -326,10 +316,10 @@ public class PacketHandler {
                                 SpellMasterySyncPacket::handle);
 
                 INSTANCE.registerMessage(packetId++,
-                                FinalizeGrimoirePacket.class,
-                                FinalizeGrimoirePacket::encode,
-                                FinalizeGrimoirePacket::new,
-                                FinalizeGrimoirePacket::handle);
+                                SpellMasterySyncPacket.class,
+                                SpellMasterySyncPacket::encode,
+                                SpellMasterySyncPacket::decode,
+                                SpellMasterySyncPacket::handle);
 
                 INSTANCE.registerMessage(packetId++,
                                 FinalizePlayerUpgradesPacket.class,
@@ -337,25 +327,11 @@ public class PacketHandler {
                                 FinalizePlayerUpgradesPacket::new,
                                 FinalizePlayerUpgradesPacket::handle);
 
-                // Weapon Mastery Packets
                 INSTANCE.registerMessage(packetId++,
                                 WeaponMasterySyncPacket.class,
                                 WeaponMasterySyncPacket::toBytes,
                                 WeaponMasterySyncPacket::new,
                                 WeaponMasterySyncPacket::handle);
-
-                INSTANCE.registerMessage(packetId++,
-                                PurchaseWeaponMasteryPacket.class,
-                                PurchaseWeaponMasteryPacket::toBytes,
-                                PurchaseWeaponMasteryPacket::new,
-                                PurchaseWeaponMasteryPacket::handle);
-
-                // Stats packets
-                INSTANCE.registerMessage(packetId++,
-                                PurchaseStatsPacket.class,
-                                PurchaseStatsPacket::toBytes,
-                                PurchaseStatsPacket::new,
-                                PurchaseStatsPacket::handle);
 
                 TalentsMod.LOGGER.info("Network packets registered");
         }

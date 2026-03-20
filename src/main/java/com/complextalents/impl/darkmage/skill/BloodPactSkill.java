@@ -60,7 +60,7 @@ public class BloodPactSkill {
         SkillBuilder.create("complextalents", "blood_pact")
                 .nature(SkillNature.ACTIVE)
                 .displayName("Blood Pact")
-                .description("Toggle to fuel magic with life force. Grants soul-scaled mana regeneration (1.0 + souls/200), increased cast speed (up to +50%), and massive scaling damage based on harvested souls (up to +0.25%/soul). Drains 4-8% HP/sec.")
+                .description("Toggle spell, drains 8%-4% max HP/sec (auto-deactivates at 1 HP), grants +10%-50% cast speed. Mana regen: 1.0 + (souls/200.0)/sec. Damage: +0.05%-0.25%/soul, crit: +0.08%-0.16%/soul (excess converts to crit damage). Requires 20% HP to activate. 30-sec cooldown after toggle-off.")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents", "textures/skill/darkmage/bloodpact.png"))
                 .toggleable(true)

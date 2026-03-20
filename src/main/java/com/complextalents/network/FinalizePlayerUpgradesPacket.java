@@ -8,7 +8,6 @@ import com.complextalents.origin.capability.OriginDataProvider;
 import com.complextalents.skill.capability.IPlayerSkillData;
 import com.complextalents.spellmastery.SpellMasteryManager;
 import com.complextalents.spellmastery.capability.SpellMasteryDataProvider;
-import com.complextalents.spellmastery.network.FinalizeGrimoirePacket;
 import com.complextalents.stats.ClassCostMatrix;
 import com.complextalents.stats.StatType;
 import com.complextalents.stats.capability.GeneralStatsDataProvider;
@@ -35,20 +34,20 @@ import java.util.function.Supplier;
 public class FinalizePlayerUpgradesPacket {
     private final Map<String, Integer> statsUpgrades;
     private final Map<String, Integer> weaponMasteryUpgrades;
-    private final List<FinalizeGrimoirePacket.MasteryUpgrade> spellMasteryUpgrades;
-    private final List<FinalizeGrimoirePacket.SpellPurchase> spellPurchases;
+    private final List<UpgradeData.MasteryUpgrade> spellMasteryUpgrades;
+    private final List<UpgradeData.SpellPurchase> spellPurchases;
     private final int originUpgrades;
     private final int originSkillUpgrades;
 
     public FinalizePlayerUpgradesPacket(
             Map<String, Integer> statsUpgrades,
-            Map<String, Integer> weaponMasteryUpgrades,
-            List<FinalizeGrimoirePacket.MasteryUpgrade> spellMasteryUpgrades,
-            List<FinalizeGrimoirePacket.SpellPurchase> spellPurchases,
+            Map<String, Integer> weaponUpgrades,
+            List<UpgradeData.MasteryUpgrade> spellMasteryUpgrades,
+            List<UpgradeData.SpellPurchase> spellPurchases,
             int originUpgrades,
             int originSkillUpgrades) {
         this.statsUpgrades = statsUpgrades == null ? new HashMap<>() : statsUpgrades;
-        this.weaponMasteryUpgrades = weaponMasteryUpgrades == null ? new HashMap<>() : weaponMasteryUpgrades;
+        this.weaponMasteryUpgrades = weaponUpgrades == null ? new HashMap<>() : weaponUpgrades;
         this.spellMasteryUpgrades = spellMasteryUpgrades == null ? new ArrayList<>() : spellMasteryUpgrades;
         this.spellPurchases = spellPurchases == null ? new ArrayList<>() : spellPurchases;
         this.originUpgrades = originUpgrades;
@@ -68,16 +67,16 @@ public class FinalizePlayerUpgradesPacket {
             this.weaponMasteryUpgrades.put(buf.readUtf(), buf.readInt());
         }
 
-        int masterySize = buf.readVarInt();
-        this.spellMasteryUpgrades = new ArrayList<>(masterySize);
-        for (int i = 0; i < masterySize; i++) {
-            this.spellMasteryUpgrades.add(new FinalizeGrimoirePacket.MasteryUpgrade(buf.readResourceLocation(), buf.readInt()));
+        int mSize = buf.readVarInt();
+        this.spellMasteryUpgrades = new ArrayList<>(mSize);
+        for (int i = 0; i < mSize; i++) {
+            this.spellMasteryUpgrades.add(new UpgradeData.MasteryUpgrade(buf.readResourceLocation(), buf.readInt()));
         }
 
-        int spellSize = buf.readVarInt();
-        this.spellPurchases = new ArrayList<>(spellSize);
-        for (int i = 0; i < spellSize; i++) {
-            this.spellPurchases.add(new FinalizeGrimoirePacket.SpellPurchase(buf.readResourceLocation(), buf.readInt()));
+        int sSize = buf.readVarInt();
+        this.spellPurchases = new ArrayList<>(sSize);
+        for (int i = 0; i < sSize; i++) {
+            this.spellPurchases.add(new UpgradeData.SpellPurchase(buf.readResourceLocation(), buf.readInt()));
         }
 
         this.originUpgrades = buf.readInt();
@@ -98,13 +97,13 @@ public class FinalizePlayerUpgradesPacket {
         }
 
         buf.writeVarInt(spellMasteryUpgrades.size());
-        for (FinalizeGrimoirePacket.MasteryUpgrade upgrade : spellMasteryUpgrades) {
+        for (UpgradeData.MasteryUpgrade upgrade : spellMasteryUpgrades) {
             buf.writeResourceLocation(upgrade.schoolId());
             buf.writeInt(upgrade.tier());
         }
 
         buf.writeVarInt(spellPurchases.size());
-        for (FinalizeGrimoirePacket.SpellPurchase purchase : spellPurchases) {
+        for (UpgradeData.SpellPurchase purchase : spellPurchases) {
             buf.writeResourceLocation(purchase.spellId());
             buf.writeInt(purchase.level());
         }
@@ -126,8 +125,8 @@ public class FinalizePlayerUpgradesPacket {
             // Variables developed during verification
             Map<StatType, Integer> validatedStats = new HashMap<>();
             Map<IWeaponMasteryData.WeaponPath, Integer> validatedWeaponPaths = new HashMap<>(); // Path -> new level after upgrades
-            List<FinalizeGrimoirePacket.MasteryUpgrade> validatedSpellMasteries = new ArrayList<>();
-            List<FinalizeGrimoirePacket.SpellPurchase> validatedSpellPurchases = new ArrayList<>();
+            List<UpgradeData.MasteryUpgrade> validatedSpellMasteries = new ArrayList<>();
+            List<UpgradeData.SpellPurchase> validatedSpellPurchases = new ArrayList<>();
             int validatedOriginLevel = -1;
             int validatedSkillLevel = -1;
             boolean newSkillAssigned = false;
@@ -167,7 +166,7 @@ public class FinalizePlayerUpgradesPacket {
                         double requiredDamageForNext = WeaponMasteryManager.getInstance().getDamageRequiredForNextLevel(proposedNewLevel);
                         if (accumulatedDamage < requiredDamageForNext) { valid = false; break; }
 
-                        totalCost[0] += WeaponMasteryManager.getInstance().getSPCostForNextLevel(proposedNewLevel);
+                        totalCost[0] += WeaponMasteryManager.getInstance().getSPCostForNextLevel(proposedNewLevel, activeOrigin);
                         proposedNewLevel++;
                     }
 
@@ -179,18 +178,20 @@ public class FinalizePlayerUpgradesPacket {
 
             // 3. Verify Spell Mastery
             player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(mastery -> {
-                for (FinalizeGrimoirePacket.MasteryUpgrade upgrade : spellMasteryUpgrades) {
+                // 1. Calculate and verify Mastery Upgrades
+                for (UpgradeData.MasteryUpgrade upgrade : spellMasteryUpgrades) {
                     int currentMastery = mastery.getMasteryLevel(upgrade.schoolId());
                     if (upgrade.tier() == currentMastery + 1) {
-                        totalCost[0] += SpellMasteryManager.getMasteryBuyUpCost(upgrade.tier());
+                        totalCost[0] += SpellMasteryManager.getMasteryBuyUpCost(upgrade.tier(), activeOrigin);
                         validatedSpellMasteries.add(upgrade);
                     }
                 }
 
-                for (FinalizeGrimoirePacket.SpellPurchase purchase : spellPurchases) {
+                // 2. Calculate and verify Spell Purchases
+                for (UpgradeData.SpellPurchase purchase : spellPurchases) {
                     AbstractSpell spell = SpellRegistry.getSpell(purchase.spellId());
                     if (spell != null && !mastery.isSpellLearned(purchase.spellId(), purchase.level())) {
-                        totalCost[0] += SpellMasteryManager.getSpellCost(spell.getRarity(purchase.level()));
+                        totalCost[0] += SpellMasteryManager.getSpellCost(spell.getRarity(purchase.level()), activeOrigin);
                         validatedSpellPurchases.add(purchase);
                     }
                 }
@@ -202,7 +203,7 @@ public class FinalizePlayerUpgradesPacket {
                 int targetLevel = currentLevel;
                 for (int i = 0; i < originUpgrades; i++) {
                     if (targetLevel >= 5) break;
-                    int cost = com.complextalents.origin.network.UpgradeOriginPacket.getCostForNextLevel(targetLevel);
+                    int cost = OriginManager.getCostForNextLevel(targetLevel);
                     if (cost <= 0) break;
                     totalCost[0] += cost;
                     targetLevel++;
@@ -232,7 +233,7 @@ public class FinalizePlayerUpgradesPacket {
                         
                         for (int i = 0; i < originSkillUpgrades; i++) {
                             if (targetLevel >= 5) break;
-                            int cost = com.complextalents.origin.network.UpgradeOriginSkillPacket.getCostForNextLevel(targetLevel);
+                            int cost = OriginManager.getSkillCostForNextLevel(targetLevel);
                             if (cost <= 0) break;
                             totalCost[0] += cost;
                             targetLevel++;
@@ -263,24 +264,37 @@ public class FinalizePlayerUpgradesPacket {
                     for (Map.Entry<IWeaponMasteryData.WeaponPath, Integer> entry : validatedWeaponPaths.entrySet()) {
                         masteryData.setMasteryLevel(entry.getKey(), entry.getValue());
                     }
+                    masteryData.sync();
                 });
 
                 // Apply Spells
                 player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(mastery -> {
-                    for (FinalizeGrimoirePacket.MasteryUpgrade upgrade : validatedSpellMasteries) {
-                        int cost = SpellMasteryManager.getMasteryBuyUpCost(upgrade.tier());
-                        mastery.purchaseMastery(upgrade.schoolId(), upgrade.tier(), cost);
+                    // 3. Process Mastery Upgrades FIRST
+                    for (UpgradeData.MasteryUpgrade upgrade : validatedSpellMasteries) {
+                        int currentMastery = mastery.getMasteryLevel(upgrade.schoolId());
+                        if (upgrade.tier() == currentMastery + 1) {
+                            int cost = SpellMasteryManager.getMasteryBuyUpCost(upgrade.tier(), activeOrigin);
+                            mastery.purchaseMastery(upgrade.schoolId(), upgrade.tier(), cost);
+                        }
                     }
-                    for (FinalizeGrimoirePacket.SpellPurchase purchase : validatedSpellPurchases) {
+
+                    // 4. Process Spell Purchases
+                    for (UpgradeData.SpellPurchase purchase : validatedSpellPurchases) {
                         AbstractSpell spell = SpellRegistry.getSpell(purchase.spellId());
-                        if (spell != null) {
+                        if (spell != null && !mastery.isSpellLearned(purchase.spellId(), purchase.level())) {
+                            int cost = SpellMasteryManager.getSpellCost(spell.getRarity(purchase.level()), activeOrigin);
+
+                            // Double check mastery requirements (after upgrades)
                             int reqMastery = spell.getRarity(purchase.level()).getValue();
                             if (mastery.getMasteryLevel(spell.getSchoolType().getId()) >= reqMastery) {
                                 mastery.learnSpell(purchase.spellId(), purchase.level());
-                                giveScroll(player, purchase.spellId(), purchase.level());
+                                giveScroll(ctx.getSender(), purchase.spellId(), purchase.level());
+                            } else {
+                                totalCost[0] -= cost;
                             }
                         }
                     }
+                    mastery.sync();
                 });
 
                 // Apply Origin
@@ -304,6 +318,9 @@ public class FinalizePlayerUpgradesPacket {
                 }
 
                 LevelingSyncHandler.syncPlayerLevelData(player);
+
+                // Send feedback message about total SP spent
+                player.sendSystemMessage(net.minecraft.network.chat.Component.literal("\u00A76Spent \u00A7b" + totalCost[0] + " SP"));
             }
         });
         ctx.setPacketHandled(true);

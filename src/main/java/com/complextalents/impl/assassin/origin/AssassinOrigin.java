@@ -30,7 +30,7 @@ public class AssassinOrigin {
         OriginBuilder.create("complextalents", "assassin")
                 .displayName("Assassin")
                 .description(net.minecraft.network.chat.Component.literal(
-                        "Stealth-based burst damage dealer. Melee attacks from behind apply 'Exposed', amplifying damage by up to 80% and granting move speed on disengagement."))
+                        "Stealth-based burst damage dealer. Expose Weakness (30%/40%/50%/60%/80% amp, 8-16s duration, 45-25s cooldown) amplifies target damage. The Disengage grants 30%/45%/60%/75%/100% move speed (1.5-2.5s) after stealth attacks. Recovery slowed by half outside stealth."))
                 .maxLevel(5)
                 .renderer(new AssassinRenderer())
                 // Passive: Expose Weakness
@@ -47,25 +47,6 @@ public class AssassinOrigin {
                         "Enter stealth and gain movement speed. Your next attack breaks stealth for bonus damage.",
                         null)
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "shadow_walk"))
-                .customUpgradeUI((player) -> {
-                    com.lowdragmc.lowdraglib.gui.widget.WidgetGroup group = new com.lowdragmc.lowdraglib.gui.widget.WidgetGroup();
-                    group.setSize(330, 45);
-                    group.setBackground(com.lowdragmc.lowdraglib.gui.texture.ResourceBorderTexture.BUTTON_COMMON);
-
-                    com.lowdragmc.lowdraglib.gui.widget.LabelWidget title = new com.lowdragmc.lowdraglib.gui.widget.LabelWidget();
-                    title.setSelfPosition(5, 5);
-                    title.setText("§8Shadow Walk");
-                    group.addWidget(title);
-
-                    com.lowdragmc.lowdraglib.gui.widget.LabelWidget gaugeLbl = new com.lowdragmc.lowdraglib.gui.widget.LabelWidget();
-                    gaugeLbl.setSelfPosition(5, 20);
-                    gaugeLbl.setTextProvider(() -> "Stealth Gauge: §7"
-                            + (int) com.complextalents.impl.assassin.client.ClientAssassinData.getStealthGauge() + " / "
-                            + (int) com.complextalents.impl.assassin.client.ClientAssassinData.getMaxStealthGauge());
-                    group.addWidget(gaugeLbl);
-
-                    return group;
-                })
                 .register();
 
         ClassCostMatrix.defineCosts(ID)
@@ -77,7 +58,9 @@ public class AssassinOrigin {
                 .cost(StatType.MAX_HP, 4)
                 .cost(StatType.MAX_MANA, 4)
                 .cost(StatType.MOBILITY, 1)
-                .cost(StatType.CDR, 3);
+                .cost(StatType.CDR, 3)
+                .spellMasteryCostMultiplier(3.0) // Assassin terrible with spells, 300% cost
+                .weaponMasteryCostMultiplier(1.0); // Assassin normal with melee weapons, 100% cost
 
         TalentsMod.LOGGER.info("Assassin origin registered");
     }

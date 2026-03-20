@@ -23,7 +23,7 @@ public class ShadowWalkSkill {
         SkillBuilder.create("complextalents", "shadow_walk")
                 .nature(SkillNature.ACTIVE)
                 .displayName("Shadow Walk")
-                .description("Phase into shadows for up to 60 seconds. Grants increased movement speed and a massive damage bonus (up to +100%) on your next backstab.")
+                .description("Phase into shadows until discovered. Gain 35%/40%/45%/50%/60% move speed while cloaked. Next attack grants +40%/50%/60%/70%/100% backstab damage or -25% penalty on normal strikes. Stealth gauge: 100-300 size, 5-20 per-second recovery. Visibility reduction: 0.1-0.02 (lower better). Proximity drain within 2 blocks; entering stealth forces enemy tracking loss immediately.")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/assassin/shadow_walk.png"))

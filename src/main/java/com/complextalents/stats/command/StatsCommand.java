@@ -31,7 +31,7 @@ public class StatsCommand {
         dispatcher.register(Commands.literal("stats")
                 .then(Commands.literal("ui").executes(ctx -> {
                         ServerPlayer player = ctx.getSource().getPlayerOrException();
-                        com.complextalents.dev.SimpleUIFactory.INSTANCE.open(player, com.complextalents.client.PlayerUpgradeUI.UI_ID);
+                        ctx.getSource().sendSuccess(() -> Component.literal("Use the keybind to open the progression UI"), true);
                         return 1;
                 }))
                 .then(AddSPCommand.register())

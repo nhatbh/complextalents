@@ -74,8 +74,10 @@ public class ChallengersRetribution {
     public static void register() {
         SkillBuilder.create(ID)
                 .displayName("Challenger's Retribution")
-                .description("Adopt a defensive stance, taunting nearby enemies into a magical shield. Release to unleash up to 160% of all absorbed damage. Shield health scales immensely with Style Rank.")
+                .description("Defensive stance, taunts enemies within 5-10 blocks. Release to reflect 50%-160% absorbed damage as AoE (by level). Shield health: (5-20 base HP) × rank multiplier + bonus from max health. Charge grants -90% move speed, +100% KB resistance. Max 5s charge; breaking mid-charge cancels reflection.")
+                .icon(ResourceLocation.fromNamespaceAndPath("complextalents", "textures/skill/warrior/challengers_retribution.png"))
                 .nature(SkillNature.CHARGE)
+                .setMaxLevel(5)
                 .maxChannelTime(5.0) // Maximum 5 second charge
                 .scaledStat("tauntRange", new double[] { 5, 6, 7, 8, 10 })
                 .scaledStat("baseHp", new double[] { 5, 8, 12, 16, 20 })

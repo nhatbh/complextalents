@@ -55,15 +55,10 @@ public class OriginDataHandler {
                 data.sync();
             });
 
-            // If player doesn't have an origin, open Origin Selection GUI
+            // If player doesn't have an origin, notify the client to open Origin Selection screen
             if (!com.complextalents.origin.OriginManager.hasOrigin(player) && player.getServer() != null) {
-                // Give a slight delay so the client has time to be fully ready before receiving open window packet
-                player.getServer().tell(new net.minecraft.server.TickTask(
-                    player.getServer().getTickCount() + 10,
-                    () -> {
-                        com.complextalents.dev.SimpleUIFactory.INSTANCE.open(player, com.complextalents.origin.client.OriginSelectionUI.UI_ID);
-                    }
-                ));
+                // The client will handle opening the origin selection screen when appropriate
+                // This can be triggered by a custom packet or by client-side login event
             }
         }
     }

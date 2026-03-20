@@ -12,6 +12,7 @@ import org.lwjgl.glfw.GLFW;
 public class KeyBindings {
     // Key binding constants
     public static KeyMapping SKILL_1;
+    public static KeyMapping OPEN_PROGRESSION;
 
     public static void register() {
         // Create key bindings
@@ -20,6 +21,14 @@ public class KeyBindings {
                 KeyConflictContext.IN_GAME,
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_Z,
+                "key.categories.complextalents"
+        );
+
+        OPEN_PROGRESSION = new KeyMapping(
+                "key.complextalents.open_progression",
+                KeyConflictContext.IN_GAME,
+                InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_K,
                 "key.categories.complextalents"
         );
 

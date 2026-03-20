@@ -41,7 +41,6 @@ public class OriginBuilder {
     private BiFunction<Integer, ServerPlayer, Double> dynamicMaxResourceCalc = null;
     private final java.util.List<Origin.OriginSkillDisplay> displaySkills = new java.util.ArrayList<>();
     private ResourceLocation activeSkillId = null;
-    private java.util.function.Function<net.minecraft.world.entity.player.Player, com.lowdragmc.lowdraglib.gui.widget.WidgetGroup> customUpgradeUI = null;
 
     /**
      * Create a new origin builder.
@@ -275,17 +274,6 @@ public class OriginBuilder {
         return this;
     }
 
-    /**
-     * Provide a factory for creating a custom LDLib WidgetGroup for the Origin Upgrade UI.
-     *
-     * @param factory The factory function
-     * @return this builder
-     */
-    @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
-    public OriginBuilder customUpgradeUI(java.util.function.Function<net.minecraft.world.entity.player.Player, com.lowdragmc.lowdraglib.gui.widget.WidgetGroup> factory) {
-        this.customUpgradeUI = factory;
-        return this;
-    }
 
     /**
      * Build the origin and return a BuiltOrigin instance.
@@ -366,9 +354,5 @@ public class OriginBuilder {
 
     ResourceLocation getActiveSkillId() {
         return activeSkillId;
-    }
-
-    java.util.function.Function<net.minecraft.world.entity.player.Player, com.lowdragmc.lowdraglib.gui.widget.WidgetGroup> getCustomUpgradeUI() {
-        return customUpgradeUI;
     }
 }

@@ -345,4 +345,40 @@ public class OriginManager {
     public static void resetPassiveStacks(ServerPlayer player) {
         com.complextalents.passive.PassiveManager.resetPassiveStacks(player);
     }
+
+    /**
+     * Get the SP cost to upgrade an origin to the next level.
+     *
+     * @param currentLevel The current level (0 to max-1)
+     * @return The SP cost
+     */
+    public static int getCostForNextLevel(int currentLevel) {
+        return switch (currentLevel) {
+            case 0 -> 5;  // Initial selection is usually free or handled elsewhere
+            case 1 -> 10;
+            case 2 -> 15;
+            case 3 -> 20;
+            case 4 -> 25;
+            case 5 -> 30;
+            default -> 30;
+        };
+    }
+
+    /**
+     * Get the SP cost to upgrade an origin skill to the next level.
+     *
+     * @param currentLevel The current level (0 to max-1)
+     * @return The SP cost
+     */
+    public static int getSkillCostForNextLevel(int currentLevel) {
+        return switch (currentLevel) {
+            case 0 -> 5;
+            case 1 -> 10;
+            case 2 -> 15;
+            case 3 -> 20;
+            case 4 -> 25;
+            case 5 -> 30;
+            default -> 30;
+        };
+    }
 }

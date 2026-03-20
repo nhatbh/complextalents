@@ -106,8 +106,6 @@ public class TalentsMod {
         WeaponMasteryManager.getInstance().initialize();
         LOGGER.info("Weapon Mastery Manager initialized");
 
-        // Initialize UI
-        com.complextalents.client.PlayerUpgradeUI.init();
         // Register example origins
         HighPriestOrigin.register();
         HighPriestOrigin.initIntegration();

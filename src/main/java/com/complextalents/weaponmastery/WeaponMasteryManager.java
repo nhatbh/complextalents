@@ -1,5 +1,6 @@
 package com.complextalents.weaponmastery;
 
+import com.complextalents.stats.ClassCostMatrix;
 import com.complextalents.weaponmastery.capability.IWeaponMasteryData.WeaponPath;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -153,7 +154,7 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
 
     /**
      * SP Cost to purchase the NEXT level (0 -> 1 costs Novice amount).
-     * 
+     *
      * @param currentLevel Current level (0-24)
      * @return SP cost
      */
@@ -169,5 +170,18 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
         if (currentLevel < 25)
             return 4;
         return 0; // Maxed
+    }
+
+    /**
+     * SP Cost to purchase the NEXT level, adjusted by the origin's weapon mastery cost multiplier.
+     *
+     * @param currentLevel Current level (0-24)
+     * @param originId The origin ID to get the cost multiplier for
+     * @return SP cost adjusted by the origin's weapon multiplier
+     */
+    public int getSPCostForNextLevel(int currentLevel, ResourceLocation originId) {
+        int baseCost = getSPCostForNextLevel(currentLevel);
+        double multiplier = ClassCostMatrix.getWeaponMasteryCostMultiplier(originId);
+        return (int) Math.round(baseCost * multiplier);
     }
 }

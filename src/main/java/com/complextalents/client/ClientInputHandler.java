@@ -58,6 +58,20 @@ public class ClientInputHandler {
                 return;
             }
         }
+
+        // Check OPEN_PROGRESSION key
+        if (event.getAction() == GLFW.GLFW_PRESS && event.getKey() == getKeyCode(KeyBindings.OPEN_PROGRESSION)) {
+            if (KeyBindings.OPEN_PROGRESSION.consumeClick()) {
+                if (MC.player != null) {
+                    if (!com.complextalents.origin.client.ClientOriginData.hasOrigin()) {
+                        MC.setScreen(new com.complextalents.client.screen.OriginSelectionScreen());
+                    } else {
+                        MC.setScreen(new com.complextalents.client.screen.PlayerProgressionScreen(MC.player));
+                    }
+                }
+                return;
+            }
+        }
         if (event.getAction() == GLFW.GLFW_RELEASE && event.getKey() == getKeyCode(KeyBindings.SKILL_1)) {
             handleSkillKeyRelease(0);
         }
@@ -187,6 +201,7 @@ public class ClientInputHandler {
         public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
             KeyBindings.register();
             event.register(KeyBindings.SKILL_1);
+            event.register(KeyBindings.OPEN_PROGRESSION);
             TalentsMod.LOGGER.info("Registered skill key mappings");
         }
     }

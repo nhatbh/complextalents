@@ -172,12 +172,4 @@ public interface Origin extends PassiveOwner {
     default ResourceLocation getActiveSkillId() {
         return null;
     }
-
-    /**
-     * Returns a specific widget group for the upgrade UI.
-     */
-    @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
-    default com.lowdragmc.lowdraglib.gui.widget.WidgetGroup getCustomUpgradeUI(net.minecraft.world.entity.player.Player player) {
-        return null; // By default, origin doesn't have a custom UI element
-    }
 }

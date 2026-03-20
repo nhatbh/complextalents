@@ -21,7 +21,8 @@
       "Bash(do sed -i 's/package com.complextalents.elemental.reactions;/package com.complextalents.elemental.strategies.reactions;/' \"$file\")",
       "Bash(del:*)",
       "Bash(javac:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(cmd /c gradlew.bat build)"
     ]
   }
 }

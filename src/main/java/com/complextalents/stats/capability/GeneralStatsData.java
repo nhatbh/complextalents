@@ -62,8 +62,7 @@ public class GeneralStatsData implements IGeneralStatsData {
     @Override
     public void sync() {
         if (player instanceof ServerPlayer serverPlayer) {
-            // TODO: Implement network packet for syncing stats
-            // For now, attributes are primary sync mechanism
+            com.complextalents.stats.network.StatsDataSyncPacket.send(serverPlayer, ranks);
         }
     }
 

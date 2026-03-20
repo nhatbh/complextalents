@@ -1,6 +1,7 @@
 package com.complextalents.origin.network;
 
 import com.complextalents.origin.OriginManager;
+import com.complextalents.leveling.handlers.LevelingSyncHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,6 +40,9 @@ public class SelectOriginPacket {
                     levelingData.addSkillPoints(player.getUUID(), 10);
                     
                     player.sendSystemMessage(net.minecraft.network.chat.Component.literal("§aYou have been awarded 10 Skill Points!").withStyle(net.minecraft.ChatFormatting.GREEN));
+                    
+                    // Sync the new SP to the client immediately
+                    LevelingSyncHandler.syncPlayerLevelData(player);
                 }
             }
         });

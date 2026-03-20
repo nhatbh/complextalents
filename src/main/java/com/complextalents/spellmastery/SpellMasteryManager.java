@@ -1,6 +1,7 @@
 package com.complextalents.spellmastery;
 
 import com.complextalents.spellmastery.capability.SpellMasteryDataProvider;
+import com.complextalents.stats.ClassCostMatrix;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.api.spells.CastResult;
 import io.redspace.ironsspellbooks.api.spells.CastSource;
@@ -70,6 +71,19 @@ public class SpellMasteryManager {
         };
     }
 
+    /**
+     * Get the spell cost for a rarity, adjusted by the origin's spell mastery cost multiplier.
+     *
+     * @param rarity The spell rarity
+     * @param originId The origin ID to get the cost multiplier for
+     * @return The adjusted cost
+     */
+    public static int getSpellCost(SpellRarity rarity, ResourceLocation originId) {
+        int baseCost = getSpellCost(rarity);
+        double multiplier = ClassCostMatrix.getSpellMasteryCostMultiplier(originId);
+        return (int) Math.round(baseCost * multiplier);
+    }
+
     public static int getMasteryBuyUpCost(int tier) {
         return switch (tier) {
             case 1 -> 6;  // Common -> Uncommon
@@ -79,5 +93,18 @@ public class SpellMasteryManager {
             case 5 -> 15; // Legendary -> Pinnacle
             default -> 999;
         };
+    }
+
+    /**
+     * Get the mastery tier buy-up cost, adjusted by the origin's spell mastery cost multiplier.
+     *
+     * @param tier The target mastery tier (1-5)
+     * @param originId The origin ID to get the cost multiplier for
+     * @return The adjusted cost
+     */
+    public static int getMasteryBuyUpCost(int tier, ResourceLocation originId) {
+        int baseCost = getMasteryBuyUpCost(tier);
+        double multiplier = ClassCostMatrix.getSpellMasteryCostMultiplier(originId);
+        return (int) Math.round(baseCost * multiplier);
     }
 }

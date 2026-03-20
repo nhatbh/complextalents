@@ -30,7 +30,6 @@ public class BuiltOrigin implements Origin {
     private BiFunction<Integer, ServerPlayer, Double> dynamicMaxResourceCalc;
     private final java.util.List<OriginSkillDisplay> displaySkills;
     private final ResourceLocation activeSkillId;
-    private final java.util.function.Function<net.minecraft.world.entity.player.Player, com.lowdragmc.lowdraglib.gui.widget.WidgetGroup> customUpgradeUI;
 
     /**
      * Create a BuiltOrigin from an OriginBuilder.
@@ -48,7 +47,6 @@ public class BuiltOrigin implements Origin {
         this.dynamicMaxResourceCalc = builder.getDynamicMaxResourceCalc();
         this.displaySkills = builder.getDisplaySkills();
         this.activeSkillId = builder.getActiveSkillId();
-        this.customUpgradeUI = builder.getCustomUpgradeUI();
     }
 
     @Override
@@ -138,12 +136,4 @@ public class BuiltOrigin implements Origin {
         return activeSkillId;
     }
 
-    @Override
-    @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
-    public com.lowdragmc.lowdraglib.gui.widget.WidgetGroup getCustomUpgradeUI(net.minecraft.world.entity.player.Player player) {
-        if (customUpgradeUI != null) {
-            return customUpgradeUI.apply(player);
-        }
-        return null;
-    }
 }

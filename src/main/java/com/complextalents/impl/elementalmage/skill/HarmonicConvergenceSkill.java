@@ -33,7 +33,7 @@ public class HarmonicConvergenceSkill {
         SkillBuilder.create("complextalents", "harmonic_convergence")
                 .nature(SkillNature.ACTIVE)
                 .displayName("Harmonic Convergence")
-                .description("Converge Resonance Echoes to restore mana and supercharge your next spell. Restores up to 40 + 25*EM mana per echo. Grants massive crit chance and crit damage bonuses (up to +50% base + scaled mastery).")
+                .description("Consume 1+ echoes to restore 10-40 + (Mastery × 5-25) mana/echo and grant +10-20% crit/echo. Crit damage: +25-50% base + (Mastery × 15-40%). Next spell guaranteed crit within 10s. 10s cooldown.")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/elementalmage/harmonic_convergence.png"))
