@@ -5,7 +5,6 @@ import com.complextalents.leveling.data.LevelStats;
 import com.complextalents.leveling.data.PlayerLevelingData;
 import com.complextalents.leveling.events.xp.XPAwardedEvent;
 import com.complextalents.leveling.service.LevelingService;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,10 +25,9 @@ public class LevelUpHandler {
     @SubscribeEvent
     public static void onXPAwarded(XPAwardedEvent event) {
         ServerPlayer player = event.getPlayer();
-        ServerLevel level = player.serverLevel();
 
         // Get the player's current stats
-        PlayerLevelingData data = PlayerLevelingData.get(level);
+        PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
         LevelStats oldStats = data.getStats(player.getUUID());
 
         // Calculate the level that should correspond to the player's total XP

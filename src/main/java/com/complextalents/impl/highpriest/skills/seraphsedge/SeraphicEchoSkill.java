@@ -94,7 +94,7 @@ public class SeraphicEchoSkill {
 
                         // Award Crowd Control XP
                         if (pulledCount > 0) {
-                            int playerLevel = PlayerLevelingData.get(player.serverLevel()).getLevel(player.getUUID());
+                            int playerLevel = PlayerLevelingData.get(player.getServer()).getLevel(player.getUUID());
                             double crowdXP = XPFormula.calculateHighPriestCrowdControlXP(pulledCount, playerLevel);
                             ChunkPos chunkPos = new ChunkPos(player.blockPosition());
                             XPContext crowdContext = XPContext.builder()

@@ -2,7 +2,6 @@ package com.complextalents.leveling.data;
 
 import com.complextalents.TalentsMod;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import java.util.Map;
@@ -26,14 +25,13 @@ public class PlayerLevelingData extends SavedData {
     private final Map<UUID, LevelStats> playerStats = new ConcurrentHashMap<>();
 
     /**
-     * Gets or creates the PlayerLevelingData for a server level.
-     * Uses the level's DataStorage system for persistence.
+     * Gets the global PlayerLevelingData from the Overworld.
      *
-     * @param level The ServerLevel to get data for
-     * @return The PlayerLevelingData for this level
+     * @param server The MinecraftServer instance
+     * @return The global PlayerLevelingData
      */
-    public static PlayerLevelingData get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(
+    public static PlayerLevelingData get(net.minecraft.server.MinecraftServer server) {
+        return server.getLevel(net.minecraft.world.level.Level.OVERWORLD).getDataStorage().computeIfAbsent(
                 PlayerLevelingData::load,
                 PlayerLevelingData::new,
                 DATA_NAME

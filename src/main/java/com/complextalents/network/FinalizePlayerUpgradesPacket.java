@@ -118,7 +118,7 @@ public class FinalizePlayerUpgradesPacket {
             ServerPlayer player = ctx.getSender();
             if (player == null) return;
 
-            PlayerLevelingData levelingData = PlayerLevelingData.get(player.serverLevel());
+            PlayerLevelingData levelingData = PlayerLevelingData.get(player.getServer());
             long availableSP = levelingData.getAvailableSkillPoints(player.getUUID());
             long[] totalCost = {0};
 

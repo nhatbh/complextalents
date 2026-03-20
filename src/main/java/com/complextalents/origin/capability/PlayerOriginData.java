@@ -8,34 +8,35 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Implementation of player origin data capability.
- * Stores active origin, origin level, and resource value.
- * Mirrors PlayerSkillData pattern.
- * <p>
- * Passive stacks are now managed by the shared passive capability.
- * </p>
+ * Implementation of current player origin data.
  */
 public class PlayerOriginData implements IPlayerOriginData {
 
-    private final ServerPlayer player;
-
-    // Active origin
+    private ServerPlayer player;
     private ResourceLocation activeOrigin = null;
-
-    // Origin level (1-maxLevel)
     private int originLevel = 1;
-
-    // Current resource value
     private double resourceValue = 0;
-
 
     // Temporary shield data for HUD (not persisted)
     private double shieldValue = 0;
     private double shieldMax = 0;
 
+    /**
+     * Default constructor for persistence storage.
+     */
+    public PlayerOriginData() {
+        // Player will be set later via setPlayer method
+    }
+
     public PlayerOriginData(ServerPlayer player) {
+        this.player = player;
+    }
+
+    public void setPlayer(ServerPlayer player) {
         this.player = player;
     }
 
@@ -48,19 +49,15 @@ public class PlayerOriginData implements IPlayerOriginData {
     @Override
     public void setActiveOrigin(@Nullable ResourceLocation originId) {
         this.activeOrigin = originId;
-
-        // Reset to default values when origin changes
         this.originLevel = 1;
         ResourceType resourceType = getResourceType();
-        if (resourceType != null) {
-            this.resourceValue = resourceType.getMin();
-        } else {
-            this.resourceValue = 0;
+        this.resourceValue = resourceType != null ? resourceType.getMin() : 0;
+        
+        if (player != null) {
+            player.getCapability(com.complextalents.passive.capability.PassiveStackDataProvider.PASSIVE_STACK_DATA)
+                    .ifPresent(data -> data.resetPassiveStacks());
         }
-
-        // Reset passive stacks when origin changes (handled by shared capability)
-        player.getCapability(com.complextalents.passive.capability.PassiveStackDataProvider.PASSIVE_STACK_DATA)
-                .ifPresent(data -> data.resetPassiveStacks());
+        sync();
     }
 
     @Override
@@ -73,6 +70,7 @@ public class PlayerOriginData implements IPlayerOriginData {
         Origin origin = getOrigin();
         int maxLevel = origin != null ? origin.getMaxLevel() : 1;
         this.originLevel = Math.max(1, Math.min(level, maxLevel));
+        sync();
     }
 
     @Override
@@ -91,16 +89,9 @@ public class PlayerOriginData implements IPlayerOriginData {
     public void setResource(double value) {
         ResourceType resourceType = getResourceType();
         if (resourceType != null) {
-            // Use scaled max if available
             Origin origin = getOrigin();
-            double max;
-            if (origin != null) {
-                max = origin.getMaxResource(originLevel, player);
-            } else {
-                max = resourceType.getMax();
-            }
-            double min = resourceType.getMin();
-            this.resourceValue = Math.max(min, Math.min(max, value));
+            double max = origin != null ? origin.getMaxResource(originLevel, player) : resourceType.getMax();
+            this.resourceValue = Math.max(resourceType.getMin(), Math.min(max, value));
         } else {
             this.resourceValue = value;
         }
@@ -110,7 +101,6 @@ public class PlayerOriginData implements IPlayerOriginData {
     public void modifyResource(double delta) {
         double oldValue = resourceValue;
         setResource(resourceValue + delta);
-        // Only sync if value actually changed
         if (oldValue != resourceValue) {
             sync();
         }
@@ -118,11 +108,10 @@ public class PlayerOriginData implements IPlayerOriginData {
 
     @Override
     public void sync() {
-        // Send sync packet to client
+        if (player == null) return;
         ResourceType resourceType = getResourceType();
         ResourceLocation resourceTypeId = resourceType != null ? resourceType.getId() : null;
 
-        // Use scaled max resource if available
         double resourceMax;
         Origin origin = getOrigin();
         if (origin != null) {
@@ -143,15 +132,10 @@ public class PlayerOriginData implements IPlayerOriginData {
                 shieldValue,
                 shieldMax
         );
-
-        // Passive stacks are synced separately by the shared capability
     }
-
 
     @Override
-    public double getShieldValue() {
-        return shieldValue;
-    }
+    public double getShieldValue() { return shieldValue; }
 
     @Override
     public void setShieldValue(double value) {
@@ -160,9 +144,7 @@ public class PlayerOriginData implements IPlayerOriginData {
     }
 
     @Override
-    public double getShieldMax() {
-        return shieldMax;
-    }
+    public double getShieldMax() { return shieldMax; }
 
     @Override
     public void setShieldMax(double value) {
@@ -180,98 +162,38 @@ public class PlayerOriginData implements IPlayerOriginData {
 
     @Override
     public void tick() {
-        // Placeholder for passive effects
-        // Origins can implement tick-based behaviors here
-        // For now, this is empty - tick behaviors are handled by event handlers
+        // Handle tick behaviors if any
     }
 
     @Override
     public void copyFrom(IPlayerOriginData other) {
-        // Copy active origin
         activeOrigin = other.getActiveOrigin();
-
-        // Copy origin level
         originLevel = other.getOriginLevel();
-
-        // Copy resource value
         resourceValue = other.getResource();
-
-
-        // Copy Shield (might be useful for dimension changes)
         shieldValue = other.getShieldValue();
         shieldMax = other.getShieldMax();
-
         sync();
     }
 
-    /**
-     * Helper to get the Origin object for the active origin.
-     */
     @Nullable
     private Origin getOrigin() {
-        if (activeOrigin == null) {
-            return null;
-        }
+        if (activeOrigin == null) return null;
         return OriginRegistry.getInstance().getOrigin(activeOrigin);
     }
 
-    // NBT serialization for persistence
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
-
-        // Serialize active origin
-        if (activeOrigin != null) {
-            tag.putString("activeOrigin", activeOrigin.toString());
-        }
-
-        // Serialize origin level (persists through death)
+        if (activeOrigin != null) tag.putString("activeOrigin", activeOrigin.toString());
         tag.putInt("originLevel", originLevel);
-
-        // Serialize resource value (resets on death, but saved for logout/login)
         tag.putDouble("resourceValue", resourceValue);
-
-
-        // Passive stacks are now serialized by the shared capability
-
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag tag) {
-        // Deserialize active origin
-        if (tag.contains("activeOrigin")) {
-            String originStr = tag.getString("activeOrigin");
-            activeOrigin = ResourceLocation.tryParse(originStr);
-        } else {
-            activeOrigin = null;
-        }
-
-        // Deserialize origin level
-        if (tag.contains("originLevel")) {
-            originLevel = tag.getInt("originLevel");
-            // Clamp to valid range
-            Origin origin = getOrigin();
-            int maxLevel = origin != null ? origin.getMaxLevel() : 1;
-            originLevel = Math.max(1, Math.min(originLevel, maxLevel));
-        } else {
-            originLevel = 1;
-        }
-
-        // Deserialize resource value
-        if (tag.contains("resourceValue")) {
-            resourceValue = tag.getDouble("resourceValue");
-            // Clamp to resource type range
-            ResourceType resourceType = getResourceType();
-            if (resourceType != null) {
-                resourceValue = resourceType.clamp(resourceValue);
-            }
-        } else {
-            ResourceType resourceType = getResourceType();
-            resourceValue = resourceType != null ? resourceType.getMin() : 0;
-        }
-
-
-        // Passive stacks are now deserialized by the shared capability
+        activeOrigin = tag.contains("activeOrigin") ? ResourceLocation.tryParse(tag.getString("activeOrigin")) : null;
+        originLevel = tag.contains("originLevel") ? tag.getInt("originLevel") : 1;
+        resourceValue = tag.contains("resourceValue") ? tag.getDouble("resourceValue") : 0;
     }
 }

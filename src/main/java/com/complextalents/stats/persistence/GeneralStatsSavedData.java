@@ -2,7 +2,6 @@ package com.complextalents.stats.persistence;
 
 import com.complextalents.TalentsMod;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import java.util.Map;
@@ -18,8 +17,8 @@ public class GeneralStatsSavedData extends SavedData {
 
     private final Map<UUID, CompoundTag> statsData = new ConcurrentHashMap<>();
 
-    public static GeneralStatsSavedData get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(
+    public static GeneralStatsSavedData get(net.minecraft.server.MinecraftServer server) {
+        return server.getLevel(net.minecraft.world.level.Level.OVERWORLD).getDataStorage().computeIfAbsent(
                 GeneralStatsSavedData::load,
                 GeneralStatsSavedData::new,
                 DATA_NAME

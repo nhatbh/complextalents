@@ -9,7 +9,6 @@ import com.complextalents.leveling.fatigue.ChunkFatigueData;
 import com.complextalents.leveling.network.LevelDataSyncPacket;
 import com.complextalents.network.PacketHandler;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
@@ -93,8 +92,7 @@ public class LevelingSyncHandler {
      * Sends level and fatigue data to the player.
      */
     public static void syncPlayerLevelData(ServerPlayer player) {
-        ServerLevel level = player.serverLevel();
-        PlayerLevelingData levelingData = PlayerLevelingData.get(level);
+        PlayerLevelingData levelingData = PlayerLevelingData.get(player.getServer());
         UUID uuid = player.getUUID();
 
         // Get level, XP, and calculate XP for next level
@@ -105,7 +103,7 @@ public class LevelingSyncHandler {
 
         // Get fatigue multiplier for current chunk
         ChunkPos chunkPos = new ChunkPos(player.blockPosition());
-        ChunkFatigueData fatigueData = ChunkFatigueData.get(level);
+        ChunkFatigueData fatigueData = ChunkFatigueData.get(player.serverLevel());
         double fatigue = fatigueData.getMultiplier(chunkPos);
 
         // Send packet to player

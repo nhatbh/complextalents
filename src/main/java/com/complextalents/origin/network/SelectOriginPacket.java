@@ -36,7 +36,7 @@ public class SelectOriginPacket {
 
                 // Award 10 SP if it's their first time selecting an origin
                 if (isFirstSelection) {
-                    com.complextalents.leveling.data.PlayerLevelingData levelingData = com.complextalents.leveling.data.PlayerLevelingData.get(player.serverLevel());
+                    com.complextalents.leveling.data.PlayerLevelingData levelingData = com.complextalents.leveling.data.PlayerLevelingData.get(player.getServer());
                     levelingData.addSkillPoints(player.getUUID(), 10);
                     
                     player.sendSystemMessage(net.minecraft.network.chat.Component.literal("§aYou have been awarded 10 Skill Points!").withStyle(net.minecraft.ChatFormatting.GREEN));

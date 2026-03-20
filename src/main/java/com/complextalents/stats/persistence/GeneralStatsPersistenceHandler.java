@@ -45,14 +45,31 @@ public class GeneralStatsPersistenceHandler {
 
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
-        if (!event.isWasDeath()) return;
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        // If dimension change, save latest state from original player first
+        if (!event.isWasDeath()) {
+            saveStats((ServerPlayer) event.getOriginal());
+            LOGGER.info("[STATS-CLONE] Dimension change detected for {}, saving original data before restoration", player.getUUID());
+        }
 
         restoreStats(player);
     }
 
+    @SubscribeEvent
+    public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (event.getEntity().level().isClientSide) return;
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        // Ensure data is synced to client after dimension change
+        player.getCapability(GeneralStatsDataProvider.STATS_DATA).ifPresent(stats -> {
+            stats.sync();
+            LOGGER.debug("[STATS-PERSISTENCE] Synced stats for {} after dimension change", player.getUUID());
+        });
+    }
+
     private static void restoreStats(ServerPlayer player) {
-        GeneralStatsSavedData data = GeneralStatsSavedData.get(player.serverLevel());
+        GeneralStatsSavedData data = GeneralStatsSavedData.get(player.getServer());
         player.getCapability(GeneralStatsDataProvider.STATS_DATA).ifPresent(stats -> {
             CompoundTag tag = data.getStatsData(player.getUUID());
             if (tag != null) {
@@ -64,7 +81,7 @@ public class GeneralStatsPersistenceHandler {
     }
 
     private static void saveStats(ServerPlayer player) {
-        GeneralStatsSavedData data = GeneralStatsSavedData.get(player.serverLevel());
+        GeneralStatsSavedData data = GeneralStatsSavedData.get(player.getServer());
         player.getCapability(GeneralStatsDataProvider.STATS_DATA).ifPresent(stats -> {
             data.saveStatsData(player.getUUID(), stats.serializeNBT());
             LOGGER.debug("[STATS-PERSISTENCE] Saved stats for {}", player.getUUID());

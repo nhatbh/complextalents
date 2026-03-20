@@ -46,14 +46,31 @@ public class SpellMasteryPersistenceHandler {
 
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
-        if (!event.isWasDeath()) return;
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        
+        // If dimension change, save latest state from original player first
+        if (!event.isWasDeath()) {
+            saveMastery((ServerPlayer) event.getOriginal());
+            LOGGER.info("[MASTERY-CLONE] Dimension change detected for {}, saving original data before restoration", player.getUUID());
+        }
 
         restoreMastery(player);
     }
 
+    @SubscribeEvent
+    public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (event.getEntity().level().isClientSide) return;
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        // Ensure data is synced to client after dimension change
+        player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(mastery -> {
+            mastery.sync();
+            LOGGER.debug("[MASTERY-PERSISTENCE] Synced mastery for {} after dimension change", player.getUUID());
+        });
+    }
+
     private static void restoreMastery(ServerPlayer player) {
-        GeneralStatsSavedData data = GeneralStatsSavedData.get(player.serverLevel());
+        GeneralStatsSavedData data = GeneralStatsSavedData.get(player.getServer());
         player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(mastery -> {
             CompoundTag tag = data.getStatsData(player.getUUID());
             if (tag != null && tag.contains("SpellMastery")) {
@@ -65,7 +82,7 @@ public class SpellMasteryPersistenceHandler {
     }
 
     private static void saveMastery(ServerPlayer player) {
-        GeneralStatsSavedData data = GeneralStatsSavedData.get(player.serverLevel());
+        GeneralStatsSavedData data = GeneralStatsSavedData.get(player.getServer());
         player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(mastery -> {
             CompoundTag playerTag = data.getStatsData(player.getUUID());
             if (playerTag == null) {

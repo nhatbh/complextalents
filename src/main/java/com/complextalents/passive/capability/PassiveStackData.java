@@ -17,12 +17,23 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PassiveStackData implements IPassiveStackData {
 
-    private final ServerPlayer player;
+    private ServerPlayer player;
 
     // Passive stacks storage - maps stack type name to current count
     private final Map<String, Integer> passiveStacks = new ConcurrentHashMap<>();
 
+    /**
+     * Default constructor for persistence storage.
+     */
+    public PassiveStackData() {
+        // Player will be set later via setPlayer method
+    }
+
     public PassiveStackData(ServerPlayer player) {
+        this.player = player;
+    }
+
+    public void setPlayer(ServerPlayer player) {
         this.player = player;
     }
 

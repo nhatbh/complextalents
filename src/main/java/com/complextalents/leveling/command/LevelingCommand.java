@@ -47,7 +47,7 @@ public class LevelingCommand {
 
         private static int addXP(CommandContext<CommandSourceStack> ctx, Collection<ServerPlayer> targets, int amount) {
             for (ServerPlayer player : targets) {
-                PlayerLevelingData data = PlayerLevelingData.get(player.serverLevel());
+                PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
                 data.addXP(player.getUUID(), amount);
                 LevelingSyncHandler.syncPlayerLevelData(player);
                 ctx.getSource().sendSuccess(() -> Component.literal("\u00A7aAdded " + amount + " XP to " + player.getName().getString()), true);
@@ -71,7 +71,7 @@ public class LevelingCommand {
 
         private static int addSP(CommandContext<CommandSourceStack> ctx, Collection<ServerPlayer> targets, int amount) {
             for (ServerPlayer player : targets) {
-                PlayerLevelingData data = PlayerLevelingData.get(player.serverLevel());
+                PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
                 data.addSkillPoints(player.getUUID(), amount);
                 LevelingSyncHandler.syncPlayerLevelData(player);
                 ctx.getSource().sendSuccess(() -> Component.literal("\u00A7aAdded " + amount + " Skill Points to " + player.getName().getString()), true);

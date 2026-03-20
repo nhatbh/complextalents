@@ -102,7 +102,7 @@ public class LevelingService {
         }
 
         // Add XP to storage
-        PlayerLevelingData data = PlayerLevelingData.get(player.serverLevel());
+        PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
         data.addXP(player.getUUID(), finalAmount);
 
         // Fire post-event (immutable, for notifications)
@@ -120,7 +120,7 @@ public class LevelingService {
      */
     public int getLevel(ServerPlayer player) {
         Objects.requireNonNull(player, "Player cannot be null");
-        PlayerLevelingData data = PlayerLevelingData.get(player.serverLevel());
+        PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
         return data.getLevel(player.getUUID());
     }
 
@@ -132,7 +132,7 @@ public class LevelingService {
      */
     public double getCurrentXP(ServerPlayer player) {
         Objects.requireNonNull(player, "Player cannot be null");
-        PlayerLevelingData data = PlayerLevelingData.get(player.serverLevel());
+        PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
         return data.getCurrentXP(player.getUUID());
     }
 
@@ -144,7 +144,7 @@ public class LevelingService {
      */
     public double getTotalXP(ServerPlayer player) {
         Objects.requireNonNull(player, "Player cannot be null");
-        PlayerLevelingData data = PlayerLevelingData.get(player.serverLevel());
+        PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
         return data.getTotalXP(player.getUUID());
     }
 
@@ -156,7 +156,7 @@ public class LevelingService {
      */
     public int getTotalSkillPoints(ServerPlayer player) {
         Objects.requireNonNull(player, "Player cannot be null");
-        PlayerLevelingData data = PlayerLevelingData.get(player.serverLevel());
+        PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
         return data.getTotalSkillPoints(player.getUUID());
     }
 
@@ -168,7 +168,7 @@ public class LevelingService {
      */
     public int getConsumedSkillPoints(ServerPlayer player) {
         Objects.requireNonNull(player, "Player cannot be null");
-        PlayerLevelingData data = PlayerLevelingData.get(player.serverLevel());
+        PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
         return data.getConsumedSkillPoints(player.getUUID());
     }
 
@@ -180,7 +180,7 @@ public class LevelingService {
      */
     public int getAvailableSkillPoints(ServerPlayer player) {
         Objects.requireNonNull(player, "Player cannot be null");
-        PlayerLevelingData data = PlayerLevelingData.get(player.serverLevel());
+        PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
         return data.getAvailableSkillPoints(player.getUUID());
     }
 
@@ -195,7 +195,7 @@ public class LevelingService {
         Objects.requireNonNull(player, "Player cannot be null");
         if (amount <= 0) return true;
 
-        PlayerLevelingData data = PlayerLevelingData.get(player.serverLevel());
+        PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
         int available = data.getAvailableSkillPoints(player.getUUID());
         if (available < amount) {
             return false;
@@ -214,7 +214,7 @@ public class LevelingService {
      */
     public LevelStats getStats(ServerPlayer player) {
         Objects.requireNonNull(player, "Player cannot be null");
-        PlayerLevelingData data = PlayerLevelingData.get(player.serverLevel());
+        PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
         return data.getStats(player.getUUID());
     }
 
@@ -230,7 +230,7 @@ public class LevelingService {
         Objects.requireNonNull(player, "Player cannot be null");
         Objects.requireNonNull(reason, "ResetReason cannot be null");
 
-        PlayerLevelingData data = PlayerLevelingData.get(player.serverLevel());
+        PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
         double lostXP = data.getCurrentXP(player.getUUID());
 
         data.resetCurrentXP(player.getUUID());
@@ -264,7 +264,7 @@ public class LevelingService {
      */
     public void removePlayerData(ServerPlayer player) {
         Objects.requireNonNull(player, "Player cannot be null");
-        PlayerLevelingData data = PlayerLevelingData.get(player.serverLevel());
+        PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
         data.removePlayerData(player.getUUID());
         AssistTracker.clearPlayerAssists(player.getUUID());
     }
