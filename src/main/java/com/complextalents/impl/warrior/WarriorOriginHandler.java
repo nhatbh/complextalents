@@ -52,7 +52,8 @@ public class WarriorOriginHandler {
         public final double damageMultiplier;
         public final int color;
 
-        StyleRank(String name, String fullName, int min, int max, double gainMultiplier, double decayPerSecond, double damageMultiplier, int color) {
+        StyleRank(String name, String fullName, int min, int max, double gainMultiplier, double decayPerSecond,
+                double damageMultiplier, int color) {
             this.name = name;
             this.fullName = fullName;
             this.min = min;
@@ -64,12 +65,18 @@ public class WarriorOriginHandler {
         }
 
         public static StyleRank getRank(double points) {
-            if (points >= SSS.min) return SSS;
-            if (points >= SS.min) return SS;
-            if (points >= S.min) return S;
-            if (points >= A.min) return A;
-            if (points >= B.min) return B;
-            if (points >= C.min) return C;
+            if (points >= SSS.min)
+                return SSS;
+            if (points >= SS.min)
+                return SS;
+            if (points >= S.min)
+                return S;
+            if (points >= A.min)
+                return A;
+            if (points >= B.min)
+                return B;
+            if (points >= C.min)
+                return C;
             return D;
         }
     }
@@ -91,11 +98,11 @@ public class WarriorOriginHandler {
             if (isWarrior(player)) {
                 double points = OriginManager.getResource(player);
                 StyleRank rank = StyleRank.getRank(points);
-                
+
                 String statName = "momentumDamage_" + rank.name();
                 double multiplier = OriginManager.getOriginStat(player, statName);
                 markCombat(player);
-                
+
                 event.setAmount((float) (event.getAmount() * multiplier));
 
                 // Award Unstoppable Momentum XP
@@ -103,12 +110,12 @@ public class WarriorOriginHandler {
                     double momentumXP = XPFormula.calculateWarriorUnstoppableMomentumXP(event.getAmount());
                     ChunkPos chunkPos = new ChunkPos(player.blockPosition());
                     XPContext context = XPContext.builder()
-                        .source(XPSource.WARRIOR_MOMENTUM)
-                        .chunkPos(chunkPos)
-                        .rawAmount(momentumXP)
-                        .metadata("sssDamage", event.getAmount())
-                        .metadata("styleRank", "SSS")
-                        .build();
+                            .source(XPSource.WARRIOR_MOMENTUM)
+                            .chunkPos(chunkPos)
+                            .rawAmount(momentumXP)
+                            .metadata("sssDamage", event.getAmount())
+                            .metadata("styleRank", "SSS")
+                            .build();
                     LevelingService.getInstance().awardXP(player, momentumXP, XPSource.WARRIOR_MOMENTUM, context);
                 }
             }
@@ -125,15 +132,17 @@ public class WarriorOriginHandler {
                         event.setAmount(0);
                         event.setCanceled(true);
                         PassiveManager.setPassiveStacks(player, "sss_shield", 0);
-                        
+
                         double resetPoints = OriginManager.getOriginStat(player, "shieldBreakReset");
                         OriginManager.setResource(player, resetPoints);
-                        
-                        player.sendSystemMessage(Component.literal("\u00A7c[SSS SHIELD SHATTERED] \u00A77Style reset to " + StyleRank.getRank(resetPoints).name + "!"));
+
+                        player.sendSystemMessage(
+                                Component.literal("\u00A7c[SSS SHIELD SHATTERED] \u00A77Style reset to "
+                                        + StyleRank.getRank(resetPoints).name + "!"));
                         return;
                     }
                 }
-                
+
                 // 2. Unmitigated damage penalty
                 if (!event.isCanceled()) {
                     modifyStylePoints(player, -200);
@@ -152,11 +161,11 @@ public class WarriorOriginHandler {
                 if (rank.decayPerSecond > 0) {
                     long lastCombat = LAST_COMBAT_TIME.getOrDefault(player.getUUID(), 0L);
                     boolean inCombat = (System.currentTimeMillis() - lastCombat) < COMBAT_TIMEOUT_MS;
-                    
+
                     if (inCombat) {
                         return; // No decay while in combat
                     }
-                    
+
                     // Out of combat decay
                     double decay = Math.max(rank.decayPerSecond, 20.0); // Minimum 20 pts/sec when out of combat
                     double decayPerTick = decay / 20.0;
@@ -172,7 +181,7 @@ public class WarriorOriginHandler {
         if (attacker instanceof ServerPlayer player && isWarrior(player)) {
             markCombat(player);
         }
-        
+
         // Handle assists (simplified)
         // In a real mod, we'd check recent damage history
     }
@@ -201,7 +210,37 @@ public class WarriorOriginHandler {
         if (next >= StyleRank.SSS.min) {
             if (!com.complextalents.passive.PassiveManager.hasPassiveStacks(player, "sss_shield", 1)) {
                 com.complextalents.passive.PassiveManager.setPassiveStacks(player, "sss_shield", 1);
-                player.sendSystemMessage(net.minecraft.network.chat.Component.literal("\u00A76[SSS RANK REACHED] \u00A7fShield activated!"));
+                player.sendSystemMessage(net.minecraft.network.chat.Component
+                        .literal("\u00A76[SSS RANK REACHED] \u00A7fShield activated!"));
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onGuard(EpicFightGuardEvent event) {
+        ServerPlayer player = event.getPlayer();
+        if (isWarrior(player)) {
+            markCombat(player);
+            double points = event.isParry() ? 50 : 20; // More points for perfect parry
+            addStylePoints(player, points);
+
+            ServerPlayerPatch playerpatch = EpicFightCapabilities.getEntityPatch(player, ServerPlayerPatch.class);
+            if (playerpatch != null) {
+                float refund = event.getStaminaConsumed();
+                if (event.isParry()) {
+                    float currentStamina = playerpatch.getStamina();
+                    playerpatch.resetActionTick();
+                    playerpatch.setStamina(currentStamina + refund);
+
+                    // Reset penalty on perfect parry
+                    SkillContainer container = event.getContainer();
+                    container.getDataManager().setDataSync(SkillDataKeys.PENALTY.get(), 0.0F);
+                    container.getDataManager().setDataSync(SkillDataKeys.PENALTY_RESTORE_COUNTER.get(),
+                            player.tickCount);
+                }
+                player.sendSystemMessage(
+                        Component.literal(String.format("Warrior Guard: Parry=%b | Consumed=%.2f | CurrentStamina=%.2f",
+                                event.isParry(), refund, playerpatch.getStamina())));
             }
         }
     }

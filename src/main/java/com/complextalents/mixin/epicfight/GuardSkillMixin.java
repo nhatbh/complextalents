@@ -32,18 +32,19 @@ public abstract class GuardSkillMixin {
     @Inject(method = "guard", at = @At(value = "HEAD"))
     private void complextalents$onGuard(SkillContainer container, CapabilityItem itemCapability,
             TakeDamageEvent.Attack event, float knockback, float impact, boolean advanced, CallbackInfo ci) {
-        float penalty = container.getDataManager().getDataValue(SkillDataKeys.PENALTY.get()) + this.getPenalizer(itemCapability);
+        float penalty = container.getDataManager().getDataValue(SkillDataKeys.PENALTY.get())
+                + this.getPenalizer(itemCapability);
         float consumeAmount = penalty * impact;
-        
+
         boolean isParry = false;
         if (container.getExecutor().getOriginal() instanceof ServerPlayer serverPlayer) {
             Integer startTick = START_TICKS.get(container);
             if (startTick != null) {
                 int currentTick = serverPlayer.tickCount;
                 // 10 ticks = 0.5 seconds
-                isParry = (currentTick - startTick) <= 10;
+                isParry = (currentTick - startTick) <= 4;
             }
-            
+
             LivingEntity attacker = event.getDamageSource().getEntity() instanceof LivingEntity le ? le : null;
 
             // Post the custom event to the Forge event bus
