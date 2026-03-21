@@ -30,6 +30,7 @@ public class PlayerPersistentData extends SavedData {
     private final Map<UUID, CompoundTag> darkMageData = new ConcurrentHashMap<>();
     private final Map<UUID, CompoundTag> elementalMageData = new ConcurrentHashMap<>();
     private final Map<UUID, CompoundTag> faithData = new ConcurrentHashMap<>();
+    private final Map<UUID, Map<String, CompoundTag>> skillCustomData = new ConcurrentHashMap<>();
 
     /**
      * Get the global PlayerPersistentData from the Overworld level.
@@ -111,6 +112,19 @@ public class PlayerPersistentData extends SavedData {
             data.spellMasteryData.put(uuid, smd);
         }
 
+        CompoundTag skillCustomTag = tag.getCompound("skillCustomData");
+        for (String uuidStr : skillCustomTag.getAllKeys()) {
+            UUID uuid = UUID.fromString(uuidStr);
+            CompoundTag playerSkillsTag = skillCustomTag.getCompound(uuidStr);
+            Map<String, CompoundTag> skillMap = new ConcurrentHashMap<>();
+            for (String skillId : playerSkillsTag.getAllKeys()) {
+                skillMap.put(skillId, playerSkillsTag.getCompound(skillId));
+            }
+            data.skillCustomData.put(uuid, skillMap);
+        }
+
+        TalentsMod.LOGGER.info("[PERSISTENCE] Loaded PlayerPersistentData with {} origins, {} skills, {} custom skill entries", 
+            data.originData.size(), data.skillData.size(), data.skillCustomData.size());
         return data;
     }
 
@@ -173,6 +187,18 @@ public class PlayerPersistentData extends SavedData {
         }
         tag.put("spellMasteryData", spellMasteryTag);
 
+        CompoundTag skillCustomTag = new CompoundTag();
+        for (var entry : skillCustomData.entrySet()) {
+            CompoundTag playerSkillsTag = new CompoundTag();
+            for (var skillEntry : entry.getValue().entrySet()) {
+                playerSkillsTag.put(skillEntry.getKey(), skillEntry.getValue());
+            }
+            skillCustomTag.put(entry.getKey().toString(), playerSkillsTag);
+        }
+        tag.put("skillCustomData", skillCustomTag);
+
+        TalentsMod.LOGGER.info("[PERSISTENCE] Saved PlayerPersistentData with {} origins, {} skills, {} custom skill entries", 
+            originData.size(), skillData.size(), skillCustomData.size());
         return tag;
     }
 
@@ -231,6 +257,16 @@ public class PlayerPersistentData extends SavedData {
         return faithData.get(playerId);
     }
 
+    public void saveSkillCustomData(UUID playerId, String skillId, CompoundTag tag) {
+        skillCustomData.computeIfAbsent(playerId, k -> new ConcurrentHashMap<>()).put(skillId, tag.copy());
+        setDirty();
+    }
+
+    public CompoundTag getSkillCustomData(UUID playerId, String skillId) {
+        Map<String, CompoundTag> playerSkills = skillCustomData.get(playerId);
+        return playerSkills != null ? playerSkills.get(skillId) : null;
+    }
+
     public void removeAllPlayerData(UUID playerId) {
         originData.remove(playerId);
         skillData.remove(playerId);
@@ -241,6 +277,7 @@ public class PlayerPersistentData extends SavedData {
         darkMageData.remove(playerId);
         elementalMageData.remove(playerId);
         faithData.remove(playerId);
+        skillCustomData.remove(playerId);
         setDirty();
     }
 }

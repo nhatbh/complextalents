@@ -14,6 +14,7 @@ import com.complextalents.weaponmastery.capability.WeaponMasteryDataProvider;
 import com.complextalents.stats.capability.GeneralStatsDataProvider;
 import com.complextalents.spellmastery.capability.SpellMasteryDataProvider;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.TickEvent;
@@ -127,7 +128,11 @@ public class PlayerDataPersistenceHandler {
 
         if (DarkMageOrigin.isDarkMage(player)) {
             CompoundTag soulTag = persistentData.getDarkMageData(playerId);
-            if (soulTag != null) SoulData.deserializeNBT(player, soulTag);
+            if (soulTag != null) {
+                SoulData.deserializeNBT(player, soulTag);
+                TalentsMod.LOGGER.info("[SOUL PERSIST] Deserialized {} souls for player {}", 
+                    soulTag.getDouble("souls"), playerId);
+            }
         }
 
         if (ElementalMageOrigin.isElementalMage(player)) {
@@ -141,6 +146,19 @@ public class PlayerDataPersistenceHandler {
             CompoundTag faithTag = persistentData.getFaithData(playerId);
             if (faithTag != null) FaithData.deserializeNBT(player, faithTag);
         }
+
+        // Generic skill-specific persistence
+        player.getCapability(com.complextalents.skill.capability.SkillDataProvider.SKILL_DATA).ifPresent(skillCap -> {
+            for (ResourceLocation skillId : skillCap.getAllLearnedSkills()) {
+                CompoundTag skillTag = persistentData.getSkillCustomData(playerId, skillId.toString());
+                if (skillTag != null && !skillTag.isEmpty()) {
+                    // This is where individual skills would register their load hooks
+                    if (skillId.equals(com.complextalents.impl.warrior.skills.ChallengersRetribution.ID)) {
+                        com.complextalents.impl.warrior.skills.ChallengersRetribution.loadData(player, skillTag);
+                    }
+                }
+            }
+        });
     }
 
     private static void savePlayerData(ServerPlayer player) {
@@ -157,6 +175,19 @@ public class PlayerDataPersistenceHandler {
         if (HighPriestOrigin.isHighPriest(player)) {
             persistentData.saveFaithData(playerId, FaithData.serializeNBT(player));
         }
+        
+        // Generic skill-specific persistence
+        player.getCapability(com.complextalents.skill.capability.SkillDataProvider.SKILL_DATA).ifPresent(skillCap -> {
+            for (ResourceLocation skillId : skillCap.getAllLearnedSkills()) {
+                // Individual skills register their save hooks
+                if (skillId.equals(com.complextalents.impl.warrior.skills.ChallengersRetribution.ID)) {
+                    CompoundTag skillTag = com.complextalents.impl.warrior.skills.ChallengersRetribution.saveData(player);
+                    if (!skillTag.isEmpty()) {
+                        persistentData.saveSkillCustomData(playerId, skillId.toString(), skillTag);
+                    }
+                }
+            }
+        });
         
         // General Data is saved whenever the world saves via SavedData.setDirty()
         persistentData.setDirty();

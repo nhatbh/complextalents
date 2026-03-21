@@ -1,33 +1,40 @@
 package com.complextalents.impl.warrior.skills;
 
+import com.complextalents.TalentsMod;
 import com.complextalents.impl.warrior.WarriorOriginHandler;
 import com.complextalents.leveling.util.XPFormula;
 import com.complextalents.leveling.service.LevelingService;
 import com.complextalents.leveling.events.xp.XPSource;
 import com.complextalents.leveling.events.xp.XPContext;
-import net.minecraft.world.level.ChunkPos;
+import com.complextalents.network.PacketHandler;
+import com.complextalents.network.S2CSpawnAAAParticlePacket;
 import com.complextalents.origin.OriginManager;
 import com.complextalents.skill.SkillBuilder;
 import com.complextalents.skill.SkillNature;
 import com.complextalents.skill.Skill;
 import com.complextalents.util.UUIDHelper;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import com.complextalents.network.PacketHandler;
-import com.complextalents.network.S2CSpawnAAAParticlePacket;
+import net.minecraftforge.network.PacketDistributor;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.joml.Vector3f;
 import yesman.epicfight.api.animation.AnimationManager.AnimationAccessor;
 import yesman.epicfight.api.animation.types.AttackAnimation;
@@ -68,6 +75,31 @@ public class ChallengersRetribution {
             this.maxHealth = health;
             this.absorbedDamage = 0;
             this.startTime = System.currentTimeMillis();
+        }
+
+        public ShieldData(double health, double maxHealth, double absorbedDamage, long startTime) {
+            this.health = health;
+            this.maxHealth = maxHealth;
+            this.absorbedDamage = absorbedDamage;
+            this.startTime = startTime;
+        }
+
+        public CompoundTag serializeNBT() {
+            CompoundTag tag = new CompoundTag();
+            tag.putDouble("health", health);
+            tag.putDouble("maxHealth", maxHealth);
+            tag.putDouble("absorbedDamage", absorbedDamage);
+            tag.putLong("startTime", startTime);
+            return tag;
+        }
+
+        public static ShieldData deserializeNBT(CompoundTag tag) {
+            return new ShieldData(
+                tag.getDouble("health"),
+                tag.getDouble("maxHealth"),
+                tag.getDouble("absorbedDamage"),
+                tag.getLong("startTime")
+            );
         }
     }
 
@@ -362,6 +394,46 @@ public class ChallengersRetribution {
                             2, 0.3, 0.5, 0.3, 0.02);
                 }
             }
+        }
+    }
+
+    // --- Persistence Hooks ---
+
+    public static CompoundTag saveData(ServerPlayer player) {
+        ShieldData data = ACTIVE_SHIELDS.get(player.getUUID());
+        return data != null ? data.serializeNBT() : new CompoundTag();
+    }
+
+    public static void loadData(ServerPlayer player, CompoundTag tag) {
+        if (tag.contains("health")) {
+            ShieldData data = ShieldData.deserializeNBT(tag);
+            ACTIVE_SHIELDS.put(player.getUUID(), data);
+            
+            // Re-apply HUD
+            OriginManager.getCapability(player).ifPresent(cap -> {
+                cap.setShieldMax(data.maxHealth);
+                cap.setShieldValue(data.health);
+            });
+
+            // Re-apply attributes if still valid
+            applyRetributionAttributes(player);
+            
+            TalentsMod.LOGGER.info("[SKILL PERSIST] Restored Challenger's Retribution for {}", player.getUUID());
+        }
+    }
+
+    private static void applyRetributionAttributes(ServerPlayer player) {
+        var speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speedAttr != null) {
+            speedAttr.removeModifier(SLOWNESS_UUID);
+            speedAttr.addTransientModifier(new AttributeModifier(SLOWNESS_UUID, "Retribution Slowness", -0.9,
+                    AttributeModifier.Operation.MULTIPLY_TOTAL));
+        }
+        var kbAttr = player.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
+        if (kbAttr != null) {
+            kbAttr.removeModifier(KB_RESIST_UUID);
+            kbAttr.addTransientModifier(new AttributeModifier(KB_RESIST_UUID, "Retribution KB Resist", 1.0,
+                    AttributeModifier.Operation.ADDITION));
         }
     }
 }

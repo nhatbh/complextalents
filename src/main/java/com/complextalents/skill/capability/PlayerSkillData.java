@@ -248,6 +248,11 @@ public class PlayerSkillData implements IPlayerSkillData, net.minecraftforge.com
     public void setFormExpiration(long expirationTime) { this.formExpiration = expirationTime; }
 
     @Override
+    public java.util.Set<ResourceLocation> getAllLearnedSkills() {
+        return skillLevels.keySet();
+    }
+
+    @Override
     public void copyFrom(IPlayerSkillData other) {
         ResourceLocation[] otherSlots = other.getAssignedSlots();
         System.arraycopy(otherSlots, 0, skillSlots, 0, Math.min(skillSlots.length, otherSlots.length));

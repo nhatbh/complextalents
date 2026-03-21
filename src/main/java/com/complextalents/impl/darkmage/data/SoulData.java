@@ -279,7 +279,9 @@ public class SoulData {
      */
     public static CompoundTag serializeNBT(UUID playerUuid) {
         CompoundTag tag = new CompoundTag();
-        tag.putDouble("souls", getSouls(playerUuid));
+        double souls = getSouls(playerUuid);
+        tag.putDouble("souls", souls);
+        TalentsMod.LOGGER.info("[SOUL PERSIST] Serializing {} souls for UUID {}", souls, playerUuid);
         // Note: Blood Pact active state and Phylactery cooldown are NOT persisted
         // Blood Pact should be re-activated manually after login/respawn
         // Phylactery cooldown resets on logout

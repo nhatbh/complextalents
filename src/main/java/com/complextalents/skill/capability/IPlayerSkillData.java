@@ -237,10 +237,9 @@ public interface IPlayerSkillData {
     void setFormExpiration(long expirationTime);
 
     /**
-     * Copy all skill data from another instance.
-     * Used during player clone/respawn to persist data.
-     *
-     * @param other The source data to copy from
+     * Get all skills that have been learned/leveled.
      */
+    java.util.Set<ResourceLocation> getAllLearnedSkills();
+
     void copyFrom(IPlayerSkillData other);
 }
