@@ -206,7 +206,7 @@ public class BloodPactSkill {
                 attributeInstance.removeModifier(MANA_REGEN_UUID);
 
                 // Add mana regen modifier: (1.0 + (souls / 200.0)) * multiplier
-                double souls = SoulData.getSouls(player.getUUID());
+                double souls = SoulData.getSouls(player);
                 double bonus = (1.0 + (souls / 200.0)) * multiplier;
                 
                 AttributeModifier modifier = new AttributeModifier(
@@ -245,7 +245,7 @@ public class BloodPactSkill {
      * Any excess beyond 1.0 is applied as additive crit damage bonus.
      */
     public static void applyCritBonus(ServerPlayer player, double multiplier) {
-        double souls = SoulData.getSouls(player.getUUID());
+        double souls = SoulData.getSouls(player);
         double rate  = OriginManager.getOriginStat(player, "soulSpellCritPercent");
         double totalBonus = souls * rate * multiplier;
 
@@ -291,7 +291,7 @@ public class BloodPactSkill {
      * Bonus = souls × soulDamageBonusPercent × multiplier, applied as additive spell_power.
      */
     public static void applySpellPowerBonus(ServerPlayer player, double multiplier) {
-        double souls = SoulData.getSouls(player.getUUID());
+        double souls = SoulData.getSouls(player);
         double bonusPerSoul = OriginManager.getOriginStat(player, "soulDamageBonusPercent");
         double bonus = souls * bonusPerSoul * multiplier;
 

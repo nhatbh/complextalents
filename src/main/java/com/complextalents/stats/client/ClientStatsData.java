@@ -14,21 +14,37 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public class ClientStatsData {
     private static final Map<StatType, Integer> statRanks = new EnumMap<>(StatType.class);
+    private static final Map<StatType, Integer> originRanks = new EnumMap<>(StatType.class);
 
     static {
         // Initialize with defaults
         for (StatType type : StatType.values()) {
             statRanks.put(type, 0);
+            originRanks.put(type, 0);
         }
     }
 
     /**
-     * Get the rank of a specific stat.
+     * Get the TOTAL rank of a specific stat (purchased + origin base).
      * @param type The stat type
-     * @return The rank/level of the stat, 0 if not set
+     * @return The total rank/level of the stat, 0 if not set
      */
     public static int getStatRank(StatType type) {
+        return statRanks.getOrDefault(type, 0) + originRanks.getOrDefault(type, 0);
+    }
+
+    /**
+     * Get the purchased rank of a specific stat.
+     */
+    public static int getPurchasedRank(StatType type) {
         return statRanks.getOrDefault(type, 0);
+    }
+
+    /**
+     * Get the origin base rank of a specific stat.
+     */
+    public static int getOriginRank(StatType type) {
+        return originRanks.getOrDefault(type, 0);
     }
 
     /**
@@ -43,11 +59,26 @@ public class ClientStatsData {
     }
 
     /**
-     * Get all stat ranks.
-     * @return A copy of all stat ranks
+     * Update origin ranks from server sync packet.
+     * Called by StatsDataSyncPacket.
+     */
+    public static void updateOriginRanks(Map<StatType, Integer> newOriginRanks) {
+        originRanks.clear();
+        for (StatType type : StatType.values()) {
+            originRanks.put(type, newOriginRanks.getOrDefault(type, 0));
+        }
+    }
+
+    /**
+     * Get all stat ranks (total).
+     * @return A map of total stat ranks
      */
     public static Map<StatType, Integer> getAllRanks() {
-        return new EnumMap<>(statRanks);
+        Map<StatType, Integer> totalRanks = new EnumMap<>(StatType.class);
+        for (StatType type : StatType.values()) {
+            totalRanks.put(type, getStatRank(type));
+        }
+        return totalRanks;
     }
 
     /**
@@ -56,6 +87,7 @@ public class ClientStatsData {
     public static void reset() {
         for (StatType type : StatType.values()) {
             statRanks.put(type, 0);
+            originRanks.put(type, 0);
         }
     }
 }

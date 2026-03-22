@@ -4,6 +4,7 @@ import com.complextalents.origin.client.OriginRenderer;
 import com.complextalents.passive.PassiveOwner;
 import com.complextalents.passive.PassiveStackDef;
 import com.complextalents.stats.ScaledStat;
+import com.complextalents.stats.StatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -104,6 +105,15 @@ public interface Origin extends PassiveOwner {
      * @return Map of stat key to ScaledStat definition
      */
     default Map<String, ScaledStat> getScaledStats() {
+        return Map.of();
+    }
+
+    /**
+     * Get the base stats (initial General Stat ranks) provided by this origin.
+     *
+     * @return Map of StatType to base rank
+     */
+    default Map<StatType, Integer> getBaseStats() {
         return Map.of();
     }
 

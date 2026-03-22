@@ -98,8 +98,10 @@ public class HighPriestOrigin {
     public static void register() {
         OriginBuilder.create(ID)
                 .displayName("High Priest")
-                .description(Component.literal("Holy commander. Grace (binary) grants +20%-60% cast speed and +30%-125% healing potency; lost on any damage (30-sec recovery). Build Faith via holy spells (+0.1-0.3 max mana/Faith, +0.01% spell power/Faith). Generate Command (max 10, every 200-100 ticks). Overheal converts 30%-75% to absorption shields (600-1500-tick duration). Stationary echo deals 1.5x damage/shield."))
+                .description(Component.literal(
+                        "Holy commander. Grace (binary) grants +20%-60% cast speed and +30%-125% healing potency; lost on any damage (30-sec recovery). Build Faith via holy spells (+0.1-0.3 max mana/Faith, +0.01% spell power/Faith). Generate Command (max 10, every 200-100 ticks). Overheal converts 30%-75% to absorption shields (600-1500-tick duration). Stationary echo deals 1.5x damage/shield."))
                 .maxLevel(5)
+                .baseStat(StatType.MAX_MANA, 20)
                 // Grace stack - binary state (ON/OFF), lost on damage
                 .passiveStack("grace", PassiveStackDef.create("Grace")
                         .maxStacks(1)
@@ -112,9 +114,12 @@ public class HighPriestOrigin {
                 .passiveStack("grace_cooldown", PassiveStackDef.create("Grace Recovery")
                         .maxStacks(600)
                         .build())
-                .passiveSkill("Grace of the Seraphim", "Gain scaling Cast Speed and Healing Potency. Overheal grants Absorption. Lost upon taking damage.")
+                .passiveSkill("Grace of the Seraphim",
+                        "Gain scaling Cast Speed and Healing Potency. Overheal grants Absorption. Lost upon taking damage.")
                 .passiveSkill("Command", "Passively generates over time. Used to command Seraphic Echo strikes.")
-                .activeSkill("Seraphic Echo", "Command the Seraphim to strike your targeted enemy with holy magic.", ResourceLocation.fromNamespaceAndPath("complextalents", "textures/skill/highpriest/seraphic_echo.png"))
+                .activeSkill("Seraphic Echo", "Command the Seraphim to strike your targeted enemy with holy magic.",
+                        ResourceLocation.fromNamespaceAndPath("complextalents",
+                                "textures/skill/highpriest/seraphic_echo.png"))
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "seraphic_echo"))
                 // Custom HUD renderer
                 .renderer(new HighPriestRenderer())
@@ -182,19 +187,19 @@ public class HighPriestOrigin {
 
             // Award Clutch Savior XP
             double clutchXP = XPFormula.calculateHighPriestClutchSaviorXP(
-                effectiveHeal, target.getMaxHealth(), targetCurrentHealth);
+                    effectiveHeal, target.getMaxHealth(), targetCurrentHealth);
             ChunkPos chunkPos = new ChunkPos(player.blockPosition());
             double hpCriticality = targetCurrentHealth > 0 ? target.getMaxHealth() / targetCurrentHealth : 5.0;
             XPContext context = XPContext.builder()
-                .source(XPSource.HIGHPRIEST_SAVIOR)
-                .chunkPos(chunkPos)
-                .rawAmount(clutchXP)
-                .metadata("healAmount", effectiveHeal)
-                .metadata("targetMaxHP", target.getMaxHealth())
-                .metadata("targetCurrentHP", targetCurrentHealth)
-                .metadata("hpCriticality", Math.min(hpCriticality, 5.0))
-                .metadata("targetUUID", target.getUUID().toString())
-                .build();
+                    .source(XPSource.HIGHPRIEST_SAVIOR)
+                    .chunkPos(chunkPos)
+                    .rawAmount(clutchXP)
+                    .metadata("healAmount", effectiveHeal)
+                    .metadata("targetMaxHP", target.getMaxHealth())
+                    .metadata("targetCurrentHP", targetCurrentHealth)
+                    .metadata("hpCriticality", Math.min(hpCriticality, 5.0))
+                    .metadata("targetUUID", target.getUUID().toString())
+                    .build();
             LevelingService.getInstance().awardXP(player, clutchXP, XPSource.HIGHPRIEST_SAVIOR, context);
         }
     }

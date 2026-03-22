@@ -245,7 +245,7 @@ public class WeaponMasteryData implements IWeaponMasteryData {
             }
         }
         
-        if (!player.level().isClientSide) {
+        if (player != null && !player.level().isClientSide) {
             applyStatRewards();
         }
     }

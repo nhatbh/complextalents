@@ -4,9 +4,11 @@ import com.complextalents.origin.client.OriginRenderer;
 import com.complextalents.passive.PassiveStackDef;
 import com.complextalents.passive.PassiveStackRegistry;
 import com.complextalents.stats.ScaledStat;
+import com.complextalents.stats.StatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -35,6 +37,7 @@ public class OriginBuilder {
     private ResourceType resourceType;
     private int maxLevel = 1;
     private final Map<String, ScaledStat> scaledStats = new HashMap<>();
+    private final Map<StatType, Integer> baseStats = new EnumMap<>(StatType.class);
     private final Map<String, PassiveStackDef> passiveStacks = new HashMap<>();
     private OriginRenderer renderer;
     private double[] scaledMaxResource = null;
@@ -165,6 +168,18 @@ public class OriginBuilder {
             throw new IllegalArgumentException("Scaled stat values must have at least one element");
         }
         this.scaledStats.put(key, new ScaledStat(displayName, values.clone()));
+        return this;
+    }
+
+    /**
+     * Add a base stat rank that is granted when selecting this origin.
+     *
+     * @param type The stat type
+     * @param rank The base rank to grant
+     * @return this builder
+     */
+    public OriginBuilder baseStat(StatType type, int rank) {
+        this.baseStats.put(type, rank);
         return this;
     }
 
@@ -330,6 +345,10 @@ public class OriginBuilder {
 
     Map<String, ScaledStat> getScaledStats() {
         return new HashMap<>(scaledStats);
+    }
+
+    Map<StatType, Integer> getBaseStats() {
+        return new EnumMap<>(baseStats);
     }
 
     Map<String, PassiveStackDef> getPassiveStacks() {

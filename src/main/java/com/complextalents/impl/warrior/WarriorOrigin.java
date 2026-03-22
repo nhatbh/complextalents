@@ -25,6 +25,8 @@ public class WarriorOrigin {
                         "Frontline juggernaut building Style (0-1000). Style ranks provide damage multipliers: D(0.7x), C(0.85x), B(1.0x), A(1.05-1.15x), S(1.08-1.30x), SS(1.09-1.40x), SSS(1.1-1.5x by level). At SSS, gain one-time shield that negates single hit; breaking resets Style. Shield breaks reset at 250-900 points by level.")
                 .resourceType(styleType)
                 .maxLevel(5)
+                .baseStat(StatType.PERCENT_AD, 4)
+                .baseStat(StatType.MAX_HP, 2)
                 // Passive Skill: Vanguard's Momentum - Damage Scaling
                 .scaledStat("momentumDamage_D", new double[] { 0.7, 0.7, 0.7, 0.7, 0.7 })
                 .scaledStat("momentumDamage_C", new double[] { 0.85, 0.85, 0.85, 0.85, 0.85 })

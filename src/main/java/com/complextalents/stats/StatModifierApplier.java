@@ -9,6 +9,12 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import io.redspace.ironsspellbooks.api.magic.MagicData;
+import io.redspace.ironsspellbooks.network.ClientboundSyncMana;
+import io.redspace.ironsspellbooks.setup.Messages;
+import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
+import net.minecraft.server.level.ServerPlayer;
+
 import java.util.UUID;
 
 /**
@@ -60,8 +66,26 @@ public class StatModifierApplier {
                 updateModifier(player, Attributes.MAX_HEALTH, totalValue, AttributeModifier.Operation.ADDITION, uuid);
                 break;
             case MAX_MANA:
+                double oldMax = 0;
+                var attr = AttributeRegistry.MAX_MANA.get();
+                if (attr != null) {
+                    oldMax = player.getAttributeValue(attr);
+                }
+
                 updateModAttribute(player, "irons_spellbooks", "max_mana", totalValue,
                         AttributeModifier.Operation.ADDITION, uuid);
+
+                if (attr != null && player instanceof ServerPlayer serverPlayer) {
+                    double newMax = player.getAttributeValue(attr);
+                    if (newMax > oldMax) {
+                        try {
+                            MagicData magicData = MagicData.getPlayerMagicData(serverPlayer);
+                            magicData.setMana(magicData.getMana() + (float) (newMax - oldMax));
+                            Messages.sendToPlayer(new ClientboundSyncMana(magicData), serverPlayer);
+                        } catch (Exception ignored) {
+                        }
+                    }
+                }
                 break;
             case MOBILITY:
                 // +1.5% Movement Speed, +1% Jump Height per rank

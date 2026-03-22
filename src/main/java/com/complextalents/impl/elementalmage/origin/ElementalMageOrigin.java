@@ -23,12 +23,12 @@ public class ElementalMageOrigin {
 
     private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("complextalents",
             "elemental_mage");
-    
+
     // Level scaling arrays (index corresponds to level 1, 2, 3, 4, 5)
-    private static final double[] BASE_RES = {40.0, 50.0, 60.0, 70.0, 100.0};
-    private static final double[] MULT_RES = {60.0, 70.0, 80.0, 95.0, 120.0};
-    private static final double[] BASE_REGEN = {1.0, 1.2, 1.4, 1.6, 2.5}; // Per second
-    private static final double[] MULT_REGEN = {1.0, 1.1, 1.2, 1.4, 2.0}; // Per second per mastery point
+    private static final double[] BASE_RES = { 40.0, 50.0, 60.0, 70.0, 100.0 };
+    private static final double[] MULT_RES = { 60.0, 70.0, 80.0, 95.0, 120.0 };
+    private static final double[] BASE_REGEN = { 1.0, 1.2, 1.4, 1.6, 2.5 }; // Per second
+    private static final double[] MULT_REGEN = { 1.0, 1.1, 1.2, 1.4, 2.0 }; // Per second per mastery point
 
     /**
      * Register the Elemental Mage origin.
@@ -46,9 +46,12 @@ public class ElementalMageOrigin {
 
         OriginBuilder.create("complextalents", "elemental_mage")
                 .displayName("Elemental Mage")
-                .description(Component.literal("Evocation specialist building power through elemental damage. Generate echoes for mana restore: 10-40 base + (Mastery × 5-25) per echo/level. Resonance regen: 1.0-2.5 + (Mastery × 1.0-2.0)/sec. Combine elements (Fire+Ice=Melt, Water+Nature=Growth) for 25 Resonance/reaction. Massive spell hits (10+/30+/50+) trigger \"OP\" reactions."))
+                .description(Component.literal(
+                        "Evocation specialist building power through elemental damage. Generate echoes for mana restore: 10-40 base + (Mastery × 5-25) per echo/level. Resonance regen: 1.0-2.5 + (Mastery × 1.0-2.0)/sec. Combine elements (Fire+Ice=Melt, Water+Nature=Growth) for 25 Resonance/reaction. Massive spell hits (10+/30+/50+) trigger \"OP\" reactions."))
                 .resourceType(resonanceType)
                 .maxLevel(5) // Max level is now 5
+                .baseStat(StatType.AP, 2)
+                .baseStat(StatType.MAX_MANA, 4)
                 .scaledStat("base_resonance", "Base Resonance", BASE_RES)
                 .scaledStat("mastery_res_mult", "Mastery Res Mult", MULT_RES)
                 .scaledStat("base_regen", "Base Regen", BASE_REGEN)
@@ -56,10 +59,12 @@ public class ElementalMageOrigin {
                 .dynamicMaxResource((level, player) -> {
                     int idx = Math.min(Math.max(level - 1, 0), 4);
                     // Get latest elemental mastery value
-                    double mastery = com.complextalents.elemental.registry.ReactionRegistry.getInstance().calculateElementalMastery(player);
+                    double mastery = com.complextalents.elemental.registry.ReactionRegistry.getInstance()
+                            .calculateElementalMastery(player);
                     return BASE_RES[idx] + (MULT_RES[idx] * mastery);
                 })
-                .passiveSkill("Elemental Resonance", "Deal elemental damage to generate echoes and mastery-scaled regeneration.")
+                .passiveSkill("Elemental Resonance",
+                        "Deal elemental damage to generate echoes and mastery-scaled regeneration.")
                 .activeSkill("Harmonic Convergence", "Unleash stored resonance as a devastating blast.", null)
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "harmonic_convergence"))
                 .renderer(new com.complextalents.impl.elementalmage.client.ElementalMageRenderer())
@@ -105,27 +110,32 @@ public class ElementalMageOrigin {
     @SubscribeEvent
     public static void onPlayerTick(net.minecraftforge.event.TickEvent.PlayerTickEvent event) {
         // Only run on server, and only once per tick (Phase START or END, pick one)
-        if (event.side.isClient() || event.phase != net.minecraftforge.event.TickEvent.Phase.END) return;
-        
-        if (!(event.player instanceof ServerPlayer serverPlayer)) return;
+        if (event.side.isClient() || event.phase != net.minecraftforge.event.TickEvent.Phase.END)
+            return;
+
+        if (!(event.player instanceof ServerPlayer serverPlayer))
+            return;
 
         // Apply regeneration once per second (every 20 ticks)
         if (serverPlayer.level().getGameTime() % 20L == 0L) {
             if (isElementalMage(serverPlayer)) {
                 // Get player origin data capability
-                serverPlayer.getCapability(com.complextalents.origin.capability.OriginDataProvider.ORIGIN_DATA).ifPresent(data -> {
-                    int level = data.getOriginLevel();
-                    int idx = Math.min(Math.max(level - 1, 0), 4);
-                    
-                    double mastery = com.complextalents.elemental.registry.ReactionRegistry.getInstance().calculateElementalMastery(serverPlayer);
-                    double regenAmount = BASE_REGEN[idx] + (MULT_REGEN[idx] * mastery);
-                    
-                    data.modifyResource(regenAmount);
-                    
-                    // Force a sync to ensure dynamic max resource (based on mastery) is instantly updated 
-                    // on the client, even if current resource is already full and didn't change.
-                    data.sync();
-                });
+                serverPlayer.getCapability(com.complextalents.origin.capability.OriginDataProvider.ORIGIN_DATA)
+                        .ifPresent(data -> {
+                            int level = data.getOriginLevel();
+                            int idx = Math.min(Math.max(level - 1, 0), 4);
+
+                            double mastery = com.complextalents.elemental.registry.ReactionRegistry.getInstance()
+                                    .calculateElementalMastery(serverPlayer);
+                            double regenAmount = BASE_REGEN[idx] + (MULT_REGEN[idx] * mastery);
+
+                            data.modifyResource(regenAmount);
+
+                            // Force a sync to ensure dynamic max resource (based on mastery) is instantly
+                            // updated
+                            // on the client, even if current resource is already full and didn't change.
+                            data.sync();
+                        });
             }
         }
     }

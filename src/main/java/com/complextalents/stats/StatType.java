@@ -23,7 +23,7 @@ public enum StatType {
                     .getValue(ResourceLocation.fromNamespaceAndPath("attributeslib", "armor_pierce"))),
     LUCK_CRIT("Luck & Crit", 1.0, () -> Attributes.LUCK), // Multi-attribute: handled specifically
     MAX_HP("Max HP", 2.0, () -> Attributes.MAX_HEALTH),
-    MAX_MANA("Max Mana", 20.0,
+    MAX_MANA("Max Mana", 50.0,
             () -> ForgeRegistries.ATTRIBUTES
                     .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "max_mana"))),
     MOBILITY("Mobility", 1.0, () -> Attributes.MOVEMENT_SPEED), // Multi-attribute: handled specifically

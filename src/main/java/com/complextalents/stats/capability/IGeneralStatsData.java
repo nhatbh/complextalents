@@ -14,6 +14,10 @@ public interface IGeneralStatsData extends INBTSerializable<CompoundTag> {
     int getStatRank(StatType type);
     
     void setStatRank(StatType type, int rank);
+
+    int getOriginStatRank(StatType type);
+
+    void setOriginStatRank(StatType type, int rank);
     
     int getSkillPoints();
     
@@ -24,4 +28,6 @@ public interface IGeneralStatsData extends INBTSerializable<CompoundTag> {
     void sync();
     
     Map<StatType, Integer> getAllRanks();
+
+    Map<StatType, Integer> getAllOriginRanks();
 }

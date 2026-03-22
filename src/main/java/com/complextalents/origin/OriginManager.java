@@ -7,6 +7,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.Nullable;
+import io.redspace.ironsspellbooks.api.magic.MagicData;
+import io.redspace.ironsspellbooks.network.ClientboundSyncMana;
+import io.redspace.ironsspellbooks.setup.Messages;
+import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
 
 /**
  * Central API for origin operations.
@@ -46,6 +50,29 @@ public class OriginManager {
             }
             data.sync();
 
+            // Apply base stats from the new origin
+            Origin origin = OriginRegistry.getInstance().getOrigin(originId);
+            if (origin != null) {
+                player.getCapability(com.complextalents.stats.capability.GeneralStatsDataProvider.STATS_DATA).ifPresent(statsData -> {
+                    // Clear existing origin ranks first
+                    for (com.complextalents.stats.StatType type : com.complextalents.stats.StatType.values()) {
+                        statsData.setOriginStatRank(type, 0);
+                    }
+                    // Apply new origin ranks
+                    origin.getBaseStats().forEach((type, rank) -> statsData.setOriginStatRank(type, rank));
+                });
+            }
+
+            // Set mana to max after setting the origin base stats
+            try {
+                MagicData magicData = MagicData.getPlayerMagicData(player);
+                double maxMana = player.getAttributeValue(AttributeRegistry.MAX_MANA.get());
+                magicData.setMana((float) maxMana);
+                Messages.sendToPlayer(new ClientboundSyncMana(magicData), player);
+            } catch (Exception ignored) {
+                // Iron's Spellbooks not loaded or error
+            }
+
             // Fire origin change event
             OriginChangeEvent.ChangeType changeType = (oldOriginId == null)
                 ? OriginChangeEvent.ChangeType.SET
@@ -75,6 +102,13 @@ public class OriginManager {
 
             data.clear();
             data.sync();
+
+            // Clear base stats when origin is cleared
+            player.getCapability(com.complextalents.stats.capability.GeneralStatsDataProvider.STATS_DATA).ifPresent(statsData -> {
+                for (com.complextalents.stats.StatType type : com.complextalents.stats.StatType.values()) {
+                    statsData.setOriginStatRank(type, 0);
+                }
+            });
 
             // Fire origin change event
             MinecraftForge.EVENT_BUS.post(new OriginChangeEvent(

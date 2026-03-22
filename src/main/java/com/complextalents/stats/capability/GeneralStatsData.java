@@ -16,6 +16,7 @@ public class GeneralStatsData implements IGeneralStatsData {
 
     private Player player;
     private final Map<StatType, Integer> ranks = new EnumMap<>(StatType.class);
+    private final Map<StatType, Integer> originRanks = new EnumMap<>(StatType.class);
     private int skillPoints = 0;
 
     public GeneralStatsData() {
@@ -38,6 +39,20 @@ public class GeneralStatsData implements IGeneralStatsData {
     @Override
     public void setStatRank(StatType type, int rank) {
         ranks.put(type, rank);
+        if (player != null && !player.level().isClientSide) {
+            applyModifiers();
+            sync();
+        }
+    }
+
+    @Override
+    public int getOriginStatRank(StatType type) {
+        return originRanks.getOrDefault(type, 0);
+    }
+
+    @Override
+    public void setOriginStatRank(StatType type, int rank) {
+        originRanks.put(type, rank);
         if (player != null && !player.level().isClientSide) {
             applyModifiers();
             sync();
@@ -68,14 +83,24 @@ public class GeneralStatsData implements IGeneralStatsData {
     }
 
     @Override
+    public Map<StatType, Integer> getAllOriginRanks() {
+        return new EnumMap<>(originRanks);
+    }
+
+    @Override
     public void sync() {
         if (player instanceof ServerPlayer serverPlayer) {
-            com.complextalents.stats.network.StatsDataSyncPacket.send(serverPlayer, ranks);
+            com.complextalents.stats.network.StatsDataSyncPacket.send(serverPlayer, ranks, originRanks);
         }
     }
 
     private void applyModifiers() {
-        StatModifierApplier.applyAll(player, ranks);
+        Map<StatType, Integer> totalRanks = new EnumMap<>(StatType.class);
+        for (StatType type : StatType.values()) {
+            int total = ranks.getOrDefault(type, 0) + originRanks.getOrDefault(type, 0);
+            totalRanks.put(type, total);
+        }
+        StatModifierApplier.applyAll(player, totalRanks);
     }
 
     @Override
@@ -88,6 +113,12 @@ public class GeneralStatsData implements IGeneralStatsData {
             ranksNbt.putInt(entry.getKey().name(), entry.getValue());
         }
         nbt.put("Ranks", ranksNbt);
+
+        CompoundTag originRanksNbt = new CompoundTag();
+        for (Map.Entry<StatType, Integer> entry : originRanks.entrySet()) {
+            originRanksNbt.putInt(entry.getKey().name(), entry.getValue());
+        }
+        nbt.put("OriginRanks", originRanksNbt);
         
         return nbt;
     }
@@ -101,6 +132,14 @@ public class GeneralStatsData implements IGeneralStatsData {
         for (StatType type : StatType.values()) {
             if (ranksNbt.contains(type.name())) {
                 this.ranks.put(type, ranksNbt.getInt(type.name()));
+            }
+        }
+
+        this.originRanks.clear();
+        CompoundTag originRanksNbt = nbt.getCompound("OriginRanks");
+        for (StatType type : StatType.values()) {
+            if (originRanksNbt.contains(type.name())) {
+                this.originRanks.put(type, originRanksNbt.getInt(type.name()));
             }
         }
 

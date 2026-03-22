@@ -32,6 +32,8 @@ public class AssassinOrigin {
                 .description(net.minecraft.network.chat.Component.literal(
                         "Stealth-based burst damage dealer. Expose Weakness (30%/40%/50%/60%/80% amp, 8-16s duration, 45-25s cooldown) amplifies target damage. The Disengage grants 30%/45%/60%/75%/100% move speed (1.5-2.5s) after stealth attacks. Recovery slowed by half outside stealth."))
                 .maxLevel(5)
+                .baseStat(StatType.FLAT_AD, 4)
+                .baseStat(StatType.MOBILITY, 2)
                 .renderer(new AssassinRenderer())
                 // Passive: Expose Weakness
                 .scaledStat("exposeDamageAmp", new double[] { 0.30, 0.40, 0.50, 0.60, 0.80 })

@@ -3,6 +3,7 @@ package com.complextalents.origin;
 import com.complextalents.origin.client.OriginRenderer;
 import com.complextalents.passive.PassiveStackDef;
 import com.complextalents.stats.ScaledStat;
+import com.complextalents.stats.StatType;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -24,6 +25,7 @@ public class BuiltOrigin implements Origin {
     private final ResourceType resourceType;
     private final int maxLevel;
     private final Map<String, ScaledStat> scaledStats;
+    private final Map<StatType, Integer> baseStats;
     private final Map<String, PassiveStackDef> passiveStacks;
     private final OriginRenderer renderer;
     private final double[] scaledMaxResource;
@@ -41,6 +43,7 @@ public class BuiltOrigin implements Origin {
         this.resourceType = builder.getResourceType();
         this.maxLevel = builder.getMaxLevel();
         this.scaledStats = builder.getScaledStats();
+        this.baseStats = builder.getBaseStats();
         this.passiveStacks = builder.getPassiveStacks();
         this.renderer = builder.getRenderer();
         this.scaledMaxResource = builder.getScaledMaxResource();
@@ -82,6 +85,11 @@ public class BuiltOrigin implements Origin {
     @Override
     public Map<String, ScaledStat> getScaledStats() {
         return scaledStats;
+    }
+
+    @Override
+    public Map<StatType, Integer> getBaseStats() {
+        return baseStats;
     }
 
     @Override

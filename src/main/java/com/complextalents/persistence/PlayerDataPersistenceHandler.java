@@ -25,7 +25,9 @@ import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Handles persistence of player capability data using global SavedData.
@@ -34,6 +36,12 @@ import java.util.UUID;
 public class PlayerDataPersistenceHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PlayerDataPersistenceHandler.class);
+
+    /**
+     * Players whose origin-specific data (Souls, Elemental stats, Faith) needs to be synced to the client.
+     * The value is the number of ticks remaining to retry the sync until their origin capability is ready.
+     */
+    private static final Map<UUID, Integer> PENDING_DATA_SYNC = new ConcurrentHashMap<>();
 
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
@@ -87,6 +95,34 @@ public class PlayerDataPersistenceHandler {
 
         player.getCapability(OriginDataProvider.ORIGIN_DATA).ifPresent(com.complextalents.origin.capability.IPlayerOriginData::tick);
         player.getCapability(SkillDataProvider.SKILL_DATA).ifPresent(com.complextalents.skill.capability.IPlayerSkillData::tick);
+
+        // Deliver deferred origin data sync — retry for up to 100 ticks (5 seconds) until origin data is ready.
+        UUID playerId = player.getUUID();
+        if (PENDING_DATA_SYNC.containsKey(playerId)) {
+            int remaining = PENDING_DATA_SYNC.get(playerId);
+            boolean synced = false;
+            
+            if (DarkMageOrigin.isDarkMage(player)) {
+                SoulData.syncToClient(player);
+                synced = true;
+            } else if (ElementalMageOrigin.isElementalMage(player)) {
+                ElementalMageData.applyAttributeModifiers(player);
+                ElementalMageData.syncToClient(player);
+                synced = true;
+            } else if (HighPriestOrigin.isHighPriest(player)) {
+                FaithData.syncToClient(player);
+                synced = true;
+            }
+
+            if (synced) {
+                PENDING_DATA_SYNC.remove(playerId);
+                LOGGER.info("[DATA SYNC] Delivered deferred class data sync for {} ({} ticks after login)", player.getScoreboardName(), 100 - remaining);
+            } else if (remaining <= 0) {
+                PENDING_DATA_SYNC.remove(playerId);
+            } else {
+                PENDING_DATA_SYNC.put(playerId, remaining - 1);
+            }
+        }
     }
 
     @SubscribeEvent
@@ -126,25 +162,12 @@ public class PlayerDataPersistenceHandler {
         UUID playerId = player.getUUID();
         PlayerPersistentData persistentData = PlayerPersistentData.get(player.getServer());
 
-        if (DarkMageOrigin.isDarkMage(player)) {
-            CompoundTag soulTag = persistentData.getDarkMageData(playerId);
-            if (soulTag != null) {
-                SoulData.deserializeNBT(player, soulTag);
-                TalentsMod.LOGGER.info("[SOUL PERSIST] Deserialized {} souls for player {}", 
-                    soulTag.getDouble("souls"), playerId);
-            }
-        }
+        // Origin-specific data (Soul, Elemental, Faith) is now persisted automatically 
+        // as live objects in PlayerPersistentData. Queue a deferred sync with a 100-tick retry window.
+        PENDING_DATA_SYNC.put(player.getUUID(), 100);
 
         if (ElementalMageOrigin.isElementalMage(player)) {
-            CompoundTag elementalTag = persistentData.getElementalMageData(playerId);
-            if (elementalTag != null) ElementalMageData.deserializeNBT(playerId, elementalTag);
             ElementalMageData.applyAttributeModifiers(player);
-            ElementalMageData.syncToClient(player);
-        }
-
-        if (HighPriestOrigin.isHighPriest(player)) {
-            CompoundTag faithTag = persistentData.getFaithData(playerId);
-            if (faithTag != null) FaithData.deserializeNBT(player, faithTag);
         }
 
         // Generic skill-specific persistence
@@ -165,16 +188,8 @@ public class PlayerDataPersistenceHandler {
         UUID playerId = player.getUUID();
         PlayerPersistentData persistentData = PlayerPersistentData.get(player.getServer());
 
-        // Origin-specific data persistence
-        if (DarkMageOrigin.isDarkMage(player)) {
-            persistentData.saveDarkMageData(playerId, SoulData.serializeNBT(player));
-        }
-        if (ElementalMageOrigin.isElementalMage(player)) {
-            persistentData.saveElementalMageData(playerId, ElementalMageData.serializeNBT(playerId));
-        }
-        if (HighPriestOrigin.isHighPriest(player)) {
-            persistentData.saveFaithData(playerId, FaithData.serializeNBT(player));
-        }
+        // Soul, Elemental, and Faith data are now persisted automatically as live objects
+        // in PlayerPersistentData — no manual snapshot needed here.
         
         // Generic skill-specific persistence
         player.getCapability(com.complextalents.skill.capability.SkillDataProvider.SKILL_DATA).ifPresent(skillCap -> {
