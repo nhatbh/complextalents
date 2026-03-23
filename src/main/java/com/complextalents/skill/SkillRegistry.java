@@ -82,7 +82,6 @@ public class SkillRegistry {
             skillsById.put(skill.getId(), skill);
             skillsByNature.get(skill.getNature()).add(skill);
 
-            TalentsMod.LOGGER.debug("Registered skill: {}", skill.getId());
         }
     }
 
@@ -104,7 +103,6 @@ public class SkillRegistry {
             skillsById.put(skill.getId(), skill);
             skillsByNature.get(skill.getNature()).add(skill);
 
-            TalentsMod.LOGGER.debug("Registered/replaced skill: {}", skill.getId());
         }
     }
 
@@ -184,7 +182,6 @@ public class SkillRegistry {
             Skill removed = skillsById.remove(skillId);
             if (removed != null) {
                 skillsByNature.get(removed.getNature()).remove(removed);
-                TalentsMod.LOGGER.debug("Unregistered skill: {}", skillId);
             }
             return removed;
         }

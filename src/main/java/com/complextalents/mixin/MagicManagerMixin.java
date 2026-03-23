@@ -2,8 +2,8 @@ package com.complextalents.mixin;
 
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.capabilities.magic.MagicManager;
-import io.redspace.ironsspellbooks.network.ClientboundSyncMana;
-import io.redspace.ironsspellbooks.setup.Messages;
+import io.redspace.ironsspellbooks.network.SyncManaPacket;
+import io.redspace.ironsspellbooks.setup.PacketDistributor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -64,7 +64,7 @@ public abstract class MagicManagerMixin {
                     MagicData magicData = MagicData.getPlayerMagicData(serverPlayer);
                     float maxMana = (float) serverPlayer.getAttributeValue(MAX_MANA.get());
                     magicData.setMana(maxMana);
-                    Messages.sendToPlayer(new ClientboundSyncMana(magicData), serverPlayer);
+                    PacketDistributor.sendToPlayer(serverPlayer, new SyncManaPacket(magicData));
                 });
             }
         }
@@ -80,7 +80,7 @@ public abstract class MagicManagerMixin {
                     if (currentMana < maxMana) {
                         float increment = maxMana * 0.025f;
                         magicData.setMana(Mth.clamp(currentMana + increment, 0, maxMana));
-                        Messages.sendToPlayer(new ClientboundSyncMana(magicData), serverPlayer);
+                        PacketDistributor.sendToPlayer(serverPlayer, new SyncManaPacket(magicData));
                     }
                 });
             }

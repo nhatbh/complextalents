@@ -60,11 +60,6 @@ public class OPTargetSelector {
     }
 
     private static void triggerWinner(OPContext context) {
-        // Debug message for detection
-        context.getAttacker().sendSystemMessage(net.minecraft.network.chat.Component.literal(
-            String.format("\u00A78[OP Debug] Winner Selected: %.1f on %s", 
-            context.getRawDamage(), context.getTarget().getName().getString())
-        ));
 
         OverwhelmingPowerRegistry.getInstance().trigger(context);
     }

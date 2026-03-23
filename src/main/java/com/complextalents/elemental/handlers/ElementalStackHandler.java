@@ -68,7 +68,6 @@ public class ElementalStackHandler {
 
         // Check if pre-event was canceled
         if (preEvent.isCanceled()) {
-            TalentsMod.LOGGER.debug("Element stack application canceled by pre-event handler for entity {}", target.getUUID());
             return;
         }
 
@@ -84,7 +83,6 @@ public class ElementalStackHandler {
                 ElementStack newStack = new ElementStack(element, target, source);
                 elements.put(element, newStack);
 
-                TalentsMod.LOGGER.debug("Refreshed {} stack on {}", element, target.getName().getString());
 
                 // Spawn particle effects for stack refresh
                 if (target.level() instanceof ServerLevel) {
@@ -102,12 +100,9 @@ public class ElementalStackHandler {
             ElementStackAppliedEvent stackEvent = new ElementStackAppliedEvent(target, source, element, stackCount);
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(stackEvent);
 
-            TalentsMod.LOGGER.info("AFTER_REACTION_CHECK: Element {} applied to {} (UUID: {}). Remaining stacks: {}",
-                element, target.getName().getString(), targetId, elements.keySet());
 
             // Check if event was canceled
             if (stackEvent.isCanceled()) {
-                TalentsMod.LOGGER.debug("Element stack application canceled by event handler for entity {}", targetId);
                 return;
             }
 
@@ -115,8 +110,6 @@ public class ElementalStackHandler {
             ElementStack stack = new ElementStack(element, target, source);
             elements.put(element, stack);
 
-            TalentsMod.LOGGER.info("BEFORE_REACTION_CHECK: Applied {} stack to {} (UUID: {}). Current stacks: {}",
-                element, target.getName().getString(), targetId, elements.keySet());
 
             // Spawn particle effects for stack application
             if (target.level() instanceof ServerLevel) {
@@ -125,21 +118,12 @@ public class ElementalStackHandler {
                 PacketHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), packet);
             }
 
-            TalentsMod.LOGGER.debug("Applied {} stack to {}", element, target.getName().getString());
 
             // Trigger Overwhelming Power logic
             if (source instanceof ServerPlayer serverPlayer) {
-                serverPlayer.sendSystemMessage(net.minecraft.network.chat.Component.literal(
-                    String.format("\u00A78[OP Debug] Elemental Hit Detected: %s on %s, Damage=%.1f", 
-                    element, target.getName().getString(), event.getDamage())
-                ));
                 OPElementType opType = OPElementType.fromBaseType(element);
                 if (opType != null) {
                     OPTargetSelector.buffer(new OPContext(target, serverPlayer, opType, event.getDamage()));
-                } else {
-                    serverPlayer.sendSystemMessage(net.minecraft.network.chat.Component.literal(
-                        "\u00A78[OP Debug] Failed to map element to OPElementType: " + element
-                    ));
                 }
             }
 
@@ -212,7 +196,6 @@ public class ElementalStackHandler {
         // But we can optionally remove them immediately here for faster cleanup
         ElementalStackTracker.removeEntityStacks(entityId);
 
-        TalentsMod.LOGGER.debug("Cleaned up elemental stacks for dead entity: {}", entity.getName().getString());
     }
 
     /**
@@ -232,7 +215,6 @@ public class ElementalStackHandler {
             // Notify reaction handler
             ElementalReactionHandler.onPlayerLogout(playerId);
 
-            TalentsMod.LOGGER.debug("Cleaned up tracker for disconnected player: {}", player.getName().getString());
         }
     }
 

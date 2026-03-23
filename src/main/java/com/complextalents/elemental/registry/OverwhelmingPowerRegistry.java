@@ -55,8 +55,6 @@ public class OverwhelmingPowerRegistry {
         Player player = context.getAttacker();
 
         if (!OPCooldownTracker.canTrigger(player, context.getElement())) {
-            player.sendSystemMessage(Component.literal(
-                    "\u00A78[OP Debug] Trigger blocked by NBT Cooldown."));
             return;
         }
 
@@ -72,9 +70,9 @@ public class OverwhelmingPowerRegistry {
 
     public static int getThreshold(int tier) {
         return switch (tier) {
-            case 3 -> 50;
-            case 2 -> 30;
-            case 1 -> 10;
+            case 3 -> 10000;
+            case 2 -> 1000;
+            case 1 -> 100;
             default -> 0;
         };
     }

@@ -17,8 +17,8 @@ import com.complextalents.passive.PassiveStackDef;
 import com.complextalents.passive.events.PassiveStackChangeEvent;
 import com.complextalents.util.UUIDHelper;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
-import io.redspace.ironsspellbooks.network.ClientboundSyncMana;
-import io.redspace.ironsspellbooks.setup.Messages;
+import io.redspace.ironsspellbooks.network.SyncManaPacket;
+import io.redspace.ironsspellbooks.setup.PacketDistributor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -344,7 +344,7 @@ public class HighPriestOrigin {
                 // Sync mana to client after max mana changes
                 try {
                     MagicData magicData = MagicData.getPlayerMagicData(player);
-                    Messages.sendToPlayer(new ClientboundSyncMana(magicData), player);
+                    PacketDistributor.sendToPlayer(player, new SyncManaPacket(magicData));
                 } catch (Exception e) {
                     // Iron's Spellbooks not loaded or error
                 }

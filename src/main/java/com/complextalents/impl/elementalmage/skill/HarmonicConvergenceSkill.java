@@ -7,8 +7,8 @@ import com.complextalents.skill.SkillBuilder;
 import com.complextalents.skill.SkillNature;
 import com.complextalents.targeting.TargetType;
 
-import io.redspace.ironsspellbooks.network.ClientboundSyncMana;
-import io.redspace.ironsspellbooks.setup.Messages;
+import io.redspace.ironsspellbooks.network.SyncManaPacket;
+import io.redspace.ironsspellbooks.setup.PacketDistributor;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -33,7 +33,8 @@ public class HarmonicConvergenceSkill {
         SkillBuilder.create("complextalents", "harmonic_convergence")
                 .nature(SkillNature.ACTIVE)
                 .displayName("Harmonic Convergence")
-                .description("Consume 1+ echoes to restore 10-40 + (Mastery × 5-25) mana/echo and grant +10-20% crit/echo. Crit damage: +25-50% base + (Mastery × 15-40%). Next spell guaranteed crit within 10s. 10s cooldown.")
+                .description(
+                        "Consume 1+ echoes to restore 10-40 + (Mastery × 5-25) mana/echo and grant +10-20% crit/echo. Crit damage: +25-50% base + (Mastery × 15-40%). Next spell guaranteed crit within 10s. 10s cooldown.")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/elementalmage/harmonic_convergence.png"))
@@ -84,7 +85,7 @@ public class HarmonicConvergenceSkill {
                                         .get());
                         magicData.setMana((float) Math.min(maxMana,
                                 magicData.getMana() + manaRestored));
-                        Messages.sendToPlayer(new ClientboundSyncMana(magicData), serverPlayer);
+                        PacketDistributor.sendToPlayer(serverPlayer, new SyncManaPacket(magicData));
                     } catch (Exception e) {
                         // Iron's Spellbooks not loaded or error
                     }

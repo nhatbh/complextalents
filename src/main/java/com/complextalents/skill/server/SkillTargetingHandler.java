@@ -46,38 +46,30 @@ public class SkillTargetingHandler {
     public static void handleSkillCast(ServerPlayer player, ResourceLocation skillId,
                                         int slotIndex, TargetingSnapshot snapshot, double channelTime) {
 
-        player.sendSystemMessage(Component.literal("§7[DEBUG] §f=== SKILL CAST START ==="));
-        player.sendSystemMessage(Component.literal("§7[DEBUG] §eSkill: " + skillId + " | Channel: " + String.format("%.3f", channelTime) + "s"));
 
         // Get skill nature and targeting type (placeholder - integrate with your skill registry)
         SkillNature nature = getSkillNature(skillId);
         TargetType targetingType = getTargetingType(skillId);
 
-        player.sendSystemMessage(Component.literal("§7[DEBUG] §9Nature: " + nature + " | TargetingType: " + targetingType));
 
         // Passives shouldn't send cast packets
         if (nature == SkillNature.PASSIVE) {
-            player.sendSystemMessage(Component.literal("§c[DEBUG] Passive skill - ignoring cast attempt"));
             return;
         }
 
         // Stage 1: Cast Request Event
         // Used for: cooldowns, resource checks, silence/stun, permissions
-        player.sendSystemMessage(Component.literal("§7[DEBUG] §6Stage 1: SkillCastRequestEvent"));
         SkillCastRequestEvent requestEvent = new SkillCastRequestEvent(player, skillId, slotIndex);
         MinecraftForge.EVENT_BUS.post(requestEvent);
 
         if (requestEvent.isCanceled()) {
             // Cast failed at request stage (cooldown, no resources, etc.)
-            player.sendSystemMessage(Component.literal("§c[DEBUG] Cast CANCELED at request stage: " + requestEvent.getFailureReason()));
             sendCastFailure(player, skillId, requestEvent.getFailureReason());
             return;
         }
-        player.sendSystemMessage(Component.literal("§7[DEBUG] §aRequest stage PASSED"));
 
         // Check if this is a form skill
         if (SkillFormRegistry.getInstance().isFormSkill(skillId)) {
-            player.sendSystemMessage(Component.literal("§7[DEBUG] §dForm skill detected - handling form activation"));
             IPlayerSkillData data = player.getCapability(SkillDataProvider.SKILL_DATA).orElse(null);
             if (data != null) {
                 // Create a self-targeted data for form skills (they don't need targeting)
@@ -113,7 +105,6 @@ public class SkillTargetingHandler {
 
         // Stage 2: Target Resolution Event
         // Normalizes targeting data into guaranteed-valid form
-        player.sendSystemMessage(Component.literal("§7[DEBUG] §6Stage 2: TargetResolutionEvent"));
         TargetResolutionEvent resolutionEvent = new TargetResolutionEvent(
                 player,
                 skillId,
@@ -125,21 +116,15 @@ public class SkillTargetingHandler {
         // Get resolved target data
         ResolvedTargetData targetData = resolutionEvent.getResolvedTarget();
 
-        player.sendSystemMessage(Component.literal("§7[DEBUG] §aResolved Target: " +
-                (targetData.isSelfTarget() ? "SELF" : (targetData.hasEntity() ? targetData.getTargetEntity().getName().getString() : "NONE")) +
-                " | Ally: " + targetData.isAlly() +
-                " | Dist: " + String.format("%.1f", targetData.getDistance())));
 
         // Validate: ENTITY-targeted skills must have an entity target
         if (targetingType == TargetType.ENTITY && !targetData.hasEntity()) {
-            player.sendSystemMessage(Component.literal("§c[DEBUG] Cast CANCELED: No entity target for ENTITY-targeted skill"));
             sendCastFailure(player, skillId, "No target");
             return;
         }
 
         // Stage 3: Pre-Execute Event
         // Final validation gate: ally protection, area restrictions, conditional failures
-        player.sendSystemMessage(Component.literal("§7[DEBUG] §6Stage 3: SkillPreExecuteEvent"));
         SkillPreExecuteEvent preEvent = new SkillPreExecuteEvent(
                 player,
                 skillId,
@@ -149,15 +134,12 @@ public class SkillTargetingHandler {
 
         if (preEvent.isCanceled()) {
             // Cast failed at pre-execution stage
-            player.sendSystemMessage(Component.literal("§c[DEBUG] Cast CANCELED at pre-execute stage: " + preEvent.getFailureReason()));
             sendCastFailure(player, skillId, preEvent.getFailureReason());
             return;
         }
-        player.sendSystemMessage(Component.literal("§7[DEBUG] §aPre-execute stage PASSED"));
 
         // Stage 4: Execute Event
         // Core execution - skills listen for this event
-        player.sendSystemMessage(Component.literal("§7[DEBUG] §6Stage 4: SkillExecuteEvent"));
         SkillExecuteEvent executeEvent = new SkillExecuteEvent(
                 player,
                 skillId,
@@ -166,15 +148,9 @@ public class SkillTargetingHandler {
         );
         MinecraftForge.EVENT_BUS.post(executeEvent);
 
-        if (executeEvent.isCanceled()) {
-            player.sendSystemMessage(Component.literal("§c[DEBUG] Execution was CANCELED"));
-        } else {
-            player.sendSystemMessage(Component.literal("§7[DEBUG] §aExecution completed"));
-        }
 
         // Stage 5: Post-Execute Event
         // After-effects: cooldowns, resource consumption, passive triggers
-        player.sendSystemMessage(Component.literal("§7[DEBUG] §6Stage 5: SkillPostExecuteEvent"));
         SkillPostExecuteEvent postEvent = new SkillPostExecuteEvent(
                 player,
                 skillId,
@@ -183,7 +159,6 @@ public class SkillTargetingHandler {
         );
         MinecraftForge.EVENT_BUS.post(postEvent);
 
-        player.sendSystemMessage(Component.literal("§7[DEBUG] §f=== SKILL CAST END ==="));
     }
 
     /**

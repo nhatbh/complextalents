@@ -8,20 +8,21 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.Nullable;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
-import io.redspace.ironsspellbooks.network.ClientboundSyncMana;
-import io.redspace.ironsspellbooks.setup.Messages;
 import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
+import io.redspace.ironsspellbooks.network.SyncManaPacket;
+import io.redspace.ironsspellbooks.setup.PacketDistributor;
 
 /**
  * Central API for origin operations.
  * Mirrors SkillFormManager pattern.
  * <p>
  * All origin operations go through this class.
- * Passive stack operations are now handled by {@link com.complextalents.passive.PassiveManager}.
+ * Passive stack operations are now handled by
+ * {@link com.complextalents.passive.PassiveManager}.
  * </p>
  */
 public class OriginManager {
- 
+
     /**
      * Get the raw origin data capability for a player.
      */
@@ -53,14 +54,15 @@ public class OriginManager {
             // Apply base stats from the new origin
             Origin origin = OriginRegistry.getInstance().getOrigin(originId);
             if (origin != null) {
-                player.getCapability(com.complextalents.stats.capability.GeneralStatsDataProvider.STATS_DATA).ifPresent(statsData -> {
-                    // Clear existing origin ranks first
-                    for (com.complextalents.stats.StatType type : com.complextalents.stats.StatType.values()) {
-                        statsData.setOriginStatRank(type, 0);
-                    }
-                    // Apply new origin ranks
-                    origin.getBaseStats().forEach((type, rank) -> statsData.setOriginStatRank(type, rank));
-                });
+                player.getCapability(com.complextalents.stats.capability.GeneralStatsDataProvider.STATS_DATA)
+                        .ifPresent(statsData -> {
+                            // Clear existing origin ranks first
+                            for (com.complextalents.stats.StatType type : com.complextalents.stats.StatType.values()) {
+                                statsData.setOriginStatRank(type, 0);
+                            }
+                            // Apply new origin ranks
+                            origin.getBaseStats().forEach((type, rank) -> statsData.setOriginStatRank(type, rank));
+                        });
             }
 
             // Set mana to max after setting the origin base stats
@@ -68,15 +70,15 @@ public class OriginManager {
                 MagicData magicData = MagicData.getPlayerMagicData(player);
                 double maxMana = player.getAttributeValue(AttributeRegistry.MAX_MANA.get());
                 magicData.setMana((float) maxMana);
-                Messages.sendToPlayer(new ClientboundSyncMana(magicData), player);
+                PacketDistributor.sendToPlayer(player, new SyncManaPacket(magicData));
             } catch (Exception ignored) {
                 // Iron's Spellbooks not loaded or error
             }
 
             // Fire origin change event
             OriginChangeEvent.ChangeType changeType = (oldOriginId == null)
-                ? OriginChangeEvent.ChangeType.SET
-                : OriginChangeEvent.ChangeType.SET;
+                    ? OriginChangeEvent.ChangeType.SET
+                    : OriginChangeEvent.ChangeType.SET;
             MinecraftForge.EVENT_BUS.post(new OriginChangeEvent(player, originId, oldLevel, newLevel, changeType));
         });
     }
@@ -104,15 +106,16 @@ public class OriginManager {
             data.sync();
 
             // Clear base stats when origin is cleared
-            player.getCapability(com.complextalents.stats.capability.GeneralStatsDataProvider.STATS_DATA).ifPresent(statsData -> {
-                for (com.complextalents.stats.StatType type : com.complextalents.stats.StatType.values()) {
-                    statsData.setOriginStatRank(type, 0);
-                }
-            });
+            player.getCapability(com.complextalents.stats.capability.GeneralStatsDataProvider.STATS_DATA)
+                    .ifPresent(statsData -> {
+                        for (com.complextalents.stats.StatType type : com.complextalents.stats.StatType.values()) {
+                            statsData.setOriginStatRank(type, 0);
+                        }
+                    });
 
             // Fire origin change event
             MinecraftForge.EVENT_BUS.post(new OriginChangeEvent(
-                player, null, oldLevel, 0, OriginChangeEvent.ChangeType.CLEAR));
+                    player, null, oldLevel, 0, OriginChangeEvent.ChangeType.CLEAR));
         });
     }
 
@@ -187,7 +190,7 @@ public class OriginManager {
             if (oldLevel != newLevel) {
                 ResourceLocation originId = data.getActiveOrigin();
                 MinecraftForge.EVENT_BUS.post(new OriginChangeEvent(
-                    player, originId, oldLevel, newLevel, OriginChangeEvent.ChangeType.LEVEL_CHANGE));
+                        player, originId, oldLevel, newLevel, OriginChangeEvent.ChangeType.LEVEL_CHANGE));
             }
         });
     }
@@ -207,7 +210,8 @@ public class OriginManager {
      * Get the resource type for a player's active origin.
      *
      * @param player The player
-     * @return The resource type, or null if the player has no origin or the origin has no resource
+     * @return The resource type, or null if the player has no origin or the origin
+     *         has no resource
      */
     @Nullable
     public static ResourceType getResourceType(ServerPlayer player) {
@@ -300,16 +304,17 @@ public class OriginManager {
         return origin.getScaledStat(statName, level);
     }
 
-
     // ========== Passive Stacks API (removed - use PassiveManager) ==========
 
     /**
-     * Get passive stacks - use {@link com.complextalents.passive.PassiveManager#getPassiveStacks}
+     * Get passive stacks - use
+     * {@link com.complextalents.passive.PassiveManager#getPassiveStacks}
      *
-     * @param player       The player
+     * @param player        The player
      * @param stackTypeName The stack type name
      * @return The current stack count
-     * @deprecated Use {@link com.complextalents.passive.PassiveManager#getPassiveStacks}
+     * @deprecated Use
+     *             {@link com.complextalents.passive.PassiveManager#getPassiveStacks}
      */
     @Deprecated
     public static int getPassiveStacks(ServerPlayer player, String stackTypeName) {
@@ -317,13 +322,15 @@ public class OriginManager {
     }
 
     /**
-     * Check passive stacks - use {@link com.complextalents.passive.PassiveManager#hasPassiveStacks}
+     * Check passive stacks - use
+     * {@link com.complextalents.passive.PassiveManager#hasPassiveStacks}
      *
-     * @param player       The player
+     * @param player        The player
      * @param stackTypeName The stack type name
-     * @param threshold    The minimum stacks required
+     * @param threshold     The minimum stacks required
      * @return true if the player has at least the threshold
-     * @deprecated Use {@link com.complextalents.passive.PassiveManager#hasPassiveStacks}
+     * @deprecated Use
+     *             {@link com.complextalents.passive.PassiveManager#hasPassiveStacks}
      */
     @Deprecated
     public static boolean hasPassiveStacks(ServerPlayer player, String stackTypeName, int threshold) {
@@ -331,12 +338,14 @@ public class OriginManager {
     }
 
     /**
-     * Check max passive stacks - use {@link com.complextalents.passive.PassiveManager#isAtMaxPassiveStacks}
+     * Check max passive stacks - use
+     * {@link com.complextalents.passive.PassiveManager#isAtMaxPassiveStacks}
      *
-     * @param player       The player
+     * @param player        The player
      * @param stackTypeName The stack type name
      * @return true if at max stacks
-     * @deprecated Use {@link com.complextalents.passive.PassiveManager#isAtMaxPassiveStacks}
+     * @deprecated Use
+     *             {@link com.complextalents.passive.PassiveManager#isAtMaxPassiveStacks}
      */
     @Deprecated
     public static boolean isAtMaxPassiveStacks(ServerPlayer player, String stackTypeName) {
@@ -344,12 +353,14 @@ public class OriginManager {
     }
 
     /**
-     * Modify passive stacks - use {@link com.complextalents.passive.PassiveManager#modifyPassiveStacks}
+     * Modify passive stacks - use
+     * {@link com.complextalents.passive.PassiveManager#modifyPassiveStacks}
      *
-     * @param player       The player
+     * @param player        The player
      * @param stackTypeName The stack type name
-     * @param delta        The amount to add (can be negative)
-     * @deprecated Use {@link com.complextalents.passive.PassiveManager#modifyPassiveStacks}
+     * @param delta         The amount to add (can be negative)
+     * @deprecated Use
+     *             {@link com.complextalents.passive.PassiveManager#modifyPassiveStacks}
      */
     @Deprecated
     public static void modifyPassiveStacks(ServerPlayer player, String stackTypeName, int delta) {
@@ -357,12 +368,14 @@ public class OriginManager {
     }
 
     /**
-     * Set passive stacks - use {@link com.complextalents.passive.PassiveManager#setPassiveStacks}
+     * Set passive stacks - use
+     * {@link com.complextalents.passive.PassiveManager#setPassiveStacks}
      *
-     * @param player       The player
+     * @param player        The player
      * @param stackTypeName The stack type name
-     * @param count        The new stack count
-     * @deprecated Use {@link com.complextalents.passive.PassiveManager#setPassiveStacks}
+     * @param count         The new stack count
+     * @deprecated Use
+     *             {@link com.complextalents.passive.PassiveManager#setPassiveStacks}
      */
     @Deprecated
     public static void setPassiveStacks(ServerPlayer player, String stackTypeName, int count) {
@@ -370,10 +383,12 @@ public class OriginManager {
     }
 
     /**
-     * Reset passive stacks - use {@link com.complextalents.passive.PassiveManager#resetPassiveStacks}
+     * Reset passive stacks - use
+     * {@link com.complextalents.passive.PassiveManager#resetPassiveStacks}
      *
      * @param player The player
-     * @deprecated Use {@link com.complextalents.passive.PassiveManager#resetPassiveStacks}
+     * @deprecated Use
+     *             {@link com.complextalents.passive.PassiveManager#resetPassiveStacks}
      */
     @Deprecated
     public static void resetPassiveStacks(ServerPlayer player) {
@@ -388,7 +403,7 @@ public class OriginManager {
      */
     public static int getCostForNextLevel(int currentLevel) {
         return switch (currentLevel) {
-            case 0 -> 5;  // Initial selection is usually free or handled elsewhere
+            case 0 -> 5; // Initial selection is usually free or handled elsewhere
             case 1 -> 10;
             case 2 -> 15;
             case 3 -> 20;

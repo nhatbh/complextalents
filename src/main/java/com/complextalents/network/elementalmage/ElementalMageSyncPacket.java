@@ -1,6 +1,5 @@
 package com.complextalents.network.elementalmage;
 
-import com.complextalents.TalentsMod;
 import com.complextalents.elemental.ElementType;
 import com.complextalents.impl.elementalmage.ElementalMageData;
 import net.minecraft.network.FriendlyByteBuf;
@@ -48,10 +47,8 @@ public class ElementalMageSyncPacket {
             Player player = net.minecraft.client.Minecraft.getInstance().player;
             if (player == null) return;
             
-            // Log that we received the sync
+            // Update stats on the client version of ElementalMageData
             for (Map.Entry<ElementType, Float> entry : msg.stats.entrySet()) {
-                TalentsMod.LOGGER.debug("[CLIENT] ElementalMageSyncPacket updated {} to {}", entry.getKey(), entry.getValue());
-                // For now, we update it on the client version of ElementalMageData
                 ElementalMageData.setStat(player.getUUID(), entry.getKey(), entry.getValue());
             }
         });

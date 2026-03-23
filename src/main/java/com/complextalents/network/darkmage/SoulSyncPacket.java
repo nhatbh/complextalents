@@ -1,6 +1,5 @@
 package com.complextalents.network.darkmage;
 
-import com.complextalents.TalentsMod;
 import com.complextalents.impl.darkmage.client.ClientSoulData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
@@ -73,15 +72,13 @@ public class SoulSyncPacket {
         context.setPacketHandled(true);
     }
 
-    @OnlyIn(Dist.CLIENT)
+@OnlyIn(Dist.CLIENT)
     private void handleClient() {
         ClientSoulData.setSouls(souls);
         ClientSoulData.setBloodPactActive(bloodPactActive);
         ClientSoulData.setPhylacteryCooldown(phylacteryCooldownTicks, phylacteryTotalCooldownTicks);
         ClientSoulData.setBloodPactStats(spellPower, critChance, critDamage);
         ClientSoulData.setBloodPactMultipliers(drainMultiplier, soulMultiplier);
-        TalentsMod.LOGGER.debug("Received SoulSyncPacket: {} souls, bloodPactActive: {}, multipliers: {}/{}",
-                souls, bloodPactActive, drainMultiplier, soulMultiplier);
     }
 
     public double getSouls() {

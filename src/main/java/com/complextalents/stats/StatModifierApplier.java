@@ -10,9 +10,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import io.redspace.ironsspellbooks.api.magic.MagicData;
-import io.redspace.ironsspellbooks.network.ClientboundSyncMana;
-import io.redspace.ironsspellbooks.setup.Messages;
 import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
+import io.redspace.ironsspellbooks.network.SyncManaPacket;
+import io.redspace.ironsspellbooks.setup.PacketDistributor;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.UUID;
@@ -81,7 +81,7 @@ public class StatModifierApplier {
                         try {
                             MagicData magicData = MagicData.getPlayerMagicData(serverPlayer);
                             magicData.setMana(magicData.getMana() + (float) (newMax - oldMax));
-                            Messages.sendToPlayer(new ClientboundSyncMana(magicData), serverPlayer);
+                            PacketDistributor.sendToPlayer(serverPlayer, new SyncManaPacket(magicData));
                         } catch (Exception ignored) {
                         }
                     }

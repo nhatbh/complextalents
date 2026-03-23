@@ -10,9 +10,6 @@ import com.complextalents.elemental.strategies.reactions.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraftforge.common.MinecraftForge;
@@ -108,7 +105,6 @@ public class ReactionRegistry {
         // Get the strategy for this reaction
         IReactionStrategy strategy = getStrategy(reaction);
         if (strategy == null) {
-            TalentsMod.LOGGER.debug("No strategy registered for reaction: {}", reaction);
             return false;
         }
 
@@ -128,8 +124,6 @@ public class ReactionRegistry {
 
         // Check if the reaction can trigger
         if (!strategy.canTrigger(context)) {
-            TalentsMod.LOGGER.debug("Reaction {} cannot trigger for target {}",
-                reaction, target.getName().getString());
             return false;
         }
 
@@ -145,8 +139,6 @@ public class ReactionRegistry {
 
         // Check if event was canceled
         if (reactionEvent.isCanceled()) {
-            TalentsMod.LOGGER.debug("Reaction {} canceled by event handler for target {}",
-                reaction, target.getName().getString());
             return false;
         }
 
@@ -156,11 +148,7 @@ public class ReactionRegistry {
         // Execute the reaction
         strategy.execute(context);
 
-        // Send chat message with damage breakdown
-        sendDamageChatMessage(attacker, reaction, mastery, damageMultiplier, finalDamage, target);
 
-        TalentsMod.LOGGER.info("Executed {} reaction on {} by {}",
-            reaction, target.getName().getString(), attacker.getName().getString());
 
         return true;
     }
@@ -188,7 +176,6 @@ public class ReactionRegistry {
             // Update sorted list
             updateSortedStrategies();
 
-            TalentsMod.LOGGER.debug("Registered reaction strategy: {}", reaction);
         }
     }
 
@@ -209,7 +196,6 @@ public class ReactionRegistry {
             // Update sorted list
             updateSortedStrategies();
 
-            TalentsMod.LOGGER.debug("Registered/replaced reaction strategy: {}", reaction);
         }
     }
 
@@ -226,7 +212,6 @@ public class ReactionRegistry {
             if (removed != null) {
                 nameToReactionMap.remove(reaction.name().toLowerCase());
                 updateSortedStrategies();
-                TalentsMod.LOGGER.debug("Unregistered reaction strategy: {}", reaction);
             }
             return removed;
         }
@@ -444,47 +429,4 @@ public class ReactionRegistry {
         return totalMastery;
     }
 
-    /**
-     * Sends a chat message to the attacker with damage calculation details.
-     *
-     * @param attacker The player who triggered the reaction
-     * @param reaction The reaction type
-     * @param mastery The elemental mastery value
-     * @param multiplier The damage multiplier
-     * @param finalDamage The final calculated damage
-     * @param target The target entity
-     */
-    private void sendDamageChatMessage(ServerPlayer attacker, ElementalReaction reaction,
-                                       float mastery, float multiplier, float finalDamage,
-                                       LivingEntity target) {
-        Component message = Component.literal("")
-            .append(Component.literal("Elemental Reaction: ")
-                .setStyle(Style.EMPTY.withColor(TextColor.parseColor("#FF6B6B"))))
-            .append(Component.literal(reaction.name())
-                .setStyle(Style.EMPTY.withColor(TextColor.parseColor("#FFD93D")).withBold(true)))
-            .append(Component.literal("\n"))
-
-            .append(Component.literal("Mastery: ")
-                .setStyle(Style.EMPTY.withColor(TextColor.parseColor("#6BCB77"))))
-            .append(Component.literal(String.format("%.2f", mastery))
-                .setStyle(Style.EMPTY.withColor(TextColor.parseColor("#4D96FF"))))
-            .append(Component.literal(" | "))
-
-            .append(Component.literal("Multiplier: ")
-                .setStyle(Style.EMPTY.withColor(TextColor.parseColor("#6BCB77"))))
-            .append(Component.literal(String.format("%.2f", multiplier))
-                .setStyle(Style.EMPTY.withColor(TextColor.parseColor("#4D96FF"))))
-            .append(Component.literal("\n"))
-
-            .append(Component.literal("Final Damage: ")
-                .setStyle(Style.EMPTY.withColor(TextColor.parseColor("#FF6B6B"))))
-            .append(Component.literal(String.format("%.2f", finalDamage))
-                .setStyle(Style.EMPTY.withColor(TextColor.parseColor("#FF0000")).withBold(true)))
-            .append(Component.literal(" to "))
-
-            .append(Component.literal(target.getName().getString())
-                .setStyle(Style.EMPTY.withColor(TextColor.parseColor("#AAAAAA"))));
-
-        attacker.sendSystemMessage(message);
-    }
 }

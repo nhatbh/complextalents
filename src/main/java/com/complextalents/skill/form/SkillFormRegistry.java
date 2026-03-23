@@ -1,6 +1,5 @@
 package com.complextalents.skill.form;
 
-import com.complextalents.TalentsMod;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,7 +51,6 @@ public class SkillFormRegistry {
                 throw new IllegalArgumentException("Form skill " + definition.getFormSkillId() + " already registered");
             }
             formDefinitions.put(definition.getFormSkillId(), definition);
-            TalentsMod.LOGGER.debug("Registered skill form: {}", definition.getFormSkillId());
         }
     }
 

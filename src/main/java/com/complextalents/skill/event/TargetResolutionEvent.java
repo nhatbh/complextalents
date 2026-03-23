@@ -3,7 +3,6 @@ package com.complextalents.skill.event;
 import com.complextalents.targeting.TargetType;
 import com.complextalents.targeting.TargetingSnapshot;
 import com.complextalents.util.EntityValidationHelper;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -87,13 +86,9 @@ public class TargetResolutionEvent extends SkillEvent {
         Vec3 aimDirection = snapshot.getAimDirection();
         Vec3 targetPosition = snapshot.getTargetPosition();
 
-        // DEBUG: Log resolution start
-        player.sendSystemMessage(Component.literal("§7[DEBUG]   §eResolving: " + targetingType));
-
         return switch (targetingType) {
             case NONE -> {
                 // Targetless skills target the caster
-                player.sendSystemMessage(Component.literal("§7[DEBUG]   §7Rule: NONE → Target caster"));
                 yield new ResolvedTargetData(
                         player,
                         player,
@@ -116,13 +111,7 @@ public class TargetResolutionEvent extends SkillEvent {
                         targetEntity = hitEntity;
                         isAlly = snapshot.isAlly();
                         isSelfTarget = (hitEntity == player);
-                        player.sendSystemMessage(Component.literal("§7[DEBUG]   §aRule: " + targetingType + " → " +
-                                (isSelfTarget ? "SELF" : hitEntity.getName().getString())));
-                    } else {
-                        player.sendSystemMessage(Component.literal("§7[DEBUG]   §cRule: " + targetingType + " → Entity from snapshot no longer valid"));
                     }
-                } else {
-                    player.sendSystemMessage(Component.literal("§7[DEBUG]   §7Rule: " + targetingType + " → No entity"));
                 }
 
                 yield new ResolvedTargetData(

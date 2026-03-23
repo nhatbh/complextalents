@@ -3,7 +3,6 @@ package com.complextalents.skill.network;
 import com.complextalents.skill.server.SkillTargetingHandler;
 import com.complextalents.targeting.TargetingSnapshot;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
@@ -85,19 +84,6 @@ public class SkillCastPacket {
             if (player != null) {
                 double channelTimeSeconds = channelTime / 1000.0;
 
-                // DEBUG: Log packet received
-                player.sendSystemMessage(Component.literal("§7[DEBUG] §eSkillCastPacket received: " + skillId +
-                        " (slot " + slotIndex + ", channel: " + String.format("%.3f", channelTimeSeconds) + "s)"));
-
-                // Log targeting snapshot details
-                if (targetingSnapshot.hasEntity()) {
-                    player.sendSystemMessage(Component.literal("§7[DEBUG] §aTarget: ENTITY " + targetingSnapshot.getTargetEntityId() + " (ally: " + targetingSnapshot.isAlly() + ")"));
-                } else {
-                    player.sendSystemMessage(Component.literal("§7[DEBUG] §bTarget: POSITION " + String.format("%.1f, %.1f, %.1f",
-                            targetingSnapshot.getTargetPosition().x,
-                            targetingSnapshot.getTargetPosition().y,
-                            targetingSnapshot.getTargetPosition().z)));
-                }
 
                 // Forward to the skill casting handler with channel time
                 SkillTargetingHandler.handleSkillCast(player, skillId, slotIndex, targetingSnapshot, channelTimeSeconds);

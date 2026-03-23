@@ -75,19 +75,16 @@ public class SpawnElementFXPacket {
     private void handleClient() {
         Level level = Minecraft.getInstance().level;
         if (level == null) {
-            System.out.println("[Complex Talents] Client level is null, cannot spawn particles!");
             return;
         }
 
         try {
             if (type == ParticleType.ELEMENT_STACK) {
                 ElementType element = ElementType.valueOf(dataString);
-                System.out.println("[Complex Talents] Spawning stack particles for element: " + element + " at " + position);
                 ElementFXRenderer.play(level, position, element, extraData);
             } 
         } catch (Exception e) {
-            System.err.println("[Complex Talents] ERROR spawning particles:");
-            e.printStackTrace();
+            // Error spawning particles
         }
     }
 }
