@@ -35,6 +35,8 @@ public class PassiveStackData implements IPassiveStackData {
 
     public void setPlayer(ServerPlayer player) {
         this.player = player;
+        // Clamp all current stacks once the player context is available
+        clampAll();
     }
 
     @Override
@@ -64,8 +66,10 @@ public class PassiveStackData implements IPassiveStackData {
         // Only sync and fire event if value changed
         if (oldValue != clampedCount) {
             sync();
-            MinecraftForge.EVENT_BUS.post(new PassiveStackChangeEvent(
-                player, stackTypeName, oldValue, clampedCount, PassiveStackChangeEvent.ChangeType.SET));
+            if (player != null) {
+                MinecraftForge.EVENT_BUS.post(new PassiveStackChangeEvent(
+                    player, stackTypeName, oldValue, clampedCount, PassiveStackChangeEvent.ChangeType.SET));
+            }
         }
     }
 
@@ -80,15 +84,37 @@ public class PassiveStackData implements IPassiveStackData {
         if (!passiveStacks.isEmpty()) {
             passiveStacks.clear();
             sync();
-            MinecraftForge.EVENT_BUS.post(new PassiveStackChangeEvent(
-                player, PassiveStackChangeEvent.ChangeType.RESET));
+            if (player != null) {
+                MinecraftForge.EVENT_BUS.post(new PassiveStackChangeEvent(
+                    player, PassiveStackChangeEvent.ChangeType.RESET));
+            }
         }
     }
 
     @Override
     public void sync() {
-        // Send sync packet to client
-        PassiveStackSyncPacket.send(player, getPassiveStacks());
+        if (player != null) {
+            // Send sync packet to client
+            PassiveStackSyncPacket.send(player, getPassiveStacks());
+        }
+    }
+
+    /**
+     * Enforce max stack limits on all currently stored passive stacks.
+     * Should be called when the player instance is set or changed.
+     */
+    public void clampAll() {
+        for (String stackTypeName : passiveStacks.keySet()) {
+            int current = getPassiveStackCount(stackTypeName);
+            int max = getMaxStacksForType(stackTypeName);
+            if (current > max) {
+                if (max <= 0) {
+                    passiveStacks.remove(stackTypeName);
+                } else {
+                    passiveStacks.put(stackTypeName, max);
+                }
+            }
+        }
     }
 
     /**
@@ -98,6 +124,12 @@ public class PassiveStackData implements IPassiveStackData {
      * @return The max stacks, or Integer.MAX_VALUE if not defined
      */
     private int getMaxStacksForType(String stackTypeName) {
+        // If player is null, we can't reliably look up the definition via owner IDs
+        // This usually happens during global data loading in PlayerPersistentData
+        if (player == null) {
+            return Integer.MAX_VALUE;
+        }
+
         // Try to find the definition in the registry
         // Since we don't know the owner here, we'll search all owners
         // This is a bit inefficient but keeps the API simple
@@ -125,12 +157,15 @@ public class PassiveStackData implements IPassiveStackData {
      * Get the player's origin ID as a string.
      */
     private String getOriginId() {
-        return player.getCapability(com.complextalents.origin.capability.OriginDataProvider.ORIGIN_DATA)
-                .map(data -> {
-                    var originId = data.getActiveOrigin();
-                    return originId != null ? originId.toString() : null;
-                })
-                .orElse(null);
+        if (player == null) {
+            return null;
+        }
+        var cap = player.getCapability(com.complextalents.origin.capability.OriginDataProvider.ORIGIN_DATA).resolve();
+        if (cap.isPresent()) {
+            var originId = cap.get().getActiveOrigin();
+            return originId != null ? originId.toString() : null;
+        }
+        return null;
     }
 
     /**

@@ -113,7 +113,7 @@ public class SpellMasteryData implements ISpellMasteryData {
     @Override
     public void forgetSpell(ResourceLocation spellId) {
         learnedSpells.remove(spellId);
-        if (!player.level().isClientSide) {
+        if (player != null && !player.level().isClientSide) {
             sync();
         }
     }
@@ -132,7 +132,7 @@ public class SpellMasteryData implements ISpellMasteryData {
     public void purchaseMastery(ResourceLocation schoolId, int tier, int cost) {
         purchasedMasteryLevels.put(schoolId, tier);
         totalSPSpentOnMastery += cost;
-        if (!player.level().isClientSide) {
+        if (player != null && !player.level().isClientSide) {
             applySpellPowerReward();
             sync();
         }
@@ -144,7 +144,7 @@ public class SpellMasteryData implements ISpellMasteryData {
     }
 
     private void applySpellPowerReward() {
-        if (player.level().isClientSide) return;
+        if (player == null || player.level().isClientSide) return;
         
         Attribute spellPowerAttr = ForgeRegistries.ATTRIBUTES.getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "spell_power"));
         if (spellPowerAttr != null) {
@@ -226,7 +226,7 @@ public class SpellMasteryData implements ISpellMasteryData {
         
         totalSPSpentOnMastery = nbt.getInt("TotalSPSpentOnMastery");
         
-        if (!player.level().isClientSide) {
+        if (player != null && !player.level().isClientSide) {
             applySpellPowerReward();
         }
     }
