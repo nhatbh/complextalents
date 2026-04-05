@@ -16,9 +16,13 @@ import java.util.function.Supplier;
 public class ElementalMageSyncPacket {
     
     private final Map<ElementType, Float> stats;
+    private final float convergenceCritChance;
+    private final float convergenceCritDamage;
 
-    public ElementalMageSyncPacket(Map<ElementType, Float> stats) {
+    public ElementalMageSyncPacket(Map<ElementType, Float> stats, float critChance, float critDamage) {
         this.stats = stats;
+        this.convergenceCritChance = critChance;
+        this.convergenceCritDamage = critDamage;
     }
 
     public static void encode(ElementalMageSyncPacket msg, FriendlyByteBuf buf) {
@@ -27,6 +31,8 @@ public class ElementalMageSyncPacket {
             buf.writeEnum(entry.getKey());
             buf.writeFloat(entry.getValue());
         }
+        buf.writeFloat(msg.convergenceCritChance);
+        buf.writeFloat(msg.convergenceCritDamage);
     }
 
     public static ElementalMageSyncPacket decode(FriendlyByteBuf buf) {
@@ -37,7 +43,9 @@ public class ElementalMageSyncPacket {
             float value = buf.readFloat();
             decodedStats.put(element, value);
         }
-        return new ElementalMageSyncPacket(decodedStats);
+        float critChance = buf.readFloat();
+        float critDamage = buf.readFloat();
+        return new ElementalMageSyncPacket(decodedStats, critChance, critDamage);
     }
 
     public static void handle(ElementalMageSyncPacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -49,8 +57,13 @@ public class ElementalMageSyncPacket {
             
             // Update stats on the client version of ElementalMageData
             for (Map.Entry<ElementType, Float> entry : msg.stats.entrySet()) {
-                ElementalMageData.setStat(player.getUUID(), entry.getKey(), entry.getValue());
+                ElementalMageData.setStat(player, entry.getKey(), entry.getValue());
             }
+
+            player.getCapability(com.complextalents.impl.elementalmage.ElementalMageDataProvider.ELEMENTAL_DATA).ifPresent(cap -> {
+                cap.setConvergenceCritChance(msg.convergenceCritChance);
+                cap.setConvergenceCritDamage(msg.convergenceCritDamage);
+            });
         });
         ctx.get().setPacketHandled(true);
     }

@@ -12,5 +12,11 @@ public interface IPlayerElementalMageData extends INBTSerializable<CompoundTag> 
     float getStat(ElementType element);
     void setStat(ElementType element, float value);
     Map<ElementType, Float> getAllStats();
+
+    float getConvergenceCritChance();
+    void setConvergenceCritChance(float chance);
+    float getConvergenceCritDamage();
+    void setConvergenceCritDamage(float damage);
+
     void sync();
 }

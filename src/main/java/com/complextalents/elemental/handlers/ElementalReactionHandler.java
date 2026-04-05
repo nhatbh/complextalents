@@ -8,19 +8,16 @@ import com.complextalents.elemental.ElementalStackTracker;
 import com.complextalents.elemental.ElementType;
 import com.complextalents.elemental.api.IReactionStrategy;
 import com.complextalents.elemental.events.ElementStackAppliedEvent;
+import com.complextalents.elemental.events.ElementalReactionTriggeredEvent;
 import com.complextalents.elemental.events.ElementalStackRemovedEvent;
 import com.complextalents.elemental.registry.ReactionRegistry;
+import com.complextalents.impl.elementalmage.origin.ElementalMageOrigin;
+
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import com.complextalents.leveling.util.XPFormula;
-import com.complextalents.leveling.service.LevelingService;
-import com.complextalents.leveling.events.xp.XPSource;
-import com.complextalents.leveling.events.xp.XPContext;
-import net.minecraft.world.level.ChunkPos;
-import com.complextalents.elemental.api.ReactionContext;
-import net.minecraft.server.level.ServerLevel;
+
 
 import java.util.Map;
 import java.util.UUID;
@@ -28,16 +25,12 @@ import java.util.UUID;
 /**
  * Handles elemental reaction triggering when ElementStackAppliedEvent is fired.
  * This is the second stage in the reaction chain.
- *
- * <p>Listens to: {@link com.complextalents.elemental.events.ElementStackAppliedEvent}</p>
- * <p>Fires: {@link com.complextalents.elemental.events.ElementalReactionTriggeredEvent} (via ReactionRegistry)</p>
- *
- * <p>Note: This handler responds to the POST-application event. For preventing element
- * application (e.g., for special entities like Nature Cores), use the
- * {@link com.complextalents.elemental.events.ElementStackPreAppliedEvent} in a separate handler.</p>
  */
 @Mod.EventBusSubscriber(modid = TalentsMod.MODID)
 public class ElementalReactionHandler {
+
+    private static final double REACTION_COST = 25.0;
+
 
     /**
      * Listens for element stack application and checks for possible reactions.
@@ -74,20 +67,6 @@ public class ElementalReactionHandler {
             return;
         }
 
-        // Check if player has enough Elemental Resonance (25 points)
-        final double REACTION_COST = 25.0;
-        final boolean[] hasEnoughResonance = {false};
-        
-        player.getCapability(com.complextalents.origin.capability.OriginDataProvider.ORIGIN_DATA).ifPresent(data -> {
-            if (data.getResource() >= REACTION_COST) {
-                hasEnoughResonance[0] = true;
-            }
-        });
-
-        if (!hasEnoughResonance[0]) {
-            return; // Not enough resonance
-        }
-
         // Track this entity for the player
         ElementalStackTracker.addTracking(player.getUUID(), targetId);
 
@@ -105,51 +84,39 @@ public class ElementalReactionHandler {
                 continue;
             }
 
-            // Calculate damage for XP before execution
-            float mastery = ReactionRegistry.getInstance().calculateElementalMastery(player);
-            ReactionContext context = ReactionContext.builder()
-                .target(target)
-                .attacker(player)
-                .reaction(reaction)
-                .triggeringElement(newElement)
-                .existingElement(existingElement)
-                .damageMultiplier(1.0f)
-                .elementalMastery(mastery)
-                .level((ServerLevel) target.level())
-                .build();
-            var strategy = ReactionRegistry.getInstance().getStrategy(reaction);
-            if (strategy == null) continue;
-            float reactionDamage = strategy.calculateDamage(context);
+            // Get the strategy for stack consumption check
+            IReactionStrategy strategy = ReactionRegistry.getInstance().getStrategy(reaction);
+            if (strategy == null) {
+                continue;
+            }
+
+            // --- REACTION COST CHECK ---
+            final double cost = REACTION_COST;
+            var originDataCap = player.getCapability(com.complextalents.origin.capability.OriginDataProvider.ORIGIN_DATA);
+            if (originDataCap.isPresent()) {
+                var data = originDataCap.resolve().get();
+                if (data.getResource() < cost) {
+                    player.sendSystemMessage(net.minecraft.network.chat.Component.literal("\u00A7cInsufficient Resonance to trigger reaction!"));
+                    continue; 
+                }
+                // Deduct cost
+                data.modifyResource(-cost);
+                data.sync();
+            }
+            // ---------------------------
 
             // Trigger the reaction
+
             boolean executed = ReactionRegistry.getInstance().executeReaction(
                 target, reaction, newElement, existingElement, player, 1.0f
             );
-
-            // Award Master of Elements XP
-            if (executed) {
-                double reactionXP = XPFormula.calculateElementalMageMasterOfElementsXP(reactionDamage);
-                ChunkPos chunkPos = new ChunkPos(player.blockPosition());
-                XPContext xpContext = XPContext.builder()
-                    .source(XPSource.ELEMENTAL_MASTER)
-                    .chunkPos(chunkPos)
-                    .rawAmount(reactionXP)
-                    .metadata("reactionDamage", reactionDamage)
-                    .metadata("reactionType", reaction.name())
-                    .metadata("triggeringElement", newElement.name())
-                    .metadata("existingElement", existingElement.name())
-                    .metadata("elementalMastery", mastery)
-                    .metadata("targetUUID", target.getUUID().toString())
-                    .build();
-                LevelingService.getInstance().awardXP(player, reactionXP, XPSource.ELEMENTAL_MASTER, xpContext);
-            }
 
             TalentsMod.LOGGER.info("REACTION_EXECUTED: {} reaction on {} (UUID: {}). Reaction executed: {}. Existing element: {}, New element: {}",
                 reaction, target.getName().getString(), targetId, executed, existingElement, newElement);
 
             // If reaction was executed and it consumes stacks, remove the existing element
             if (executed) {
-                if (strategy != null && strategy.consumesStacks()) {
+                if (strategy.consumesStacks()) {
                     TalentsMod.LOGGER.info("CONSUMING_STACK: Removing {} stack from {} (UUID: {}) after {} reaction. Stacks before removal: {}",
                         existingElement, target.getName().getString(), targetId, reaction, elements.keySet());
 
@@ -164,19 +131,8 @@ public class ElementalReactionHandler {
                         existingElement, elements.keySet());
                 } else {
                     TalentsMod.LOGGER.info("STRATEGY_INFO: Reaction {} has strategy: {}, Consumes stacks: {}",
-                        reaction, strategy != null ? strategy.getClass().getSimpleName() : "null",
-                        strategy != null ? strategy.consumesStacks() : "N/A");
+                        reaction, strategy.getClass().getSimpleName(), strategy.consumesStacks());
                 }
-
-                // Deduct Elemental Resonance and add 1 Resonance Echo
-                player.getCapability(com.complextalents.origin.capability.OriginDataProvider.ORIGIN_DATA).ifPresent(data -> {
-                    data.modifyResource(-25.0);
-                });
-                player.getCapability(com.complextalents.passive.capability.PassiveStackDataProvider.PASSIVE_STACK_DATA).ifPresent(data -> {
-                    if (data.getPassiveStackCount("resonance_echo") < 5) {
-                        data.modifyPassiveStacks("resonance_echo", 1);
-                    }
-                });
             }
 
             // Only trigger one reaction per stack application
@@ -194,6 +150,7 @@ public class ElementalReactionHandler {
         ElementalStackTracker.removeEntityTracking(entityId);
     }
 
+
     /**
      * Clean up tracker when a player disconnects.
      * Called by ElementalStackManager's logout event handler.
@@ -203,4 +160,49 @@ public class ElementalReactionHandler {
     public static void onPlayerLogout(UUID playerId) {
         ElementalStackTracker.removePlayerTracking(playerId);
     }
+
+    /**
+     * Listen for reactions being triggered to award accumulation gains.
+     * $Accumulation\ Gain = \max(1, Reaction\ Damage \times 0.02)$
+     */
+    @SubscribeEvent
+    public static void onReactionTriggered(ElementalReactionTriggeredEvent event) {
+        ServerPlayer player = event.getAttacker();
+        if (player == null || !ElementalMageOrigin.isElementalMage(player)) return;
+
+
+        ElementType element = event.getTriggeringElement();
+        float damage = event.getDamage();
+        float current = com.complextalents.impl.elementalmage.ElementalMageData.getStat(player, element);
+
+        // --- "LADDER" PROGRESSION FORMULA ---
+        // f(L) = L + 0.25 * (L - 1)^2
+        // f(L) = L + 0.25 * (L^2 - 2L + 1) = 0.25L^2 + 0.5L + 0.25
+        double startF = 0.25 * current * current + 0.5 * current + 0.25;
+        double targetF = startF + (damage * 0.002);
+        
+        // Final Level: L = sqrt(4 * targetF) - 1.0
+        float nextVal = (float) (Math.sqrt(4.0 * targetF) - 1.0);
+        float gain = nextVal - current;
+        // ------------------------------------
+        
+        // Update accumulated power
+        com.complextalents.impl.elementalmage.ElementalMageData.setStat(player, element, nextVal);
+        
+        // Award 1 Resonance Echo (max 5)
+        if (com.complextalents.passive.PassiveManager.getPassiveStacks(player, "resonance_echo") < 5) {
+            com.complextalents.passive.PassiveManager.modifyPassiveStacks(player, "resonance_echo", 1);
+        }
+
+        // Chat notification
+        player.sendSystemMessage(net.minecraft.network.chat.Component.literal(String.format(
+            "\u00A7b[Elemental Mage] \u00A7fPower increased: \u00A7e+%.3f \u00A7f%s (Total: %.3f)", 
+            gain, element.name(), current + gain
+        )));
+
+        TalentsMod.LOGGER.debug("Accumulated {} power for {} through {} reaction (Damage: {}). Total: {}", 
+            gain, element, event.getReaction(), damage, current + gain);
+    }
 }
+
+

@@ -1,7 +1,7 @@
 package com.complextalents.impl.elementalmage.skill;
 
 import com.complextalents.elemental.registry.ReactionRegistry;
-import com.complextalents.impl.elementalmage.ElementalMageData;
+import com.complextalents.elemental.effects.ElementalEffects;
 import com.complextalents.passive.PassiveManager;
 import com.complextalents.skill.SkillBuilder;
 import com.complextalents.skill.SkillNature;
@@ -34,11 +34,16 @@ public class HarmonicConvergenceSkill {
                 .nature(SkillNature.ACTIVE)
                 .displayName("Harmonic Convergence")
                 .description(
-                        "Consume 1+ echoes to restore 10-40 + (Mastery × 5-25) mana/echo and grant +10-20% crit/echo. Crit damage: +25-50% base + (Mastery × 15-40%). Next spell guaranteed crit within 10s. 10s cooldown.")
+                        "Consume 1+ echoes to restore 10-40 + (Mastery × 5-25) mana/echo and grant +10-20% crit/echo. Crit damage: +25-50% base + (Mastery × 15-40%). Gains a 10s buff that adds these bonuses to ALL spells and attacks and enables Reactions to Crit. 10s cooldown.")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/elementalmage/harmonic_convergence.png"))
                 .setMaxLevel(5)
+                .passiveStack("resonance_echo", com.complextalents.passive.PassiveStackDef.create("resonance_echo")
+                        .maxStacks(5)
+                        .displayName("Resonance Echo")
+                        .color(0xFF4D96FF)
+                        .build())
                 .scaledCooldown(new double[] { 10.0, 10.0, 10.0, 10.0, 10.0 })
                 .scaledStat("base_mana_restore", "Base Mana Restore", MANA_BASE)
                 .scaledStat("mastery_mana_mult", "Mastery Mana Mult", MANA_MULT)
@@ -90,14 +95,19 @@ public class HarmonicConvergenceSkill {
                         // Iron's Spellbooks not loaded or error
                     }
 
-                    // Cache for the Next Spell
-                    ElementalMageData.ConvergenceBuff buff = ElementalMageData
-                            .getConvergenceBuff(serverPlayer.getUUID());
-                    buff.waitingForNextSpell = true;
-                    buff.cachedCritChanceOffset = critChance;
-                    buff.cachedCritDamageBonus = critDamageBonus;
-                    buff.buffWindowTicks = 0;
-                    buff.buffedSpellId = null;
+                    // 4. Apply 10s Buff and Store Stats in NBT
+                    serverPlayer.getCapability(com.complextalents.impl.elementalmage.ElementalMageDataProvider.ELEMENTAL_DATA).ifPresent(cap -> {
+                        cap.setConvergenceCritChance((float) critChance);
+                        cap.setConvergenceCritDamage((float) critDamageBonus);
+                    });
+
+                    // Apply custom effect
+                    serverPlayer.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                            ElementalEffects.HARMONIC_CONVERGENCE.get(), 200, 0));
+
+                    // Apply Accumulated Power Attributes (Burst Window)
+                    com.complextalents.impl.elementalmage.ElementalMageData.activateConvergence(serverPlayer);
+
 
                     // Play SFX & Particles
                     ServerLevel sLevel = serverPlayer.serverLevel();
@@ -112,7 +122,7 @@ public class HarmonicConvergenceSkill {
                             50, 0.5, 0.5, 0.5, 0.2);
 
                     serverPlayer.sendSystemMessage(Component.literal(String.format(
-                            "\u00A7b\u2728 Harmonic Convergence! \u00A7fRestored \u00A7b%.0f Mana\u00A7f. Your next spell gains \u00A7e+%.0f%% Crit Chance \u00A7fand \u00A7c+%.0f%% Crit Damage\u00A7f!",
+                            "\u00A7b\u2728 Harmonic Convergence! \u00A7fRestored \u00A7b%.0f Mana\u00A7f. Your spells and reactions gain \u00A7e+%.0f%% Crit Chance \u00A7fand \u00A7c+%.0f%% Crit Damage \u00A7ffor 10s!",
                             manaRestored, critChance * 100.0, critDamageBonus * 100.0)));
                 })
                 .register();

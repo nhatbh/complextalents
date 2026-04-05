@@ -106,9 +106,9 @@ public class PlayerDataPersistenceHandler {
                 SoulData.syncToClient(player);
                 synced = true;
             } else if (ElementalMageOrigin.isElementalMage(player)) {
-                ElementalMageData.applyAttributeModifiers(player);
                 ElementalMageData.syncToClient(player);
                 synced = true;
+
             } else if (HighPriestOrigin.isHighPriest(player)) {
                 FaithData.syncToClient(player);
                 synced = true;
@@ -166,9 +166,6 @@ public class PlayerDataPersistenceHandler {
         // as live objects in PlayerPersistentData. Queue a deferred sync with a 100-tick retry window.
         PENDING_DATA_SYNC.put(player.getUUID(), 100);
 
-        if (ElementalMageOrigin.isElementalMage(player)) {
-            ElementalMageData.applyAttributeModifiers(player);
-        }
 
         // Generic skill-specific persistence
         player.getCapability(com.complextalents.skill.capability.SkillDataProvider.SKILL_DATA).ifPresent(skillCap -> {

@@ -18,6 +18,7 @@ public class ElementalEffects {
 
     public static final RegistryObject<MobEffect> MARKED_FOR_DEATH = EFFECTS.register("marked_for_death", () -> new MarkedForDeathEffect(MobEffectCategory.HARMFUL, 0x4B0082));
     public static final RegistryObject<MobEffect> BURNING = EFFECTS.register("burning", () -> new BurningEffect(MobEffectCategory.HARMFUL, 0xFF4500));
+    public static final RegistryObject<MobEffect> HARMONIC_CONVERGENCE = EFFECTS.register("harmonic_convergence", () -> new HarmonicConvergenceEffect(MobEffectCategory.BENEFICIAL, 0x00FFFF));
 
     // Ice reaction effects
     public static final RegistryObject<MobEffect> FREEZE = EFFECTS.register("freeze", () -> new FreezeEffect(MobEffectCategory.HARMFUL, 0xADD8E6));

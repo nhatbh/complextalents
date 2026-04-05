@@ -7,13 +7,10 @@ import com.complextalents.elemental.api.IReactionStrategy;
 import com.complextalents.elemental.api.ReactionContext;
 import com.complextalents.elemental.events.ElementalReactionTriggeredEvent;
 import com.complextalents.elemental.strategies.reactions.*;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -109,6 +106,21 @@ public class ReactionRegistry {
         }
 
         final float mastery = calculateElementalMastery(attacker);
+        float currentDamageMultiplier = damageMultiplier;
+
+        // --- HARMONIC CONVERGENCE REACTION CRITS ---
+        boolean isCrit = false;
+        if (attacker.hasEffect(com.complextalents.elemental.effects.ElementalEffects.HARMONIC_CONVERGENCE.get())) {
+            var cap = attacker.getCapability(com.complextalents.impl.elementalmage.ElementalMageDataProvider.ELEMENTAL_DATA).resolve();
+            if (cap.isPresent()) {
+                double critChance = cap.get().getConvergenceCritChance();
+                if (attacker.getRandom().nextDouble() < critChance) {
+                    isCrit = true;
+                    currentDamageMultiplier *= (1.0f + cap.get().getConvergenceCritDamage());
+                }
+            }
+        }
+        // -------------------------------------------
 
         // Build the reaction context
         ReactionContext context = ReactionContext.builder()
@@ -117,7 +129,7 @@ public class ReactionRegistry {
             .reaction(reaction)
             .triggeringElement(triggeringElement)
             .existingElement(existingElement)
-            .damageMultiplier(damageMultiplier)
+            .damageMultiplier(currentDamageMultiplier)
             .elementalMastery(mastery)
             .level((ServerLevel) target.level())
             .build();
@@ -147,6 +159,13 @@ public class ReactionRegistry {
 
         // Execute the reaction
         strategy.execute(context);
+
+        // --- NOTIFY CRIT ---
+        if (isCrit) {
+            attacker.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                String.format("\u00A76\u2736 Reaction Critical! \u00A7f%.1f damage", finalDamage)));
+        }
+        // ------------------
 
 
 
@@ -335,98 +354,71 @@ public class ReactionRegistry {
     }
 
     /**
-     * Gets statistics about the registry.
-     *
-     * @return Map of statistic names to values
-     */
-    public Map<String, Object> getStatistics() {
-        Map<String, Object> stats = new HashMap<>();
-        stats.put("total_reactions", strategies.size());
-        stats.put("initialized", initialized);
-
-        // Count by priority
-        Map<Integer, Long> priorityCounts = new HashMap<>();
-        for (IReactionStrategy strategy : strategies.values()) {
-            priorityCounts.merge(strategy.getPriority(), 1L, Long::sum);
-        }
-        stats.put("priority_distribution", priorityCounts);
-
-        return stats;
-    }
-
-    /**
-     * Calculates elemental mastery using an array-rank weighted sum of spell power attributes.
-     * Elements are sorted by power.
-     * Top element: 40%
-     * 2nd element: 20%
-     * 3rd element: 15%
-     * 4th element: 10%
-     * 5th element: 10%
-     * 6th element: 5%
-     *
-     * This ensures focusing on just 2 elements yields ~60% of absolute mastery potential.
+     * Calculates elemental mastery using the isolated Accumulated Power track.
+     * $Effective\ Mastery = Raw\ Mastery \times Harmony\ Multiplier$
      *
      * @param player The player to calculate mastery for
-     * @return The weighted sum of all spell power attributes, or 1.0 if no attributes found
+     * @return The effective mastery
      */
     public float calculateElementalMastery(ServerPlayer player) {
-        // List of all spell power attributes to include in calculation
-        List<ResourceLocation> spellPowerAttributes = List.of(
-            ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "fire_spell_power"),
-            ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "ice_spell_power"),
-            ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "lightning_spell_power"),
-            ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "nature_spell_power"),
-            ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "ender_spell_power"),
-            ResourceLocation.fromNamespaceAndPath("traveloptics", "aqua_spell_power")
-        );
-
-        return (float) calculateElementalMastery(player, spellPowerAttributes);
+        float rawMastery = calculateRawMastery(player);
+        float harmonyMultiplier = calculateHarmonyMultiplier(player);
+        return rawMastery * harmonyMultiplier;
     }
 
     /**
-     * Calculates elemental mastery with a custom attribute list using array-rank weights.
-     *
-     * @param player The player to calculate mastery for
-     * @param attributes Custom list of attribute IDs to include
-     * @return The weighted sum of the specified attributes
+     * Calculates the Raw Mastery: $1 + \sum (Accumulated_i \times Weight_i)$
+     * Weights: [0.40, 0.20, 0.15, 0.10, 0.10, 0.05] (sorted by power)
      */
-    public double calculateElementalMastery(ServerPlayer player, List<ResourceLocation> attributes) {
-        List<Double> values = new ArrayList<>();
-
-        for (ResourceLocation attrId : attributes) {
-            Attribute attribute = ForgeRegistries.ATTRIBUTES.getValue(attrId);
-
-            if (attribute != null) {
-                // Ensure base value isn't functionally 0
-                double value = Math.max(1.0, player.getAttributeValue(attribute));
-                values.add(value);
-            }
+    private float calculateRawMastery(ServerPlayer player) {
+        List<Float> values = new ArrayList<>();
+        for (ElementType type : ElementType.values()) {
+            values.add(com.complextalents.impl.elementalmage.ElementalMageData.getStat(player, type));
         }
-
-        if (values.isEmpty()) {
-            return 1.0;
-        }
-
-        // Sort descending (highest value first)
+        
+        // Ensure we handle at least some values
+        if (values.isEmpty()) return 1.0f;
+        
+        // Sort descending
         values.sort(Collections.reverseOrder());
-
-        // Weights summing to 1.0 (assuming max 6 elements)
-        // Adjust array dynamically if custom attributes list isn't exactly 6
-        double[] weights;
-        if (values.size() == 6) {
-            weights = new double[]{0.40, 0.20, 0.15, 0.10, 0.10, 0.05};
-        } else {
-            // Fallback for custom ranges - equal weighting
-            weights = new double[values.size()];
-            Arrays.fill(weights, 1.0 / values.size());
+        
+        float[] weights = {0.40f, 0.20f, 0.15f, 0.10f, 0.10f, 0.05f};
+        float weightedSum = 0.0f;
+        
+        for (int i = 0; i < values.size() && i < weights.length; i++) {
+            weightedSum += values.get(i) * weights[i];
         }
-
-        double totalMastery = 0.0;
-        for (int i = 0; i < values.size(); i++) {
-            totalMastery += values.get(i) * weights[i];
-        }
-
-        return totalMastery;
+        
+        return weightedSum;
     }
+
+    /**
+     * Calculates the Harmony Multiplier based on the ratio $R = E_{others} / E_{max}$.
+     * Piecewise linear scaling:
+     * - $R \approx 0 \to 0.2x$
+     * - $R \approx 1 \to 1.0x$
+     * - $R \ge 4 \to 1.3x$
+     */
+    private float calculateHarmonyMultiplier(ServerPlayer player) {
+        float maxVal = 0.0f;
+        float totalSum = 0.0f;
+        
+        for (ElementType type : ElementType.values()) {
+            float val = com.complextalents.impl.elementalmage.ElementalMageData.getStat(player, type);
+            if (val > maxVal) maxVal = val;
+            totalSum += val;
+        }
+
+        float othersSum = totalSum - maxVal;
+        float R = othersSum / maxVal;
+
+        // --- NEW HARMONY CALIBRATION [0.5 - 1.1] ---
+        // Formula: 0.5 + 0.12 * R (Cap R at 5.0)
+        float clampedR = Math.min(5.0f, R);
+        return 0.5f + (0.12f * clampedR);
+    }
+
+
+
 
 }

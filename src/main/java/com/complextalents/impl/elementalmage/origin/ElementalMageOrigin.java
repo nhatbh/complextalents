@@ -1,8 +1,6 @@
 package com.complextalents.impl.elementalmage.origin;
 
 import com.complextalents.TalentsMod;
-import com.complextalents.elemental.events.ElementalDamageEvent;
-import com.complextalents.impl.elementalmage.ElementalMageData;
 import com.complextalents.origin.OriginBuilder;
 import com.complextalents.origin.OriginManager;
 import com.complextalents.stats.ClassCostMatrix;
@@ -47,7 +45,8 @@ public class ElementalMageOrigin {
         OriginBuilder.create("complextalents", "elemental_mage")
                 .displayName("Elemental Mage")
                 .description(Component.literal(
-                        "Evocation specialist building power through elemental damage. Generate echoes for mana restore: 10-40 base + (Mastery × 5-25) per echo/level. Resonance regen: 1.0-2.5 + (Mastery × 1.0-2.0)/sec. Combine elements (Fire+Ice=Melt, Water+Nature=Growth) for 25 Resonance/reaction. Massive spell hits (10+/30+/50+) trigger \"OP\" reactions."))
+                        "Evocation specialist building permanent power through elemental reactions. Triggering reactions costs 25 Resonance and generates Resonance Echoes (max 5). Converge these echoes using Harmonic Convergence to restore mana and gain massive spell critical bonuses."))
+
                 .resourceType(resonanceType)
                 .maxLevel(5) // Max level is now 5
                 .baseStat(StatType.AP, 2)
@@ -63,9 +62,13 @@ public class ElementalMageOrigin {
                             .calculateElementalMastery(player);
                     return BASE_RES[idx] + (MULT_RES[idx] * mastery);
                 })
-                .passiveSkill("Elemental Resonance",
-                        "Deal elemental damage to generate echoes and mastery-scaled regeneration.")
-                .activeSkill("Harmonic Convergence", "Unleash stored resonance as a devastating blast.", null)
+                .passiveSkill("Elemental Mastery",
+                        "Trigger reactions to build permanent power. Balanced builds receive higher Mastery multipliers.")
+
+                .activeSkill("Harmonic Convergence", "Converge your Resonance Echoes to restore mana and gain guaranteed critical hits based on Mastery.", null)
+
+
+
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "harmonic_convergence"))
                 .renderer(new com.complextalents.impl.elementalmage.client.ElementalMageRenderer())
                 .register();
@@ -140,20 +143,5 @@ public class ElementalMageOrigin {
         }
     }
 
-    /**
-     * Listen for ElementalDamageEvents to feed the math framework.
-     */
-    @SubscribeEvent
-    public static void onElementalDamage(ElementalDamageEvent event) {
-        // Ensure the event has a valid caster and target
-        if (!(event.getSource() instanceof ServerPlayer player))
-            return;
 
-        // Ensure the player is an Elemental Mage
-        if (!isElementalMage(player))
-            return;
-
-        // Pass the damage event details into the stats system
-        ElementalMageData.processElementalDamage(player, event.getElement(), event.getDamage());
-    }
 }
