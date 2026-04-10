@@ -57,6 +57,7 @@ public class TalentsMod {
         OPEffects.register(modEventBus);
         HighPriestEffects.register(modEventBus);
         AssassinEffects.register(modEventBus);
+        com.complextalents.impl.darkmage.effect.DarkMageEffects.MOB_EFFECTS.register(modEventBus);
 
         // Register common attributes
         ModAttributes.register(modEventBus);
@@ -148,6 +149,10 @@ public class TalentsMod {
         // Register weapon mastery commands
         WeaponMasteryCommand.register(event.getServer().getCommands().getDispatcher());
         LOGGER.info("Weapon mastery commands registered");
+
+        // Register Dark Mage commands
+        com.complextalents.impl.darkmage.command.DarkMageCommand.register(event.getServer().getCommands().getDispatcher());
+        LOGGER.info("Dark Mage commands registered");
 
         // Register leveling commands
         com.complextalents.leveling.command.LevelingCommand.register(event.getServer().getCommands().getDispatcher());

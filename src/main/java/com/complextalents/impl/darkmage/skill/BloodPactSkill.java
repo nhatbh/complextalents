@@ -5,6 +5,7 @@ import com.complextalents.origin.OriginManager;
 import com.complextalents.origin.integration.SpellCritAttributes;
 import com.complextalents.skill.SkillBuilder;
 import com.complextalents.skill.SkillNature;
+import com.complextalents.impl.darkmage.util.BloodParticleHelper;
 import com.complextalents.targeting.TargetType;
 import com.complextalents.util.UUIDHelper;
 import net.minecraft.network.chat.Component;
@@ -15,6 +16,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.UUID;
@@ -100,6 +102,12 @@ public class BloodPactSkill {
                             SoundEvents.WITHER_SPAWN, SoundSource.PLAYERS, 0.5f, 1.5f);
                     level.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
                             SoundEvents.SOUL_ESCAPE, SoundSource.PLAYERS, 1.0f, 0.8f);
+
+                    // Blood Core effect (burst of circles)
+                    Vec3 center = serverPlayer.position().add(0, serverPlayer.getBbHeight() / 2.0, 0);
+                    BloodParticleHelper.sendParticleCircle(level, center, 1.5, BloodParticleHelper.BLOOD_MIST, 40);
+                    BloodParticleHelper.sendParticleVerticalCircle(level, center, 1.5, BloodParticleHelper.BLOOD_MIST, 40);
+                    BloodParticleHelper.sendParticleVerticalCircleZ(level, center, 1.5, BloodParticleHelper.BLOOD_MIST, 40);
 
                     // Feedback message
                     double souls = SoulData.getSouls(serverPlayer);

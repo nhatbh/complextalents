@@ -16,6 +16,10 @@ import com.complextalents.leveling.service.LevelingService;
 import com.complextalents.leveling.events.xp.XPSource;
 import com.complextalents.leveling.events.xp.XPContext;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraftforge.event.TickEvent;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Event handler for Soul Siphon passive.
@@ -24,6 +28,18 @@ import net.minecraft.world.level.ChunkPos;
  */
 @Mod.EventBusSubscriber(modid = TalentsMod.MODID)
 public class SoulSiphonHandler {
+
+    private static final Map<UUID, List<VictimData>> deathBuffer = new ConcurrentHashMap<>();
+    private static final Map<UUID, List<Long>> spawnTimestamps = new ConcurrentHashMap<>();
+
+    private static class VictimData {
+        final LivingEntity entity;
+        final double souls;
+        VictimData(LivingEntity entity, double souls) {
+            this.entity = entity;
+            this.souls = souls;
+        }
+    }
 
     /**
      * Handle enemy deaths - grant souls to Dark Mage killers.
@@ -109,11 +125,75 @@ public class SoulSiphonHandler {
                         String.format("%.1f", totalSouls) + " total)"
         ));
 
+        // Tiered Blood Pact Reactions (Buffered for Batching)
+        if (BloodPactTickHandler.isBloodPactActive(player)) {
+            deathBuffer.computeIfAbsent(player.getUUID(), k -> new ArrayList<>())
+                    .add(new VictimData(victim, totalSouls));
+        }
+
         TalentsMod.LOGGER.debug("Dark Mage {} gained {:.2f} souls from killing {} (max HP: {}, total souls: {:.2f})",
                 player.getName().getString(),
                 soulsGained,
                 victim.getName().getString(),
                 maxHealth,
                 totalSouls);
+    }
+
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+
+        if (deathBuffer.isEmpty()) return;
+
+        Map<UUID, List<VictimData>> currentDeaths = new HashMap<>(deathBuffer);
+        deathBuffer.clear();
+
+        currentDeaths.forEach((playerId, victims) -> {
+            if (victims.isEmpty()) return;
+
+            ServerPlayer player = event.getServer().getPlayerList().getPlayer(playerId);
+            if (player == null) return;
+
+            // Batching: Find highest max health enemy from simultaneous deaths
+            VictimData priorityVictim = victims.stream()
+                    .max(Comparator.comparingDouble(v -> v.entity.getMaxHealth()))
+                    .orElse(null);
+
+            if (priorityVictim != null) {
+                triggerBloodPactReaction(player, priorityVictim.entity, priorityVictim.souls);
+            }
+        });
+        deathBuffer.clear();
+    }
+
+    private static void triggerBloodPactReaction(ServerPlayer player, LivingEntity victim, double souls) {
+        if (souls >= 6666) {
+            spawnBloodOrb(player, victim, 5);
+        } else if (souls >= 3000) {
+            spawnBloodOrb(player, victim, 4);
+        } else if (souls >= 1500) {
+            spawnBloodOrb(player, victim, 3);
+        } else if (souls >= 500) {
+            spawnBloodOrb(player, victim, 2);
+        } else if (souls >= 100) {
+            // Tier 1: Fledgling - Instant Lifesteal (15% of slain enemy's max health)
+            player.heal(victim.getMaxHealth() * 0.15f);
+        }
+    }
+
+    private static void spawnBloodOrb(ServerPlayer player, LivingEntity victim, int tier) {
+        if (!(player.level() instanceof ServerLevel level)) return;
+
+        // Rate Limit: 3 per 5 seconds (100 ticks)
+        long now = level.getGameTime();
+        List<Long> timestamps = spawnTimestamps.computeIfAbsent(player.getUUID(), k -> new ArrayList<>());
+        timestamps.removeIf(t -> now - t > 100);
+
+        if (timestamps.size() >= 3) {
+            return;
+        }
+
+        timestamps.add(now);
+        com.complextalents.impl.darkmage.manager.BloodOrbManager.spawnOrb(player, victim.position().add(0, 1.0, 0), tier);
     }
 }

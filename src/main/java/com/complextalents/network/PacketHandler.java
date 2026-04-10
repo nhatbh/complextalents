@@ -29,6 +29,8 @@ import com.complextalents.network.elemental.SpawnSuperconductReactionPacket;
 import com.complextalents.network.elemental.SpawnVaporizeReactionPacket;
 import com.complextalents.network.elemental.SpawnVoidfireReactionPacket;
 import com.complextalents.network.darkmage.SoulSyncPacket;
+import com.complextalents.network.darkmage.S2CSyncBloodOrbPacket;
+import com.complextalents.network.darkmage.S2CRemoveBloodOrbPacket;
 import com.complextalents.network.assassin.AssassinSyncPacket;
 import com.complextalents.network.assassin.AssassinEntitySyncPacket;
 import com.complextalents.network.elementalmage.ElementalMageSyncPacket;
@@ -269,6 +271,18 @@ public class PacketHandler {
                                 SoulSyncPacket::encode,
                                 SoulSyncPacket::decode,
                                 SoulSyncPacket::handle);
+
+                INSTANCE.registerMessage(packetId++,
+                                S2CSyncBloodOrbPacket.class,
+                                S2CSyncBloodOrbPacket::encode,
+                                S2CSyncBloodOrbPacket::decode,
+                                S2CSyncBloodOrbPacket::handle);
+
+                INSTANCE.registerMessage(packetId++,
+                                S2CRemoveBloodOrbPacket.class,
+                                S2CRemoveBloodOrbPacket::encode,
+                                S2CRemoveBloodOrbPacket::decode,
+                                S2CRemoveBloodOrbPacket::handle);
 
                 // Assassin sync packet
                 INSTANCE.registerMessage(packetId++,
