@@ -192,6 +192,7 @@ public class PlayerOriginData implements IPlayerOriginData {
 
     @Override
     public void deserializeNBT(CompoundTag tag) {
+        if (tag.isEmpty()) return;
         activeOrigin = tag.contains("activeOrigin") ? ResourceLocation.tryParse(tag.getString("activeOrigin")) : null;
         originLevel = tag.contains("originLevel") ? tag.getInt("originLevel") : 1;
         resourceValue = tag.contains("resourceValue") ? tag.getDouble("resourceValue") : 0;

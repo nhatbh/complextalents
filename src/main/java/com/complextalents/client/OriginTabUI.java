@@ -327,8 +327,9 @@ public class OriginTabUI {
         if (origin == null) return 0;
         ResourceLocation skillId = origin.getActiveSkillId();
         if (skillId == null) return 0;
-        return cart.getPlayer().getCapability(com.complextalents.skill.capability.SkillDataProvider.SKILL_DATA)
-                .map(data -> data.getSkillLevel(skillId))
-                .orElse(0);
+        
+        int level = com.complextalents.skill.client.ClientSkillData.getSkillLevel(skillId);
+        // Fail-safe: If origin is active but skill level is 0, default to 1 for origin skills
+        return level > 0 ? level : 1;
     }
 }

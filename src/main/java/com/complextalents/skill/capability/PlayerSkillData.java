@@ -297,6 +297,7 @@ public class PlayerSkillData implements IPlayerSkillData, net.minecraftforge.com
 
     @Override
     public void deserializeNBT(CompoundTag tag) {
+        if (tag.isEmpty()) return;
         Arrays.fill(skillSlots, null);
         if (tag.contains("slots")) {
             ListTag list = tag.getList("slots", Tag.TAG_COMPOUND);

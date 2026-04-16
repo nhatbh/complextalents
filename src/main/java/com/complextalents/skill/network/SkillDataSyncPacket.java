@@ -39,9 +39,7 @@ public class SkillDataSyncPacket {
             if (hasSkill) {
                 slots[i] = buffer.readResourceLocation();
                 int level = buffer.readVarInt();
-                if (level > 1) {
-                    levels.put(slots[i], level);
-                }
+                levels.put(slots[i], level);
             } else {
                 slots[i] = null;
             }
@@ -59,7 +57,7 @@ public class SkillDataSyncPacket {
             buffer.writeBoolean(hasSkill);
             if (hasSkill) {
                 buffer.writeResourceLocation(skillSlots[i]);
-                buffer.writeVarInt(skillLevels.getOrDefault(skillSlots[i], 1));
+                buffer.writeVarInt(skillLevels.getOrDefault(skillSlots[i], 0));
             }
         }
     }
