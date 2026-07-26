@@ -36,6 +36,7 @@ import com.complextalents.network.elementalmage.ElementalMageSyncPacket;
 import com.complextalents.leveling.network.LevelDataSyncPacket;
 import com.complextalents.spellmastery.network.SpellMasterySyncPacket;
 import com.complextalents.weaponmastery.network.WeaponMasterySyncPacket;
+import com.complextalents.network.caseopening.S2COpenCaseScreenPacket;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -330,6 +331,12 @@ public class PacketHandler {
                                 WeaponMasterySyncPacket::toBytes,
                                 WeaponMasterySyncPacket::new,
                                 WeaponMasterySyncPacket::handle);
+
+                INSTANCE.registerMessage(packetId++,
+                                S2COpenCaseScreenPacket.class,
+                                S2COpenCaseScreenPacket::encode,
+                                S2COpenCaseScreenPacket::decode,
+                                S2COpenCaseScreenPacket::handle);
 
                 TalentsMod.LOGGER.info("Network packets registered");
         }

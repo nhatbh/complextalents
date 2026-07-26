@@ -25,6 +25,9 @@ public class ModItems {
     public static final RegistryObject<Item> NIFTHELM_TESTER = ITEMS.register("nifthelm_tester",
             () -> new AAAParticleTesterItem(new Item.Properties().stacksTo(1), "nifthelm"));
 
+    public static final RegistryObject<Item> MYSTERIOUS_LOOT = ITEMS.register("mysterious_loot",
+            () -> new MysteriousLootItem(new Item.Properties().stacksTo(64)));
+
     public static void register(IEventBus modEventBus) {
         ITEMS.register(modEventBus);
     }

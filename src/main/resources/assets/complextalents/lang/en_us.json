@@ -47,5 +47,6 @@
   "skill.complextalents.challengers_retribution": "Challenger's Retribution",
   "skill.complextalents.challengers_retribution.desc": "Adopt a defensive stance, taunting nearby enemies into a magical shield. Release the charge to unleash all absorbed damage in a powerful burst.",
 
-  "entity.complextalents.seraphs_edge": "Seraph's Edge"
+  "entity.complextalents.seraphs_edge": "Seraph's Edge",
+  "item.complextalents.mysterious_loot": "Mysterious Loot"
 }

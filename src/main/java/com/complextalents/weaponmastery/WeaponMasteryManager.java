@@ -14,6 +14,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -109,6 +110,35 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
 
     public int getRequiredRankValue(ResourceLocation itemId) {
         return weaponToRequiredRankMap.getOrDefault(itemId, 0);
+    }
+
+    public List<net.minecraft.world.item.Item> getWeaponsForPathAndTier(WeaponPath path, int tier) {
+        int requiredRank = switch (tier) {
+            case 1 -> 0;  // Novice
+            case 2 -> 5;  // Apprentice
+            case 3 -> 10; // Adept
+            case 4 -> 15; // Expert
+            case 5 -> 20; // Master
+            default -> 0;
+        };
+        return getWeaponsForPathAndRank(path, requiredRank);
+    }
+
+    public List<net.minecraft.world.item.Item> getWeaponsForPathAndRank(WeaponPath path, int requiredRank) {
+        List<net.minecraft.world.item.Item> items = new java.util.ArrayList<>();
+        for (Map.Entry<ResourceLocation, WeaponPath> entry : weaponToPathMap.entrySet()) {
+            if (entry.getValue() == path) {
+                ResourceLocation itemId = entry.getKey();
+                int rank = weaponToRequiredRankMap.getOrDefault(itemId, 0);
+                if (rank == requiredRank) {
+                    net.minecraft.world.item.Item item = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(itemId);
+                    if (item != null && item != net.minecraft.world.item.Items.AIR) {
+                        items.add(item);
+                    }
+                }
+            }
+        }
+        return items;
     }
 
     // --- Damage Milestone Methods ---

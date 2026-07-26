@@ -1,6 +1,10 @@
 package com.complextalents.item;
 
 import com.complextalents.TalentsMod;
+import com.complextalents.caseopening.DynamicCasePoolBuilder;
+import com.complextalents.weaponmastery.capability.IWeaponMasteryData;
+import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
+import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -18,7 +22,7 @@ public class ModCreativeTabs {
             "complex_talents_tab",
             () -> CreativeModeTab.builder()
                     .withTabsBefore(CreativeModeTabs.COMBAT)
-                    .icon(() -> new ItemStack(ModItems.INFERNO_TESTER.get()))
+                    .icon(() -> new ItemStack(ModItems.MYSTERIOUS_LOOT.get()))
                     .title(Component.translatable("creativetab.complextalents.tab"))
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.INFERNO_TESTER.get());
@@ -26,6 +30,27 @@ public class ModCreativeTabs {
                         output.accept(ModItems.SANDSTORM_TESTER.get());
                         output.accept(ModItems.SUPERCELL_TESTER.get());
                         output.accept(ModItems.NIFTHELM_TESTER.get());
+
+                        // Default Mysterious Loot Box
+                        output.accept(new ItemStack(ModItems.MYSTERIOUS_LOOT.get()));
+
+                        // Populate Weapon Case NBT variants (only valid rarities present in category)
+                        for (IWeaponMasteryData.WeaponPath path : IWeaponMasteryData.WeaponPath.values()) {
+                            for (DynamicCasePoolBuilder.CrateRarity rarity : DynamicCasePoolBuilder.getValidRaritiesForWeaponPath(path)) {
+                                output.accept(MysteriousLootItem.createWeaponCase(path, rarity));
+                            }
+                        }
+
+                        // Populate Magic Case NBT variants for all registered schools (only valid rarities present in category)
+                        try {
+                            if (SchoolRegistry.REGISTRY != null && SchoolRegistry.REGISTRY.get() != null) {
+                                for (SchoolType school : SchoolRegistry.REGISTRY.get().getValues()) {
+                                    for (DynamicCasePoolBuilder.CrateRarity rarity : DynamicCasePoolBuilder.getValidRaritiesForSchool(school.getId())) {
+                                        output.accept(MysteriousLootItem.createMagicCase(school.getId(), rarity));
+                                    }
+                                }
+                            }
+                        } catch (Exception ignored) {}
                     }).build());
 
     public static void register(IEventBus modEventBus) {
