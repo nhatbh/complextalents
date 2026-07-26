@@ -30,7 +30,7 @@ public class AssassinOrigin {
         OriginBuilder.create("complextalents", "assassin")
                 .displayName("Assassin")
                 .description(net.minecraft.network.chat.Component.literal(
-                        "Stealth-based burst damage dealer. Expose Weakness (30%/40%/50%/60%/80% amp, 8-16s duration, 45-25s cooldown) amplifies target damage. The Disengage grants 30%/45%/60%/75%/100% move speed (1.5-2.5s) after stealth attacks. Recovery slowed by half outside stealth."))
+                        "Sát thủ tàng hình dồn sát thương. Đánh lén từ phía sau lưng tăng 30%-80% sát thương mục tiêu nhận vào từ cả đội trong 8-16s. Tấn công từ trạng thái Stealth giúp tăng 30%-100% Move Speed để rút lui."))
                 .maxLevel(5)
                 .baseStat(StatType.FLAT_AD, 4)
                 .baseStat(StatType.MOBILITY, 2)
@@ -43,10 +43,10 @@ public class AssassinOrigin {
                 // Passive: The Disengage
                 .scaledStat("disengageMoveSpeed", new double[] { 0.30, 0.45, 0.60, 0.75, 1.00 })
                 .scaledStat("disengageDuration", new double[] { 1.5, 1.5, 2.0, 2.0, 2.5 })
-                .passiveSkill("Expose Weakness", "Melee attacks from behind amplify team damage against the target.")
-                .passiveSkill("The Disengage", "Gain movement speed after striking from stealth or exposing weakness.")
+                .passiveSkill("Expose Weakness", "Đánh cận chiến từ phía sau lưng giúp cả đội gây thêm 30%-80% sát thương lên mục tiêu.")
+                .passiveSkill("The Disengage", "Tăng mạnh Move Speed để rút lui sau khi tấn công từ trạng thái tàng hình.")
                 .activeSkill("Shadow Walk",
-                        "Enter stealth and gain movement speed. Your next attack breaks stealth for bonus damage.",
+                        "Vào trạng thái tàng hình, tăng Move Speed và khiến đòn đánh tiếp theo gây thêm sát thương từ phía sau lưng.",
                         null)
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "shadow_walk"))
                 .register();

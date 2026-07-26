@@ -138,6 +138,10 @@ public class TalentsMod {
         com.complextalents.command.DevUICommand.register(event.getServer().getCommands().getDispatcher());
         LOGGER.info("Dev UI command registered");
 
+        // Register dummy player command
+        com.complextalents.command.DummyPlayerCommand.register(event.getServer().getCommands().getDispatcher());
+        LOGGER.info("Dummy player command registered");
+
         // Register stats commands
         StatsCommand.register(event.getServer().getCommands().getDispatcher());
         LOGGER.info("Stats commands registered");
@@ -149,10 +153,6 @@ public class TalentsMod {
         // Register weapon mastery commands
         WeaponMasteryCommand.register(event.getServer().getCommands().getDispatcher());
         LOGGER.info("Weapon mastery commands registered");
-
-        // Register Dark Mage commands
-        com.complextalents.impl.darkmage.command.DarkMageCommand.register(event.getServer().getCommands().getDispatcher());
-        LOGGER.info("Dark Mage commands registered");
 
         // Register leveling commands
         com.complextalents.leveling.command.LevelingCommand.register(event.getServer().getCommands().getDispatcher());

@@ -12,40 +12,25 @@ import net.minecraft.client.renderer.GameRenderer;
 
 /**
  * Custom HUD renderer for the High Priest origin.
- * Displays the Faith resource bar and Grace passive stack indicators as
- * symmetric arc segments.
- * Faith (right) and Grace (left) are mirrored around the center of the screen.
- * <p>
- * Performance optimizations:
- * - Caches text strings, only updates when values change
- * - Avoids String.format and Component creation
- * - Uses BufferBuilder for efficient arc rendering
- * </p>
+ * Displays a 10-segment Command arc (max 100 stacks) with fractional stack rendering.
  */
 public class HighPriestRenderer implements OriginRenderer {
 
-    // Shared arc configuration - both arcs use same size for symmetry
     private static final float ARC_INNER_RADIUS = 25f;
     private static final float ARC_OUTER_RADIUS = 28f;
     private static final float ARC_LENGTH = 120f; // degrees
 
-    // Grace arc (left side) - spans from 240° to 120° (bottom-left to top-left)
-    // Fill starts from bottom (240°) and goes up
-    private static final float GRACE_BOTTOM_ANGLE = 240f;
+    // Command arc (left side) - spans from 240° to 120° (bottom-left to top-left)
+    private static final float COMMAND_BOTTOM_ANGLE = 240f;
 
-    // Color definitions (ARGB) - all at 60% opacity (0x99)
-    private static final int FAITH_TEXT_COLOR = 0x99FFD700; // Gold
-
-    private static final int GRACE_BG_COLOR = 0x99000000;
+    // Color definitions (ARGB) - 60% opacity (0x99)
+    private static final int COMMAND_BG_COLOR = 0x99000000;
     private static final int COMMAND_FILL_COLOR = 0x99FFD700; // Gold
-    private static final int COMMAND_FULL_COLOR = 0x99FFAA00; // Bright Gold when maxed
-    private static final int COMMAND_DIVIDER_COLOR = 0x99000000; // Dark divider lines
+    private static final int COMMAND_PULL_READY_COLOR = 0x9900E5FF; // Celestial Cyan when >= 50 Command (Pull Ready)
+    private static final int COMMAND_FULL_COLOR = 0x9900FFCC; // Bright Celestial Cyan when maxed (100)
+    private static final int COMMAND_DIVIDER_COLOR = 0x99000000;
 
-    // Cache for Faith text - only rebuild when values change
-    private static String cachedFaithText = "";
-    private static double lastFaithValue = -1;
-
-    // Cache for Command text
+    // Cache
     private static String cachedCommandText = "";
     private static int lastCommandValue = -1;
     private static int lastGraceValue = -1;
@@ -63,89 +48,84 @@ public class HighPriestRenderer implements OriginRenderer {
         renderLabels(graphics, centerX, centerY);
     }
 
-    /**
-     * Render Command stacks as arc segments on the LEFT side.
-     * Repurposed from Grace arc.
-     */
     private void renderCommandArc(GuiGraphics graphics, int centerX, int centerY) {
         int command = ClientPassiveStackData.getStackCount("command");
-        int maxCommand = 10;
+        int maxCommand = 100;
+        int numSegments = 10;
         boolean hasGrace = ClientPassiveStackData.getStackCount("grace") > 0;
 
-        float segmentAngleLength = ARC_LENGTH / maxCommand; // 12° per stack
+        float segmentAngleLength = ARC_LENGTH / numSegments; // 12° per segment
 
-        // Draw empty stacks (background)
-        for (int i = 0; i < maxCommand; i++) {
-            float startAngle = GRACE_BOTTOM_ANGLE - (i * segmentAngleLength);
+        // Draw empty background segments
+        for (int i = 0; i < numSegments; i++) {
+            float startAngle = COMMAND_BOTTOM_ANGLE - (i * segmentAngleLength);
             drawArcSegment(graphics, centerX, centerY, ARC_INNER_RADIUS, ARC_OUTER_RADIUS,
                     startAngle - segmentAngleLength + 0.8f, startAngle,
-                    3, GRACE_BG_COLOR);
+                    3, COMMAND_BG_COLOR);
         }
 
-        // Draw filled stacks
-        int fillColor = command >= maxCommand ? COMMAND_FULL_COLOR : COMMAND_FILL_COLOR;
-
-        // Visual indicator for Grace - glow if active
+        // Grace active glow
         if (hasGrace) {
             drawArcSegment(graphics, centerX, centerY, ARC_INNER_RADIUS - 1.5f, ARC_OUTER_RADIUS + 1.5f,
-                    GRACE_BOTTOM_ANGLE - ARC_LENGTH, GRACE_BOTTOM_ANGLE,
-                    16, 0x33E6F0FF); // Subtle blue glow for Grace
+                    COMMAND_BOTTOM_ANGLE - ARC_LENGTH, COMMAND_BOTTOM_ANGLE,
+                    16, 0x33E6F0FF);
         }
 
-        for (int i = 0; i < command && i < maxCommand; i++) {
-            float startAngle = GRACE_BOTTOM_ANGLE - (i * segmentAngleLength);
+        // Fill color based on command level
+        int fillColor;
+        if (command >= maxCommand) {
+            fillColor = COMMAND_FULL_COLOR;
+        } else if (command >= 50) {
+            fillColor = COMMAND_PULL_READY_COLOR;
+        } else {
+            fillColor = COMMAND_FILL_COLOR;
+        }
+
+        // Draw filled segments (including fractional filling for partial segment)
+        for (int i = 0; i < numSegments; i++) {
+            int segmentStartVal = i * 10;
+            int segmentEndVal = (i + 1) * 10;
+
+            if (command <= segmentStartVal) break;
+
+            float fillFraction = 1.0f;
+            if (command < segmentEndVal) {
+                fillFraction = (command - segmentStartVal) / 10.0f;
+            }
+
+            float startAngle = COMMAND_BOTTOM_ANGLE - (i * segmentAngleLength);
+            float endAngle = startAngle - (segmentAngleLength * fillFraction) + (fillFraction >= 1.0f ? 0.8f : 0.0f);
+
             drawArcSegment(graphics, centerX, centerY, ARC_INNER_RADIUS, ARC_OUTER_RADIUS,
-                    startAngle - segmentAngleLength + 0.8f, startAngle,
+                    endAngle, startAngle,
                     3, fillColor);
         }
 
-        // Draw dividers
-        for (int i = 1; i < maxCommand; i++) {
-            float dividerAngle = GRACE_BOTTOM_ANGLE - (i * segmentAngleLength);
+        // Draw dividers between the 10 segments
+        for (int i = 1; i < numSegments; i++) {
+            float dividerAngle = COMMAND_BOTTOM_ANGLE - (i * segmentAngleLength);
             drawThickLine(graphics, centerX, centerY, ARC_INNER_RADIUS, ARC_OUTER_RADIUS, dividerAngle,
                     COMMAND_DIVIDER_COLOR);
         }
     }
 
-    /**
-     * Render labels - just the values, no names.
-     */
     private void renderLabels(GuiGraphics graphics, int centerX, int centerY) {
         Minecraft minecraft = Minecraft.getInstance();
 
-        // Faith value (right side) - just the number
-        double faith = com.complextalents.impl.highpriest.client.ClientFaithData.getFaith();
-        if (faith != lastFaithValue) {
-            lastFaithValue = faith;
-            cachedFaithText = formatFaithCount(faith);
-        }
-
-        int faithTextX = (int) (centerX + ARC_OUTER_RADIUS + 6);
-        int faithTextY = centerY - 3;
-
-        graphics.pose().pushPose();
-        graphics.pose().scale(0.7f, 0.7f, 0.7f);
-        graphics.drawString(minecraft.font, cachedFaithText,
-                (int) (faithTextX / 0.7f), (int) (faithTextY / 0.7f), FAITH_TEXT_COLOR);
-        graphics.pose().popPose();
-
-        // Command value (left side)
         int command = ClientPassiveStackData.getStackCount("command");
         int grace = ClientPassiveStackData.getStackCount("grace");
-        int maxCommand = 10;
 
         if (command != lastCommandValue || grace != lastGraceValue) {
             lastCommandValue = command;
             lastGraceValue = grace;
-            cachedCommandText = "Command: " + command + "/" + maxCommand;
+            cachedCommandText = "Command: " + command + "/100";
         }
 
         int commandTextWidth = minecraft.font.width(cachedCommandText);
         int commandTextX = (int) (centerX - ARC_OUTER_RADIUS - 8 - commandTextWidth * 0.7f);
         int commandTextY = centerY - 3;
 
-        // Color based on Grace active state
-        int textColor = grace > 0 ? 0x99E6F0FF : 0x99AAAAAA; // Bright blue if active, gray if inactive
+        int textColor = command >= 50 ? 0x9900E5FF : (grace > 0 ? 0x99E6F0FF : 0x99AAAAAA);
 
         graphics.pose().pushPose();
         graphics.pose().scale(0.7f, 0.7f, 0.7f);
@@ -153,7 +133,6 @@ public class HighPriestRenderer implements OriginRenderer {
                 (int) (commandTextX / 0.7f), (int) (commandTextY / 0.7f), textColor);
         graphics.pose().popPose();
 
-        // Grace Cooldown Timer (below Command text)
         int graceCooldown = ClientPassiveStackData.getStackCount("grace_cooldown");
         if (graceCooldown > 0) {
             if (graceCooldown != lastGraceCooldown) {
@@ -173,22 +152,6 @@ public class HighPriestRenderer implements OriginRenderer {
         }
     }
 
-    /**
-     * Format faith count for display, acting similar to Dark Mage's soul format.
-     */
-    private String formatFaithCount(double faith) {
-        if (faith < 1000) {
-            return String.format("%.2f Faith", faith);
-        } else if (faith < 1000000) {
-            return String.format("%.2fK Faith", faith / 1000.0);
-        } else {
-            return String.format("%.2fM Faith", faith / 1000000.0);
-        }
-    }
-
-    /**
-     * Draw a thick radial line (divider between Grace stacks).
-     */
     private void drawThickLine(GuiGraphics graphics, float cx, float cy, float innerRadius, float outerRadius,
             float angleDegrees, int color) {
         int a = (color >> 24) & 0xFF;
@@ -208,14 +171,11 @@ public class HighPriestRenderer implements OriginRenderer {
         float cos = (float) Math.cos(rad);
         float sin = (float) Math.sin(rad);
 
-        // Create a thick line (2 pixels wide on each side)
         float thickness = 4f;
 
-        // Perpendicular offset (rotated 90 degrees)
         float perpCos = -sin * thickness;
         float perpSin = cos * thickness;
 
-        // Four vertices for the thick line
         float x1 = cx + cos * innerRadius + perpCos;
         float y1 = cy + sin * innerRadius + perpSin;
         float x2 = cx + cos * outerRadius + perpCos;
@@ -225,12 +185,10 @@ public class HighPriestRenderer implements OriginRenderer {
         float x4 = cx + cos * outerRadius - perpCos;
         float y4 = cy + sin * outerRadius - perpSin;
 
-        // Triangle 1
         buf.vertex(x1, y1, 0).color(r, g, b, a).endVertex();
         buf.vertex(x3, y3, 0).color(r, g, b, a).endVertex();
         buf.vertex(x2, y2, 0).color(r, g, b, a).endVertex();
 
-        // Triangle 2
         buf.vertex(x3, y3, 0).color(r, g, b, a).endVertex();
         buf.vertex(x4, y4, 0).color(r, g, b, a).endVertex();
         buf.vertex(x2, y2, 0).color(r, g, b, a).endVertex();
@@ -238,21 +196,6 @@ public class HighPriestRenderer implements OriginRenderer {
         tesselator.end();
     }
 
-    /**
-     * Draw a filled ring arc segment using BufferBuilder.
-     * Creates a thick curved bar between two radii.
-     * Handles angle wrapping (angles can exceed 360°).
-     *
-     * @param graphics    The GUI graphics context
-     * @param cx          Center X
-     * @param cy          Center Y
-     * @param innerRadius Inner radius of the ring
-     * @param outerRadius Outer radius of the ring
-     * @param startAngle  Start angle in degrees
-     * @param endAngle    End angle in degrees (can be > 360)
-     * @param segments    Number of segments for smoothness
-     * @param color       ARGB color
-     */
     private void drawArcSegment(GuiGraphics graphics, float cx, float cy, float innerRadius, float outerRadius,
             float startAngle, float endAngle, int segments, int color) {
 
@@ -275,7 +218,6 @@ public class HighPriestRenderer implements OriginRenderer {
             float a1 = startAngle + angleStep * i;
             float a2 = startAngle + angleStep * (i + 1);
 
-            // Normalize angles to 0-360 for calculation, but preserve arc continuity
             double rad1 = Math.toRadians(a1);
             double rad2 = Math.toRadians(a2);
 
@@ -284,7 +226,6 @@ public class HighPriestRenderer implements OriginRenderer {
             float cos2 = (float) Math.cos(rad2);
             float sin2 = (float) Math.sin(rad2);
 
-            // Four vertices of the quad segment
             float outer1x = cx + cos1 * outerRadius;
             float outer1y = cy + sin1 * outerRadius;
             float outer2x = cx + cos2 * outerRadius;
@@ -294,12 +235,10 @@ public class HighPriestRenderer implements OriginRenderer {
             float inner2x = cx + cos2 * innerRadius;
             float inner2y = cy + sin2 * innerRadius;
 
-            // Triangle 1: outer1 -> inner1 -> outer2
             buf.vertex(outer1x, outer1y, 0).color(r, g, b, a).endVertex();
             buf.vertex(inner1x, inner1y, 0).color(r, g, b, a).endVertex();
             buf.vertex(outer2x, outer2y, 0).color(r, g, b, a).endVertex();
 
-            // Triangle 2: inner1 -> inner2 -> outer2
             buf.vertex(inner1x, inner1y, 0).color(r, g, b, a).endVertex();
             buf.vertex(inner2x, inner2y, 0).color(r, g, b, a).endVertex();
             buf.vertex(outer2x, outer2y, 0).color(r, g, b, a).endVertex();

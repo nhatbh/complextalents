@@ -55,11 +55,11 @@ public class StatModifierApplier {
                         AttributeModifier.Operation.ADDITION, uuid);
                 break;
             case LUCK_CRIT:
-                // +1% Crit Chance, +0.2 Luck, +1% Spell Crit Chance per rank
+                // +2.5% Crit Chance, +0.2 Luck, +2.5% Spell Crit Chance per rank
                 updateModifier(player, Attributes.LUCK, rank * 0.2, AttributeModifier.Operation.ADDITION, uuid);
-                updateModAttribute(player, "attributeslib", "crit_chance", rank * 0.01,
+                updateModAttribute(player, "attributeslib", "crit_chance", rank * 0.025,
                         AttributeModifier.Operation.ADDITION, uuid);
-                updateModifier(player, ModAttributes.SPELL_CRIT_CHANCE.get(), rank * 0.01,
+                updateModifier(player, ModAttributes.SPELL_CRIT_CHANCE.get(), rank * 0.025,
                         AttributeModifier.Operation.ADDITION, uuid);
                 break;
             case MAX_HP:

@@ -47,6 +47,11 @@ public class SeraphsEdgeEntity extends LivingEntity {
     private @Nullable UUID ownerUUID;
     private @Nullable Entity cachedOwner;
 
+    // Player Attachment state
+    private @Nullable UUID attachedPlayerUUID = null;
+    private @Nullable Player cachedAttachedPlayer = null;
+    private int attachTicksRemaining = 0;
+
     // Configuration
     private float baseDamage = 10.0f;
     private float shieldAmount = 5.0f;
@@ -142,7 +147,83 @@ public class SeraphsEdgeEntity extends LivingEntity {
         this.shieldAmount = shield;
     }
 
+    public void attachToPlayer(Player player) {
+        this.attachedPlayerUUID = player.getUUID();
+        this.cachedAttachedPlayer = player;
+        this.attachTicksRemaining = 140; // 7 seconds (140 ticks)
+        this.targetPos = null;
+        this.wasHovering = true;
+        this.hitEntitiesThisMove.clear();
+
+        Vec3 headPos = player.position().add(0, player.getBbHeight() + 0.1, 0);
+        setPos(headPos.x, headPos.y, headPos.z);
+        this.xo = headPos.x;
+        this.yo = headPos.y;
+        this.zo = headPos.z;
+        this.xOld = headPos.x;
+        this.yOld = headPos.y;
+        this.zOld = headPos.z;
+        setDeltaMovement(Vec3.ZERO);
+
+        applyAttachedAuraEffects();
+
+        if (level() instanceof ServerLevel serverLevel) {
+            PacketHandler.sendToNearby(
+                    new SpawnSeraphSwordFXPacket(position().add(0, 0.5, 0), null, 5),
+                    serverLevel,
+                    position());
+        }
+    }
+
+    private void applyAttachedAuraEffects() {
+        if (level().isClientSide) return;
+
+        List<Player> nearbyPlayers = level().getEntitiesOfClass(
+                Player.class,
+                getBoundingBox().inflate(3.0),
+                p -> p.isAlive());
+
+        float shieldAmplifier = shieldAmount * 1.5f;
+        int amp = Math.max(0, (int) (shieldAmplifier / 4.0f));
+        int speedAmplifier = 2;
+
+        for (Player player : nearbyPlayers) {
+            player.addEffect(new MobEffectInstance(
+                    MobEffects.ABSORPTION,
+                    140, // 7 seconds duration (140 ticks)
+                    amp,
+                    false,
+                    true));
+            player.addEffect(new MobEffectInstance(
+                    MobEffects.MOVEMENT_SPEED,
+                    140, // 7 seconds duration (140 ticks)
+                    speedAmplifier,
+                    false,
+                    true));
+        }
+    }
+
+    public void detachPlayer() {
+        this.attachedPlayerUUID = null;
+        this.cachedAttachedPlayer = null;
+        this.attachTicksRemaining = 0;
+    }
+
+    @Nullable
+    public Player getAttachedPlayer() {
+        if (this.cachedAttachedPlayer != null && !this.cachedAttachedPlayer.isRemoved()) {
+            return this.cachedAttachedPlayer;
+        } else if (this.attachedPlayerUUID != null && this.level() instanceof ServerLevel serverLevel) {
+            if (serverLevel.getEntity(this.attachedPlayerUUID) instanceof Player player) {
+                this.cachedAttachedPlayer = player;
+                return this.cachedAttachedPlayer;
+            }
+        }
+        return null;
+    }
+
     public void moveTo(Vec3 target) {
+        detachPlayer();
         this.wasHovering = (this.targetPos == null);
         this.targetPos = target.add(0, 1, 0);
         this.hitEntitiesThisMove.clear();
@@ -152,7 +233,7 @@ public class SeraphsEdgeEntity extends LivingEntity {
         setDeltaMovement(velocity);
     }
 
-    public int pullEnemies() {
+    public int executeVariablePull(double scalingT, double purifyDamageMult, double absorptionShield) {
         if (level().isClientSide)
             return 0;
 
@@ -160,11 +241,75 @@ public class SeraphsEdgeEntity extends LivingEntity {
         List<LivingEntity> enemies = level().getEntitiesOfClass(
                 LivingEntity.class,
                 getBoundingBox().inflate(PULL_RADIUS),
-                e -> e.isAlive() && owner instanceof Player p && AllyHelper.isEnemy(p, e));
+                e -> e.isAlive() && !(e instanceof Player));
+
+        float pullForce = (float) (0.3 + 0.2 * scalingT);
+        float damageMult = (float) (1.0 + (purifyDamageMult - 1.0) * scalingT);
+        float burstDamage = baseDamage * damageMult;
+        int slowDuration = (int) (40 + 20 * scalingT);
+        int slowAmp = (int) (1 + scalingT);
 
         for (LivingEntity enemy : enemies) {
-            // Play hit particle effect immediately (it covers both pull and hit
+            Vec3 pullVec = position().subtract(enemy.position());
+            enemy.setDeltaMovement(enemy.getDeltaMovement().add(pullVec.scale(pullForce)));
+            enemy.hurtMarked = true;
 
+            enemy.hurt(
+                    level().damageSources().mobProjectile(this, owner instanceof LivingEntity l ? l : null),
+                    burstDamage);
+            enemy.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, slowDuration, slowAmp));
+
+            PacketHandler.sendToNearby(
+                    new S2CSpawnAAAParticlePacket(
+                            ResourceLocation.fromNamespaceAndPath(TalentsMod.MODID, "hiteffect"),
+                            enemy.position().add(0, enemy.getBbHeight() * 0.5, 0)),
+                    (ServerLevel) level(),
+                    enemy.position());
+        }
+
+        if (absorptionShield > 0) {
+            List<Player> players = level().getEntitiesOfClass(
+                    Player.class,
+                    getBoundingBox().inflate(PULL_RADIUS),
+                    p -> p.isAlive());
+
+            int amp = Math.max(0, (int) (absorptionShield / 4.0));
+            for (Player player : players) {
+                player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, amp));
+                PacketHandler.sendToNearby(
+                        new S2CSpawnAAAParticlePacket(
+                                ResourceLocation.fromNamespaceAndPath(TalentsMod.MODID, "hiteffect"),
+                                player.position().add(0, player.getBbHeight() * 0.5, 0)),
+                        (ServerLevel) level(),
+                        player.position());
+            }
+        }
+
+        PacketHandler.sendToNearby(
+                new S2CSpawnAAAParticlePacket(
+                        ResourceLocation.fromNamespaceAndPath(TalentsMod.MODID, "orbpull"),
+                        position().add(0, 0.6, 0)),
+                (ServerLevel) level(),
+                position());
+
+        PacketHandler.sendToNearby(
+                new SpawnSeraphSwordFXPacket(position().add(0, 0, 0), null, 4),
+                (ServerLevel) level(),
+                position());
+
+        return enemies.size();
+    }
+
+    public int pullEnemies() {
+        if (level().isClientSide)
+            return 0;
+
+        List<LivingEntity> enemies = level().getEntitiesOfClass(
+                LivingEntity.class,
+                getBoundingBox().inflate(PULL_RADIUS),
+                e -> e.isAlive() && !(e instanceof Player));
+
+        for (LivingEntity enemy : enemies) {
             // Scale pull with distance: further away = stronger pull
             Vec3 pullVec = position().subtract(enemy.position());
             enemy.setDeltaMovement(enemy.getDeltaMovement().add(pullVec.scale(0.3)));
@@ -199,6 +344,71 @@ public class SeraphsEdgeEntity extends LivingEntity {
         return enemies.size();
     }
 
+    public int purifyEnemies(double damageMultiplier, double absorptionShield) {
+        if (level().isClientSide)
+            return 0;
+
+        Entity owner = getOwner();
+        List<LivingEntity> enemies = level().getEntitiesOfClass(
+                LivingEntity.class,
+                getBoundingBox().inflate(PULL_RADIUS),
+                e -> e.isAlive() && !(e instanceof Player));
+
+        float purifyDamage = (float) (baseDamage * damageMultiplier);
+
+        for (LivingEntity enemy : enemies) {
+            Vec3 pullVec = position().subtract(enemy.position());
+            enemy.setDeltaMovement(enemy.getDeltaMovement().add(pullVec.scale(0.5)));
+            enemy.hurtMarked = true;
+
+            // Instant burst damage on Purify
+            enemy.hurt(
+                    level().damageSources().mobProjectile(this, owner instanceof LivingEntity l ? l : null),
+                    purifyDamage);
+            enemy.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 2));
+
+            PacketHandler.sendToNearby(
+                    new S2CSpawnAAAParticlePacket(
+                            ResourceLocation.fromNamespaceAndPath(TalentsMod.MODID, "hiteffect"),
+                            enemy.position().add(0, enemy.getBbHeight() * 0.5, 0)),
+                    (ServerLevel) level(),
+                    enemy.position());
+        }
+
+        // Grant brief Absorption shield (5s / 100 ticks) to all nearby players regardless of team
+        if (absorptionShield > 0) {
+            List<Player> players = level().getEntitiesOfClass(
+                    Player.class,
+                    getBoundingBox().inflate(PULL_RADIUS),
+                    p -> p.isAlive());
+
+            int amp = Math.max(0, (int) (absorptionShield / 4.0));
+            for (Player player : players) {
+                player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, amp)); // 5 seconds brief duration
+                PacketHandler.sendToNearby(
+                        new S2CSpawnAAAParticlePacket(
+                                ResourceLocation.fromNamespaceAndPath(TalentsMod.MODID, "hiteffect"),
+                                player.position().add(0, player.getBbHeight() * 0.5, 0)),
+                        (ServerLevel) level(),
+                        player.position());
+            }
+        }
+
+        PacketHandler.sendToNearby(
+                new S2CSpawnAAAParticlePacket(
+                        ResourceLocation.fromNamespaceAndPath(TalentsMod.MODID, "orbpull"),
+                        position().add(0, 0.6, 0)),
+                (ServerLevel) level(),
+                position());
+
+        PacketHandler.sendToNearby(
+                new SpawnSeraphSwordFXPacket(position().add(0, 0, 0), null, 5),
+                (ServerLevel) level(),
+                position());
+
+        return enemies.size();
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -208,7 +418,33 @@ public class SeraphsEdgeEntity extends LivingEntity {
         if (!level().isClientSide) {
             checkOwnerDistance();
 
-            if (targetPos != null) {
+            if (attachedPlayerUUID != null) {
+                Player targetPlayer = getAttachedPlayer();
+                Entity owner = getOwner();
+
+                boolean invalidTarget = targetPlayer == null || !targetPlayer.isAlive() || targetPlayer.isRemoved();
+                boolean outOfTimer = attachTicksRemaining <= 0;
+                boolean outOfRange = owner instanceof Player priest && (priest.distanceToSqr(targetPlayer != null ? targetPlayer : this) > DESPAWN_RANGE * DESPAWN_RANGE);
+
+                if (invalidTarget || outOfTimer || outOfRange) {
+                    discardAndClear();
+                    return;
+                }
+
+                Vec3 headPos = targetPlayer.position().add(0, targetPlayer.getBbHeight() + 0.1, 0);
+                setPos(headPos.x, headPos.y, headPos.z);
+                this.xo = headPos.x;
+                this.yo = headPos.y;
+                this.zo = headPos.z;
+                this.xOld = headPos.x;
+                this.yOld = headPos.y;
+                this.zOld = headPos.z;
+                setDeltaMovement(Vec3.ZERO);
+                targetPos = null;
+                attachTicksRemaining--;
+
+                applyAttachedAuraEffects();
+            } else if (targetPos != null) {
                 Vec3 currentPos = position();
                 Vec3 toTarget = targetPos.subtract(currentPos);
                 double distance = toTarget.length();
@@ -251,45 +487,12 @@ public class SeraphsEdgeEntity extends LivingEntity {
         List<LivingEntity> entities = level().getEntitiesOfClass(
                 LivingEntity.class,
                 sweepBox,
-                e -> e.isAlive() && e != this && !hitEntitiesThisMove.contains(e.getUUID()));
-
-        Entity owner = getOwner();
+                e -> e.isAlive() && e != this && !(e instanceof Player) && !hitEntitiesThisMove.contains(e.getUUID()));
 
         for (LivingEntity entity : entities) {
-            if (entity == owner)
-                continue;
-
             hitEntitiesThisMove.add(entity.getUUID());
-            boolean isAlly = owner instanceof Player p && AllyHelper.isAlly(p, entity);
-
-            if (isAlly) {
-                applyAllyEffects(entity);
-            } else {
-                applyEnemyEffects(entity);
-            }
+            applyEnemyEffects(entity);
         }
-    }
-
-    private void applyAllyEffects(LivingEntity ally) {
-        float shieldAmplifier = wasHovering ? shieldAmount * 1.5f : shieldAmount;
-        ally.addEffect(new MobEffectInstance(
-                MobEffects.ABSORPTION,
-                200,
-                (int) (shieldAmplifier / 2)));
-
-        int speedAmplifier = wasHovering ? 2 : 1;
-        ally.addEffect(new MobEffectInstance(
-                MobEffects.MOVEMENT_SPEED,
-                100,
-                speedAmplifier));
-
-        // Play hit particle effect for allies
-        PacketHandler.sendToNearby(
-                new S2CSpawnAAAParticlePacket(
-                        ResourceLocation.fromNamespaceAndPath(TalentsMod.MODID, "hiteffect"),
-                        ally.position().add(0, ally.getBbHeight() * 0.5, 0)),
-                (ServerLevel) level(),
-                ally.position());
     }
 
     private void applyEnemyEffects(LivingEntity enemy) {

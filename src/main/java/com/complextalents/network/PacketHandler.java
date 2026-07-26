@@ -28,13 +28,11 @@ import com.complextalents.network.elemental.SpawnSpringReactionPacket;
 import com.complextalents.network.elemental.SpawnSuperconductReactionPacket;
 import com.complextalents.network.elemental.SpawnVaporizeReactionPacket;
 import com.complextalents.network.elemental.SpawnVoidfireReactionPacket;
-import com.complextalents.network.darkmage.SoulSyncPacket;
 import com.complextalents.network.darkmage.S2CSyncBloodOrbPacket;
 import com.complextalents.network.darkmage.S2CRemoveBloodOrbPacket;
 import com.complextalents.network.assassin.AssassinSyncPacket;
 import com.complextalents.network.assassin.AssassinEntitySyncPacket;
 import com.complextalents.network.elementalmage.ElementalMageSyncPacket;
-import com.complextalents.network.highpriest.FaithSyncPacket;
 import com.complextalents.leveling.network.LevelDataSyncPacket;
 import com.complextalents.spellmastery.network.SpellMasterySyncPacket;
 import com.complextalents.weaponmastery.network.WeaponMasterySyncPacket;
@@ -265,13 +263,6 @@ public class PacketHandler {
                                 SkillChannelStartResponsePacket::decode,
                                 SkillChannelStartResponsePacket::handle);
 
-                // Dark Mage soul sync packet
-                INSTANCE.registerMessage(packetId++,
-                                SoulSyncPacket.class,
-                                SoulSyncPacket::encode,
-                                SoulSyncPacket::decode,
-                                SoulSyncPacket::handle);
-
                 INSTANCE.registerMessage(packetId++,
                                 S2CSyncBloodOrbPacket.class,
                                 S2CSyncBloodOrbPacket::encode,
@@ -309,13 +300,6 @@ public class PacketHandler {
                                 ElementalMageSyncPacket::encode,
                                 ElementalMageSyncPacket::decode,
                                 ElementalMageSyncPacket::handle);
-
-                // High Priest faith sync packet
-                INSTANCE.registerMessage(packetId++,
-                                FaithSyncPacket.class,
-                                FaithSyncPacket::encode,
-                                FaithSyncPacket::decode,
-                                FaithSyncPacket::handle);
 
                 INSTANCE.registerMessage(packetId++,
                                 LevelDataSyncPacket.class,

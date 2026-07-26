@@ -2,7 +2,6 @@ package com.complextalents.impl.darkmage.origin;
 
 import com.complextalents.TalentsMod;
 import com.complextalents.impl.darkmage.client.DarkMageRenderer;
-import com.complextalents.impl.darkmage.data.SoulData;
 import com.complextalents.origin.OriginBuilder;
 import com.complextalents.origin.OriginManager;
 import com.complextalents.stats.ClassCostMatrix;
@@ -64,32 +63,42 @@ public class DarkMageOrigin {
         OriginBuilder.create("complextalents", "dark_mage")
                 .displayName("Dark Mage")
                 .description(Component.literal(
-                        "Soul harvester with infinite scaling. Harvest souls from kills (enemy max HP / 40). Soul Siphon grants +0.05-0.25% damage/soul and +0.08-0.16% spell crit/soul during Blood Pact. Souls are uncapped. Phylactery auto-triggers on fatal damage (if holding souls), saving at 1 HP, costs 50% souls; 5-min cooldown. Death without souls: 30% loss."))
+                        "Pháp sư Huyết Thuật. Hạ gục kẻ địch rơi ra Soul Orbs dựa trên Max HP mục tiêu. Bật Blood Pact tự đốt Current HP để tăng Shadow Spell Power và chuyển sát thương phép nhận vào thành Bleed 3s. Tắt Blood Pact sẽ kích nổ các Soul Orbs tạo sóng sát thương diện rộng."))
                 .maxLevel(5)
                 .baseStat(StatType.AP, 4)
                 .baseStat(StatType.MAX_MANA, 2)
-                // HP drain rates for Blood Pact: 8%/7%/6%/5%/4% per second
+                // HP drain rates for Blood Pact: 8%/7%/6%/5%/4% Current HP per second
                 .scaledStat("bloodPactHpDrainPercent", "HP Drain/sec", new double[] { 0.08, 0.07, 0.06, 0.05, 0.04 })
-                // Cast speed bonus: 10%/20%/30%/40%/50%
-                .scaledStat("bloodPactCastSpeedBonus", "Cast Speed Bonus",
+                // Shadow Spell Power bonus: +10%/20%/30%/40%/50%
+                .scaledStat("bloodPactSpellPowerBonus", "Spell Power Bonus",
                         new double[] { 0.10, 0.20, 0.30, 0.40, 0.50 })
-                // Soul damage bonus per soul: 0.05%/0.1%/0.15%/0.2%/0.25%
-                .scaledStat("soulDamageBonusPercent", "Soul Dmg/%%Soul",
-                        new double[] { 0.0005, 0.001, 0.0015, 0.002, 0.0025 })
-                // Spell crit chance per soul during Blood Pact: 0.08%/0.1%/0.12%/0.14%/0.16%
-                // per soul
-                .scaledStat("soulSpellCritPercent", "Soul Spell Crit",
-                        new double[] { 0.0008, 0.001, 0.0012, 0.0014, 0.0016 })
+                // Harvest Heal Base Percent: 2%/3%/4%/5%/6%
+                .scaledStat("harvestHealPercent", "Harvest Heal",
+                        new double[] { 0.02, 0.03, 0.04, 0.05, 0.06 })
+                // Harvest Frenzy Cast Speed: +10%/15%/20%/25%/30%
+                .scaledStat("harvestFrenzyCastSpeed", "Frenzy Cast Speed",
+                        new double[] { 0.10, 0.15, 0.20, 0.25, 0.30 })
+                // Detonation Base Damage per Density V: 10/15/20/25/35
+                .scaledStat("detonationBaseDamage", "Detonation Base Dmg",
+                        new double[] { 10.0, 15.0, 20.0, 25.0, 35.0 })
+                // Rebound Heal Percent: 30%/35%/40%/45%/50%
+                .scaledStat("reboundHealPercent", "Rebound Heal",
+                        new double[] { 0.30, 0.35, 0.40, 0.45, 0.50 })
+                .passiveStack("blood_pact_active", com.complextalents.passive.PassiveStackDef.create("blood_pact_active")
+                        .maxStacks(1).displayName("Blood Pact Active").build())
+                .passiveStack("blood_pact_ticks", com.complextalents.passive.PassiveStackDef.create("blood_pact_ticks")
+                        .maxStacks(72000).displayName("Blood Pact Ticks").build())
+                .passiveStack("blood_pact_dmg", com.complextalents.passive.PassiveStackDef.create("blood_pact_dmg")
+                        .maxStacks(500).displayName("Blood Pact Dmg Bonus").build())
                 .passiveSkill("Soul Siphon",
-                        "Gain souls from killed enemies. Souls are uncapped and provide a damage bonus during Blood Pact.")
-                .passiveSkill("Phylactery",
-                        "Auto-triggers on fatal damage if souls > 0, saving you at the cost of 50% souls.")
+                        "Hạ gục kẻ địch rơi ra Soul Orbs tích trữ sức mạnh dựa trên Max HP kẻ địch.")
+                .passiveSkill("Blood Magic",
+                        "Chuyển sát thương phép nhận vào thành Bleed giảm dần trong 3s khi đang bật Blood Pact.")
                 .activeSkill("Blood Pact",
-                        "Toggle to drain HP for Cast Speed, Mana Regen, and immense Soul-scaled damage.",
+                        "Bật/Tắt: Đốt Current HP để tăng liên tục Shadow Spell Power. Tắt kỹ năng để kích nổ Soul Orbs tạo sóng sát thương diện rộng.",
                         ResourceLocation.fromNamespaceAndPath("complextalents",
                                 "textures/skill/darkmage/bloodpact.png"))
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "blood_pact"))
-                // Phylactery cooldown in seconds: 300s (5 min) at all levels
                 .renderer(new DarkMageRenderer())
                 .register();
 
@@ -114,52 +123,5 @@ public class DarkMageOrigin {
      */
     public static boolean isDarkMage(ServerPlayer player) {
         return ID.equals(OriginManager.getOriginId(player));
-    }
-
-    /**
-     * Handle player login - sync soul data.
-     */
-    @SubscribeEvent
-    public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) {
-            return;
-        }
-
-        if (!isDarkMage(player)) {
-            return;
-        }
-
-        // Sync soul data on login
-        SoulData.syncToClient(player);
-    }
-
-    /**
-     * Handle player logout - cleanup tracking data.
-     */
-    @SubscribeEvent
-    public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) {
-            return;
-        }
-
-        // Clean up Blood Pact active tracking (souls persist)
-        SoulData.setBloodPactActive(player.getUUID(), false);
-    }
-
-    /**
-     * Handle player respawn - sync soul data after death.
-     */
-    @SubscribeEvent
-    public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) {
-            return;
-        }
-
-        if (!isDarkMage(player)) {
-            return;
-        }
-
-        // Sync soul data after respawn
-        SoulData.syncToClient(player);
     }
 }

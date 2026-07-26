@@ -32,7 +32,9 @@ public class WeaponMasteryData implements IWeaponMasteryData {
     private static final UUID COLOSSUS_SWEEP = UUIDHelper.generateAttributeModifierUUID("weapon_mastery", "colossus_sweep");
 
     private static final UUID VANGUARD_AD = UUIDHelper.generateAttributeModifierUUID("weapon_mastery", "vanguard_ad");
-    private static final UUID VANGUARD_CDR = UUIDHelper.generateAttributeModifierUUID("weapon_mastery", "vanguard_cdr");
+    private static final UUID VANGUARD_MS = UUIDHelper.generateAttributeModifierUUID("weapon_mastery", "vanguard_ms");
+    private static final UUID VANGUARD_HP = UUIDHelper.generateAttributeModifierUUID("weapon_mastery", "vanguard_hp");
+    private static final UUID VANGUARD_AS = UUIDHelper.generateAttributeModifierUUID("weapon_mastery", "vanguard_as");
 
     private static final UUID REAPER_CRIT_CHANCE = UUIDHelper.generateAttributeModifierUUID("weapon_mastery", "reaper_crit_chance");
     private static final UUID REAPER_CRIT_DAMAGE = UUIDHelper.generateAttributeModifierUUID("weapon_mastery", "reaper_crit_damage");
@@ -126,15 +128,15 @@ public class WeaponMasteryData implements IWeaponMasteryData {
     private void applyBlademasterRewards() {
         int levels = getMasteryLevel(WeaponPath.BLADEMASTER);
         int ranks = levels / 5; // Major rank every 5 levels
-        updateModifier(Attributes.ATTACK_DAMAGE, BLADEMASTER_AD, "Blademaster AD", levels * 0.5, AttributeModifier.Operation.ADDITION);
-        updateModifier(Attributes.MOVEMENT_SPEED, BLADEMASTER_MS, "Blademaster MS", ranks * 0.02, AttributeModifier.Operation.MULTIPLY_BASE);
-        updateModifier(Attributes.ATTACK_SPEED, BLADEMASTER_AS, "Blademaster AS", ranks * 0.02, AttributeModifier.Operation.MULTIPLY_BASE);
+        updateModifier(Attributes.ATTACK_DAMAGE, BLADEMASTER_AD, "Blademaster AD", levels * 1.0, AttributeModifier.Operation.ADDITION);
+        updateModifier(Attributes.MOVEMENT_SPEED, BLADEMASTER_MS, "Blademaster MS", ranks * 0.05, AttributeModifier.Operation.MULTIPLY_BASE);
+        updateModifier(Attributes.ATTACK_SPEED, BLADEMASTER_AS, "Blademaster AS", ranks * 0.05, AttributeModifier.Operation.MULTIPLY_BASE);
     }
 
     private void applyColossusRewards() {
         int levels = getMasteryLevel(WeaponPath.COLOSSUS);
         int ranks = levels / 5;
-        updateModifier(Attributes.ATTACK_DAMAGE, COLOSSUS_AD, "Colossus AD", levels * 0.03, AttributeModifier.Operation.MULTIPLY_BASE);
+        updateModifier(Attributes.ATTACK_DAMAGE, COLOSSUS_AD, "Colossus AD", levels * 0.05, AttributeModifier.Operation.MULTIPLY_BASE);
         updateModifier(Attributes.MAX_HEALTH, COLOSSUS_HP, "Colossus HP", ranks * 5.0, AttributeModifier.Operation.ADDITION);
         updateModModifier("epicfight", "sweeping_area", COLOSSUS_SWEEP, "Colossus Sweep", ranks * 0.05, AttributeModifier.Operation.MULTIPLY_BASE);
     }
@@ -142,25 +144,24 @@ public class WeaponMasteryData implements IWeaponMasteryData {
     private void applyVanguardRewards() {
         int levels = getMasteryLevel(WeaponPath.VANGUARD);
         int ranks = levels / 5;
-        updateModifier(Attributes.ATTACK_DAMAGE, VANGUARD_AD, "Vanguard AD", levels * 0.02, AttributeModifier.Operation.MULTIPLY_BASE);
-        // Reach is unsupported, changed to CDR in plan
-        double totalCDR = ranks * 0.05; // 5% base CDR equivalent for now per rank
-        double cdrPercentage = totalCDR / (1.0 + totalCDR); // simple formula
-        updateModModifier("irons_spellbooks", "cooldown_reduction", VANGUARD_CDR, "Vanguard CDR", cdrPercentage, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        updateModifier(Attributes.ATTACK_DAMAGE, VANGUARD_AD, "Vanguard AD", levels * 0.03, AttributeModifier.Operation.MULTIPLY_BASE);
+        updateModifier(Attributes.MOVEMENT_SPEED, VANGUARD_MS, "Vanguard MS", levels * 0.02, AttributeModifier.Operation.MULTIPLY_BASE);
+        updateModifier(Attributes.MAX_HEALTH, VANGUARD_HP, "Vanguard HP", ranks * 5.0, AttributeModifier.Operation.ADDITION);
+        updateModifier(Attributes.ATTACK_SPEED, VANGUARD_AS, "Vanguard AS", ranks * 0.05, AttributeModifier.Operation.MULTIPLY_BASE);
     }
 
     private void applyReaperRewards() {
         int levels = getMasteryLevel(WeaponPath.REAPER);
         int ranks = levels / 5;
-        updateModModifier("attributeslib", "crit_chance", REAPER_CRIT_CHANCE, "Reaper Crit Chance", levels * 0.01, AttributeModifier.Operation.ADDITION);
-        updateModModifier("attributeslib", "crit_damage", REAPER_CRIT_DAMAGE, "Reaper Crit Damage", ranks * 0.05, AttributeModifier.Operation.MULTIPLY_BASE);
+        updateModModifier("attributeslib", "crit_chance", REAPER_CRIT_CHANCE, "Reaper Crit Chance", levels * 0.02, AttributeModifier.Operation.ADDITION);
+        updateModModifier("attributeslib", "crit_damage", REAPER_CRIT_DAMAGE, "Reaper Crit Damage", ranks * 0.10, AttributeModifier.Operation.MULTIPLY_BASE);
         updateModifier(Attributes.ATTACK_DAMAGE, REAPER_AD, "Reaper AD", ranks * 0.5, AttributeModifier.Operation.ADDITION);
     }
 
     private void applyJuggernautRewards() {
         int levels = getMasteryLevel(WeaponPath.JUGGERNAUT);
         int ranks = levels / 5;
-        updateModModifier("attributeslib", "armor_pierce", JUGGERNAUT_ARMOR_PEN, "Juggernaut Armor Pen", levels * 1.0, AttributeModifier.Operation.ADDITION);
+        updateModModifier("attributeslib", "armor_pierce", JUGGERNAUT_ARMOR_PEN, "Juggernaut Armor Pen", levels * 2.0, AttributeModifier.Operation.ADDITION);
         updateModifier(Attributes.ATTACK_DAMAGE, JUGGERNAUT_AD, "Juggernaut AD", ranks * 0.05, AttributeModifier.Operation.MULTIPLY_BASE);
         updateModifier(Attributes.ATTACK_KNOCKBACK, JUGGERNAUT_KNOCKBACK, "Juggernaut Knockback", ranks * 0.1, AttributeModifier.Operation.MULTIPLY_BASE);
     }

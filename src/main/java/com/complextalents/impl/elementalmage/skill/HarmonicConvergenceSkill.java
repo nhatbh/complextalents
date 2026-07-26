@@ -1,12 +1,14 @@
 package com.complextalents.impl.elementalmage.skill;
 
-import com.complextalents.elemental.registry.ReactionRegistry;
+import com.complextalents.elemental.ElementType;
 import com.complextalents.elemental.effects.ElementalEffects;
-import com.complextalents.passive.PassiveManager;
+import com.complextalents.impl.elementalmage.ElementalMageData;
+import com.complextalents.impl.elementalmage.ElementalMageDataProvider;
+import com.complextalents.origin.capability.OriginDataProvider;
 import com.complextalents.skill.SkillBuilder;
 import com.complextalents.skill.SkillNature;
 import com.complextalents.targeting.TargetType;
-
+import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
 import io.redspace.ironsspellbooks.network.SyncManaPacket;
 import io.redspace.ironsspellbooks.setup.PacketDistributor;
 import net.minecraft.core.particles.ParticleTypes;
@@ -16,6 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
 
 public class HarmonicConvergenceSkill {
 
@@ -25,6 +28,7 @@ public class HarmonicConvergenceSkill {
     // Level Scaling Arrays
     private static final double[] MANA_BASE = { 10.0, 15.0, 20.0, 25.0, 40.0 };
     private static final double[] MANA_MULT = { 5.0, 8.0, 12.0, 16.0, 25.0 };
+    private static final double[] RES_BASE = { 15.0, 18.0, 20.0, 22.0, 25.0 }; // Resonance refund per echo
     private static final double[] CRIT_PER_STACK = { 0.10, 0.12, 0.15, 0.17, 0.20 };
     private static final double[] CD_BASE = { 0.25, 0.30, 0.35, 0.40, 0.50 };
     private static final double[] CD_MULT = { 0.15, 0.20, 0.25, 0.30, 0.40 };
@@ -34,29 +38,24 @@ public class HarmonicConvergenceSkill {
                 .nature(SkillNature.ACTIVE)
                 .displayName("Harmonic Convergence")
                 .description(
-                        "Consume 1+ echoes to restore 10-40 + (Mastery × 5-25) mana/echo and grant +10-20% crit/echo. Crit damage: +25-50% base + (Mastery × 15-40%). Gains a 10s buff that adds these bonuses to ALL spells and attacks and enables Reactions to Crit. 10s cooldown.")
+                        "Tiêu hao Prismatic Echoes (cần >=1) để hoàn Mana & Resonance, gia tăng sát thương trong 10s dựa trên số Echoes tiêu thụ và giúp mọi phép dùng trúng kẻ địch lập tức phản ứng với nguyên tố kích hoạt gần nhất.")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/elementalmage/harmonic_convergence.png"))
                 .setMaxLevel(5)
-                .passiveStack("resonance_echo", com.complextalents.passive.PassiveStackDef.create("resonance_echo")
-                        .maxStacks(5)
-                        .displayName("Resonance Echo")
-                        .color(0xFF4D96FF)
-                        .build())
                 .scaledCooldown(new double[] { 10.0, 10.0, 10.0, 10.0, 10.0 })
                 .scaledStat("base_mana_restore", "Base Mana Restore", MANA_BASE)
-                .scaledStat("mastery_mana_mult", "Mastery Mana Mult", MANA_MULT)
+                .scaledStat("spell_power_mana_mult", "Spell Power Mana Mult", MANA_MULT)
+                .scaledStat("resonance_refund", "Resonance Refund", RES_BASE)
                 .scaledStat("crit_per_stack", "Crit Per Stack", CRIT_PER_STACK)
                 .scaledStat("crit_dmg_base", "Crit Dmg Base", CD_BASE)
                 .scaledStat("crit_dmg_mult", "Crit Dmg Mult", CD_MULT)
                 .validate((context, player) -> {
                     ServerPlayer serverPlayer = (ServerPlayer) player;
-                    int echoes = PassiveManager.getPassiveStacks(serverPlayer, "resonance_echo");
-                    if (echoes <= 0) {
+                    var capOpt = serverPlayer.getCapability(ElementalMageDataProvider.ELEMENTAL_DATA).resolve();
+                    if (capOpt.isEmpty() || capOpt.get().getEchoCount() <= 0) {
                         serverPlayer.sendSystemMessage(
-                                Component.literal(
-                                        "\u00A7cYou have no Resonance Echoes to converge!"));
+                                Component.literal("\u00A7cYou have no Prismatic Echoes to converge!"));
                         return false;
                     }
                     return true;
@@ -65,54 +64,54 @@ public class HarmonicConvergenceSkill {
                     ServerPlayer serverPlayer = (ServerPlayer) player;
                     int level = Math.min(Math.max(context.skillLevel() - 1, 0), 4);
 
-                    // 1. Consume Stacks
-                    int echoes = PassiveManager.getPassiveStacks(serverPlayer, "resonance_echo");
-                    PassiveManager.setPassiveStacks(serverPlayer, "resonance_echo", 0);
+                    var cap = serverPlayer.getCapability(ElementalMageDataProvider.ELEMENTAL_DATA).orElseThrow(IllegalStateException::new);
 
-                    // 2. Fetch Stats
-                    double em = ReactionRegistry.getInstance()
-                            .calculateElementalMastery(serverPlayer);
-                    double bonusEm = Math.max(0.0, em - 1.0); // "scale with elemental master - 1"
+                    // Read consumed Echo count & lock current Harmony Multiplier & Apex element
+                    int echoCount = cap.getEchoCount();
+                    ElementType apex = cap.getEchoes().isEmpty() ? cap.getApexElement() : cap.getEchoes().get(0);
+                    float lockedHarmonyMult = cap.getLiveHarmonyMultiplier();
 
-                    // 3. Calculate Mana Restore
-                    double manaRestored = echoes * (MANA_BASE[level] + (em * MANA_MULT[level]));
+                    cap.setApexElement(apex);
+                    cap.setLockedHarmonyMultiplier(lockedHarmonyMult);
+                    cap.clearEchoes(); // Reset combo bar & lock accumulation
 
-                    // 4. Calculate Critical Hit Stats for Next Spell
-                    double critChance = echoes * CRIT_PER_STACK[level];
-                    double critDamageBonus = CD_BASE[level] + (bonusEm * CD_MULT[level]);
+                    // Fetch raw Spell Power
+                    double spellPower = serverPlayer.getAttributeValue(AttributeRegistry.SPELL_POWER.get());
+
+                    // Phase 1: Engine Refund (Mana + Resonance)
+                    double manaRestored = echoCount * (MANA_BASE[level] + (spellPower * MANA_MULT[level]));
+                    double resonanceRestored = echoCount * RES_BASE[level];
 
                     // Apply Mana Recovery
                     try {
                         io.redspace.ironsspellbooks.api.magic.MagicData magicData = io.redspace.ironsspellbooks.api.magic.MagicData
                                 .getPlayerMagicData(serverPlayer);
-                        double maxMana = serverPlayer.getAttributeValue(
-                                io.redspace.ironsspellbooks.api.registry.AttributeRegistry.MAX_MANA
-                                        .get());
-                        magicData.setMana((float) Math.min(maxMana,
-                                magicData.getMana() + manaRestored));
+                        double maxMana = serverPlayer.getAttributeValue(AttributeRegistry.MAX_MANA.get());
+                        magicData.setMana((float) Math.min(maxMana, magicData.getMana() + manaRestored));
                         PacketDistributor.sendToPlayer(serverPlayer, new SyncManaPacket(magicData));
-                    } catch (Exception e) {
-                        // Iron's Spellbooks not loaded or error
-                    }
+                    } catch (Exception ignored) {}
 
-                    // 4. Apply 10s Buff and Store Stats in NBT
-                    serverPlayer.getCapability(com.complextalents.impl.elementalmage.ElementalMageDataProvider.ELEMENTAL_DATA).ifPresent(cap -> {
-                        cap.setConvergenceCritChance((float) critChance);
-                        cap.setConvergenceCritDamage((float) critDamageBonus);
+                    // Apply Resonance Recovery
+                    serverPlayer.getCapability(OriginDataProvider.ORIGIN_DATA).ifPresent(originData -> {
+                        originData.modifyResource(resonanceRestored);
+                        originData.sync();
                     });
 
-                    // Apply custom effect
-                    serverPlayer.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                            ElementalEffects.HARMONIC_CONVERGENCE.get(), 200, 0));
+                    // Phase 2: 10-Second Convergence Buff Parameters
+                    double critChance = Math.min(1.0, echoCount * CRIT_PER_STACK[level]);
+                    double rawCritDmg = CD_BASE[level] + Math.max(0.0, (spellPower - 1.0) * CD_MULT[level]);
+                    double hardCappedCritDmg = Math.min(1.0, rawCritDmg); // Hard-capped at max +100% bonus
 
-                    // Apply Accumulated Power Attributes (Burst Window)
-                    com.complextalents.impl.elementalmage.ElementalMageData.activateConvergence(serverPlayer);
+                    cap.setConvergenceCritChance((float) critChance);
+                    cap.setConvergenceCritDamage((float) hardCappedCritDmg);
+                    cap.sync();
 
+                    // Apply 10s mob effect
+                    serverPlayer.addEffect(new MobEffectInstance(ElementalEffects.HARMONIC_CONVERGENCE.get(), 200, 0));
 
                     // Play SFX & Particles
                     ServerLevel sLevel = serverPlayer.serverLevel();
-                    sLevel.playSound(null, serverPlayer.getX(), serverPlayer.getY(),
-                            serverPlayer.getZ(),
+                    sLevel.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
                             SoundEvents.END_PORTAL_SPAWN, SoundSource.PLAYERS, 0.7f, 1.5f);
 
                     sLevel.sendParticles(ParticleTypes.ENCHANTED_HIT,
@@ -122,8 +121,8 @@ public class HarmonicConvergenceSkill {
                             50, 0.5, 0.5, 0.5, 0.2);
 
                     serverPlayer.sendSystemMessage(Component.literal(String.format(
-                            "\u00A7b\u2728 Harmonic Convergence! \u00A7fRestored \u00A7b%.0f Mana\u00A7f. Your spells and reactions gain \u00A7e+%.0f%% Crit Chance \u00A7fand \u00A7c+%.0f%% Crit Damage \u00A7ffor 10s!",
-                            manaRestored, critChance * 100.0, critDamageBonus * 100.0)));
+                            "\u00A7b\u2728 Harmonic Convergence! \u00A7fRefunded \u00A7b%.0f Mana \u00A7f& \u00A79%.0f Resonance\u00A7f. Locked Multiplier at \u00A7e%.1fx\u00A7f (+%.0f%% Crit, +%.0f%% Crit Dmg) for 10s!",
+                            manaRestored, resonanceRestored, lockedHarmonyMult, critChance * 100.0, hardCappedCritDmg * 100.0)));
                 })
                 .register();
     }

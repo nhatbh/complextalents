@@ -124,19 +124,19 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
 
         if (currentLevel < 5) {
             // Novice 1-5
-            return 500.0 * (currentLevel + 1); // 500 to 2500 max
+            return 250.0 * (currentLevel + 1); // 250 to 1250 max
         } else if (currentLevel < 10) {
             // Apprentice
-            return 2500.0 + (1500.0 * (currentLevel - 4)); // 4000 to 10000 max
+            return 1250.0 + (750.0 * (currentLevel - 4)); // 2000 to 5000 max
         } else if (currentLevel < 15) {
             // Adept
-            return 10000.0 + (3500.0 * (currentLevel - 9)); // 13500 to 27500 max
+            return 5000.0 + (1750.0 * (currentLevel - 9)); // 6750 to 13750 max
         } else if (currentLevel < 20) {
             // Expert
-            return 27500.0 + (7500.0 * (currentLevel - 14)); // 35000 to 65000 max
+            return 13750.0 + (3750.0 * (currentLevel - 14)); // 17500 to 32500 max
         } else {
             // Master
-            return 65000.0 + (15000.0 * (currentLevel - 19)); // 80000 to 140000 max
+            return 32500.0 + (7500.0 * (currentLevel - 19)); // 40000 to 70000 max
         }
     }
 

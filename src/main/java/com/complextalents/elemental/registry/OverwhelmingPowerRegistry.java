@@ -48,24 +48,8 @@ public class OverwhelmingPowerRegistry {
     }
 
     public void trigger(OPContext context) {
-        IOPStrategy strategy = getStrategy(context.getElement());
-        if (strategy == null)
-            return;
-
-        Player player = context.getAttacker();
-
-        if (!OPCooldownTracker.canTrigger(player, context.getElement())) {
-            return;
-        }
-
-        float damage = context.getRawDamage();
-        int tier = calculateTier(damage);
-
-        if (tier > 0) {
-            OPCooldownTracker.startCooldown(player, context.getElement());
-            sendTriggerMessage(player, context.getElement(), tier, damage);
-            strategy.execute(context, tier);
-        }
+        // Disabled: Overwhelming Power reactions are disabled.
+        return;
     }
 
     public static int getThreshold(int tier) {

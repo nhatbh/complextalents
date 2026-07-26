@@ -8,8 +8,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of current player origin data.
@@ -52,7 +50,7 @@ public class PlayerOriginData implements IPlayerOriginData {
         this.originLevel = 1;
         ResourceType resourceType = getResourceType();
         this.resourceValue = resourceType != null ? resourceType.getMin() : 0;
-        
+
         if (player != null) {
             player.getCapability(com.complextalents.passive.capability.PassiveStackDataProvider.PASSIVE_STACK_DATA)
                     .ifPresent(data -> data.resetPassiveStacks());
@@ -108,7 +106,8 @@ public class PlayerOriginData implements IPlayerOriginData {
 
     @Override
     public void sync() {
-        if (player == null) return;
+        if (player == null)
+            return;
         ResourceType resourceType = getResourceType();
         ResourceLocation resourceTypeId = resourceType != null ? resourceType.getId() : null;
 
@@ -130,12 +129,13 @@ public class PlayerOriginData implements IPlayerOriginData {
                 resourceMax,
                 resourceTypeId,
                 shieldValue,
-                shieldMax
-        );
+                shieldMax);
     }
 
     @Override
-    public double getShieldValue() { return shieldValue; }
+    public double getShieldValue() {
+        return shieldValue;
+    }
 
     @Override
     public void setShieldValue(double value) {
@@ -144,7 +144,9 @@ public class PlayerOriginData implements IPlayerOriginData {
     }
 
     @Override
-    public double getShieldMax() { return shieldMax; }
+    public double getShieldMax() {
+        return shieldMax;
+    }
 
     @Override
     public void setShieldMax(double value) {
@@ -177,14 +179,16 @@ public class PlayerOriginData implements IPlayerOriginData {
 
     @Nullable
     private Origin getOrigin() {
-        if (activeOrigin == null) return null;
+        if (activeOrigin == null)
+            return null;
         return OriginRegistry.getInstance().getOrigin(activeOrigin);
     }
 
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
-        if (activeOrigin != null) tag.putString("activeOrigin", activeOrigin.toString());
+        if (activeOrigin != null)
+            tag.putString("activeOrigin", activeOrigin.toString());
         tag.putInt("originLevel", originLevel);
         tag.putDouble("resourceValue", resourceValue);
         return tag;
@@ -192,7 +196,8 @@ public class PlayerOriginData implements IPlayerOriginData {
 
     @Override
     public void deserializeNBT(CompoundTag tag) {
-        if (tag.isEmpty()) return;
+        if (tag.isEmpty())
+            return;
         activeOrigin = tag.contains("activeOrigin") ? ResourceLocation.tryParse(tag.getString("activeOrigin")) : null;
         originLevel = tag.contains("originLevel") ? tag.getInt("originLevel") : 1;
         resourceValue = tag.contains("resourceValue") ? tag.getDouble("resourceValue") : 0;

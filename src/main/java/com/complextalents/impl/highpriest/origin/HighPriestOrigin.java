@@ -99,16 +99,16 @@ public class HighPriestOrigin {
         OriginBuilder.create(ID)
                 .displayName("High Priest")
                 .description(Component.literal(
-                        "Holy commander. Grace (binary) grants +20%-60% cast speed and +30%-125% healing potency; lost on any damage (30-sec recovery). Build Faith via holy spells (+0.1-0.3 max mana/Faith, +0.01% spell power/Faith). Generate Command (max 10, every 200-100 ticks). Overheal converts 30%-75% to absorption shields (600-1500-tick duration). Stationary echo deals 1.5x damage/shield."))
+                        "Tăng 20%-60% Tốc cast và 30%-125% Hiệu lực hồi máu khi không bị nhận sát thương trong 30s. Dùng phép Holy tiêu hao Mana để tích lũy Command (tối đa 100). Điểm Command giúp hoàn Mana, định vị Beacon và kích nổ kéo/giải hiệu ứng từ Seraphic Echo."))
                 .maxLevel(5)
                 .baseStat(StatType.MAX_MANA, 20)
                 // Grace stack - binary state (ON/OFF), lost on damage
                 .passiveStack("grace", PassiveStackDef.create("Grace")
                         .maxStacks(1)
                         .build())
-                // Command stacks - gain over time, consumed by Seraphic Echo
+                // Command stacks - gain over time & mana spent, consumed by Seraphic Echo
                 .passiveStack("command", PassiveStackDef.create("Command")
-                        .maxStacks(10)
+                        .maxStacks(100)
                         .build())
                 // Grace recovery cooldown stack (synced timer)
                 .passiveStack("grace_cooldown", PassiveStackDef.create("Grace Recovery")
@@ -116,21 +116,22 @@ public class HighPriestOrigin {
                         .build())
                 .passiveSkill("Grace of the Seraphim",
                         "Gain scaling Cast Speed and Healing Potency. Overheal grants Absorption. Lost upon taking damage.")
-                .passiveSkill("Command", "Passively generates over time. Used to command Seraphic Echo strikes.")
-                .activeSkill("Seraphic Echo", "Command the Seraphim to strike your targeted enemy with holy magic.",
+                .passiveSkill("Seraphic Command",
+                        "Spending mana on holy spells generates Command stacks (5 Mana = 1 Command, max 100). Consuming Command refunds Mana (up to 20% Max Mana). Fuel Seraphic Echo abilities.")
+                .activeSkill("Seraphic Echo", "Summon or command the Seraphic Orb to strike, shield allies, or pull and purify enemies in a central burst.",
                         ResourceLocation.fromNamespaceAndPath("complextalents",
                                 "textures/skill/highpriest/seraphic_echo.png"))
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "seraphic_echo"))
                 // Custom HUD renderer
                 .renderer(new HighPriestRenderer())
                 // Scaled Stats
-                .scaledStat("commandTickInterval", new double[] { 200.0, 180.0, 160.0, 140.0, 100.0 })
+                .scaledStat("commandTickInterval", new double[] { 20.0, 18.0, 16.0, 14.0, 10.0 })
                 .scaledStat("graceRecoveryDuration", new double[] { 600.0, 600.0, 600.0, 600.0, 600.0 })
                 .scaledStat("castTimeReduction", new double[] { 0.20, 0.30, 0.40, 0.50, 0.60 })
                 .scaledStat("healingPotency", new double[] { 0.30, 0.50, 0.70, 0.90, 1.25 })
                 .scaledStat("overhealToAbsorptionRate", new double[] { 0.30, 0.40, 0.50, 0.60, 0.75 })
                 .scaledStat("absorptionDuration", new double[] { 600.0, 800.0, 1000.0, 1200.0, 1500.0 })
-                .scaledStat("manaPerFaith", new double[] { 0.1, 0.15, 0.2, 0.25, 0.3 })
+                .scaledStat("manaRefundPerCommand", new double[] { 0.0020, 0.0020, 0.0020, 0.0020, 0.0020 })
                 .register();
 
         ClassCostMatrix.defineCosts(ID)
@@ -265,7 +266,7 @@ public class HighPriestOrigin {
 
         if (gameTime % commandInterval == 0) {
             int currentCommand = PassiveManager.getPassiveStacks(player, "command");
-            if (currentCommand < 10) {
+            if (currentCommand < 100) {
                 PassiveManager.modifyPassiveStacks(player, "command", 1);
             }
         }
@@ -314,64 +315,23 @@ public class HighPriestOrigin {
             }
         }
 
-        // Background: Faith increases Holy Spell Power when Grace is at max (10
-        // stacks).
-        // Faith increases Max Mana permanently.
-
-        double faith = com.complextalents.impl.highpriest.data.FaithData.getFaith(player);
-
-        // Update Max Mana (always applies)
+        // Clean up legacy modifiers if present
         ResourceLocation maxManaAttrId = ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "max_mana");
         Attribute maxManaAttr = ForgeRegistries.ATTRIBUTES.getValue(maxManaAttrId);
-
         if (maxManaAttr != null) {
             var attributeInstance = player.getAttributes().getInstance(maxManaAttr);
             if (attributeInstance != null) {
                 attributeInstance.removeModifier(MAX_MANA_UUID);
-
-                double manaPerFaith = OriginManager.getOriginStat(player, "manaPerFaith");
-                double totalManaBonus = faith * manaPerFaith;
-
-                if (totalManaBonus > 0) {
-                    AttributeModifier modifier = new AttributeModifier(
-                            MAX_MANA_UUID,
-                            "High Priest Faith Max Mana",
-                            totalManaBonus,
-                            AttributeModifier.Operation.ADDITION);
-                    attributeInstance.addTransientModifier(modifier);
-                }
-
-                // Sync mana to client after max mana changes
-                try {
-                    MagicData magicData = MagicData.getPlayerMagicData(player);
-                    PacketDistributor.sendToPlayer(player, new SyncManaPacket(magicData));
-                } catch (Exception e) {
-                    // Iron's Spellbooks not loaded or error
-                }
             }
         }
 
-        // Update holy spell power (only applies at max Grace - 10 stacks)
         ResourceLocation holyPowerAttrId = ResourceLocation.fromNamespaceAndPath("irons_spellbooks",
                 "holy_spell_power");
         Attribute holyPowerAttr = ForgeRegistries.ATTRIBUTES.getValue(holyPowerAttrId);
-
         if (holyPowerAttr != null) {
             var attributeInstance = player.getAttributes().getInstance(holyPowerAttr);
             if (attributeInstance != null) {
                 attributeInstance.removeModifier(HOLY_SPELL_POWER_UUID);
-
-                if (hasGrace && faith > 0) {
-                    // Faith directly increases Holy Spell Power when Grace is ON.
-                    double spellPowerBonus = faith * 0.0001;
-
-                    AttributeModifier modifier = new AttributeModifier(
-                            HOLY_SPELL_POWER_UUID,
-                            "High Priest Faith Divine Retribution",
-                            spellPowerBonus,
-                            AttributeModifier.Operation.MULTIPLY_BASE);
-                    attributeInstance.addTransientModifier(modifier);
-                }
             }
         }
     }

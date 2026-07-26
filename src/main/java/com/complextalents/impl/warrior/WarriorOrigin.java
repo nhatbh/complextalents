@@ -22,7 +22,7 @@ public class WarriorOrigin {
         OriginBuilder.create(ID)
                 .displayName("Warrior")
                 .description(
-                        "Frontline juggernaut building Style (0-1000). Style ranks provide damage multipliers: D(0.7x), C(0.85x), B(1.0x), A(1.05-1.15x), S(1.08-1.30x), SS(1.09-1.40x), SSS(1.1-1.5x by level). At SSS, gain one-time shield that negates single hit; breaking resets Style. Shield breaks reset at 250-900 points by level.")
+                        "Đấu sĩ tuyến đầu tích điểm Style (0-1000) từ đòn đánh để tăng từ 0.7x đến 1.5x sát thương. Đạt cấp SSS nhận 1 lớp khiên chặn đòn đánh, vỡ khiên sẽ đưa Style về 250-900 điểm.")
                 .resourceType(styleType)
                 .maxLevel(5)
                 .baseStat(StatType.PERCENT_AD, 4)
@@ -43,8 +43,8 @@ public class WarriorOrigin {
                         .displayName("SSS Shield")
                         .build())
                 .passiveSkill("Vanguard's Momentum",
-                        "Using abilities and attacking generates Style. High Style grants massive damage multipliers and resets shield breaks.")
-                .activeSkill("Challenger's Retribution", "A devastating strike that builds Style.", null)
+                        "Tấn công liên tục để tích điểm Style, tăng mạnh sát thương và tạo khiên bảo vệ ở cấp tối đa.")
+                .activeSkill("Challenger's Retribution", "Đỡ khiên hấp thụ sát thương, khiêu khích kẻ địch lân cận và nhả phím để phản lại sát thương diện rộng.", null)
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "challengers_retribution"))
                 .renderer(new com.complextalents.impl.warrior.client.WarriorRenderer())
                 .register();

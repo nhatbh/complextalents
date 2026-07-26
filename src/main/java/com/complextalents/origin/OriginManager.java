@@ -65,6 +65,11 @@ public class OriginManager {
                         });
             }
 
+            // Give starter spell book if selecting a spellcasting origin
+            if (isSpellcastingOrigin(originId) && !originId.equals(oldOriginId)) {
+                giveStarterSpellBook(player);
+            }
+
             // Set mana to max after setting the origin base stats
             try {
                 MagicData magicData = MagicData.getPlayerMagicData(player);
@@ -429,5 +434,24 @@ public class OriginManager {
             case 5 -> 30;
             default -> 30;
         };
+    }
+
+    private static boolean isSpellcastingOrigin(@Nullable ResourceLocation originId) {
+        if (originId == null)
+            return false;
+        String path = originId.getPath();
+        return "elemental_mage".equals(path) || "dark_mage".equals(path) || "high_priest".equals(path);
+    }
+
+    private static void giveStarterSpellBook(ServerPlayer player) {
+        ResourceLocation itemId = ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "iron_spell_book");
+        net.minecraft.world.item.Item spellBookItem = net.minecraftforge.registries.ForgeRegistries.ITEMS
+                .getValue(itemId);
+        if (spellBookItem != null && spellBookItem != net.minecraft.world.item.Items.AIR) {
+            net.minecraft.world.item.ItemStack stack = new net.minecraft.world.item.ItemStack(spellBookItem);
+            if (!player.getInventory().add(stack)) {
+                player.drop(stack, false);
+            }
+        }
     }
 }

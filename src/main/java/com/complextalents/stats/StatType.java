@@ -13,8 +13,8 @@ import java.util.function.Supplier;
  * Defines the core stats in the General Stats system.
  */
 public enum StatType {
-    FLAT_AD("Flat Attack Damage", 0.15, () -> Attributes.ATTACK_DAMAGE),
-    PERCENT_AD("% Attack Damage", 0.02, () -> Attributes.ATTACK_DAMAGE), // 5% Base AD
+    FLAT_AD("Flat Attack Damage", 0.25, () -> Attributes.ATTACK_DAMAGE),
+    PERCENT_AD("% Attack Damage", 0.04, () -> Attributes.ATTACK_DAMAGE),
     AP("Ability Power (AP)", 0.05,
             () -> ForgeRegistries.ATTRIBUTES
                     .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "spell_power"))),

@@ -24,16 +24,10 @@ public class PlayerPersistentData extends SavedData {
     private final Map<UUID, com.complextalents.weaponmastery.capability.WeaponMasteryData> weaponMasteryData = new ConcurrentHashMap<>();
     private final Map<UUID, com.complextalents.stats.capability.GeneralStatsData> generalStatsData = new ConcurrentHashMap<>();
     private final Map<UUID, com.complextalents.spellmastery.capability.SpellMasteryData> spellMasteryData = new ConcurrentHashMap<>();
-    private final Map<UUID, com.complextalents.impl.darkmage.data.PlayerSoulData> soulData = new ConcurrentHashMap<>();
     private final Map<UUID, com.complextalents.impl.elementalmage.PlayerElementalMageData> elementalMageData = new ConcurrentHashMap<>();
-    private final Map<UUID, com.complextalents.impl.highpriest.data.PlayerFaithData> faithData = new ConcurrentHashMap<>();
 
-    // Map the origin-specific static data to this instance for persistence
-    // (We will rework SoulData etc. to use these maps instead of their own static ones)
     // Map the origin-specific static data to this instance for persistence (Legacy)
-    private final Map<UUID, CompoundTag> legacyDarkMageData = new ConcurrentHashMap<>();
     private final Map<UUID, CompoundTag> legacyElementalMageData = new ConcurrentHashMap<>();
-    private final Map<UUID, CompoundTag> legacyFaithData = new ConcurrentHashMap<>();
     private final Map<UUID, Map<String, CompoundTag>> skillCustomData = new ConcurrentHashMap<>();
 
     /**
@@ -77,34 +71,6 @@ public class PlayerPersistentData extends SavedData {
             data.passiveData.put(uuid, psd);
         }
 
-        CompoundTag darkMageTag = tag.getCompound("darkMageData");
-        for (String uuidStr : darkMageTag.getAllKeys()) {
-            data.legacyDarkMageData.put(UUID.fromString(uuidStr), darkMageTag.getCompound(uuidStr));
-        }
-
-        CompoundTag soulTag = tag.getCompound("soulData");
-        for (String uuidStr : soulTag.getAllKeys()) {
-            UUID uuid = UUID.fromString(uuidStr);
-            var sd = new com.complextalents.impl.darkmage.data.PlayerSoulData();
-            sd.deserializeNBT(soulTag.getCompound(uuidStr));
-            // Migrate from legacy darkMageData if no soulData entry exists yet
-            data.soulData.put(uuid, sd);
-            LOGGER.info("[SOUL LOAD] Loaded {} souls for {} from soulData", sd.getSouls(), uuid);
-        }
-        // Migrate legacy darkMageData entries that don't yet have a soulData entry
-        for (String uuidStr : darkMageTag.getAllKeys()) {
-            UUID uuid = UUID.fromString(uuidStr);
-            if (!data.soulData.containsKey(uuid)) {
-                CompoundTag legacyTag = darkMageTag.getCompound(uuidStr);
-                if (legacyTag.contains("souls")) {
-                    var sd = new com.complextalents.impl.darkmage.data.PlayerSoulData();
-                    sd.deserializeNBT(legacyTag);
-                    data.soulData.put(uuid, sd);
-                    LOGGER.info("[SOUL LOAD] Migrated {} souls for {} from legacy darkMageData", sd.getSouls(), uuid);
-                }
-            }
-        }
-        
         // Load Elemental Mage objects
         CompoundTag elementalObjTag = tag.getCompound("elementalMageObjects");
         for (String uuidStr : elementalObjTag.getAllKeys()) {
@@ -125,41 +91,10 @@ public class PlayerPersistentData extends SavedData {
             }
         }
 
-        // Load Faith objects
-        CompoundTag faithObjTag = tag.getCompound("faithObjects");
-        for (String uuidStr : faithObjTag.getAllKeys()) {
-            UUID uuid = UUID.fromString(uuidStr);
-            var fd = new com.complextalents.impl.highpriest.data.PlayerFaithData();
-            fd.deserializeNBT(faithObjTag.getCompound(uuidStr));
-            data.faithData.put(uuid, fd);
-        }
-        // Migrate legacy faithData
-        CompoundTag legacyFaithTag = tag.getCompound("faithData");
-        for (String uuidStr : legacyFaithTag.getAllKeys()) {
-            UUID uuid = UUID.fromString(uuidStr);
-            if (!data.faithData.containsKey(uuid)) {
-                CompoundTag legacyF = legacyFaithTag.getCompound(uuidStr);
-                if (legacyF.contains("faith")) {
-                    var fd = new com.complextalents.impl.highpriest.data.PlayerFaithData();
-                    fd.deserializeNBT(legacyF);
-                    data.faithData.put(uuid, fd);
-                    LOGGER.info("[FAITH LOAD] Migrated {} faith for {} from legacy data", fd.getFaith(), uuid);
-                }
-            }
-        }
-        
-        LOGGER.info("[SOUL LOAD] Finished loading soul data. Total entries: {}", data.soulData.size());
-
         // Load legacy elementalMageData (CompoundTag based)
         CompoundTag elementalMageTag = tag.getCompound("elementalMageData");
         for (String uuidStr : elementalMageTag.getAllKeys()) {
             data.legacyElementalMageData.put(UUID.fromString(uuidStr), elementalMageTag.getCompound(uuidStr));
-        }
-
-        // Load legacy faithData (CompoundTag based)
-        CompoundTag faithTag = tag.getCompound("faithData");
-        for (String uuidStr : faithTag.getAllKeys()) {
-            data.legacyFaithData.put(UUID.fromString(uuidStr), faithTag.getCompound(uuidStr));
         }
 
         CompoundTag weaponMasteryTag = tag.getCompound("weaponMasteryData");
@@ -225,12 +160,6 @@ public class PlayerPersistentData extends SavedData {
         }
         tag.put("passiveData", passiveTag);
 
-        CompoundTag soulTag = new CompoundTag();
-        for (var entry : soulData.entrySet()) {
-            soulTag.put(entry.getKey().toString(), entry.getValue().serializeNBT());
-        }
-        tag.put("soulData", soulTag);
-
         CompoundTag elementalObjTag = new CompoundTag();
         for (var entry : elementalMageData.entrySet()) {
             elementalObjTag.put(entry.getKey().toString(), entry.getValue().serializeNBT());
@@ -238,29 +167,12 @@ public class PlayerPersistentData extends SavedData {
         tag.put("elementalMageObjects", elementalObjTag);
 
         CompoundTag faithObjTag = new CompoundTag();
-        for (var entry : faithData.entrySet()) {
-            faithObjTag.put(entry.getKey().toString(), entry.getValue().serializeNBT());
-        }
-        tag.put("faithObjects", faithObjTag);
-
         // Save legacy CompoundTag data
-        CompoundTag darkMageTag = new CompoundTag();
-        for (var entry : legacyDarkMageData.entrySet()) {
-            darkMageTag.put(entry.getKey().toString(), entry.getValue());
-        }
-        tag.put("darkMageData", darkMageTag);
-
         CompoundTag elementalMageTag = new CompoundTag();
         for (var entry : legacyElementalMageData.entrySet()) {
             elementalMageTag.put(entry.getKey().toString(), entry.getValue());
         }
         tag.put("elementalMageData", elementalMageTag);
-
-        CompoundTag faithTag = new CompoundTag();
-        for (var entry : legacyFaithData.entrySet()) {
-            faithTag.put(entry.getKey().toString(), entry.getValue());
-        }
-        tag.put("faithData", faithTag);
 
         CompoundTag weaponMasteryTag = new CompoundTag();
         for (var entry : weaponMasteryData.entrySet()) {
@@ -321,28 +233,11 @@ public class PlayerPersistentData extends SavedData {
         return spellMasteryData.computeIfAbsent(playerId, k -> new com.complextalents.spellmastery.capability.SpellMasteryData());
     }
 
-    public com.complextalents.impl.darkmage.data.PlayerSoulData getSoulData(UUID playerId) {
-        return soulData.computeIfAbsent(playerId, k -> new com.complextalents.impl.darkmage.data.PlayerSoulData());
-    }
-
     public com.complextalents.impl.elementalmage.PlayerElementalMageData getElementalData(UUID playerId) {
         return elementalMageData.computeIfAbsent(playerId, k -> new com.complextalents.impl.elementalmage.PlayerElementalMageData());
     }
 
-    public com.complextalents.impl.highpriest.data.PlayerFaithData getFaithDataObj(UUID playerId) {
-        return faithData.computeIfAbsent(playerId, k -> new com.complextalents.impl.highpriest.data.PlayerFaithData());
-    }
-
     // --- Legacy/Compatibility methods for transition ---
-
-    public void saveDarkMageData(UUID playerId, CompoundTag data) {
-        legacyDarkMageData.put(playerId, data.copy());
-        setDirty();
-    }
-
-    public CompoundTag getDarkMageData(UUID playerId) {
-        return legacyDarkMageData.getOrDefault(playerId, new CompoundTag());
-    }
 
     public void saveElementalMageData(UUID playerId, CompoundTag data) {
         legacyElementalMageData.put(playerId, data.copy());
@@ -351,15 +246,6 @@ public class PlayerPersistentData extends SavedData {
 
     public CompoundTag getElementalMageData(UUID playerId) {
         return legacyElementalMageData.getOrDefault(playerId, new CompoundTag());
-    }
-
-    public void saveFaithData(UUID playerId, CompoundTag data) {
-        legacyFaithData.put(playerId, data.copy());
-        setDirty();
-    }
-
-    public CompoundTag getFaithData(UUID playerId) {
-        return legacyFaithData.getOrDefault(playerId, new CompoundTag());
     }
 
     public void saveSkillCustomData(UUID playerId, String skillId, CompoundTag tag) {
@@ -379,12 +265,8 @@ public class PlayerPersistentData extends SavedData {
         weaponMasteryData.remove(playerId);
         generalStatsData.remove(playerId);
         spellMasteryData.remove(playerId);
-        soulData.remove(playerId);
         elementalMageData.remove(playerId);
-        faithData.remove(playerId);
-        legacyDarkMageData.remove(playerId);
         legacyElementalMageData.remove(playerId);
-        legacyFaithData.remove(playerId);
         skillCustomData.remove(playerId);
         setDirty();
     }

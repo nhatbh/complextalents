@@ -88,10 +88,11 @@ public class HighPriestIntegration {
         }
     }
 
+    private static final java.util.Map<java.util.UUID, Float> MANA_ACCUMULATOR = new java.util.concurrent.ConcurrentHashMap<>();
+
     /**
      * Handles ChangeManaEvent from Iron's Spellbooks.
-     * Detects mana depletion and rewards Faith based on the removed mana
-     * if the player is a High Priest at maximum Grace.
+     * Spending mana on spells generates Command stacks at a 5:1 ratio (5 Mana = 1 Command, cap 100).
      */
     @SubscribeEvent
     public static void onManaChange(io.redspace.ironsspellbooks.api.events.ChangeManaEvent event) {
@@ -108,25 +109,30 @@ public class HighPriestIntegration {
                 return;
             }
 
-            // check if mana decreased
+            // Check if mana decreased
             float oldMana = event.getOldMana();
             float newMana = event.getNewMana();
-            if (newMana >= oldMana)
+            if (newMana >= oldMana) {
                 return;
+            }
 
-            int graceStacks = com.complextalents.passive.PassiveManager.getPassiveStacks(player, "grace");
-            if (graceStacks >= 10) {
-                float manaCost = oldMana - newMana;
+            float manaCost = oldMana - newMana;
 
-                // 100 mana = 1 Faith (previously 10000 mana = 1 Faith)
-                double faithGained = manaCost / 100.0;
-                if (faithGained > 0) {
-                    com.complextalents.impl.highpriest.data.FaithData.addFaith(player, faithGained);
-                    com.complextalents.impl.highpriest.origin.HighPriestOrigin.updateAttributes(player);
+            // 5 Mana = 1 Command stack (capped at 100 Command)
+            float totalManaSpent = MANA_ACCUMULATOR.getOrDefault(player.getUUID(), 0.0f) + manaCost;
+            int commandGained = (int) (totalManaSpent / 5.0f);
+            float remainder = totalManaSpent % 5.0f;
+            MANA_ACCUMULATOR.put(player.getUUID(), remainder);
+
+            if (commandGained > 0) {
+                int currentCommand = com.complextalents.passive.PassiveManager.getPassiveStacks(player, "command");
+                if (currentCommand < 100) {
+                    int newCommand = Math.min(100, currentCommand + commandGained);
+                    com.complextalents.passive.PassiveManager.setPassiveStacks(player, "command", newCommand);
                 }
             }
         } catch (Exception e) {
-            TalentsMod.LOGGER.debug("Error processing ChangeManaEvent for Faith computation: {}", e.getMessage());
+            TalentsMod.LOGGER.debug("Error processing ChangeManaEvent for High Priest Command generation: {}", e.getMessage());
         }
     }
 }

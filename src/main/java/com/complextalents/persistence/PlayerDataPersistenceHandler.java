@@ -1,11 +1,9 @@
 package com.complextalents.persistence;
 
 import com.complextalents.TalentsMod;
-import com.complextalents.impl.darkmage.data.SoulData;
 import com.complextalents.impl.darkmage.origin.DarkMageOrigin;
 import com.complextalents.impl.elementalmage.ElementalMageData;
 import com.complextalents.impl.elementalmage.origin.ElementalMageOrigin;
-import com.complextalents.impl.highpriest.data.FaithData;
 import com.complextalents.impl.highpriest.origin.HighPriestOrigin;
 import com.complextalents.origin.capability.OriginDataProvider;
 import com.complextalents.passive.capability.PassiveStackDataProvider;
@@ -102,15 +100,8 @@ public class PlayerDataPersistenceHandler {
             int remaining = PENDING_DATA_SYNC.get(playerId);
             boolean synced = false;
             
-            if (DarkMageOrigin.isDarkMage(player)) {
-                SoulData.syncToClient(player);
-                synced = true;
-            } else if (ElementalMageOrigin.isElementalMage(player)) {
+            if (ElementalMageOrigin.isElementalMage(player)) {
                 ElementalMageData.syncToClient(player);
-                synced = true;
-
-            } else if (HighPriestOrigin.isHighPriest(player)) {
-                FaithData.syncToClient(player);
                 synced = true;
             }
 

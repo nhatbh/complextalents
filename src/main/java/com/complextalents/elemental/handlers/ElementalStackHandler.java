@@ -119,13 +119,7 @@ public class ElementalStackHandler {
             }
 
 
-            // Trigger Overwhelming Power logic
-            if (source instanceof ServerPlayer serverPlayer) {
-                OPElementType opType = OPElementType.fromBaseType(element);
-                if (opType != null) {
-                    OPTargetSelector.buffer(new OPContext(target, serverPlayer, opType, event.getDamage()));
-                }
-            }
+            // Overwhelming Power logic is disabled
 
         } catch (Exception e) {
             TalentsMod.LOGGER.error("Error handling ElementalDamageEvent for entity {}: {}",

@@ -21,10 +21,7 @@ public class OPTargetSelector {
     private static final Map<UUID, Map<OPElementType, List<OPContext>>> tickBuffers = new HashMap<>();
 
     public static void buffer(OPContext context) {
-        UUID attackerId = context.getAttacker().getUUID();
-        tickBuffers.computeIfAbsent(attackerId, k -> new HashMap<>())
-                   .computeIfAbsent(context.getElement(), k -> new ArrayList<>())
-                   .add(context);
+        // Disabled: Overwhelming Power reactions are disabled.
     }
 
     @SubscribeEvent

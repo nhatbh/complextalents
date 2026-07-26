@@ -94,18 +94,6 @@ public class SpellCritHandler {
             float newDamage = (float) (originalDamage * critDamage);
             event.setAmount(newDamage);
 
-            // Drain 4% of souls when Blood Pact is active and a spell crits
-            if (com.complextalents.impl.darkmage.origin.DarkMageOrigin.isDarkMage(caster)
-                    && com.complextalents.impl.darkmage.events.BloodPactTickHandler.isBloodPactActive(caster)) {
-                double soulsLost = com.complextalents.impl.darkmage.data.SoulData.loseSouls(caster, 0.04);
-                // Soul escape particles on the caster (more souls lost = more particles)
-                ServerLevel serverLevel = caster.serverLevel();
-                int count = Math.max(1, Math.min(30, (int) (soulsLost * 2)));
-                serverLevel.sendParticles(ParticleTypes.SOUL,
-                        caster.getX(), caster.getY() + caster.getBbHeight() / 2.0, caster.getZ(),
-                        count, 0.3, 0.4, 0.3, 0.08);
-            }
-
             // Spawn school-themed particles on the target
             LivingEntity target = event.getEntity();
             spawnCritParticles(source, target);

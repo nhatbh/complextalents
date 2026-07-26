@@ -107,7 +107,7 @@ public class ChallengersRetribution {
         SkillBuilder.create(ID)
                 .displayName("Challenger's Retribution")
                 .description(
-                        "Defensive stance, taunts enemies within 5-10 blocks. Release to reflect 50%-160% absorbed damage as AoE (by level). Shield health: (5-20 base HP) × rank multiplier + bonus from max health. Charge grants -90% move speed, +100% KB resistance. Max 5s charge; breaking mid-charge cancels reflection.")
+                        "Vào thế đỡ khiên khiêu khích kẻ địch lân cận 5-10 khối, nhận 100% KB Resistance (kháng đẩy lùi tuyệt đối) và hấp thụ sát thương nhận vào. Nhả phím để phản lại 50%-160% sát thương đã hấp thụ thành đòn đánh AoE.")
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/warrior/challengers_retribution.png"))
                 .nature(SkillNature.CHARGE)

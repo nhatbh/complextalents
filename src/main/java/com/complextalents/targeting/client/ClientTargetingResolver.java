@@ -15,6 +15,13 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.state.BlockState;
+
 import java.util.EnumSet;
 import java.util.function.Predicate;
 
@@ -67,7 +74,7 @@ public class ClientTargetingResolver {
             EntityHitResult entityHit = raycastEntities(
                     level,
                     origin,
-                    targetPosition,
+                    maxEnd,
                     createEntityPredicate(request));
 
             if (entityHit != null && entityHit.getType() == HitResult.Type.ENTITY) {
@@ -75,7 +82,9 @@ public class ClientTargetingResolver {
                 Vec3 hitPos = entityHit.getLocation();
                 double hitDistance = origin.distanceTo(hitPos);
 
-                if (hitDistance <= request.getMaxRange()) {
+                boolean occludedBySolidBlock = hitBlock && hitDistance > distance + 0.5;
+
+                if (hitDistance <= request.getMaxRange() && !occludedBySolidBlock) {
                     if (!request.isRequireLineOfSight()
                             || hasLineOfSight(level, origin, hitPos, hit)) {
 
@@ -144,12 +153,57 @@ public class ClientTargetingResolver {
     }
 
     private BlockHitResult raycastBlocks(Level level, Vec3 start, Vec3 end) {
-        return level.clip(new ClipContext(
-                start,
-                end,
-                ClipContext.Block.OUTLINE,
-                ClipContext.Fluid.NONE,
-                null));
+        Vec3 currentStart = start;
+        Vec3 dir = end.subtract(start);
+        double totalDistance = dir.length();
+        if (totalDistance < 1.0E-6) {
+            return level.clip(new ClipContext(start, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, null));
+        }
+        Vec3 unitDir = dir.scale(1.0 / totalDistance);
+
+        int maxIter = 16;
+        while (maxIter-- > 0) {
+            BlockHitResult result = level.clip(new ClipContext(
+                    currentStart,
+                    end,
+                    ClipContext.Block.OUTLINE,
+                    ClipContext.Fluid.NONE,
+                    null));
+
+            if (result.getType() == HitResult.Type.MISS) {
+                return result;
+            }
+
+            BlockPos pos = result.getBlockPos();
+            BlockState state = level.getBlockState(pos);
+
+            if (shouldIgnoreBlock(state)) {
+                currentStart = result.getLocation().add(unitDir.scale(0.05));
+                if (start.distanceToSqr(currentStart) >= totalDistance * totalDistance) {
+                    return BlockHitResult.miss(end, result.getDirection(), pos);
+                }
+            } else {
+                return result;
+            }
+        }
+        return BlockHitResult.miss(end, Direction.UP, BlockPos.containing(end));
+    }
+
+    private boolean shouldIgnoreBlock(BlockState state) {
+        if (state.isAir()) {
+            return true;
+        }
+        if (state.is(BlockTags.LEAVES) || state.getBlock() instanceof LeavesBlock) {
+            return true;
+        }
+        if (state.is(BlockTags.REPLACEABLE)
+                || state.is(BlockTags.FLOWERS)
+                || state.is(BlockTags.CROPS)
+                || state.is(BlockTags.SAPLINGS)
+                || state.getBlock() instanceof BushBlock) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -212,12 +266,7 @@ public class ClientTargetingResolver {
             Vec3 start,
             Vec3 end,
             Entity target) {
-        BlockHitResult result = level.clip(new ClipContext(
-                start,
-                end,
-                ClipContext.Block.COLLIDER,
-                ClipContext.Fluid.NONE,
-                target));
+        BlockHitResult result = raycastBlocks(level, start, end);
 
         return result.getType() == HitResult.Type.MISS
                 || result.getLocation().distanceTo(start) >= end.distanceTo(start) - 0.1;

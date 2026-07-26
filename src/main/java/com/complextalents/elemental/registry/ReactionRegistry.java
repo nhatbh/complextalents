@@ -7,10 +7,15 @@ import com.complextalents.elemental.api.IReactionStrategy;
 import com.complextalents.elemental.api.ReactionContext;
 import com.complextalents.elemental.events.ElementalReactionTriggeredEvent;
 import com.complextalents.elemental.strategies.reactions.*;
+import com.complextalents.impl.elementalmage.ElementalMageData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -18,9 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Registry for elemental reaction strategies.
- * Manages registration, lookup, execution, and initialization of reaction implementations.
- * Implemented as a singleton for global access.
- * Thread-safe for concurrent access.
+ * Manages registration, lookup, execution, and hard-capped spell power scaling.
  */
 public class ReactionRegistry {
 
@@ -30,25 +33,15 @@ public class ReactionRegistry {
     private final Map<String, ElementalReaction> nameToReactionMap;
     private final List<IReactionStrategy> sortedStrategies;
 
-    // Lock for thread safety during modifications
     private final Object registryLock = new Object();
     private volatile boolean initialized = false;
 
-    /**
-     * Private constructor for singleton pattern.
-     * Reactions can be registered dynamically as needed.
-     */
     private ReactionRegistry() {
         this.strategies = new ConcurrentHashMap<>();
         this.nameToReactionMap = new ConcurrentHashMap<>();
         this.sortedStrategies = new ArrayList<>();
     }
 
-    /**
-     * Gets the singleton instance of the ReactionRegistry.
-     *
-     * @return The ReactionRegistry instance
-     */
     public static ReactionRegistry getInstance() {
         if (INSTANCE == null) {
             synchronized (ReactionRegistry.class) {
@@ -60,10 +53,6 @@ public class ReactionRegistry {
         return INSTANCE;
     }
 
-    /**
-     * Initializes the registry with default reaction strategies.
-     * Should be called during mod initialization.
-     */
     public void initialize() {
         synchronized (registryLock) {
             if (initialized) {
@@ -72,40 +61,33 @@ public class ReactionRegistry {
             }
 
             TalentsMod.LOGGER.info("Initializing Elemental Reaction Registry");
-
-            // Register all default reactions
             registerDefaultReactions();
-
-            // Sort strategies by priority
             updateSortedStrategies();
-
             initialized = true;
             TalentsMod.LOGGER.info("Registered {} elemental reactions", strategies.size());
         }
     }
 
     /**
-     * Executes a reaction using the registered strategy.
-     *
-     * @param target The target entity
-     * @param reaction The reaction type
-     * @param triggeringElement The element that triggered the reaction
-     * @param existingElement The element already on the target
-     * @param attacker The attacking player
-     * @param damageMultiplier Damage multiplier added by skills
-     * @return true if the reaction was executed, false otherwise
+     * Executes a reaction using hard-capped Spell Power & Harmony Multiplier scaling.
      */
     public boolean executeReaction(LivingEntity target, ElementalReaction reaction,
                                   ElementType triggeringElement, ElementType existingElement,
                                   ServerPlayer attacker, float damageMultiplier) {
 
-        // Get the strategy for this reaction
         IReactionStrategy strategy = getStrategy(reaction);
         if (strategy == null) {
             return false;
         }
 
-        final float mastery = calculateElementalMastery(attacker);
+        // --- HARD-CAPPED SPELL POWER SCALING ---
+        float harmonyMult = ElementalMageData.getEffectiveHarmonyMultiplier(attacker);
+        float trigSp = getElementalSpellPower(attacker, triggeringElement);
+        float existSp = getElementalSpellPower(attacker, existingElement);
+        float avgElemSp = (trigSp + existSp) / 2.0f;
+
+        // Effective Reaction Power = Harmony Multiplier * (1 + Avg Elem Spell Power * 0.02)
+        float reactionPower = harmonyMult * (1.0f + avgElemSp * 0.02f);
         float currentDamageMultiplier = damageMultiplier;
 
         // --- HARMONIC CONVERGENCE REACTION CRITS ---
@@ -122,7 +104,6 @@ public class ReactionRegistry {
         }
         // -------------------------------------------
 
-        // Build the reaction context
         ReactionContext context = ReactionContext.builder()
             .target(target)
             .attacker(attacker)
@@ -130,80 +111,83 @@ public class ReactionRegistry {
             .triggeringElement(triggeringElement)
             .existingElement(existingElement)
             .damageMultiplier(currentDamageMultiplier)
-            .elementalMastery(mastery)
+            .elementalMastery(reactionPower)
             .level((ServerLevel) target.level())
             .build();
 
-        // Check if the reaction can trigger
         if (!strategy.canTrigger(context)) {
             return false;
         }
 
-        // Calculate final damage before execution
         float finalDamage = strategy.calculateDamage(context);
 
-        // Fire the reaction triggered event
         ElementalReactionTriggeredEvent reactionEvent = new ElementalReactionTriggeredEvent(
             target, attacker, reaction, triggeringElement, existingElement,
-            finalDamage, mastery, damageMultiplier
+            finalDamage, reactionPower, damageMultiplier
         );
         MinecraftForge.EVENT_BUS.post(reactionEvent);
 
-        // Check if event was canceled
         if (reactionEvent.isCanceled()) {
             return false;
         }
 
-        // Update damage from event (in case handler modified it)
         finalDamage = reactionEvent.getDamage();
-
-        // Execute the reaction
         strategy.execute(context);
 
-        // --- NOTIFY CRIT ---
         if (isCrit) {
             attacker.sendSystemMessage(net.minecraft.network.chat.Component.literal(
                 String.format("\u00A76\u2736 Reaction Critical! \u00A7f%.1f damage", finalDamage)));
         }
-        // ------------------
-
-
 
         return true;
     }
 
-    /**
-     * Registers a reaction strategy.
-     *
-     * @param reaction The reaction type
-     * @param strategy The strategy implementation
-     * @throws IllegalArgumentException if reaction is already registered
-     */
+    private float getElementalSpellPower(ServerPlayer player, ElementType element) {
+        float genSp = 1.0f;
+        try {
+            Attribute genAttr = io.redspace.ironsspellbooks.api.registry.AttributeRegistry.SPELL_POWER.get();
+            if (genAttr != null) {
+                AttributeInstance inst = player.getAttribute(genAttr);
+                if (inst != null) {
+                    genSp = (float) inst.getValue();
+                }
+            }
+        } catch (Throwable ignored) {}
+
+        if (element == null) return genSp;
+
+        float elemSp = 1.0f;
+        ResourceLocation attrId = ElementalMageData.getElementalAttributeId(element);
+        if (attrId != null) {
+            Attribute attr = ForgeRegistries.ATTRIBUTES.getValue(attrId);
+            if (attr != null) {
+                AttributeInstance inst = player.getAttribute(attr);
+                if (inst != null) {
+                    elemSp = (float) inst.getValue();
+                }
+            }
+        }
+        return genSp * elemSp;
+    }
+
+    public float calculateElementalMastery(ServerPlayer player) {
+        return ElementalMageData.getEffectiveHarmonyMultiplier(player);
+    }
+
     public void register(ElementalReaction reaction, IReactionStrategy strategy) {
         Objects.requireNonNull(reaction, "Reaction type cannot be null");
         Objects.requireNonNull(strategy, "Strategy cannot be null");
 
         synchronized (registryLock) {
             if (strategies.containsKey(reaction)) {
-                throw new IllegalArgumentException(
-                    "Reaction " + reaction + " is already registered");
+                throw new IllegalArgumentException("Reaction " + reaction + " is already registered");
             }
-
             strategies.put(reaction, strategy);
             nameToReactionMap.put(reaction.name().toLowerCase(), reaction);
-
-            // Update sorted list
             updateSortedStrategies();
-
         }
     }
 
-    /**
-     * Registers a reaction strategy, replacing any existing registration.
-     *
-     * @param reaction The reaction type
-     * @param strategy The strategy implementation
-     */
     public void registerOrReplace(ElementalReaction reaction, IReactionStrategy strategy) {
         Objects.requireNonNull(reaction, "Reaction type cannot be null");
         Objects.requireNonNull(strategy, "Strategy cannot be null");
@@ -211,19 +195,10 @@ public class ReactionRegistry {
         synchronized (registryLock) {
             strategies.put(reaction, strategy);
             nameToReactionMap.put(reaction.name().toLowerCase(), reaction);
-
-            // Update sorted list
             updateSortedStrategies();
-
         }
     }
 
-    /**
-     * Unregisters a reaction strategy.
-     *
-     * @param reaction The reaction type to unregister
-     * @return The unregistered strategy, or null if not found
-     */
     @Nullable
     public IReactionStrategy unregister(ElementalReaction reaction) {
         synchronized (registryLock) {
@@ -236,60 +211,28 @@ public class ReactionRegistry {
         }
     }
 
-    /**
-     * Gets the strategy for a specific reaction type.
-     *
-     * @param reaction The reaction type
-     * @return The strategy, or null if not registered
-     */
     @Nullable
     public IReactionStrategy getStrategy(ElementalReaction reaction) {
         return strategies.get(reaction);
     }
 
-    /**
-     * Gets a reaction by name (case-insensitive).
-     *
-     * @param name The reaction name
-     * @return The reaction type, or null if not found
-     */
     @Nullable
     public ElementalReaction getReactionByName(String name) {
         return nameToReactionMap.get(name.toLowerCase());
     }
 
-    /**
-     * Gets all registered reaction types.
-     *
-     * @return Unmodifiable set of registered reactions
-     */
     public Set<ElementalReaction> getRegisteredReactions() {
         return Collections.unmodifiableSet(strategies.keySet());
     }
 
-    /**
-     * Gets all strategies sorted by priority (highest first).
-     *
-     * @return Unmodifiable list of sorted strategies
-     */
     public List<IReactionStrategy> getSortedStrategies() {
         return Collections.unmodifiableList(sortedStrategies);
     }
 
-    /**
-     * Checks if a reaction is registered.
-     *
-     * @param reaction The reaction type
-     * @return true if registered
-     */
     public boolean isRegistered(ElementalReaction reaction) {
         return strategies.containsKey(reaction);
     }
 
-    /**
-     * Clears all registered strategies.
-     * Useful for testing or reload scenarios.
-     */
     public void clear() {
         synchronized (registryLock) {
             strategies.clear();
@@ -300,9 +243,6 @@ public class ReactionRegistry {
         }
     }
 
-    /**
-     * Reloads the registry, re-registering all default reactions.
-     */
     public void reload() {
         synchronized (registryLock) {
             clear();
@@ -311,114 +251,31 @@ public class ReactionRegistry {
         }
     }
 
-    /**
-     * Updates the sorted strategies list based on priority.
-     */
     private void updateSortedStrategies() {
         sortedStrategies.clear();
         sortedStrategies.addAll(strategies.values());
         sortedStrategies.sort((a, b) -> Integer.compare(b.getPriority(), a.getPriority()));
     }
 
-    /**
-     * Registers all default reaction strategies.
-     */
     private void registerDefaultReactions() {
-        // Register original five reaction implementations
         register(ElementalReaction.MELT, new MeltReaction());
         register(ElementalReaction.VAPORIZE, new VaporizeReaction());
         register(ElementalReaction.OVERLOADED, new OverloadReaction());
         register(ElementalReaction.BURNING, new BurningReaction());
         register(ElementalReaction.VOIDFIRE, new VoidfireReaction());
 
-        // Register new Ice reactions
         register(ElementalReaction.FREEZE, new FreezeReaction());
         register(ElementalReaction.SUPERCONDUCT, new SuperconductReaction());
         register(ElementalReaction.PERMAFROST, new PermafrostReaction());
         register(ElementalReaction.FRACTURE, new FractureReaction());
 
-        // Register Aqua reactions
         register(ElementalReaction.ELECTRO_CHARGED, new ElectroChargedReaction());
         register(ElementalReaction.SPRING, new SpringReaction());
 
-        // Register Nature reactions
         register(ElementalReaction.BLOOM, new BloomReaction());
-
-        // Register Lightning reactions
         register(ElementalReaction.FLUX, new FluxReaction());
-
-        // Register Lightning + Nature reaction
         register(ElementalReaction.OVERGROWTH, new OvergrowthReaction());
 
         TalentsMod.LOGGER.info("Registered 14 default elemental reaction strategies");
     }
-
-    /**
-     * Calculates elemental mastery using the isolated Accumulated Power track.
-     * $Effective\ Mastery = Raw\ Mastery \times Harmony\ Multiplier$
-     *
-     * @param player The player to calculate mastery for
-     * @return The effective mastery
-     */
-    public float calculateElementalMastery(ServerPlayer player) {
-        float rawMastery = calculateRawMastery(player);
-        float harmonyMultiplier = calculateHarmonyMultiplier(player);
-        return rawMastery * harmonyMultiplier;
-    }
-
-    /**
-     * Calculates the Raw Mastery: $1 + \sum (Accumulated_i \times Weight_i)$
-     * Weights: [0.40, 0.20, 0.15, 0.10, 0.10, 0.05] (sorted by power)
-     */
-    private float calculateRawMastery(ServerPlayer player) {
-        List<Float> values = new ArrayList<>();
-        for (ElementType type : ElementType.values()) {
-            values.add(com.complextalents.impl.elementalmage.ElementalMageData.getStat(player, type));
-        }
-        
-        // Ensure we handle at least some values
-        if (values.isEmpty()) return 1.0f;
-        
-        // Sort descending
-        values.sort(Collections.reverseOrder());
-        
-        float[] weights = {0.40f, 0.20f, 0.15f, 0.10f, 0.10f, 0.05f};
-        float weightedSum = 0.0f;
-        
-        for (int i = 0; i < values.size() && i < weights.length; i++) {
-            weightedSum += values.get(i) * weights[i];
-        }
-        
-        return weightedSum;
-    }
-
-    /**
-     * Calculates the Harmony Multiplier based on the ratio $R = E_{others} / E_{max}$.
-     * Piecewise linear scaling:
-     * - $R \approx 0 \to 0.2x$
-     * - $R \approx 1 \to 1.0x$
-     * - $R \ge 4 \to 1.3x$
-     */
-    private float calculateHarmonyMultiplier(ServerPlayer player) {
-        float maxVal = 0.0f;
-        float totalSum = 0.0f;
-        
-        for (ElementType type : ElementType.values()) {
-            float val = com.complextalents.impl.elementalmage.ElementalMageData.getStat(player, type);
-            if (val > maxVal) maxVal = val;
-            totalSum += val;
-        }
-
-        float othersSum = totalSum - maxVal;
-        float R = othersSum / maxVal;
-
-        // --- NEW HARMONY CALIBRATION [0.5 - 1.1] ---
-        // Formula: 0.5 + 0.12 * R (Cap R at 5.0)
-        float clampedR = Math.min(5.0f, R);
-        return 0.5f + (0.12f * clampedR);
-    }
-
-
-
-
 }

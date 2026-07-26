@@ -10,14 +10,14 @@ import java.util.function.Supplier;
 public class S2CSyncBloodOrbPacket {
     private final UUID orbId;
     private final Vec3 position;
-    private final int tier;
+    private final double densityV;
     private final UUID ownerUUID;
     private final int lifetime;
 
-    public S2CSyncBloodOrbPacket(UUID orbId, Vec3 position, int tier, UUID ownerUUID, int lifetime) {
+    public S2CSyncBloodOrbPacket(UUID orbId, Vec3 position, double densityV, UUID ownerUUID, int lifetime) {
         this.orbId = orbId;
         this.position = position;
-        this.tier = tier;
+        this.densityV = densityV;
         this.ownerUUID = ownerUUID;
         this.lifetime = lifetime;
     }
@@ -27,7 +27,7 @@ public class S2CSyncBloodOrbPacket {
         buf.writeDouble(msg.position.x);
         buf.writeDouble(msg.position.y);
         buf.writeDouble(msg.position.z);
-        buf.writeInt(msg.tier);
+        buf.writeDouble(msg.densityV);
         buf.writeUUID(msg.ownerUUID);
         buf.writeInt(msg.lifetime);
     }
@@ -36,7 +36,7 @@ public class S2CSyncBloodOrbPacket {
         return new S2CSyncBloodOrbPacket(
                 buf.readUUID(),
                 new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble()),
-                buf.readInt(),
+                buf.readDouble(),
                 buf.readUUID(),
                 buf.readInt()
         );
@@ -44,7 +44,7 @@ public class S2CSyncBloodOrbPacket {
 
     public static void handle(S2CSyncBloodOrbPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            com.complextalents.impl.darkmage.client.BloodOrbRenderer.addOrb(msg.orbId, msg.position, msg.tier, msg.ownerUUID, msg.lifetime);
+            com.complextalents.impl.darkmage.client.BloodOrbRenderer.addOrb(msg.orbId, msg.position, msg.densityV, msg.ownerUUID, msg.lifetime);
         });
         ctx.get().setPacketHandled(true);
     }

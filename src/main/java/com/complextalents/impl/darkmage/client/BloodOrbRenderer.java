@@ -1,16 +1,23 @@
 package com.complextalents.impl.darkmage.client;
 
 import com.complextalents.TalentsMod;
+import com.complextalents.elemental.client.renderers.entities.CustomRenderTypes;
 import com.complextalents.impl.darkmage.util.BloodParticleHelper;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -22,15 +29,12 @@ public class BloodOrbRenderer {
 
     private static final Map<UUID, ClientBloodOrbData> ACTIVE_ORBS = new ConcurrentHashMap<>();
 
-    public static void addOrb(UUID orbId, Vec3 pos, int tier, UUID ownerUUID, int lifetime) {
-        ACTIVE_ORBS.put(orbId, new ClientBloodOrbData(orbId, pos, tier, ownerUUID, lifetime));
+    public static void addOrb(UUID orbId, Vec3 pos, double densityV, UUID ownerUUID, int lifetime) {
+        ACTIVE_ORBS.put(orbId, new ClientBloodOrbData(orbId, pos, densityV, ownerUUID, lifetime));
     }
 
     public static void removeOrb(UUID orbId, boolean detonate) {
-        ClientBloodOrbData orb = ACTIVE_ORBS.remove(orbId);
-        if (orb != null && detonate) {
-            triggerDetonationVisual(orb);
-        }
+        ACTIVE_ORBS.remove(orbId);
     }
 
     @SubscribeEvent
@@ -54,75 +58,131 @@ public class BloodOrbRenderer {
                 continue;
             }
 
-            renderOrb(level, orb);
-        }
-    }
-
-    private static void renderOrb(ClientLevel level, ClientBloodOrbData orb) {
-        // 1. Render Orb Core (Reduced count)
-        double coreChaos = orb.tier == 5 ? 0.15 : 0.05;
-        BloodParticleHelper.spawnParticleCircle(level, orb.pos, 0.4, BloodParticleHelper.BLOOD_MIST, 5, coreChaos);
-        BloodParticleHelper.spawnParticleVerticalCircle(level, orb.pos, 0.4, BloodParticleHelper.BLOOD_MIST, 5, coreChaos);
-        BloodParticleHelper.spawnParticleVerticalCircleZ(level, orb.pos, 0.4, BloodParticleHelper.BLOOD_MIST, 5, coreChaos);
-
-        // Tier 5 Volatility Sparks
-        if (orb.tier == 5 && level.random.nextFloat() < 0.2f) {
-            level.addParticle(ParticleTypes.SOUL, orb.pos.x, orb.pos.y, orb.pos.z, 
-                (level.random.nextDouble() - 0.5) * 0.1, (level.random.nextDouble() - 0.5) * 0.1, (level.random.nextDouble() - 0.5) * 0.1);
-        }
-
-        // 2. Render Tether (Tier 2 only - continuous beam to owner)
-        if (orb.tier == 2) {
-            Player owner = level.getPlayerByUUID(orb.ownerUUID);
-            if (owner != null && owner == Minecraft.getInstance().player) { // Only render tether for the local player if they are the owner
-                Vec3 ownerPos = owner.position().add(0, owner.getBbHeight() / 2.0, 0);
-                if (ownerPos.distanceTo(orb.pos) <= 32.0) {
-                     BloodParticleHelper.spawnParticleBeam(level, orb.pos, ownerPos, BloodParticleHelper.BLOOD_MIST, 1.2);
-                }
-            }
-        }
-
-        // 3. Render AoE Visuals (Tier 3-5)
-        if (orb.tier >= 3) {
-            double radius = orb.tier == 3 ? 10.0 : (orb.tier == 4 ? 14.0 : 16.0);
-            
-            // Pulse effect every 20 ticks
-            if (orb.currentTick % 20 == 0) {
-                // AoE Pulse Circle
-                BloodParticleHelper.spawnParticleCircle(level, orb.pos, radius, BloodParticleHelper.BLOOD_MIST, (int) (radius * 6), 0.1);
-                
-                // T4/T5 Siphoning Field ground indicator (pulse-aligned)
-                if (orb.tier >= 4) {
-                    BloodParticleHelper.spawnParticleCircle(level, orb.pos.subtract(0, 0.9, 0), radius, BloodParticleHelper.BLOOD_MIST, (int)(radius * 4), 0.02);
-                    
-                    // T4 Siphon Visual: Particles flying from radius to center
-                    for (int i = 0; i < 15; i++) {
-                        double angle = level.random.nextDouble() * Math.PI * 2;
-                        Vec3 start = orb.pos.add(Math.cos(angle) * radius, (level.random.nextDouble() - 0.5) * 2.0, Math.sin(angle) * radius);
-                        Vec3 vel = orb.pos.subtract(start).normalize().scale(0.4);
-                        level.addParticle(BloodParticleHelper.BLOOD_SPLATTER, start.x, start.y, start.z, vel.x, vel.y, vel.z);
-                    }
-                }
+            // Spawn subtle dispersed ambient blood mist aura every 3 ticks
+            if (orb.currentTick % 3 == 0) {
+                double spread = 0.3 + 0.1 * Math.sqrt(Math.max(0.1, orb.densityV));
+                float bobOffset = (float) Math.sin(orb.currentTick * 0.1f) * 0.04f;
+                double px = orb.pos.x + (level.random.nextDouble() - 0.5) * spread;
+                double py = orb.pos.y + 0.4 + bobOffset + (level.random.nextDouble() - 0.5) * spread * 0.4;
+                double pz = orb.pos.z + (level.random.nextDouble() - 0.5) * spread;
+                level.addParticle(BloodParticleHelper.BLOOD_MIST, px, py, pz, 0, 0.01, 0);
             }
         }
     }
 
-    private static void triggerDetonationVisual(ClientBloodOrbData orb) {
-        // Detonation visual is now handled by AAA Particles triggered from the server.
+    @SubscribeEvent
+    public static void onRenderLevel(RenderLevelStageEvent event) {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) return;
+        if (ACTIVE_ORBS.isEmpty()) return;
+
+        PoseStack poseStack = event.getPoseStack();
+        Camera camera = event.getCamera();
+        Vec3 camPos = camera.getPosition();
+        float partialTicks = event.getPartialTick();
+
+        MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
+
+        for (ClientBloodOrbData orb : ACTIVE_ORBS.values()) {
+            poseStack.pushPose();
+
+            double x = orb.pos.x - camPos.x;
+            double y = orb.pos.y - camPos.y;
+            double z = orb.pos.z - camPos.z;
+
+            float time = orb.currentTick + partialTicks;
+            float bobOffset = (float) Math.sin(time * 0.1f) * 0.04f;
+
+            poseStack.translate(x, y + 0.4 + bobOffset, z);
+
+            // Orb radius starts off tiny for weak mobs (0.065m at V=0.1) and grows smoothly/slowly (up to 0.40m at V=20)
+            float coreRadius = (float) (0.04f + 0.08f * Math.sqrt(Math.max(0.1, orb.densityV)));
+            float glowRadius = coreRadius * 1.45f;
+
+            // Render core 3D sphere (solid deep blood/crimson)
+            VertexConsumer coreConsumer = buffer.getBuffer(CustomRenderTypes.sphereNoCull());
+            renderSphere(poseStack, coreConsumer, coreRadius, 16, 16, 240, 150, 10, 25, 230);
+
+            // Render outer glow 3D sphere (translucent blood aura scaling with density V)
+            VertexConsumer glowConsumer = buffer.getBuffer(CustomRenderTypes.sphereGlow());
+            renderSphere(poseStack, glowConsumer, glowRadius, 14, 14, 240, 190, 20, 40, 80);
+
+            poseStack.popPose();
+        }
+
+        buffer.endBatch();
+    }
+
+    private static void renderSphere(PoseStack poseStack, VertexConsumer consumer,
+                                       float radius, int stacks, int slices, int packedLight,
+                                       int r, int g, int b, int a) {
+        Matrix4f matrix4f = poseStack.last().pose();
+        Matrix3f matrix3f = poseStack.last().normal();
+
+        for (int i = 0; i < stacks; i++) {
+            float lat0 = (float) Math.PI * (-0.5f + (float) i / stacks);
+            float z0 = (float) Math.sin(lat0);
+            float zr0 = (float) Math.cos(lat0);
+
+            float lat1 = (float) Math.PI * (-0.5f + (float) (i + 1) / stacks);
+            float z1 = (float) Math.sin(lat1);
+            float zr1 = (float) Math.cos(lat1);
+
+            for (int j = 0; j < slices; j++) {
+                float lng0 = 2 * (float) Math.PI * (float) j / slices;
+                float x0 = (float) Math.cos(lng0);
+                float y0 = (float) Math.sin(lng0);
+
+                float lng1 = 2 * (float) Math.PI * (float) (j + 1) / slices;
+                float x1 = (float) Math.cos(lng1);
+                float y1 = (float) Math.sin(lng1);
+
+                addVertex(consumer, matrix4f, matrix3f,
+                        x0 * zr0 * radius, y0 * zr0 * radius, z0 * radius,
+                        x0 * zr0, y0 * zr0, z0, packedLight, r, g, b, a);
+                addVertex(consumer, matrix4f, matrix3f,
+                        x1 * zr0 * radius, y1 * zr0 * radius, z0 * radius,
+                        x1 * zr0, y1 * zr0, z0, packedLight, r, g, b, a);
+                addVertex(consumer, matrix4f, matrix3f,
+                        x1 * zr1 * radius, y1 * zr1 * radius, z1 * radius,
+                        x1 * zr1, y1 * zr1, z1, packedLight, r, g, b, a);
+
+                addVertex(consumer, matrix4f, matrix3f,
+                        x0 * zr0 * radius, y0 * zr0 * radius, z0 * radius,
+                        x0 * zr0, y0 * zr0, z0, packedLight, r, g, b, a);
+                addVertex(consumer, matrix4f, matrix3f,
+                        x1 * zr1 * radius, y1 * zr1 * radius, z1 * radius,
+                        x1 * zr1, y1 * zr1, z1, packedLight, r, g, b, a);
+                addVertex(consumer, matrix4f, matrix3f,
+                        x0 * zr1 * radius, y0 * zr1 * radius, z1 * radius,
+                        x0 * zr1, y0 * zr1, z1, packedLight, r, g, b, a);
+            }
+        }
+    }
+
+    private static void addVertex(VertexConsumer consumer, Matrix4f matrix4f, Matrix3f matrix3f,
+                                   float x, float y, float z, float nx, float ny, float nz, int packedLight,
+                                   int r, int g, int b, int a) {
+        consumer.vertex(matrix4f, x, y, z)
+                .color(r, g, b, a)
+                .uv(0, 0)
+                .overlayCoords(0)
+                .uv2(packedLight)
+                .normal(matrix3f, nx, ny, nz)
+                .endVertex();
     }
 
     private static class ClientBloodOrbData {
         private final UUID id;
         private final Vec3 pos;
-        private final int tier;
+        private final double densityV;
         private final UUID ownerUUID;
         private final int lifetime;
         private int currentTick = 0;
 
-        public ClientBloodOrbData(UUID id, Vec3 pos, int tier, UUID ownerUUID, int lifetime) {
+        public ClientBloodOrbData(UUID id, Vec3 pos, double densityV, UUID ownerUUID, int lifetime) {
             this.id = id;
             this.pos = pos;
-            this.tier = tier;
+            this.densityV = densityV;
             this.ownerUUID = ownerUUID;
             this.lifetime = lifetime;
         }
@@ -130,3 +190,4 @@ public class BloodOrbRenderer {
         public void tick() { currentTick++; }
     }
 }
+
