@@ -48,5 +48,20 @@
   "skill.complextalents.challengers_retribution.desc": "Adopt a defensive stance, taunting nearby enemies into a magical shield. Release the charge to unleash all absorbed damage in a powerful burst.",
 
   "entity.complextalents.seraphs_edge": "Seraph's Edge",
-  "item.complextalents.mysterious_loot": "Mysterious Loot"
+  "item.complextalents.mysterious_loot": "Mysterious Loot",
+  "item.complextalents.novice_weapon_gem": "Novice Weapon Gem",
+  "item.complextalents.apprentice_weapon_gem": "Apprentice Weapon Gem",
+  "item.complextalents.adept_weapon_gem": "Adept Weapon Gem",
+  "item.complextalents.expert_weapon_gem": "Expert Weapon Gem",
+  "item.complextalents.master_weapon_gem": "Master Weapon Gem",
+  "item.complextalents.power_gem": "Power Rune",
+  "item.complextalents.mana_saver_gem": "Mana Saver Rune",
+  "item.complextalents.haste_gem": "Haste Rune",
+  "item.complextalents.speed_gem": "Speed Rune",
+  "item.complextalents.precision_gem": "Precision Rune",
+  "item.complextalents.fatal_gem": "Fatal Rune",
+  "item.complextalents.vampirism_gem": "Vampirism Rune",
+  "item.complextalents.pierce_gem": "Pierce Rune",
+  "item.complextalents.overclock_gem": "Overclock Rune",
+  "item.complextalents.recast_gem": "Recast Rune"
 }

@@ -34,6 +34,25 @@ public class ModCreativeTabs {
                         // Default Mysterious Loot Box
                         output.accept(new ItemStack(ModItems.MYSTERIOUS_LOOT.get()));
 
+                        // Refinement Gems
+                        output.accept(ModItems.NOVICE_WEAPON_GEM.get());
+                        output.accept(ModItems.APPRENTICE_WEAPON_GEM.get());
+                        output.accept(ModItems.ADEPT_WEAPON_GEM.get());
+                        output.accept(ModItems.EXPERT_WEAPON_GEM.get());
+                        output.accept(ModItems.MASTER_WEAPON_GEM.get());
+
+                        // Magic Augment Gems
+                        output.accept(ModItems.POWER_GEM.get());
+                        output.accept(ModItems.MANA_SAVER_GEM.get());
+                        output.accept(ModItems.HASTE_GEM.get());
+                        output.accept(ModItems.SPEED_GEM.get());
+                        output.accept(ModItems.PRECISION_GEM.get());
+                        output.accept(ModItems.FATAL_GEM.get());
+                        output.accept(ModItems.VAMPIRISM_GEM.get());
+                        output.accept(ModItems.PIERCE_GEM.get());
+                        output.accept(ModItems.OVERCLOCK_GEM.get());
+                        output.accept(ModItems.RECAST_GEM.get());
+
                         // Populate Weapon Case NBT variants (only valid rarities present in category)
                         for (IWeaponMasteryData.WeaponPath path : IWeaponMasteryData.WeaponPath.values()) {
                             for (DynamicCasePoolBuilder.CrateRarity rarity : DynamicCasePoolBuilder.getValidRaritiesForWeaponPath(path)) {

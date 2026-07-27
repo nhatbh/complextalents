@@ -30,11 +30,11 @@ public class DynamicCasePoolBuilder {
     private static final Gson GSON = new Gson();
 
     public enum CrateRarity {
-        COMMON("Common", 0xFFAAAAAA, new int[]{550, 280, 120, 45, 5}),
-        UNCOMMON("Uncommon", 0xFF55FF55, new int[]{400, 350, 170, 70, 10}),
-        RARE("Rare", 0xFF5555FF, new int[]{250, 320, 260, 150, 20}),
-        EPIC("Epic", 0xFFAA00AA, new int[]{150, 240, 320, 240, 50}),
-        LEGENDARY("Legendary", 0xFFFFAA00, new int[]{80, 160, 300, 360, 100});
+        COMMON("Common", 0xFFAAAAAA, new int[]{850, 90, 40, 15, 5}),
+        UNCOMMON("Uncommon", 0xFF55FF55, new int[]{750, 140, 70, 30, 10}),
+        RARE("Rare", 0xFF5555FF, new int[]{650, 160, 110, 60, 20}),
+        EPIC("Epic", 0xFFAA00AA, new int[]{550, 180, 140, 90, 40}),
+        LEGENDARY("Legendary", 0xFFFFAA00, new int[]{450, 170, 150, 130, 100});
 
         private final String displayName;
         private final int colorHex;
@@ -72,8 +72,16 @@ public class DynamicCasePoolBuilder {
     public static List<CaseReward> buildWeaponPool(WeaponPath path, CrateRarity crateRarity, ResourceManager resourceManager) {
         Map<Integer, List<Item>> tierMap = new HashMap<>();
         for (int t = 1; t <= 5; t++) {
-            tierMap.put(t, com.complextalents.weaponmastery.WeaponMasteryManager.getInstance().getWeaponsForPathAndTier(path, t));
+            List<Item> weapons = new ArrayList<>(com.complextalents.weaponmastery.WeaponMasteryManager.getInstance().getWeaponsForPathAndTier(path, t));
+            tierMap.put(t, weapons);
         }
+
+        // Add Refinement Gems to their respective item tiers in every weapon case
+        tierMap.get(1).add(com.complextalents.item.ModItems.NOVICE_WEAPON_GEM.get());
+        tierMap.get(2).add(com.complextalents.item.ModItems.APPRENTICE_WEAPON_GEM.get());
+        tierMap.get(3).add(com.complextalents.item.ModItems.ADEPT_WEAPON_GEM.get());
+        tierMap.get(4).add(com.complextalents.item.ModItems.EXPERT_WEAPON_GEM.get());
+        tierMap.get(5).add(com.complextalents.item.ModItems.MASTER_WEAPON_GEM.get());
 
         return buildPoolFromTierMap(tierMap, crateRarity, path.name());
     }
@@ -206,7 +214,37 @@ public class DynamicCasePoolBuilder {
      */
     public static List<CaseReward> buildMagicPool(ResourceLocation schoolId, CrateRarity crateRarity) {
         Map<Integer, List<ItemStack>> tierMap = getMagicSpellsForSchool(schoolId);
+        
+        // Inject Magic Augment Gems into respective tiers
+        injectMagicAugmentGems(tierMap);
+
         return buildPoolFromItemStackTierMap(tierMap, crateRarity, schoolId.toString());
+    }
+
+    private static void injectMagicAugmentGems(Map<Integer, List<ItemStack>> tierMap) {
+        CrateRarity[] rarities = CrateRarity.values();
+        com.complextalents.item.MagicAugmentItem[] gems = {
+            com.complextalents.item.ModItems.POWER_GEM.get(),
+            com.complextalents.item.ModItems.MANA_SAVER_GEM.get(),
+            com.complextalents.item.ModItems.HASTE_GEM.get(),
+            com.complextalents.item.ModItems.SPEED_GEM.get(),
+            com.complextalents.item.ModItems.PRECISION_GEM.get(),
+            com.complextalents.item.ModItems.FATAL_GEM.get(),
+            com.complextalents.item.ModItems.VAMPIRISM_GEM.get(),
+            com.complextalents.item.ModItems.PIERCE_GEM.get(),
+            com.complextalents.item.ModItems.OVERCLOCK_GEM.get(),
+            com.complextalents.item.ModItems.RECAST_GEM.get()
+        };
+
+        for (int t = 1; t <= 5; t++) {
+            CrateRarity currentRarity = rarities[t - 1];
+            List<ItemStack> list = tierMap.computeIfAbsent(t, k -> new ArrayList<>());
+            for (com.complextalents.item.MagicAugmentItem gem : gems) {
+                if (currentRarity.ordinal() >= gem.getAugmentType().getMinRarity().ordinal()) {
+                    list.add(com.complextalents.item.MagicAugmentItem.createStack(gem, currentRarity, 1));
+                }
+            }
+        }
     }
 
     /**
@@ -266,7 +304,11 @@ public class DynamicCasePoolBuilder {
                     // Special golden emblem item format
                     customName = Component.literal("§6★ " + stack.getHoverName().getString());
                 }
-                pool.add(new CaseReward(stack.copy(), rarity, perItemWeight, customName));
+                int weight = perItemWeight;
+                if (stack.getItem() instanceof com.complextalents.item.RefinementGemItem || stack.getItem() instanceof com.complextalents.item.MagicAugmentItem) {
+                    weight = perItemWeight * 3; // 3x higher drop chance than individual gear/spells in the same tier
+                }
+                pool.add(new CaseReward(stack.copy(), rarity, weight, customName));
             }
         }
 

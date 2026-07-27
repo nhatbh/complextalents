@@ -22,6 +22,11 @@ public interface IWeaponMasteryData extends INBTSerializable<CompoundTag> {
         JUGGERNAUT,
         BRAWLER;
 
+        public String getDisplayName() {
+            String n = name().toLowerCase();
+            return Character.toUpperCase(n.charAt(0)) + n.substring(1);
+        }
+
         public static WeaponPath fromString(String name) {
             for (WeaponPath path : values()) {
                 if (path.name().equalsIgnoreCase(name)) {

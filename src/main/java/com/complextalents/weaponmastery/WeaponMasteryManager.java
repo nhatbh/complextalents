@@ -108,8 +108,29 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
         return weaponToPathMap.get(itemId);
     }
 
+    public WeaponPath getWeaponPath(net.minecraft.world.item.ItemStack stack) {
+        if (stack.isEmpty()) return null;
+        ResourceLocation id = net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(stack.getItem());
+        return id != null ? weaponToPathMap.get(id) : null;
+    }
+
     public int getRequiredRankValue(ResourceLocation itemId) {
         return weaponToRequiredRankMap.getOrDefault(itemId, 0);
+    }
+
+    public int getWeaponTier(net.minecraft.world.item.ItemStack stack) {
+        if (stack.isEmpty()) return 0;
+        ResourceLocation id = net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(stack.getItem());
+        if (id == null || !weaponToPathMap.containsKey(id)) return 0;
+        int rankValue = weaponToRequiredRankMap.getOrDefault(id, 0);
+        return switch (rankValue) {
+            case 0 -> 1;  // Novice
+            case 5 -> 2;  // Apprentice
+            case 10 -> 3; // Adept
+            case 15 -> 4; // Expert
+            case 20 -> 5; // Master
+            default -> 1;
+        };
     }
 
     public List<net.minecraft.world.item.Item> getWeaponsForPathAndTier(WeaponPath path, int tier) {

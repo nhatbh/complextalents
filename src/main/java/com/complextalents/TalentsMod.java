@@ -71,6 +71,12 @@ public class TalentsMod {
         ModCreativeTabs.register(modEventBus);
         HighPriestItems.register(modEventBus);
 
+        // Register loot modifiers
+        com.complextalents.loot.ModLootModifiers.register(modEventBus);
+
+        // Register custom recipes
+        com.complextalents.refinement.ModRecipes.register(modEventBus);
+
         // Register network packets
         PacketHandler.register();
 

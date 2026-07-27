@@ -44,18 +44,6 @@ public class SpellMasteryManager {
                     .withStyle(ChatFormatting.RED));
             }
 
-            // Step 3: Mastery Tier Verification
-            SpellRarity spellRarity = spell.getRarity(spellLevel);
-            ResourceLocation schoolId = spell.getSchoolType().getId();
-            int playerMastery = mastery.getMasteryLevel(schoolId);
-            int requiredMastery = spellRarity.getValue(); // Assuming SpellRarity.getValue() maps 0-4 or 1-5
-
-            if (playerMastery < requiredMastery) {
-                return new CastResult(CastResult.Type.FAILURE, 
-                    Component.literal("Your " + spell.getSchoolType().getDisplayName().getString() + " Mastery is too low to cast " + spellRarity.getDisplayName().getString() + " spells!")
-                    .withStyle(ChatFormatting.RED));
-            }
-
             return new CastResult(CastResult.Type.SUCCESS);
         }).filter(result -> result.type == CastResult.Type.FAILURE);
     }
