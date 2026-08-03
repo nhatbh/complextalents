@@ -53,9 +53,9 @@ public class LevelUpHandler {
         int level = 1;
         double xpSpent = 0;
 
-        // XP required for next level: 100 + (level^1.5 * 50)
+        // XP required for next level: 100 + (level^1.5 * 30)
         while (true) {
-            double xpForNext = 100 + (Math.pow(level, 1.5) * 50);
+            double xpForNext = 100 + (Math.pow(level, 1.5) * 30);
             if (xpSpent + xpForNext > totalXP) {
                 break; // Can't level up anymore
             }

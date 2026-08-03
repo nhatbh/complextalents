@@ -87,12 +87,9 @@ public class StatModifierApplier {
                     }
                 }
                 break;
-            case MOBILITY:
-                // +1.5% Movement Speed, +1% Jump Height per rank
-                updateModifier(player, Attributes.MOVEMENT_SPEED, rank * 0.015,
-                        AttributeModifier.Operation.MULTIPLY_BASE, uuid);
-                updateModifier(player, Attributes.JUMP_STRENGTH, rank * 0.01, AttributeModifier.Operation.MULTIPLY_BASE,
-                        uuid);
+            case HEAL_AND_SHIELD:
+                updateModifier(player, ModAttributes.HEAL_AND_SHIELD_POWER.get(), totalValue,
+                        AttributeModifier.Operation.ADDITION, uuid);
                 break;
             case CDR:
                 double cdrPercentage = totalValue / (100.0 + totalValue);

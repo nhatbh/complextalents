@@ -103,10 +103,28 @@ public class GeneralStatsData implements IGeneralStatsData {
         StatModifierApplier.applyAll(player, totalRanks);
     }
 
+    private int highestCombatPower = 0;
+
+    @Override
+    public int getHighestCombatPower() {
+        return highestCombatPower;
+    }
+
+    @Override
+    public void setHighestCombatPower(int cp) {
+        if (cp > this.highestCombatPower) {
+            this.highestCombatPower = cp;
+            if (player != null && !player.level().isClientSide) {
+                sync();
+            }
+        }
+    }
+
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         nbt.putInt("SkillPoints", skillPoints);
+        nbt.putInt("HighestCP", highestCombatPower);
         
         CompoundTag ranksNbt = new CompoundTag();
         for (Map.Entry<StatType, Integer> entry : ranks.entrySet()) {
@@ -126,6 +144,7 @@ public class GeneralStatsData implements IGeneralStatsData {
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         this.skillPoints = nbt.getInt("SkillPoints");
+        this.highestCombatPower = nbt.getInt("HighestCP");
         
         this.ranks.clear();
         CompoundTag ranksNbt = nbt.getCompound("Ranks");

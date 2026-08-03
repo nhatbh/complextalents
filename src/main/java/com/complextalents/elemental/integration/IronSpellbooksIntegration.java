@@ -116,9 +116,13 @@ public class IronSpellbooksIntegration {
             case "fire" -> ElementType.FIRE;
             case "ice" -> ElementType.ICE;
             case "lightning" -> ElementType.LIGHTNING;
-            case "ender" -> ElementType.ENDER;
             case "nature" -> ElementType.NATURE;
-            case "blood" -> ElementType.AQUA;
+            case "aqua" -> ElementType.AQUA;
+            case "holy" -> ElementType.HOLY;
+            case "evocation" -> ElementType.EVOCATION;
+            case "ender" -> ElementType.ENDER;
+            case "eldritch" -> ElementType.ELDRITCH;
+            case "blood" -> ElementType.BLOOD;
             default -> null;
         };
     }

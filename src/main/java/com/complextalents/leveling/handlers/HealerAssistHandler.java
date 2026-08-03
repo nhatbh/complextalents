@@ -101,7 +101,7 @@ public class HealerAssistHandler {
         }
 
         // Award healer assist XP
-        double baseXP = com.complextalents.leveling.util.XPFormula.calculatePrimaryXP(victimHealth);
+        double baseXP = com.complextalents.leveling.util.XPFormula.calculateAssistXP(victimHealth);
 
         ChunkPos chunkPos = new ChunkPos(healer.blockPosition());
         XPContext context = XPContext.builder()

@@ -101,7 +101,8 @@ public class HighPriestOrigin {
                 .description(Component.literal(
                         "Tăng 20%-60% Tốc cast và 30%-125% Hiệu lực hồi máu khi không bị nhận sát thương trong 30s. Dùng phép Holy tiêu hao Mana để tích lũy Command (tối đa 100). Điểm Command giúp hoàn Mana, định vị Beacon và kích nổ kéo/giải hiệu ứng từ Seraphic Echo."))
                 .maxLevel(5)
-                .baseStat(StatType.MAX_MANA, 20)
+                .baseStat(StatType.MAX_MANA, 15)
+                .baseStat(StatType.CDR, 5)
                 // Grace stack - binary state (ON/OFF), lost on damage
                 .passiveStack("grace", PassiveStackDef.create("Grace")
                         .maxStacks(1)
@@ -118,7 +119,8 @@ public class HighPriestOrigin {
                         "Gain scaling Cast Speed and Healing Potency. Overheal grants Absorption. Lost upon taking damage.")
                 .passiveSkill("Seraphic Command",
                         "Spending mana on holy spells generates Command stacks (5 Mana = 1 Command, max 100). Consuming Command refunds Mana (up to 20% Max Mana). Fuel Seraphic Echo abilities.")
-                .activeSkill("Seraphic Echo", "Summon or command the Seraphic Orb to strike, shield allies, or pull and purify enemies in a central burst.",
+                .activeSkill("Seraphic Echo",
+                        "Summon or command the Seraphic Orb to strike, shield allies, or pull and purify enemies in a central burst.",
                         ResourceLocation.fromNamespaceAndPath("complextalents",
                                 "textures/skill/highpriest/seraphic_echo.png"))
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "seraphic_echo"))
@@ -132,6 +134,10 @@ public class HighPriestOrigin {
                 .scaledStat("overhealToAbsorptionRate", new double[] { 0.30, 0.40, 0.50, 0.60, 0.75 })
                 .scaledStat("absorptionDuration", new double[] { 600.0, 800.0, 1000.0, 1200.0, 1500.0 })
                 .scaledStat("manaRefundPerCommand", new double[] { 0.0020, 0.0020, 0.0020, 0.0020, 0.0020 })
+                // Level defensive scaling (High Priest = Squishy Holy Support, just below Assassin)
+                .levelArmorCalc(lvl -> lvl <= 1 ? 0.0 : Math.round(Math.pow(lvl - 1, 1.15) * 0.55))
+                .levelToughnessCalc(lvl -> lvl <= 1 ? 0.0 : Math.min(15.0, Math.pow(lvl - 1, 1.1) * 0.15))
+                .levelHealthCalc(lvl -> 0.0)
                 .register();
 
         ClassCostMatrix.defineCosts(ID)
@@ -142,9 +148,10 @@ public class HighPriestOrigin {
                 .cost(StatType.LUCK_CRIT, 4)
                 .cost(StatType.MAX_HP, 2)
                 .cost(StatType.MAX_MANA, 1)
-                .cost(StatType.MOBILITY, 3)
-                .cost(StatType.CDR, 1)
+                .cost(StatType.HEAL_AND_SHIELD, 1)
+                .cost(StatType.CDR, 2)
                 .spellMasteryCostMultiplier(1.0) // High Priest normal with spells, 100% cost
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ELDRITCH, -1.0)
                 .weaponMasteryCostMultiplier(100.0); // High Priest should NOT use weapons, 10000% cost
     }
 

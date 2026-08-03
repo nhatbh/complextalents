@@ -22,52 +22,35 @@ public class ElementalMageOrigin {
     private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("complextalents",
             "elemental_mage");
 
-    // Level scaling arrays (index corresponds to level 1, 2, 3, 4, 5)
-    private static final double[] BASE_RES = { 40.0, 50.0, 60.0, 70.0, 100.0 };
-    private static final double[] MANA_RES_MULT = { 0.20, 0.25, 0.30, 0.35, 0.50 };
-    private static final double[] BASE_REGEN = { 1.0, 1.2, 1.4, 1.6, 2.5 }; // Per second
-    private static final double[] MANA_REGEN_MULT = { 0.005, 0.008, 0.010, 0.012, 0.020 }; // Per second per Max Mana
+    public static final double[] REACTION_DAMAGE_BONUS = { 0.25, 0.50, 0.75, 1.00, 1.30 };
 
     /**
      * Register the Elemental Mage origin.
      * Call this during mod initialization.
      */
     public static void register() {
-        // Register the Elemental Resonance resource
-        com.complextalents.origin.ResourceType resonanceType = com.complextalents.origin.ResourceType.register(
-                ResourceLocation.fromNamespaceAndPath("complextalents", "elemental_resonance"),
-                "Elemental Resonance",
-                0.0,
-                100.0, // Default max, overridden dynamically
-                0xFF4D96FF // Bright blue color for UI
-        );
-
         OriginBuilder.create("complextalents", "elemental_mage")
                 .displayName("Elemental Mage")
                 .description(Component.literal(
-                        "Chuyên gia combo phép thuật. Kích hoạt phản ứng tiêu 25 Resonance để tích lũy tới 6 Prismatic Echoes, tăng tối đa 1.5x sát thương phép. Dùng Harmonic Convergence tiêu hao Echoes để hoàn Mana & Resonance và dồn sát thương cực đại."))
+                        "Chuyên gia combo phép thuật. Kích hoạt phản ứng để tích lũy tới 6 Prismatic Echoes, tăng tối đa 1.5x sát thương phép. Dùng Harmonic Convergence tiêu hao Echoes để hoàn Mana và dồn sát thương cực đại."))
 
-                .resourceType(resonanceType)
                 .maxLevel(5)
-                .baseStat(StatType.AP, 2)
-                .baseStat(StatType.MAX_MANA, 4)
-                .scaledStat("base_resonance", "Base Resonance", BASE_RES)
-                .scaledStat("mana_res_mult", "Mana Res Mult", MANA_RES_MULT)
-                .scaledStat("base_regen", "Base Regen", BASE_REGEN)
-                .scaledStat("mana_regen_mult", "Mana Regen Mult", MANA_REGEN_MULT)
-                .dynamicMaxResource((level, player) -> {
-                    int idx = Math.min(Math.max(level - 1, 0), 4);
-                    double maxMana = player.getAttributeValue(
-                            io.redspace.ironsspellbooks.api.registry.AttributeRegistry.MAX_MANA.get()
-                    );
-                    return BASE_RES[idx] + (MANA_RES_MULT[idx] * maxMana);
-                })
+                .baseStat(StatType.AP, 6)
+                .baseStat(StatType.MAX_MANA, 10)
+                .baseStat(StatType.HEAL_AND_SHIELD, -6)
+                .scaledStat("reaction_damage_bonus", "Reaction Damage Bonus", REACTION_DAMAGE_BONUS)
                 .passiveSkill("Prismatic Harmony",
-                        "Kích hoạt phản ứng nguyên tố để tích lũy Prismatic Echoes, tăng tối đa 1.5x sát thương.")
+                        "Kích hoạt phản ứng nguyên tố để tích lũy Prismatic Echoes (tăng tối đa 1.5x sát thương). Tăng mạnh sát thương của mọi Phản ứng Nguyên tố (+25% -> +130%).")
 
-                .activeSkill("Harmonic Convergence", "Tiêu hao Prismatic Echoes để hoàn Mana & Resonance, gia tăng sát thương và khiến mọi phép phản ứng trực tiếp với nguyên tố vừa dùng.", null)
+                .activeSkill("Harmonic Convergence",
+                        "Tiêu hao Prismatic Echoes để hoàn Mana, gia tăng sát thương và khiến mọi phép phản ứng trực tiếp với nguyên tố vừa dùng.",
+                        null)
 
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "harmonic_convergence"))
+                // Level defensive scaling (Elemental Mage = Evocation Caster controlled curve)
+                .levelArmorCalc(lvl -> lvl <= 1 ? 0.0 : Math.round(Math.pow(lvl - 1, 1.15) * 0.7))
+                .levelToughnessCalc(lvl -> lvl <= 1 ? 0.0 : Math.min(25.0, Math.pow(lvl - 1, 1.1) * 0.2))
+                .levelHealthCalc(lvl -> 0.0)
                 .renderer(new com.complextalents.impl.elementalmage.client.ElementalMageRenderer())
                 .register();
 
@@ -77,11 +60,25 @@ public class ElementalMageOrigin {
                 .cost(StatType.AP, 1)
                 .cost(StatType.ARMOR_PEN, 4)
                 .cost(StatType.LUCK_CRIT, 2)
-                .cost(StatType.MAX_HP, 3)
+                .cost(StatType.MAX_HP, 4)
                 .cost(StatType.MAX_MANA, 1)
-                .cost(StatType.MOBILITY, 2)
+                .cost(StatType.HEAL_AND_SHIELD, 4)
                 .cost(StatType.CDR, 1)
                 .spellMasteryCostMultiplier(1.0)
+                // Primal Elements (Base multiplier: 1x)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.FIRE, 1.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ICE, 1.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.LIGHTNING, 1.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.NATURE, 1.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.AQUA, 1.0)
+                // Arcane Elements (Bad affinity: 3x cost)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.EVOCATION, 3.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ENDER, 3.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.BLOOD, 3.0)
+                // Holy (No affinity: 5x cost)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.HOLY, 5.0)
+                // Eldritch (Dark Mage Exclusive: -1.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ELDRITCH, -1.0)
                 .weaponMasteryCostMultiplier(3.0);
 
         // Register Harmonic Convergence Skill
@@ -106,8 +103,7 @@ public class ElementalMageOrigin {
 
     /**
      * Server tick handler:
-     * 1. Regenerate Elemental Resonance over time (every 20 ticks).
-     * 2. Decay Prismatic Echoes after 12 seconds (240 ticks) without elemental damage.
+     * Decay Prismatic Echoes after 12 seconds (240 ticks) without elemental damage.
      */
     @SubscribeEvent
     public static void onPlayerTick(net.minecraftforge.event.TickEvent.PlayerTickEvent event) {
@@ -122,32 +118,14 @@ public class ElementalMageOrigin {
 
         long gameTime = serverPlayer.level().getGameTime();
 
-        // 1. Echo Decay Check (every tick)
-        serverPlayer.getCapability(com.complextalents.impl.elementalmage.ElementalMageDataProvider.ELEMENTAL_DATA).ifPresent(cap -> {
-            if (cap.getEchoCount() > 0) {
-                if (gameTime - cap.getLastDamageTick() >= 240L) { // 12 seconds = 240 ticks
-                    cap.clearEchoes();
-                }
-            }
-        });
-
-        // 2. Regeneration once per second (every 20 ticks)
-        if (gameTime % 20L == 0L) {
-            serverPlayer.getCapability(com.complextalents.origin.capability.OriginDataProvider.ORIGIN_DATA)
-                    .ifPresent(data -> {
-                        int level = data.getOriginLevel();
-                        int idx = Math.min(Math.max(level - 1, 0), 4);
-
-                        double maxMana = serverPlayer.getAttributeValue(
-                                io.redspace.ironsspellbooks.api.registry.AttributeRegistry.MAX_MANA.get()
-                        );
-                        double regenAmount = BASE_REGEN[idx] + (MANA_REGEN_MULT[idx] * maxMana);
-
-                        data.modifyResource(regenAmount);
-                        data.sync();
-                    });
-        }
+        // Echo Decay Check (every tick)
+        serverPlayer.getCapability(com.complextalents.impl.elementalmage.ElementalMageDataProvider.ELEMENTAL_DATA)
+                .ifPresent(cap -> {
+                    if (cap.getEchoCount() > 0) {
+                        if (gameTime - cap.getLastDamageTick() >= 240L) { // 12 seconds = 240 ticks
+                            cap.clearEchoes();
+                        }
+                    }
+                });
     }
-
-
 }

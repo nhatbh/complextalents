@@ -10,6 +10,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.world.level.ChunkPos;
+import com.complextalents.leveling.events.xp.XPContext;
+import com.complextalents.leveling.events.xp.XPSource;
+import com.complextalents.leveling.service.LevelingService;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
@@ -59,9 +65,24 @@ public class ChestCaseLootModifier extends LootModifier {
 
         // 3. Compute 2D horizontal distance from world spawn (0, 0)
         double distance = Math.sqrt(origin.x * origin.x + origin.z * origin.z);
-
-        // 4. Calculate Distance-Based Drop Chance (3.0% at spawn -> 35.0% at 50,000+ blocks out)
         double distanceRatio = Math.min(1.0, distance / MAX_DISTANCE_BLOCKS);
+
+        // 4. Award Chest Loot XP to the player who opened the container
+        Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
+        if (entity instanceof ServerPlayer player) {
+            double xpAmount = 100.0 + (7400.0 * distanceRatio); // 100 XP at spawn -> 7500 XP at 50k blocks
+            ChunkPos chunkPos = new ChunkPos((int) Math.floor(origin.x) >> 4, (int) Math.floor(origin.z) >> 4);
+            XPContext xpContext = XPContext.builder()
+                    .source(XPSource.CHEST_LOOT)
+                    .chunkPos(chunkPos)
+                    .rawAmount(xpAmount)
+                    .metadata("lootTable", tableId.toString())
+                    .metadata("distance", distance)
+                    .build();
+            LevelingService.getInstance().awardXP(player, xpAmount, XPSource.CHEST_LOOT, xpContext);
+        }
+
+        // 5. Calculate Distance-Based Drop Chance (10% at spawn -> 35% at 50,000+ blocks out)
         double dropChance = BASE_DROP_CHANCE + ((MAX_DROP_CHANCE - BASE_DROP_CHANCE) * distanceRatio);
 
         RandomSource random = context.getRandom();

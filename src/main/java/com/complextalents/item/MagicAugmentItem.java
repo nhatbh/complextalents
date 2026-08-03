@@ -91,25 +91,69 @@ public class MagicAugmentItem extends Item {
         };
 
         return switch (type) {
-            case POWER -> "+" + switch (tierLevel) { case 1 -> 5; case 2 -> 10; case 3 -> 15; case 4 -> 22; default -> 30; } + "% Spell Damage";
-            case MANA_SAVER -> "-" + switch (tierLevel) { case 1 -> 6; case 2 -> 12; case 3 -> 18; case 4 -> 24; default -> 30; } + "% Mana Cost";
-            case HASTE -> "-" + switch (tierLevel) { case 1 -> 6; case 2 -> 12; case 3 -> 18; case 4 -> 24; default -> 30; } + "% Cooldown";
-            case SPEED -> "+" + switch (tierLevel) { case 2 -> 10; case 3 -> 18; case 4 -> 25; default -> 35; } + "% Cast Speed";
-            case PRECISION -> "+" + switch (tierLevel) { case 2 -> 6; case 3 -> 10; case 4 -> 15; default -> 20; } + "% Spell Crit Chance";
-            case FATAL -> "+" + switch (tierLevel) { case 2 -> 20; case 3 -> 32; case 4 -> 45; default -> 60; } + "% Spell Crit Damage";
-            case VAMPIRISM -> "+" + switch (tierLevel) { case 3 -> 8; case 4 -> 14; default -> 20; } + "% Spell Lifesteal";
-            case PIERCE -> "+" + switch (tierLevel) { case 3 -> 10; case 4 -> 18; default -> 25; } + "% Resist Penetration";
+            case POWER -> "+" + switch (tierLevel) {
+                case 1 -> 5;
+                case 2 -> 10;
+                case 3 -> 15;
+                case 4 -> 22;
+                default -> 30;
+            } + "% Spell Damage";
+            case MANA_SAVER -> "-" + switch (tierLevel) {
+                case 1 -> 6;
+                case 2 -> 12;
+                case 3 -> 18;
+                case 4 -> 24;
+                default -> 30;
+            } + "% Mana Cost";
+            case HASTE -> "-" + switch (tierLevel) {
+                case 1 -> 6;
+                case 2 -> 12;
+                case 3 -> 18;
+                case 4 -> 24;
+                default -> 30;
+            } + "% Cooldown";
+            case SPEED -> "+" + switch (tierLevel) {
+                case 2 -> 10;
+                case 3 -> 18;
+                case 4 -> 25;
+                default -> 35;
+            } + "% Cast Speed";
+            case PRECISION -> "+" + switch (tierLevel) {
+                case 2 -> 6;
+                case 3 -> 10;
+                case 4 -> 15;
+                default -> 20;
+            } + "% Spell Crit Chance";
+            case FATAL -> "+" + switch (tierLevel) {
+                case 2 -> 20;
+                case 3 -> 32;
+                case 4 -> 45;
+                default -> 60;
+            } + "% Spell Crit Damage";
+            case VAMPIRISM -> "+" + switch (tierLevel) {
+                case 3 -> 8;
+                case 4 -> 14;
+                default -> 20;
+            } + "% Spell Lifesteal";
+            case PIERCE -> "+" + switch (tierLevel) {
+                case 3 -> 10;
+                case 4 -> 18;
+                default -> 25;
+            } + "% Resist Penetration";
             case OVERCLOCK -> (tierLevel >= 5 ? "+2" : "+1") + " Spell Level Boost";
             case RECAST -> "35% Cooldown Reset Chance";
         };
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents,
+            TooltipFlag isAdvanced) {
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
         CrateRarity tier = getTier(stack);
         tooltipComponents.add(Component.literal("Tier: " + tier.getDisplayName()).withStyle(ChatFormatting.GOLD));
-        tooltipComponents.add(Component.literal("Effect: " + getBonusText(augmentType, tier)).withStyle(ChatFormatting.AQUA));
-        tooltipComponents.add(Component.literal("Socket in Smithing Table onto a Scroll or Spellbook.").withStyle(ChatFormatting.GRAY));
+        tooltipComponents
+                .add(Component.literal("Effect: " + getBonusText(augmentType, tier)).withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Socket in Smithing Table onto a Scroll or Spellbook.")
+                .withStyle(ChatFormatting.GRAY));
     }
 }

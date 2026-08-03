@@ -58,6 +58,7 @@ public class ShadowWalkSkill {
                             context.skillLevel() - 1,
                             false,
                             false));
+                    com.complextalents.impl.assassin.events.ShadowWalkEventHandler.applyUntargetableEffect(serverPlayer);
 
                     // Play stealth sound and particles
                     level.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),

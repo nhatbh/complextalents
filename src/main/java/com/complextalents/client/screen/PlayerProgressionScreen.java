@@ -194,6 +194,13 @@ public class PlayerProgressionScreen extends Screen {
         // Title
         guiGraphics.drawString(this.font, "Character Progression", screenX + 10, screenY + 10, 0xFFFFFF, false);
 
+        // Combat Power Display
+        int cp = com.complextalents.combatpower.CombatPowerCalculator.getHighestCombatPower(player);
+        com.complextalents.combatpower.KnightRank rank = com.complextalents.combatpower.KnightRank.fromCP(cp);
+        String fullTitle = rank.getTitleForCP(cp);
+        String cpText = rank.getFormattedSymbol() + " \u00A7lCP: \u00A7f" + String.format("%,d", cp) + " " + rank.getColorCode() + "[" + fullTitle + "]";
+        guiGraphics.drawString(this.font, cpText, screenX + 160, screenY + 10, 0xFFFFFF, false);
+
         // SP Display
         long remainingSP = cart.getRemainingSP();
         String spText = "SP: " + remainingSP;

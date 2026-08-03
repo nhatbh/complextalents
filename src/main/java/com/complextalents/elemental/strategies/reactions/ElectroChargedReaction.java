@@ -35,6 +35,11 @@ public class ElectroChargedReaction implements IReactionStrategy {
         LivingEntity target = context.getTarget();
         float damage = calculateDamage(context);
 
+        // Check if target is a player - skip execution on players
+        if (target instanceof net.minecraft.world.entity.player.Player) {
+            return;
+        }
+
         // Check if target is an ally of the attacker - skip damage and effects if so
         if (context.getAttacker() != null && TeamHelper.isAlly(context.getAttacker(), target)) {
             return;
@@ -84,8 +89,7 @@ public class ElectroChargedReaction implements IReactionStrategy {
 
     @Override
     public boolean canTrigger(ReactionContext context) {
-        // Can trigger if target is a valid living entity
-        return context.getTarget() != null && context.getTarget().isAlive();
+        return context.getTarget() != null && context.getTarget().isAlive() && !(context.getTarget() instanceof net.minecraft.world.entity.player.Player);
     }
 
     @Override

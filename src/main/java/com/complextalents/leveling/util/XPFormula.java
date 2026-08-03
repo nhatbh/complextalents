@@ -6,10 +6,24 @@ package com.complextalents.leveling.util;
 public class XPFormula {
 
     /**
-     * Primary XP: $XP = 5 \times (MaxHP)^{0.6}$
+     * Primary XP: Scaled superlinearly with MaxHP ($MaxHP^{1.25}$) so XP increases aggressively with mob health,
+     * keeping player leveling aligned with mob distance scaling while tapering off for extremely high HP boss mobs (10,000+ HP).
      */
     public static double calculatePrimaryXP(double maxHP) {
-        return 5 * Math.pow(maxHP, 0.6);
+        if (maxHP <= 10000) {
+            return 1.2 * Math.pow(maxHP, 1.25);
+        } else {
+            double baseXP = 1.2 * Math.pow(10000, 1.25);
+            double excessHP = maxHP - 10000;
+            return baseXP + 5.0 * Math.pow(excessHP, 0.5);
+        }
+    }
+
+    /**
+     * Assist XP: Awarded to assistants (0.7x of primary kill XP).
+     */
+    public static double calculateAssistXP(double maxHP) {
+        return calculatePrimaryXP(maxHP) * 0.7;
     }
 
     /**

@@ -126,24 +126,7 @@ public class MysteriousLootItem extends Item {
                 }
             }
 
-            ItemStack rewardStack = winningReward.getStack();
 
-            // Give item to player inventory
-            if (!player.getInventory().add(rewardStack.copy())) {
-                player.drop(rewardStack.copy(), false);
-            }
-
-            // Automatic Spell Mastery Learning Hook for magic rewards (silently learned without spoiling unboxing result)
-            if (rewardStack.hasTag() && rewardStack.getTag().contains("SpellId")) {
-                ResourceLocation spellId = ResourceLocation.parse(rewardStack.getTag().getString("SpellId"));
-                int rawLevel = rewardStack.getTag().getInt("SpellLevel");
-                final int spellLevel = rawLevel <= 0 ? 1 : rawLevel;
-
-                serverPlayer.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(data -> {
-                    data.learnSpell(spellId, spellLevel);
-                    data.sync();
-                });
-            }
 
             // Send packet to client for unboxing animation
             PacketHandler.sendTo(new S2COpenCaseScreenPacket(sequence, targetWinningIndex, winningReward, pool), serverPlayer);

@@ -28,8 +28,6 @@ import com.complextalents.network.elemental.SpawnSpringReactionPacket;
 import com.complextalents.network.elemental.SpawnSuperconductReactionPacket;
 import com.complextalents.network.elemental.SpawnVaporizeReactionPacket;
 import com.complextalents.network.elemental.SpawnVoidfireReactionPacket;
-import com.complextalents.network.darkmage.S2CSyncBloodOrbPacket;
-import com.complextalents.network.darkmage.S2CRemoveBloodOrbPacket;
 import com.complextalents.network.assassin.AssassinSyncPacket;
 import com.complextalents.network.assassin.AssassinEntitySyncPacket;
 import com.complextalents.network.elementalmage.ElementalMageSyncPacket;
@@ -264,18 +262,6 @@ public class PacketHandler {
                                 SkillChannelStartResponsePacket::decode,
                                 SkillChannelStartResponsePacket::handle);
 
-                INSTANCE.registerMessage(packetId++,
-                                S2CSyncBloodOrbPacket.class,
-                                S2CSyncBloodOrbPacket::encode,
-                                S2CSyncBloodOrbPacket::decode,
-                                S2CSyncBloodOrbPacket::handle);
-
-                INSTANCE.registerMessage(packetId++,
-                                S2CRemoveBloodOrbPacket.class,
-                                S2CRemoveBloodOrbPacket::encode,
-                                S2CRemoveBloodOrbPacket::decode,
-                                S2CRemoveBloodOrbPacket::handle);
-
                 // Assassin sync packet
                 INSTANCE.registerMessage(packetId++,
                                 AssassinSyncPacket.class,
@@ -337,6 +323,18 @@ public class PacketHandler {
                                 S2COpenCaseScreenPacket::encode,
                                 S2COpenCaseScreenPacket::decode,
                                 S2COpenCaseScreenPacket::handle);
+
+                INSTANCE.registerMessage(packetId++,
+                                com.complextalents.network.caseopening.C2SClaimCaseRewardPacket.class,
+                                com.complextalents.network.caseopening.C2SClaimCaseRewardPacket::encode,
+                                com.complextalents.network.caseopening.C2SClaimCaseRewardPacket::decode,
+                                com.complextalents.network.caseopening.C2SClaimCaseRewardPacket::handle);
+
+                INSTANCE.registerMessage(packetId++,
+                                C2SLearnSpellPromptPacket.class,
+                                C2SLearnSpellPromptPacket::encode,
+                                C2SLearnSpellPromptPacket::new,
+                                C2SLearnSpellPromptPacket::handle);
 
                 TalentsMod.LOGGER.info("Network packets registered");
         }

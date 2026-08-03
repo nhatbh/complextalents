@@ -1,9 +1,12 @@
 package com.complextalents.spellmastery.command;
 
+import com.complextalents.spellmastery.SpellMasteryManager;
 import com.complextalents.spellmastery.capability.SpellMasteryDataProvider;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
+import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -22,6 +25,7 @@ import java.util.Set;
  * /mastery mastery <schoolId> <level> [targets]
  * /mastery learn <spellId> [targets]
  * /mastery forget <spellId> [targets]
+ * /mastery purchase <spellId> <level>
  * /mastery info [target]
  */
 public class SpellMasteryCommand {
@@ -30,11 +34,19 @@ public class SpellMasteryCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("mastery")
-                .requires(src -> src.hasPermission(OP_LEVEL))
-                .then(MasterySubCommand.register())
-                .then(LearnSubCommand.register())
-                .then(ForgetSubCommand.register())
-                .then(InfoSubCommand.register())
+                .then(PurchaseSubCommand.register())
+                .then(Commands.literal("mastery")
+                        .requires(src -> src.hasPermission(OP_LEVEL))
+                        .then(MasterySubCommand.registerBody()))
+                .then(Commands.literal("learn")
+                        .requires(src -> src.hasPermission(OP_LEVEL))
+                        .then(LearnSubCommand.registerBody()))
+                .then(Commands.literal("forget")
+                        .requires(src -> src.hasPermission(OP_LEVEL))
+                        .then(ForgetSubCommand.registerBody()))
+                .then(Commands.literal("info")
+                        .requires(src -> src.hasPermission(OP_LEVEL))
+                        .then(InfoSubCommand.registerBody()))
                 .then(Commands.literal("gui")
                         .executes(ctx -> {
                             ServerPlayer player = ctx.getSource().getPlayerOrException();
@@ -44,15 +56,72 @@ public class SpellMasteryCommand {
         );
     }
 
-    private static class MasterySubCommand {
+    private static class PurchaseSubCommand {
         static com.mojang.brigadier.builder.ArgumentBuilder<CommandSourceStack, ?> register() {
-            return Commands.literal("mastery")
-                    .then(Commands.argument("school", ResourceLocationArgument.id())
-                            .then(Commands.argument("level", IntegerArgumentType.integer(0, 5))
-                                    .executes(ctx -> setMastery(ctx, Collections.singleton(ctx.getSource().getPlayerOrException()), ResourceLocationArgument.getId(ctx, "school"), IntegerArgumentType.getInteger(ctx, "level")))
-                                    .then(Commands.argument("target", EntityArgument.players())
-                                            .executes(ctx -> setMastery(ctx, EntityArgument.getPlayers(ctx, "target"), ResourceLocationArgument.getId(ctx, "school"), IntegerArgumentType.getInteger(ctx, "level")))
-                                    )
+            return Commands.literal("purchase")
+                    .requires(src -> true) // Open to all players for chat prompt purchase
+                    .then(Commands.argument("spellId", ResourceLocationArgument.id())
+                            .then(Commands.argument("level", IntegerArgumentType.integer(1, 10))
+                                    .executes(ctx -> purchaseSpell(ctx, ResourceLocationArgument.getId(ctx, "spellId"), IntegerArgumentType.getInteger(ctx, "level")))
+                            )
+                    );
+        }
+
+        private static int purchaseSpell(CommandContext<CommandSourceStack> ctx, ResourceLocation spellId, int level) {
+            try {
+                ServerPlayer player = ctx.getSource().getPlayerOrException();
+                AbstractSpell spell = SpellRegistry.getSpell(spellId);
+                if (spell == null) return 0;
+
+                int entryLevel = SpellMasteryManager.getMinLevelForRarity(spell, spell.getRarity(level));
+
+                player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(mastery -> {
+                    if (mastery.isSpellLearned(spellId, entryLevel)) {
+                        ctx.getSource().sendSuccess(() -> Component.literal("\u00A7eYou have already learned " + spell.getDisplayName(player).getString() + " (" + spell.getRarity(entryLevel).getDisplayName().getString() + " Tier - Level " + entryLevel + ")!"), false);
+                        return;
+                    }
+
+                    ResourceLocation activeOrigin = player.getCapability(com.complextalents.origin.capability.OriginDataProvider.ORIGIN_DATA)
+                            .map(data -> data.getActiveOrigin()).orElse(null);
+
+                    com.complextalents.leveling.data.PlayerLevelingData levelingData = com.complextalents.leveling.data.PlayerLevelingData.get(player.getServer());
+                    long availableSP = levelingData.getAvailableSkillPoints(player.getUUID());
+
+                    int cost = SpellMasteryManager.getSpellUpgradeCost(spell, entryLevel, mastery, true, activeOrigin);
+
+                    if (cost < 0) {
+                        ctx.getSource().sendFailure(Component.literal("Your class cannot learn spells from the " + spell.getSchoolType().getDisplayName().getString() + " school!"));
+                        return;
+                    }
+
+                    if (availableSP >= cost) {
+                        levelingData.setConsumedSkillPoints(player.getUUID(), levelingData.getConsumedSkillPoints(player.getUUID()) + cost);
+                        com.complextalents.leveling.handlers.LevelingSyncHandler.syncPlayerLevelData(player);
+
+                        mastery.learnSpell(spellId, entryLevel);
+                        mastery.sync();
+
+                        player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                                net.minecraft.sounds.SoundEvents.PLAYER_LEVELUP, net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.2f);
+                        ctx.getSource().sendSuccess(() -> Component.literal("\u00A7a✦ Successfully learned " + spell.getDisplayName(player).getString() + " L" + entryLevel + "! (Spent " + cost + " SP)"), false);
+                    } else {
+                        ctx.getSource().sendFailure(Component.literal("Not enough SP to learn " + spell.getDisplayName(player).getString() + "! Required: " + cost + " SP (Available: " + availableSP + " SP)"));
+                    }
+                });
+                return 1;
+            } catch (Exception e) {
+                return 0;
+            }
+        }
+    }
+
+    private static class MasterySubCommand {
+        static com.mojang.brigadier.builder.ArgumentBuilder<CommandSourceStack, ?> registerBody() {
+            return Commands.argument("school", ResourceLocationArgument.id())
+                    .then(Commands.argument("level", IntegerArgumentType.integer(0, 5))
+                            .executes(ctx -> setMastery(ctx, Collections.singleton(ctx.getSource().getPlayerOrException()), ResourceLocationArgument.getId(ctx, "school"), IntegerArgumentType.getInteger(ctx, "level")))
+                            .then(Commands.argument("target", EntityArgument.players())
+                                    .executes(ctx -> setMastery(ctx, EntityArgument.getPlayers(ctx, "target"), ResourceLocationArgument.getId(ctx, "school"), IntegerArgumentType.getInteger(ctx, "level")))
                             )
                     );
         }
@@ -69,19 +138,17 @@ public class SpellMasteryCommand {
     }
 
     private static class LearnSubCommand {
-        static com.mojang.brigadier.builder.ArgumentBuilder<CommandSourceStack, ?> register() {
-            return Commands.literal("learn")
-                    .then(Commands.argument("spellId", ResourceLocationArgument.id())
-                            .executes(ctx -> learnSpell(ctx, Collections.singleton(ctx.getSource().getPlayerOrException()), ResourceLocationArgument.getId(ctx, "spellId"), 1))
-                            .then(Commands.argument("level", IntegerArgumentType.integer(1, 10))
-                                    .executes(ctx -> learnSpell(ctx, Collections.singleton(ctx.getSource().getPlayerOrException()), ResourceLocationArgument.getId(ctx, "spellId"), IntegerArgumentType.getInteger(ctx, "level")))
-                                    .then(Commands.argument("target", EntityArgument.players())
-                                            .executes(ctx -> learnSpell(ctx, EntityArgument.getPlayers(ctx, "target"), ResourceLocationArgument.getId(ctx, "spellId"), IntegerArgumentType.getInteger(ctx, "level")))
-                                    )
-                            )
+        static com.mojang.brigadier.builder.ArgumentBuilder<CommandSourceStack, ?> registerBody() {
+            return Commands.argument("spellId", ResourceLocationArgument.id())
+                    .executes(ctx -> learnSpell(ctx, Collections.singleton(ctx.getSource().getPlayerOrException()), ResourceLocationArgument.getId(ctx, "spellId"), 1))
+                    .then(Commands.argument("level", IntegerArgumentType.integer(1, 10))
+                            .executes(ctx -> learnSpell(ctx, Collections.singleton(ctx.getSource().getPlayerOrException()), ResourceLocationArgument.getId(ctx, "spellId"), IntegerArgumentType.getInteger(ctx, "level")))
                             .then(Commands.argument("target", EntityArgument.players())
-                                    .executes(ctx -> learnSpell(ctx, EntityArgument.getPlayers(ctx, "target"), ResourceLocationArgument.getId(ctx, "spellId"), 1))
+                                    .executes(ctx -> learnSpell(ctx, EntityArgument.getPlayers(ctx, "target"), ResourceLocationArgument.getId(ctx, "spellId"), IntegerArgumentType.getInteger(ctx, "level")))
                             )
+                    )
+                    .then(Commands.argument("target", EntityArgument.players())
+                            .executes(ctx -> learnSpell(ctx, EntityArgument.getPlayers(ctx, "target"), ResourceLocationArgument.getId(ctx, "spellId"), 1))
                     );
         }
 
@@ -97,13 +164,11 @@ public class SpellMasteryCommand {
     }
 
     private static class ForgetSubCommand {
-        static com.mojang.brigadier.builder.ArgumentBuilder<CommandSourceStack, ?> register() {
-            return Commands.literal("forget")
-                    .then(Commands.argument("spellId", ResourceLocationArgument.id())
-                            .executes(ctx -> forgetSpell(ctx, Collections.singleton(ctx.getSource().getPlayerOrException()), ResourceLocationArgument.getId(ctx, "spellId")))
-                            .then(Commands.argument("target", EntityArgument.players())
-                                    .executes(ctx -> forgetSpell(ctx, EntityArgument.getPlayers(ctx, "target"), ResourceLocationArgument.getId(ctx, "spellId")))
-                            )
+        static com.mojang.brigadier.builder.ArgumentBuilder<CommandSourceStack, ?> registerBody() {
+            return Commands.argument("spellId", ResourceLocationArgument.id())
+                    .executes(ctx -> forgetSpell(ctx, Collections.singleton(ctx.getSource().getPlayerOrException()), ResourceLocationArgument.getId(ctx, "spellId")))
+                    .then(Commands.argument("target", EntityArgument.players())
+                            .executes(ctx -> forgetSpell(ctx, EntityArgument.getPlayers(ctx, "target"), ResourceLocationArgument.getId(ctx, "spellId")))
                     );
         }
 
@@ -119,7 +184,7 @@ public class SpellMasteryCommand {
     }
 
     private static class InfoSubCommand {
-        static com.mojang.brigadier.builder.ArgumentBuilder<CommandSourceStack, ?> register() {
+        static com.mojang.brigadier.builder.ArgumentBuilder<CommandSourceStack, ?> registerBody() {
             return Commands.literal("info")
                     .executes(ctx -> info(ctx, ctx.getSource().getPlayerOrException()))
                     .then(Commands.argument("target", EntityArgument.player())

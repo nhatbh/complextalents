@@ -13,8 +13,8 @@ import java.util.function.Supplier;
  * Defines the core stats in the General Stats system.
  */
 public enum StatType {
-    FLAT_AD("Flat Attack Damage", 0.25, () -> Attributes.ATTACK_DAMAGE),
-    PERCENT_AD("% Attack Damage", 0.04, () -> Attributes.ATTACK_DAMAGE),
+    FLAT_AD("Flat Attack Damage", 0.5, () -> Attributes.ATTACK_DAMAGE),
+    PERCENT_AD("% Attack Damage", 0.03, () -> Attributes.ATTACK_DAMAGE),
     AP("Ability Power (AP)", 0.05,
             () -> ForgeRegistries.ATTRIBUTES
                     .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "spell_power"))),
@@ -26,7 +26,7 @@ public enum StatType {
     MAX_MANA("Max Mana", 50.0,
             () -> ForgeRegistries.ATTRIBUTES
                     .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "max_mana"))),
-    MOBILITY("Mobility", 1.0, () -> Attributes.MOVEMENT_SPEED), // Multi-attribute: handled specifically
+    HEAL_AND_SHIELD("Heal & Shield", 0.10, () -> com.complextalents.registry.ModAttributes.HEAL_AND_SHIELD_POWER.get()),
     CDR("Cooldown Reduction", 5.0, () -> ForgeRegistries.ATTRIBUTES
             .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "cooldown_reduction")));
 

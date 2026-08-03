@@ -2,7 +2,6 @@ package com.complextalents.impl.darkmage;
 
 import com.complextalents.TalentsMod;
 import com.complextalents.impl.darkmage.origin.DarkMageOrigin;
-import com.complextalents.impl.darkmage.skill.BloodPactSkill;
 
 /**
  * Central registration point for Dark Mage origin and skills.
@@ -20,11 +19,8 @@ public class DarkMageRegistrar {
      * are automatically registered via @Mod.EventBusSubscriber.
      */
     public static void register() {
-        // Register origin
+        // Register origin (registers Aspect of the Wolf skill internally)
         DarkMageOrigin.register();
-
-        // Register skill
-        BloodPactSkill.register();
 
         TalentsMod.LOGGER.info("Dark Mage origin and skills registered");
     }

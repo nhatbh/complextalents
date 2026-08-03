@@ -987,13 +987,13 @@
         "id": 165,
         "item_id": "efn:nf_shortsword",
         "path": "blademaster",
-        "skill_level": "adept"
+        "skill_level": "apprentice"
     },
     {
         "id": 166,
         "item_id": "efn:nf_shortsword_2",
         "path": "blademaster",
-        "skill_level": "adept"
+        "skill_level": "apprentice"
     },
     {
         "id": 167,

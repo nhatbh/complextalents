@@ -182,4 +182,40 @@ public interface Origin extends PassiveOwner {
     default ResourceLocation getActiveSkillId() {
         return null;
     }
+
+    /**
+     * Calculates the level armor bonus for a player with this origin at a given ComplexTalents player level.
+     * Default formula: +1.2 Armor per level above 1.
+     *
+     * @param playerLevel The player's ComplexTalents level
+     * @return The bonus armor value
+     */
+    default double getLevelArmorBonus(int playerLevel) {
+        if (playerLevel <= 1) return 0.0;
+        return Math.round((playerLevel - 1) * 1.2);
+    }
+
+    /**
+     * Calculates the level armor toughness bonus for a player with this origin at a given ComplexTalents player level.
+     * Default formula: +0.3 Toughness per level above 1 (capped at 30.0).
+     *
+     * @param playerLevel The player's ComplexTalents level
+     * @return The bonus armor toughness value
+     */
+    default double getLevelToughnessBonus(int playerLevel) {
+        if (playerLevel <= 1) return 0.0;
+        return Math.min(30.0, (playerLevel - 1) * 0.3);
+    }
+
+    /**
+     * Calculates the level max health bonus for a player with this origin at a given ComplexTalents player level.
+     * Default formula: Math.pow(playerLevel - 1, 1.15) * 0.2696
+     *
+     * @param playerLevel The player's ComplexTalents level
+     * @return The bonus max health value
+     */
+    default double getLevelHealthBonus(int playerLevel) {
+        if (playerLevel <= 1) return 0.0;
+        return Math.round(Math.pow(playerLevel - 1, 1.15) * 0.2696);
+    }
 }

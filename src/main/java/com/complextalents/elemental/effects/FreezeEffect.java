@@ -30,6 +30,10 @@ public class FreezeEffect extends MobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
+        if (entity instanceof net.minecraft.world.entity.player.Player) {
+            entity.removeEffect(this);
+            return;
+        }
         // Prevent movement by zeroing out delta movement
         if (!entity.level().isClientSide) {
             entity.setDeltaMovement(0, entity.getDeltaMovement().y * 0.1, 0);
@@ -47,6 +51,9 @@ public class FreezeEffect extends MobEffect {
     public void addAttributeModifiers(LivingEntity entity, net.minecraft.world.entity.ai.attributes.AttributeMap attributeMap, int amplifier) {
         super.addAttributeModifiers(entity, attributeMap, amplifier);
         resetHitCounter(entity);
+        if (entity instanceof net.minecraft.world.entity.player.Player) {
+            return;
+        }
 
         // Apply maximum slowness - reduces movement speed by 100% (completely immobilizes)
         var speedInstance = attributeMap.getInstance(Attributes.MOVEMENT_SPEED);

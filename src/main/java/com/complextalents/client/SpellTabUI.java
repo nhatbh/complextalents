@@ -1,10 +1,11 @@
 package com.complextalents.client;
 
-import com.complextalents.origin.OriginManager;
+import com.complextalents.origin.client.ClientOriginData;
 import com.complextalents.spellmastery.SpellMasteryManager;
 import com.complextalents.spellmastery.client.ClientSpellMasteryData;
-import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
+import com.complextalents.stats.ClassCostMatrix;
 import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
+import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.api.spells.SpellRarity;
@@ -23,11 +24,11 @@ public class SpellTabUI {
 
     private final List<SpellTierEntry> allSpells;
     private String selectedSchool = "";
-    private String selectedTier = "Common";
+    private String selectedTier = "All";
     private boolean rarityAscending = false;
     private int currentPage = 0;
     private int totalPages = 0;
-    private static final int SPELLS_PER_PAGE = 9;
+    private static final int SPELLS_PER_PAGE = 18;
     private static final int SPELLS_PER_ROW = 3;
 
     private record SpellTierEntry(AbstractSpell spell, int level, SpellRarity rarity) {
@@ -42,12 +43,9 @@ public class SpellTabUI {
         List<SpellTierEntry> entries = new ArrayList<>();
         for (AbstractSpell spell : SpellRegistry.REGISTRY.get().getValues()) {
             if (spell == null || spell == SpellRegistry.none()) continue;
-            Set<SpellRarity> seenRarities = new HashSet<>();
-            for (int lvl = spell.getMinLevel(); lvl <= spell.getMaxLevel(); lvl++) {
+            for (int lvl : SpellMasteryManager.getTierEntryLevels(spell)) {
                 SpellRarity r = spell.getRarity(lvl);
-                if (seenRarities.add(r)) {
-                    entries.add(new SpellTierEntry(spell, lvl, r));
-                }
+                entries.add(new SpellTierEntry(spell, lvl, r));
             }
         }
         this.allSpells = entries.stream()
@@ -76,7 +74,7 @@ public class SpellTabUI {
                 .build();
         buttons.add(schoolBtn);
 
-        // Build tier selector toggle button
+        // Build tier selector toggle button ("All", "Common", "Uncommon", etc.)
         Button tierBtn = Button.builder(Component.literal("Tier: " + selectedTier),
                 (btn) -> cycleTier())
                 .pos(xOffset + 165, yOffset + 10)
@@ -95,7 +93,7 @@ public class SpellTabUI {
                 .build();
         buttons.add(sortBtn);
 
-        // Build filter buttons and spell/mastery buttons
+        // Build filter buttons and spell buttons
         List<SpellTierEntry> filtered = getFilteredSpells();
         this.totalPages = (filtered.size() + SPELLS_PER_PAGE - 1) / SPELLS_PER_PAGE;
 
@@ -105,9 +103,8 @@ public class SpellTabUI {
         int yPos = yOffset + 40;
         int col = 0;
         int row = 0;
-        int index = 0;
 
-        // Add pagination buttons (always visible, but disabled if no pages to navigate)
+        // Add pagination buttons
         Button prevBtn = Button.builder(Component.literal("<"),
                 (btn) -> {
                     currentPage = Math.max(0, currentPage - 1);
@@ -135,39 +132,48 @@ public class SpellTabUI {
 
         for (int i = startIndex; i < endIndex; i++) {
             SpellTierEntry entry = filtered.get(i);
-            int btnX = xPos + (col * 160);
-            int btnY = yPos + (row * 50);
+            int btnX = xPos + 5 + (col * 160);
+            int btnY = yPos + (row * 42) + 5;
 
+            boolean learned = false;
+            for (int lvl = entry.spell.getMinLevel(); lvl <= entry.spell.getMaxLevel(); lvl++) {
+                if (ClientSpellMasteryData.isSpellLearned(entry.spell.getSpellResource(), lvl)) {
+                    if (entry.spell.getRarity(lvl).getValue() >= entry.rarity.getValue()) {
+                        learned = true;
+                        break;
+                    }
+                }
+            }
             String pendingId = "S:" + entry.getUniqueId();
-            boolean learned = ClientSpellMasteryData.isSpellLearned(entry.spell.getSpellResource(), entry.level);
             boolean isPending = isPending(pendingId);
-            int cost = getAdjustedSpellCost(entry.rarity);
+            int cost = getAdjustedSpellUpgradeCost(entry.spell, entry.level);
 
-            // Create +/- button at bottom right of card
             Button spellBtn;
-            if (learned) {
-                spellBtn = new ColoredButton(btnX + 125, btnY + 28, 20, 14,
+            if (cost < 0) {
+                spellBtn = new ColoredButton(btnX + 129, btnY + 12, 18, 14,
+                        Component.literal("✕"), (btn) -> {}, 0xFF666666);
+                spellBtn.active = false;
+            } else if (learned) {
+                spellBtn = new ColoredButton(btnX + 129, btnY + 12, 18, 14,
                         Component.literal("-"), (btn) -> {}, 0xFFCC4444);
                 spellBtn.active = false;
             } else {
-                int effectiveMastery = getEffectiveMasteryLevel(entry.spell.getSchoolType().getId());
-                int requiredMastery = entry.rarity.getValue();
-                boolean canSelect = cart.canAfford(cost) && effectiveMastery >= requiredMastery;
+                boolean canSelect = cart.canAfford(cost);
 
                 if (isPending) {
-                    spellBtn = new ColoredButton(btnX + 125, btnY + 28, 20, 14,
+                    spellBtn = new ColoredButton(btnX + 129, btnY + 12, 18, 14,
                             Component.literal("-"), (btn) -> toggle(pendingId, cost), 0xFFCC4444);
                 } else if (canSelect) {
                     spellBtn = Button.builder(Component.literal("+"),
                             (btn) -> toggle(pendingId, cost))
-                            .pos(btnX + 125, btnY + 28)
-                            .size(20, 14)
+                            .pos(btnX + 129, btnY + 12)
+                            .size(18, 14)
                             .build();
                 } else {
                     spellBtn = Button.builder(Component.literal("+"),
                             (btn) -> {})
-                            .pos(btnX + 125, btnY + 28)
-                            .size(20, 14)
+                            .pos(btnX + 129, btnY + 12)
+                            .size(18, 14)
                             .build();
                     spellBtn.active = false;
                 }
@@ -181,75 +187,28 @@ public class SpellTabUI {
             }
         }
 
-        // Add mastery unlock button for selected tier (formatted like a spell card)
-        SchoolType school = SchoolRegistry.REGISTRY.get().getValues().stream()
-                .filter(s -> s.getDisplayName().getString().equals(selectedSchool)).findFirst().orElse(null);
-
-        if (school != null) {
-            SpellRarity targetRarity = SpellRarity.valueOf(selectedTier.toUpperCase());
-            int targetValue = targetRarity.getValue();
-            int actualBaseMastery = ClientSpellMasteryData.getMasteryLevel(school.getId());
-
-            // Show button if tier is not yet unlocked
-            if (actualBaseMastery < targetValue) {
-                int cost = getAdjustedMasteryBuyUpCost(targetValue);
-                if (cost < 999) {
-                    String pendingId = "M:" + school.getId().toString() + "@" + targetValue;
-                    boolean isPending = isPending(pendingId);
-
-                    // Position mastery card in the next available slot
-                    int masteryCardX = xPos + (col * 160);
-                    int masteryCardY = yPos + (row * 50);
-
-                    // Create mastery button like a spell card
-                    Button masteryBtn;
-                    if (isPending) {
-                        masteryBtn = new ColoredButton(masteryCardX + 125, masteryCardY + 28, 20, 14,
-                                Component.literal("-"), (btn) -> toggle(pendingId, cost), 0xFFCC4444);
-                    } else if (cart.canAfford(cost)) {
-                        masteryBtn = Button.builder(Component.literal("+"),
-                                (btn) -> toggle(pendingId, cost))
-                                .pos(masteryCardX + 125, masteryCardY + 28)
-                                .size(20, 14)
-                                .build();
-                    } else {
-                        masteryBtn = Button.builder(Component.literal("+"),
-                                (btn) -> {})
-                                .pos(masteryCardX + 125, masteryCardY + 28)
-                                .size(20, 14)
-                                .build();
-                        masteryBtn.active = false;
-                    }
-                    buttons.add(masteryBtn);
-                }
-            }
-        }
-
         return buttons;
     }
 
     public void update() {
-        // Update is handled via cart callback
+        // Update handled via cart callback
     }
 
     public void renderBackgrounds(GuiGraphics guiGraphics, int xOffset, int yOffset, int mouseX, int mouseY, float partialTick) {
-        // Draw filter area background (buttons area)
-        guiGraphics.fill(xOffset + 10, yOffset, xOffset + 490, yOffset + 35, 0xFF333333);
-        guiGraphics.fill(xOffset + 11, yOffset + 1, xOffset + 489, yOffset + 34, 0xFF222222);
+        // Filter area header background
+        guiGraphics.fill(xOffset + 10, yOffset - 5, xOffset + 490, yOffset + 32, 0xFF282C3D);
+        guiGraphics.fill(xOffset + 11, yOffset - 4, xOffset + 489, yOffset + 31, 0xFF141724);
 
-        // Draw spell grid background
-        guiGraphics.fill(xOffset + 10, yOffset + 35, xOffset + 490, yOffset + 360, 0xFF111111);
+        // Spell grid area background
+        guiGraphics.fill(xOffset + 10, yOffset + 35, xOffset + 490, yOffset + 355, 0xFF141724);
+        guiGraphics.fill(xOffset + 11, yOffset + 36, xOffset + 489, yOffset + 354, 0xFF0D0F18);
     }
 
     public void renderLabels(GuiGraphics guiGraphics, net.minecraft.client.gui.Font font, int xOffset, int yOffset, int mouseX, int mouseY) {
-        // Filter labels and buttons are now rendered as part of buildWidgets() buttons
-
-        // Draw spell grid
         List<SpellTierEntry> filtered = getFilteredSpells();
-        int totalPages = (filtered.size() + SPELLS_PER_PAGE - 1) / SPELLS_PER_PAGE;
 
         int xPos = xOffset + 10;
-        int yPos = yOffset + 40;
+        int yPos = yOffset + 38;
         int col = 0;
         int row = 0;
 
@@ -259,34 +218,46 @@ public class SpellTabUI {
         for (int i = startIndex; i < endIndex; i++) {
             SpellTierEntry entry = filtered.get(i);
             int cardX = xPos + 5 + (col * 160);
-            int cardY = yPos + (row * 50) + 5;
+            int cardY = yPos + (row * 42) + 5;
 
-            // Draw spell card background
-            guiGraphics.fill(cardX - 5, cardY - 5, cardX + 150, cardY + 40, 0xFF333333);
-            guiGraphics.fill(cardX - 4, cardY - 4, cardX + 149, cardY + 39, 0xFF222222);
-
+            int borderColor = getRarityBorderColor(entry.rarity);
             boolean learned = ClientSpellMasteryData.isSpellLearned(entry.spell.getSpellResource(), entry.level);
+            if (learned) borderColor = 0xFF333344;
 
-            // Draw spell icon on the left
-            guiGraphics.blit(entry.spell.getSpellIconResource(), cardX, cardY, 0, 0, 16, 16, 16, 16);
+            // Rarity left-accent strip (3px wide)
+            guiGraphics.fill(cardX - 3, cardY - 2, cardX, cardY + 36, borderColor);
+            // Card body
+            guiGraphics.fill(cardX, cardY - 2, cardX + 150, cardY + 36, learned ? 0xFF12131A : 0xFF171A28);
 
+            // Spell Icon (16x16)
+            guiGraphics.blit(entry.spell.getSpellIconResource(), cardX + 3, cardY + 1, 0, 0, 16, 16, 16, 16);
+
+            // Spell Name (truncated)
             String nameText = entry.rarity.getChatFormatting() + entry.spell.getDisplayName(null).getString();
             if (learned) nameText = "§8" + ChatFormatting.stripFormatting(nameText);
-            // Truncate name to fit within card width (approx 120 pixels for text)
-            while (font.width(nameText) > 120 && nameText.length() > 3) {
+            while (font.width(nameText) > 122 && nameText.length() > 3) {
                 nameText = nameText.substring(0, nameText.length() - 1);
             }
-            if (nameText.length() > 3 && font.width(nameText) > 120) {
-                nameText = nameText.substring(0, Math.max(1, nameText.length() - 3)) + "..";
+            guiGraphics.drawString(font, nameText, cardX + 22, cardY, 0xFFFFFF, false);
+
+            // School + Level info row
+            String schoolName = entry.spell.getSchoolType().getDisplayName().getString();
+            String infoLine = learned ? "§8" + schoolName + " L" + entry.level : "§7" + schoolName + " L" + entry.level;
+            guiGraphics.drawString(font, infoLine, cardX + 22, cardY + 11, 0xFF888888, false);
+
+            // Cost / Status row
+            int cost = getAdjustedSpellUpgradeCost(entry.spell, entry.level);
+            boolean hasLowerLearned = hasLearnedLowerTier(entry.spell, entry.level);
+
+            if (cost < 0) {
+                guiGraphics.drawString(font, "§c✘ Unlearnable", cardX + 3, cardY + 24, 0xFFFF5555, false);
+            } else if (learned) {
+                guiGraphics.drawString(font, "§8✔ Learned", cardX + 3, cardY + 24, 0xFF555555, false);
+            } else if (hasLowerLearned) {
+                guiGraphics.drawString(font, "§aUpgrade §e" + cost + "SP", cardX + 3, cardY + 24, 0xFF55FF55, false);
+            } else {
+                guiGraphics.drawString(font, "§e" + cost + "SP", cardX + 3, cardY + 24, 0xFFFFAA00, false);
             }
-
-            int cost = getAdjustedSpellCost(entry.rarity);
-            String infoText = "§7" + entry.spell.getSchoolType().getDisplayName().getString() + " | §e" + cost + "SP";
-            if (learned) infoText = "§8" + ChatFormatting.stripFormatting(infoText);
-
-            // Adjust text position to account for icon
-            guiGraphics.drawString(font, nameText, cardX + 20, cardY, 0xFFFFFF, false);
-            guiGraphics.drawString(font, infoText, cardX + 20, cardY + 10, 0xFFAAAA, false);
 
             col++;
             if (col >= 3) {
@@ -295,44 +266,22 @@ public class SpellTabUI {
             }
         }
 
-        // Draw page indicator
+        // Page indicator
         if (this.totalPages > 1) {
             String pageText = "Page " + (currentPage + 1) + "/" + this.totalPages;
-            guiGraphics.drawString(font, pageText, xPos + 200, yOffset + 328, 0xFFAAAAAA, false);
+            int pw = font.width(pageText);
+            guiGraphics.drawString(font, "§7" + pageText, xPos + (480 - pw) / 2, yOffset + 305, 0xFFAAAAAA, false);
         }
+    }
 
-        // Draw mastery unlock card (formatted like a spell card)
-        SchoolType school = SchoolRegistry.REGISTRY.get().getValues().stream()
-                .filter(s -> s.getDisplayName().getString().equals(selectedSchool)).findFirst().orElse(null);
-
-        if (school != null) {
-            SpellRarity targetRarity = SpellRarity.valueOf(selectedTier.toUpperCase());
-            int targetValue = targetRarity.getValue();
-            int actualBaseMastery = ClientSpellMasteryData.getMasteryLevel(school.getId());
-
-            // Show card if tier is not yet unlocked
-            if (actualBaseMastery < targetValue) {
-                int cost = getAdjustedMasteryBuyUpCost(targetValue);
-                if (cost < 999) {
-                    // Position mastery card in the next available slot
-                    int masteryCardX = xPos + 5 + (col * 160);
-                    int masteryCardY = yPos + (row * 50) + 5;
-
-                    // Draw mastery card background (like spell card)
-                    guiGraphics.fill(masteryCardX - 5, masteryCardY - 5, masteryCardX + 150, masteryCardY + 40, 0xFF333333);
-                    guiGraphics.fill(masteryCardX - 4, masteryCardY - 4, masteryCardX + 149, masteryCardY + 39, 0xFF222222);
-
-                    // Draw school icon placeholder (can use school texture if available)
-                    String schoolName = school.getDisplayName().getString();
-                    String masteryText = "§b" + targetRarity.getDisplayName().getString() + " Mastery";
-                    String costText = "§7" + schoolName + " | §e" + cost + "SP";
-
-                    // Adjust text position to account for icon space
-                    guiGraphics.drawString(font, masteryText, masteryCardX + 20, masteryCardY, 0xFFFFFF, false);
-                    guiGraphics.drawString(font, costText, masteryCardX + 20, masteryCardY + 10, 0xFFAAAA, false);
-                }
-            }
-        }
+    private int getRarityBorderColor(SpellRarity rarity) {
+        return switch (rarity) {
+            case COMMON -> 0xFF555566;
+            case UNCOMMON -> 0xFF2E8B57;
+            case RARE -> 0xFF1E90FF;
+            case EPIC -> 0xFF9932CC;
+            case LEGENDARY -> 0xFFFFD700;
+        };
     }
 
     private void cycleSchool() {
@@ -344,32 +293,30 @@ public class SpellTabUI {
         int currentIndex = schools.indexOf(selectedSchool);
         int nextIndex = (currentIndex + 1) % schools.size();
         selectedSchool = schools.get(nextIndex);
-        currentPage = 0; // Reset page when changing filter
-        cart.notifyUpdate(); // Notify cart to rebuild UI
+        currentPage = 0;
+        cart.notifyUpdate();
     }
 
     private void cycleTier() {
-        SpellRarity[] rarities = SpellRarity.values();
-        int currentIndex = -1;
-
-        for (int i = 0; i < rarities.length; i++) {
-            if (rarities[i].name().equalsIgnoreCase(selectedTier)) {
-                currentIndex = i;
-                break;
-            }
+        List<String> options = new ArrayList<>();
+        options.add("All");
+        for (SpellRarity r : SpellRarity.values()) {
+            String name = r.name().substring(0, 1).toUpperCase() + r.name().substring(1).toLowerCase();
+            options.add(name);
         }
 
+        int currentIndex = options.indexOf(selectedTier);
         if (currentIndex == -1) currentIndex = 0;
-        int nextIndex = (currentIndex + 1) % rarities.length;
-        selectedTier = rarities[nextIndex].name().substring(0, 1).toUpperCase() + rarities[nextIndex].name().substring(1).toLowerCase();
-        currentPage = 0; // Reset page when changing filter
-        cart.notifyUpdate(); // Notify cart to rebuild UI
+        int nextIndex = (currentIndex + 1) % options.size();
+        selectedTier = options.get(nextIndex);
+        currentPage = 0;
+        cart.notifyUpdate();
     }
 
     private List<SpellTierEntry> getFilteredSpells() {
         return allSpells.stream()
                 .filter(e -> e.spell.getSchoolType().getDisplayName().getString().equals(selectedSchool))
-                .filter(e -> e.rarity.name().equalsIgnoreCase(selectedTier))
+                .filter(e -> selectedTier.equalsIgnoreCase("All") || e.rarity.name().equalsIgnoreCase(selectedTier))
                 .sorted((e1, e2) -> {
                     int r1 = e1.rarity.getValue();
                     int r2 = e2.rarity.getValue();
@@ -387,6 +334,7 @@ public class SpellTabUI {
     }
 
     private void toggle(String uniqueId, int cost) {
+        if (cost < 0) return;
         if (isPending(uniqueId)) {
             cart.removeItem(getTypeFromId(uniqueId), uniqueId);
         } else {
@@ -402,44 +350,51 @@ public class SpellTabUI {
         return UpgradeType.SPELL_PURCHASE;
     }
 
-    private int getEffectiveMasteryLevel(ResourceLocation schoolId) {
-        int current = ClientSpellMasteryData.getMasteryLevel(schoolId);
-        int pending = 0;
-        for (UpgradeItem item : cart.getItems()) {
-            if (item.getType() == UpgradeType.SPELL_MASTERY) {
-                String uniqueId = (String) item.getContent();
-                String[] parts = uniqueId.substring(2).split("@");
-                if (ResourceLocation.parse(parts[0]).equals(schoolId)) {
-                    pending = Math.max(pending, Integer.parseInt(parts[1]));
+    private boolean hasLearnedLowerTier(AbstractSpell spell, int targetLevel) {
+        ResourceLocation spellId = spell.getSpellResource();
+        SpellRarity targetRarity = spell.getRarity(targetLevel);
+        int targetValue = targetRarity.getValue();
+
+        for (int lvl = spell.getMinLevel(); lvl <= spell.getMaxLevel(); lvl++) {
+            if (ClientSpellMasteryData.isSpellLearned(spellId, lvl)) {
+                if (spell.getRarity(lvl).getValue() < targetValue) {
+                    return true;
                 }
             }
         }
-        return Math.max(current, pending);
+        return false;
     }
 
-    /**
-     * Get the spell cost adjusted by the player's origin mastery cost multiplier.
-     */
-    private int getAdjustedSpellCost(SpellRarity rarity) {
-        // Get origin from cached client data
-        ResourceLocation originId = com.complextalents.origin.client.ClientOriginData.getOriginId();
+    private int getAdjustedSpellUpgradeCost(AbstractSpell spell, int targetLevel) {
+        ResourceLocation originId = ClientOriginData.getOriginId();
+        ResourceLocation spellId = spell.getSpellResource();
+        SpellRarity targetRarity = spell.getRarity(targetLevel);
+        int targetBaseCost = SpellMasteryManager.getSpellCost(targetRarity);
 
-        if (originId != null) {
-            return SpellMasteryManager.getSpellCost(rarity, originId);
+        int highestLearnedBaseCost = 0;
+        for (int lvl = spell.getMinLevel(); lvl <= spell.getMaxLevel(); lvl++) {
+            if (ClientSpellMasteryData.isSpellLearned(spellId, lvl)) {
+                SpellRarity r = spell.getRarity(lvl);
+                int c = SpellMasteryManager.getSpellCost(r);
+                if (c > highestLearnedBaseCost) {
+                    highestLearnedBaseCost = c;
+                }
+            }
         }
-        return SpellMasteryManager.getSpellCost(rarity);
-    }
 
-    /**
-     * Get the mastery buy-up cost adjusted by the player's origin mastery cost multiplier.
-     */
-    private int getAdjustedMasteryBuyUpCost(int tier) {
-        // Get origin from cached client data
-        ResourceLocation originId = com.complextalents.origin.client.ClientOriginData.getOriginId();
-
-        if (originId != null) {
-            return SpellMasteryManager.getMasteryBuyUpCost(tier, originId);
+        int effectiveBase = targetBaseCost;
+        if (highestLearnedBaseCost > 0 && targetBaseCost > highestLearnedBaseCost) {
+            effectiveBase = targetBaseCost - highestLearnedBaseCost;
+        } else if (highestLearnedBaseCost >= targetBaseCost) {
+            return 0;
         }
-        return SpellMasteryManager.getMasteryBuyUpCost(tier);
+
+        double multiplier = (spell.getSchoolType() != null)
+                ? ClassCostMatrix.getSchoolSpellMasteryCostMultiplier(originId, spell.getSchoolType())
+                : ClassCostMatrix.getSpellMasteryCostMultiplier(originId);
+        if (multiplier < 0 || Double.isInfinite(multiplier)) {
+            return -1;
+        }
+        return (int) Math.round(effectiveBase * multiplier);
     }
 }

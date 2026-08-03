@@ -54,6 +54,10 @@ public class ElectroChargedEffect extends MobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
+        if (entity instanceof net.minecraft.world.entity.player.Player) {
+            entity.removeEffect(this);
+            return;
+        }
         // Only apply damage on server side
         if (entity.level().isClientSide) {
             return;
@@ -80,7 +84,7 @@ public class ElectroChargedEffect extends MobEffect {
         List<LivingEntity> nearbyEntities = entity.level().getEntitiesOfClass(
             LivingEntity.class,
             entity.getBoundingBox().inflate(ZAP_RADIUS, ZAP_RADIUS, ZAP_RADIUS),
-            nearby -> nearby != entity && nearby.isAlive()
+            nearby -> nearby != entity && nearby.isAlive() && !(nearby instanceof net.minecraft.world.entity.player.Player)
         );
 
         // Zap up to maxTargets nearby entities

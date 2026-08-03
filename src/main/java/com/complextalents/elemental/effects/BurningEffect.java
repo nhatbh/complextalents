@@ -29,6 +29,10 @@ public class BurningEffect extends MobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
+        if (entity instanceof net.minecraft.world.entity.player.Player) {
+            entity.removeEffect(this);
+            return;
+        }
         // Only apply damage on server side
         if (entity.level().isClientSide) {
             return;

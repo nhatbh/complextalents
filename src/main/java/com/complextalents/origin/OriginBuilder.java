@@ -42,6 +42,9 @@ public class OriginBuilder {
     private OriginRenderer renderer;
     private double[] scaledMaxResource = null;
     private BiFunction<Integer, ServerPlayer, Double> dynamicMaxResourceCalc = null;
+    private java.util.function.IntToDoubleFunction levelArmorCalc = null;
+    private java.util.function.IntToDoubleFunction levelToughnessCalc = null;
+    private java.util.function.IntToDoubleFunction levelHealthCalc = null;
     private final java.util.List<Origin.OriginSkillDisplay> displaySkills = new java.util.ArrayList<>();
     private ResourceLocation activeSkillId = null;
 
@@ -289,6 +292,32 @@ public class OriginBuilder {
         return this;
     }
 
+    /**
+     * Provide a formula to calculate level armor bonus based on player level.
+     *
+     * @param calc IntToDoubleFunction that takes (playerLevel) and returns armor bonus
+     * @return this builder
+     */
+    public OriginBuilder levelArmorCalc(java.util.function.IntToDoubleFunction calc) {
+        this.levelArmorCalc = calc;
+        return this;
+    }
+
+    /**
+     * Provide a formula to calculate level armor toughness bonus based on player level.
+     *
+     * @param calc IntToDoubleFunction that takes (playerLevel) and returns toughness bonus
+     * @return this builder
+     */
+    public OriginBuilder levelToughnessCalc(java.util.function.IntToDoubleFunction calc) {
+        this.levelToughnessCalc = calc;
+        return this;
+    }
+
+    public OriginBuilder levelHealthCalc(java.util.function.IntToDoubleFunction calc) {
+        this.levelHealthCalc = calc;
+        return this;
+    }
 
     /**
      * Build the origin and return a BuiltOrigin instance.
@@ -373,5 +402,17 @@ public class OriginBuilder {
 
     ResourceLocation getActiveSkillId() {
         return activeSkillId;
+    }
+
+    java.util.function.IntToDoubleFunction getLevelArmorCalc() {
+        return levelArmorCalc;
+    }
+
+    java.util.function.IntToDoubleFunction getLevelToughnessCalc() {
+        return levelToughnessCalc;
+    }
+
+    java.util.function.IntToDoubleFunction getLevelHealthCalc() {
+        return levelHealthCalc;
     }
 }

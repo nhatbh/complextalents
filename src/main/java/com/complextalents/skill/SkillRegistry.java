@@ -244,6 +244,10 @@ public class SkillRegistry {
         // Register High Priest skills
         com.complextalents.impl.highpriest.skills.seraphsedge.SeraphicEchoSkill.register();
 
+        // Register Pixie skills
+        com.complextalents.impl.pixie.skills.BondOfTheFaeSkill.register();
+        com.complextalents.impl.pixie.skills.FaeSurgeSkill.register();
+
         TalentsMod.LOGGER.info("Example skills registered successfully");
     }
 }

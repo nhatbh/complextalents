@@ -8,10 +8,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
-import org.slf4j.Logger;
-
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +18,8 @@ import java.util.Map;
 
 /**
  * Manages JSON loading and parsing for Weapon Mastery paths.
+ * Tier Distribution (15 Levels Max):
+ * Novice (L1-2, 2 Ranks) -> Apprentice (L3-5, 3 Ranks) -> Adept (L6-9, 4 Ranks) -> Expert (L10-14, 5 Ranks) -> Master (L15, 1 Pinnacle Rank)
  */
 public class WeaponMasteryManager implements ResourceManagerReloadListener {
 
@@ -37,7 +38,6 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
     }
 
     public void initialize() {
-        // Initialization can remain empty as the data is loaded via the reload listener
     }
 
     @Override
@@ -86,20 +86,18 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
     }
 
     private int mapSkillLevelToRankValue(String skillLevel) {
-        // Maps the Rank string to the starting level required
-        // Novice implies Levels 1-5 (Starts requiring Rank 1, or level > 0 depending on
-        // implementation. Let's say Novice is index 0)
+        // Maps the Rank string to starting level required (15-level tree)
         // Novice = 0
-        // Apprentice = 5
-        // Adept = 10
-        // Expert = 15
-        // Master = 20
+        // Apprentice = 2
+        // Adept = 5
+        // Expert = 9
+        // Master = 14
         return switch (skillLevel.toLowerCase()) {
             case "novice" -> 0;
-            case "apprentice" -> 5;
-            case "adept" -> 10;
-            case "expert" -> 15;
-            case "master" -> 20;
+            case "apprentice" -> 2;
+            case "adept" -> 5;
+            case "expert" -> 9;
+            case "master" -> 14;
             default -> 0;
         };
     }
@@ -125,10 +123,10 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
         int rankValue = weaponToRequiredRankMap.getOrDefault(id, 0);
         return switch (rankValue) {
             case 0 -> 1;  // Novice
-            case 5 -> 2;  // Apprentice
-            case 10 -> 3; // Adept
-            case 15 -> 4; // Expert
-            case 20 -> 5; // Master
+            case 2 -> 2;  // Apprentice
+            case 5 -> 3;  // Adept
+            case 9 -> 4;  // Expert
+            case 14 -> 5; // Master
             default -> 1;
         };
     }
@@ -136,10 +134,10 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
     public List<net.minecraft.world.item.Item> getWeaponsForPathAndTier(WeaponPath path, int tier) {
         int requiredRank = switch (tier) {
             case 1 -> 0;  // Novice
-            case 2 -> 5;  // Apprentice
-            case 3 -> 10; // Adept
-            case 4 -> 15; // Expert
-            case 5 -> 20; // Master
+            case 2 -> 2;  // Apprentice
+            case 3 -> 5;  // Adept
+            case 4 -> 9;  // Expert
+            case 5 -> 14; // Master
             default -> 0;
         };
         return getWeaponsForPathAndRank(path, requiredRank);
@@ -165,74 +163,93 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
     // --- Damage Milestone Methods ---
 
     /**
-     * Gets the total damage required to fully complete a sub-level.
-     * Starts from Level 1 (index 0) to Level 25.
-     * Level represents current level, starting at 0 to 25.
+     * Gets the total damage required to unlock the NEXT level (0 to 14).
+     * Level represents current level (0 to 15).
      */
     public double getDamageRequiredForNextLevel(int currentLevel) {
-        if (currentLevel >= 25)
-            return Double.MAX_VALUE; // Maxed out
+        if (currentLevel >= 15)
+            return Double.MAX_VALUE; // Maxed out at 15
 
-        if (currentLevel < 5) {
-            // Novice 1-5
-            return 250.0 * (currentLevel + 1); // 250 to 1250 max
-        } else if (currentLevel < 10) {
-            // Apprentice
-            return 1250.0 + (750.0 * (currentLevel - 4)); // 2000 to 5000 max
-        } else if (currentLevel < 15) {
-            // Adept
-            return 5000.0 + (1750.0 * (currentLevel - 9)); // 6750 to 13750 max
-        } else if (currentLevel < 20) {
-            // Expert
-            return 13750.0 + (3750.0 * (currentLevel - 14)); // 17500 to 32500 max
-        } else {
-            // Master
-            return 32500.0 + (7500.0 * (currentLevel - 19)); // 40000 to 70000 max
-        }
+        return switch (currentLevel) {
+            // Novice (2 Ranks: L1-L2)
+            case 0 -> 200.0;
+            case 1 -> 500.0;
+
+            // Apprentice (3 Ranks: L3-L5)
+            case 2 -> 1200.0;
+            case 3 -> 2200.0;
+            case 4 -> 3500.0;
+
+            // Adept (4 Ranks: L6-L9)
+            case 5 -> 5500.0;
+            case 6 -> 8000.0;
+            case 7 -> 11000.0;
+            case 8 -> 15000.0;
+
+            // Expert (5 Ranks: L10-L14)
+            case 9 -> 20000.0;
+            case 10 -> 26000.0;
+            case 11 -> 33000.0;
+            case 12 -> 41000.0;
+            case 13 -> 50000.0;
+
+            // Master (1 Rank: L15 Pinnacle)
+            case 14 -> 75000.0;
+
+            default -> 75000.0;
+        };
     }
 
     /**
      * Finds the maximum level unlocked based on accumulated damage.
      */
     public int calculateUnlockableLevel(double accumulatedDamage) {
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 15; i++) {
             if (accumulatedDamage < getDamageRequiredForNextLevel(i)) {
                 return i;
             }
         }
-        return 25; // Max level reached
+        return 15; // Max level reached
     }
 
     /**
-     * SP Cost to purchase the NEXT level (0 -> 1 costs Novice amount).
+     * SP Cost to purchase the NEXT level (0 -> 1 costs 1 SP).
      *
-     * @param currentLevel Current level (0-24)
+     * @param currentLevel Current level (0-14)
      * @return SP cost
      */
     public int getSPCostForNextLevel(int currentLevel) {
-        if (currentLevel < 5)
-            return 1;
-        if (currentLevel < 10)
-            return 2;
-        if (currentLevel < 15)
-            return 2;
-        if (currentLevel < 20)
-            return 3;
-        if (currentLevel < 25)
-            return 4;
-        return 0; // Maxed
+        if (currentLevel >= 15) return 0; // Maxed
+
+        return switch (currentLevel) {
+            // Novice (L1-2)
+            case 0, 1 -> 1;
+
+            // Apprentice (L3-5)
+            case 2 -> 1;
+            case 3, 4 -> 2;
+
+            // Adept (L6-9)
+            case 5, 6 -> 2;
+            case 7, 8 -> 3;
+
+            // Expert (L10-14)
+            case 9, 10 -> 3;
+            case 11, 12, 13 -> 4;
+
+            // Master (L15 Pinnacle)
+            case 14 -> 5;
+
+            default -> 1;
+        };
     }
 
     /**
-     * SP Cost to purchase the NEXT level, adjusted by the origin's weapon mastery cost multiplier.
-     *
-     * @param currentLevel Current level (0-24)
-     * @param originId The origin ID to get the cost multiplier for
-     * @return SP cost adjusted by the origin's weapon multiplier
+     * SP Cost to purchase the NEXT level, adjusted by the origin's cost multiplier.
      */
     public int getSPCostForNextLevel(int currentLevel, ResourceLocation originId) {
         int baseCost = getSPCostForNextLevel(currentLevel);
         double multiplier = ClassCostMatrix.getWeaponMasteryCostMultiplier(originId);
-        return (int) Math.round(baseCost * multiplier);
+        return Math.max(1, (int) Math.round(baseCost * multiplier));
     }
 }

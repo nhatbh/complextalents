@@ -103,9 +103,26 @@ public class SkillCooldownHandler {
      * Stage 1: Check cooldowns and resources during cast request.
      * High priority to run before other handlers.
      */
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onSkillCastRequest(SkillCastRequestEvent event) {
         ServerPlayer player = event.getPlayer();
+
+        // Block active skills if player is in spectator mode
+        if (player.isSpectator()) {
+            event.setCanceled(true);
+            event.setFailureReason("Spectator mode");
+            player.sendSystemMessage(Component.literal("\u00A7cCannot cast skills in Spectator mode!"));
+            return;
+        }
+
+        // Block active skills if player is knocked down (has basedefensev2:downed effect)
+        if (isDowned(player)) {
+            event.setCanceled(true);
+            event.setFailureReason("Knocked down");
+            player.sendSystemMessage(Component.literal("\u00A7cCannot cast skills while knocked down!"));
+            return;
+        }
+
         ResourceLocation skillId = event.getSkillId();
 
         var skillDataOpt = player.getCapability(SkillDataProvider.SKILL_DATA);
@@ -307,5 +324,17 @@ public class SkillCooldownHandler {
         // Example integration points:
         // - Iron's Spellbooks: player.getData(ISpellData.MANA).setMana(newMana)
         // - Minecraft Attributes: apply temporary attribute modifier
+    }
+
+    /**
+     * Checks if a player has the knocked down effect (basedefensev2:downed).
+     */
+    private static boolean isDowned(net.minecraft.world.entity.LivingEntity entity) {
+        if (entity == null) return false;
+        return entity.getActiveEffects().stream()
+                .anyMatch(effect -> {
+                    ResourceLocation id = net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS.getKey(effect.getEffect());
+                    return id != null && "basedefensev2".equals(id.getNamespace()) && "downed".equals(id.getPath());
+                });
     }
 }

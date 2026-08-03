@@ -20,6 +20,11 @@ public class BloomReaction implements IReactionStrategy {
     @Override
     public void execute(ReactionContext context) {
         LivingEntity target = context.getTarget();
+        // Check if target is a player - skip execution on players
+        if (target instanceof net.minecraft.world.entity.player.Player) {
+            return;
+        }
+
         Vec3 pos = target.position();
 
         // Spawn 3 Nature Cores around the target in a triangle pattern
@@ -73,7 +78,7 @@ public class BloomReaction implements IReactionStrategy {
 
     @Override
     public boolean canTrigger(ReactionContext context) {
-        return context.getTarget() != null && context.getTarget().isAlive();
+        return context.getTarget() != null && context.getTarget().isAlive() && !(context.getTarget() instanceof net.minecraft.world.entity.player.Player);
     }
 
     @Override

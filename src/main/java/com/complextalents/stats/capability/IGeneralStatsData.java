@@ -27,6 +27,10 @@ public interface IGeneralStatsData extends INBTSerializable<CompoundTag> {
     
     void sync();
     
+    int getHighestCombatPower();
+
+    void setHighestCombatPower(int cp);
+
     Map<StatType, Integer> getAllRanks();
 
     Map<StatType, Integer> getAllOriginRanks();

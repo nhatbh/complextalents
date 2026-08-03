@@ -86,9 +86,14 @@ public class ReactionRegistry {
         float existSp = getElementalSpellPower(attacker, existingElement);
         float avgElemSp = (trigSp + existSp) / 2.0f;
 
-        // Effective Reaction Power = Harmony Multiplier * (1 + Avg Elem Spell Power * 0.02)
         float reactionPower = harmonyMult * (1.0f + avgElemSp * 0.02f);
         float currentDamageMultiplier = damageMultiplier;
+
+        // --- ELEMENTAL MAGE ORIGIN REACTION BONUS ---
+        if (com.complextalents.impl.elementalmage.origin.ElementalMageOrigin.isElementalMage(attacker)) {
+            double reactionBonus = com.complextalents.origin.OriginManager.getOriginStat(attacker, "reaction_damage_bonus");
+            currentDamageMultiplier *= (1.0f + (float) reactionBonus);
+        }
 
         // --- HARMONIC CONVERGENCE REACTION CRITS ---
         boolean isCrit = false;

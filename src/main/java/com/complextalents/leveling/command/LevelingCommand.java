@@ -27,9 +27,41 @@ public class LevelingCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("level")
                 .requires(src -> src.hasPermission(OP_LEVEL))
+                .then(SetLevelCommand.register())
                 .then(XPCommand.register())
                 .then(SPCommand.register())
         );
+    }
+
+    private static class SetLevelCommand {
+        static com.mojang.brigadier.builder.ArgumentBuilder<CommandSourceStack, ?> register() {
+            return Commands.literal("set")
+                    .then(Commands.argument("level", IntegerArgumentType.integer(1, 10000))
+                            .executes(ctx -> setLevel(ctx, Collections.singleton(ctx.getSource().getPlayerOrException()), IntegerArgumentType.getInteger(ctx, "level")))
+                            .then(Commands.argument("target", EntityArgument.players())
+                                    .executes(ctx -> setLevel(ctx, EntityArgument.getPlayers(ctx, "target"), IntegerArgumentType.getInteger(ctx, "level")))
+                            )
+                    );
+        }
+
+        private static int setLevel(CommandContext<CommandSourceStack> ctx, Collection<ServerPlayer> targets, int newLevel) {
+            for (ServerPlayer player : targets) {
+                PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
+                int oldLevel = data.getLevel(player.getUUID());
+                data.setLevel(player.getUUID(), newLevel);
+
+                if (newLevel != oldLevel) {
+                    com.complextalents.leveling.service.LevelingService.getInstance().fireLevelUpEvent(
+                            player, oldLevel, newLevel, Math.max(0, (newLevel - oldLevel) * 2)
+                    );
+                }
+
+                com.complextalents.leveling.handlers.LevelArmorHandler.updatePlayerLevelArmor(player);
+                LevelingSyncHandler.syncPlayerLevelData(player);
+                ctx.getSource().sendSuccess(() -> Component.literal("\u00A7aSet level for " + player.getName().getString() + " to " + newLevel), true);
+            }
+            return targets.size();
+        }
     }
 
     private static class XPCommand {
@@ -48,7 +80,17 @@ public class LevelingCommand {
         private static int addXP(CommandContext<CommandSourceStack> ctx, Collection<ServerPlayer> targets, int amount) {
             for (ServerPlayer player : targets) {
                 PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
+                int oldLevel = data.getLevel(player.getUUID());
                 data.addXP(player.getUUID(), amount);
+                int newLevel = data.getLevel(player.getUUID());
+
+                if (newLevel > oldLevel) {
+                    com.complextalents.leveling.service.LevelingService.getInstance().fireLevelUpEvent(
+                            player, oldLevel, newLevel, (newLevel - oldLevel) * 2
+                    );
+                }
+
+                com.complextalents.leveling.handlers.LevelArmorHandler.updatePlayerLevelArmor(player);
                 LevelingSyncHandler.syncPlayerLevelData(player);
                 ctx.getSource().sendSuccess(() -> Component.literal("\u00A7aAdded " + amount + " XP to " + player.getName().getString()), true);
             }

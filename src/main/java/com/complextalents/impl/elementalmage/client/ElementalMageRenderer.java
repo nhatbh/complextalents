@@ -44,31 +44,13 @@ public class ElementalMageRenderer implements OriginRenderer {
         int centerY = screenHeight / 2;
 
         RenderSystem.enableBlend();
-        renderResonanceArc(graphics, centerX, centerY);
         renderEchoArc(graphics, centerX, centerY);
         RenderSystem.disableBlend();
         renderLabels(graphics, centerX, centerY);
     }
 
     private void renderResonanceArc(GuiGraphics graphics, int centerX, int centerY) {
-        double resonance = ClientOriginData.getResourceValue();
-        double max = ClientOriginData.getResourceMax();
-        double fillRatio = max > 0 ? Math.min(1.0, Math.max(0.0, resonance / max)) : 0;
-
-        drawArcSegment(graphics, centerX, centerY, ARC_INNER_RADIUS, ARC_OUTER_RADIUS,
-                RESONANCE_BOTTOM_ANGLE, RESONANCE_BOTTOM_ANGLE + ARC_LENGTH,
-                ARC_SEGMENTS, RESONANCE_BG_COLOR);
-
-        if (fillRatio > 0) {
-            float fillAngleLength = ARC_LENGTH * (float) fillRatio;
-            drawArcSegment(graphics, centerX, centerY, ARC_INNER_RADIUS, ARC_OUTER_RADIUS,
-                    RESONANCE_BOTTOM_ANGLE, RESONANCE_BOTTOM_ANGLE + fillAngleLength,
-                    (int) (ARC_SEGMENTS * fillRatio) + 1, RESONANCE_FILL_COLOR);
-        }
-
-        drawArcOutline(graphics, centerX, centerY, ARC_OUTER_RADIUS,
-                RESONANCE_BOTTOM_ANGLE, RESONANCE_BOTTOM_ANGLE + ARC_LENGTH,
-                ARC_SEGMENTS, RESONANCE_BORDER_COLOR);
+        // Resonance mechanic removed
     }
 
     /**
@@ -154,19 +136,6 @@ public class ElementalMageRenderer implements OriginRenderer {
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
         if (player == null) return;
-
-        double resonance = ClientOriginData.getResourceValue();
-        double resonanceMax = ClientOriginData.getResourceMax();
-        String resText = (int) resonance + "/" + (int) resonanceMax;
-
-        int resonanceTextX = (int) (centerX + ARC_OUTER_RADIUS + 6);
-        int resonanceTextY = centerY - 3;
-
-        graphics.pose().pushPose();
-        graphics.pose().scale(0.7f, 0.7f, 0.7f);
-        graphics.drawString(minecraft.font, resText,
-                (int) (resonanceTextX / 0.7f), (int) (resonanceTextY / 0.7f), 0x99FFFFFF);
-        graphics.pose().popPose();
 
         var capOpt = player.getCapability(ElementalMageDataProvider.ELEMENTAL_DATA).resolve();
         float mult = capOpt.map(cap -> cap.getEffectiveHarmonyMultiplier()).orElse(0.5f);

@@ -1,5 +1,6 @@
 package com.complextalents.mixin;
 
+import com.complextalents.impl.mage.MageManaRegenHandler;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.capabilities.magic.MagicManager;
 import io.redspace.ironsspellbooks.network.SyncManaPacket;
@@ -38,7 +39,6 @@ public abstract class MagicManagerMixin {
         int phase = level.getMoonPhase();
 
         // Restrict moonrise logic to Overworld to prevent multiple messages/triggers
-        // (once per world tick across dimensions)
         if (timeOfDay == 13000 && level.dimension() == Level.OVERWORLD) {
             Component message;
             boolean shouldRestore = true;
@@ -61,26 +61,30 @@ public abstract class MagicManagerMixin {
 
             if (shouldRestore) {
                 server.getPlayerList().getPlayers().forEach(serverPlayer -> {
-                    MagicData magicData = MagicData.getPlayerMagicData(serverPlayer);
-                    float maxMana = (float) serverPlayer.getAttributeValue(MAX_MANA.get());
-                    magicData.setMana(maxMana);
-                    PacketDistributor.sendToPlayer(serverPlayer, new SyncManaPacket(magicData));
+                    // Moon phase mana recovery applies strictly to non-mages
+                    if (!MageManaRegenHandler.isMage(serverPlayer)) {
+                        MagicData magicData = MagicData.getPlayerMagicData(serverPlayer);
+                        float maxMana = (float) serverPlayer.getAttributeValue(MAX_MANA.get());
+                        magicData.setMana(maxMana);
+                        PacketDistributor.sendToPlayer(serverPlayer, new SyncManaPacket(magicData));
+                    }
                 });
             }
         }
 
-        // Full Moon continuous regen (Phase 0, Night time)
-        // Restrict to Overworld tick but apply to all players globally
+        // Full Moon continuous regen (Phase 0, Night time) for non-mages
         if (phase == 0 && timeOfDay >= 13000 && timeOfDay < 23000 && level.dimension() == Level.OVERWORLD) {
             if (server.getTickCount() % 10 == 0) {
                 server.getPlayerList().getPlayers().forEach(serverPlayer -> {
-                    MagicData magicData = MagicData.getPlayerMagicData(serverPlayer);
-                    float maxMana = (float) serverPlayer.getAttributeValue(MAX_MANA.get());
-                    float currentMana = magicData.getMana();
-                    if (currentMana < maxMana) {
-                        float increment = maxMana * 0.025f;
-                        magicData.setMana(Mth.clamp(currentMana + increment, 0, maxMana));
-                        PacketDistributor.sendToPlayer(serverPlayer, new SyncManaPacket(magicData));
+                    if (!MageManaRegenHandler.isMage(serverPlayer)) {
+                        MagicData magicData = MagicData.getPlayerMagicData(serverPlayer);
+                        float maxMana = (float) serverPlayer.getAttributeValue(MAX_MANA.get());
+                        float currentMana = magicData.getMana();
+                        if (currentMana < maxMana) {
+                            float increment = maxMana * 0.025f;
+                            magicData.setMana(Mth.clamp(currentMana + increment, 0, maxMana));
+                            PacketDistributor.sendToPlayer(serverPlayer, new SyncManaPacket(magicData));
+                        }
                     }
                 });
             }

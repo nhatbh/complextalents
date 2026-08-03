@@ -191,31 +191,28 @@ public class StatsTabUI {
     }
 
     public void renderBackgrounds(GuiGraphics guiGraphics, int xOffset, int yOffset, int mouseX, int mouseY, float partialTick) {
-        // Draw stat entry backgrounds on left (half width)
-        player.getCapability(GeneralStatsDataProvider.STATS_DATA).ifPresent(data -> {
-            for (StatEntryData entry : statEntries) {
-                int entryX = xOffset + 5;
-                int entryY = yOffset + (entry.row * STAT_ENTRY_HEIGHT) + 5;
+        // Stat entries on left side — compact card rows
+        for (StatEntryData entry : statEntries) {
+            int entryX = xOffset + 5;
+            int entryY = yOffset + (entry.row * STAT_ENTRY_HEIGHT) + 5;
 
-                guiGraphics.fill(entryX, entryY, entryX + 150, entryY + 30, 0xFF333333);
-                guiGraphics.fill(entryX + 1, entryY + 1, entryX + 149, entryY + 29, 0xFF222222);
-            }
-        });
+            guiGraphics.fill(entryX, entryY, entryX + 150, entryY + 30, 0xFF2A2E44);
+            guiGraphics.fill(entryX + 1, entryY + 1, entryX + 149, entryY + 29, 0xFF141724);
+        }
 
-        // Draw origin upgrade card background on right (full width)
+        // Origin upgrade card on right side
         ResourceLocation originId = ClientOriginData.getOriginId();
         if (originId != null) {
             Origin origin = OriginRegistry.getInstance().getOrigin(originId);
             if (origin != null) {
                 int rightX = xOffset + 160;
                 int rightY = yOffset + 5;
-
-                guiGraphics.fill(rightX, rightY, rightX + 330, rightY + 140, 0xFF333333);
-                guiGraphics.fill(rightX + 1, rightY + 1, rightX + 329, rightY + 139, 0xFF222222);
+                guiGraphics.fill(rightX, rightY, rightX + 330, rightY + 140, 0xFF3D321A);
+                guiGraphics.fill(rightX + 1, rightY + 1, rightX + 329, rightY + 139, 0xFF171924);
             }
         }
 
-        // Draw skill upgrade card background on right (full width)
+        // Skill upgrade card on right side
         ResourceLocation originId2 = ClientOriginData.getOriginId();
         if (originId2 != null) {
             Origin origin = OriginRegistry.getInstance().getOrigin(originId2);
@@ -226,9 +223,8 @@ public class StatsTabUI {
                     if (skill != null) {
                         int rightX = xOffset + 160;
                         int rightY = yOffset + 155;
-
-                        guiGraphics.fill(rightX, rightY, rightX + 330, rightY + 140, 0xFF333333);
-                        guiGraphics.fill(rightX + 1, rightY + 1, rightX + 329, rightY + 139, 0xFF222222);
+                        guiGraphics.fill(rightX, rightY, rightX + 330, rightY + 140, 0xFF3A1A3D);
+                        guiGraphics.fill(rightX + 1, rightY + 1, rightX + 329, rightY + 139, 0xFF171924);
                     }
                 }
             }
@@ -236,29 +232,39 @@ public class StatsTabUI {
     }
 
     public void renderLabels(GuiGraphics guiGraphics, net.minecraft.client.gui.Font font, int xOffset, int yOffset, int mouseX, int mouseY) {
-        // Render stat entries on left (smaller text for compact layout)
+        // Render stat entries on left
         player.getCapability(GeneralStatsDataProvider.STATS_DATA).ifPresent(data -> {
             for (StatEntryData entry : statEntries) {
                 int entryX = xOffset + 5;
                 int entryY = yOffset + (entry.row * STAT_ENTRY_HEIGHT) + 5;
 
-                // Name (small font)
+                // Stat Name
                 String nameText = entry.type.getDisplayName().replace("%", "%%");
+                guiGraphics.drawString(font, "§f" + nameText, entryX + 4, entryY + 3, 0xFFFFFF, false);
 
-                String fullText = "§l§f" + nameText;
-                guiGraphics.drawString(font, fullText, entryX + 3, entryY + 3, 0xFFFFFF, false);
+                // Yield per rank info
+                double yieldPerRank = entry.type.getYieldPerRank();
+                String yieldLabel;
+                if (yieldPerRank < 1.0) {
+                    yieldLabel = String.format("%.0f%%", yieldPerRank * 100) + "/rank";
+                } else {
+                    yieldLabel = formatNumber(yieldPerRank) + "/rank";
+                }
+                guiGraphics.drawString(font, "§8" + yieldLabel, entryX + 4, entryY + 14, 0xFF888888, false);
 
-                // Cost per rank (small) - below the name
-                String costText = "§6" + entry.costPerRank + " SP";
-                guiGraphics.drawString(font, costText, entryX + 3, entryY + 13, 0xFFFFFF, false);
+                // Cost
+                guiGraphics.drawString(font, "§e" + entry.costPerRank + "SP", entryX + 65, entryY + 14, 0xFFFFAA00, false);
 
-                // Accumulated stat value on the right side, aligned with name
+                // Accumulated stat value on the right side
                 double currentValue = entry.realRank * entry.type.getYieldPerRank();
                 double targetValue = (entry.realRank + entry.pendingRank) * entry.type.getYieldPerRank();
 
-                String valueStr = entry.pendingRank > 0 ?
-                        "§a" + formatNumber(currentValue) + "§b+" + formatNumber(targetValue - currentValue) :
-                        "§a" + formatNumber(currentValue);
+                String valueStr;
+                if (entry.pendingRank > 0) {
+                    valueStr = "§a" + formatNumber(currentValue) + " §b+" + formatNumber(targetValue - currentValue);
+                } else {
+                    valueStr = "§a" + formatNumber(currentValue);
+                }
 
                 int valueWidth = font.width(valueStr);
                 guiGraphics.drawString(font, valueStr, entryX + 145 - valueWidth, entryY + 3, 0xFFFFFF, false);
@@ -277,7 +283,7 @@ public class StatsTabUI {
                 int rightX = xOffset + 160;
                 int rightY = yOffset + 5;
 
-                // Draw origin icon (use skill icon as fallback)
+                // Draw origin icon
                 ResourceLocation activeSkillId = origin.getActiveSkillId();
                 if (activeSkillId != null) {
                     Skill skill = SkillRegistry.getInstance().getSkill(activeSkillId);
@@ -286,40 +292,33 @@ public class StatsTabUI {
                     }
                 }
 
-                // Title with gold yellow color
+                // Title
                 Component originDisplayName = origin.getDisplayName();
-                guiGraphics.drawString(font, "§l§6" + originDisplayName.getString(), rightX + 25, rightY + 3, 0xFFFFFF, false);
+                guiGraphics.drawString(font, "§6§l" + originDisplayName.getString(), rightX + 25, rightY + 3, 0xFFFFAA00, false);
 
-                // Draw level indicators as parallelogram shapes
+                // Level pips
                 int maxLevel = origin.getMaxLevel();
-                drawLevelIndicators(guiGraphics, rightX + 25, rightY + 12, maxLevel, originLevel, originPending);
+                drawLevelIndicators(guiGraphics, rightX + 25, rightY + 14, maxLevel, originLevel, originPending);
 
-                // Description (max 4 lines, small font)
+                // Description
                 Component description = origin.getDescription();
                 if (description != null) {
-                    guiGraphics.drawWordWrap(font, description, rightX + 5, rightY + 25, 290, 0xCCCCCC);
+                    guiGraphics.drawWordWrap(font, description, rightX + 5, rightY + 28, 290, 0xCCCCCC);
                 }
 
-                // Level scaling info with stat changes
+                // Cost and stat changes
                 if (originTarget < origin.getMaxLevel()) {
                     int originCost = OriginManager.getCostForNextLevel(originTarget);
-                    String costText = "§6" + originCost + " SP";
-                    guiGraphics.drawString(font, costText, rightX + 5, rightY + 120, 0xFFFFFF, false);
-
-                    // Show stat changes from current to target level if there are pending upgrades
+                    guiGraphics.drawString(font, "§e" + originCost + " SP", rightX + 5, rightY + 122, 0xFFFFAA00, false);
                     if (originPending > 0) {
                         String statChanges = generateOriginStatChanges(origin, originLevel, originTarget);
                         if (!statChanges.isEmpty()) {
-                            guiGraphics.drawString(font, statChanges, rightX + 5, rightY + 110, 0xFFAAAA, false);
+                            guiGraphics.drawString(font, statChanges, rightX + 5, rightY + 112, 0xFFAAAA, false);
                         }
                     }
-                } else {
-                    // At max level - still show cost if there are pending upgrades
-                    if (originPending > 0) {
-                        int originCost = OriginManager.getCostForNextLevel(originTarget);
-                        String costText = "§6" + originCost + " SP";
-                        guiGraphics.drawString(font, costText, rightX + 5, rightY + 120, 0xFFFFFF, false);
-                    }
+                } else if (originPending > 0) {
+                    int originCost = OriginManager.getCostForNextLevel(originTarget);
+                    guiGraphics.drawString(font, "§e" + originCost + " SP", rightX + 5, rightY + 122, 0xFFFFAA00, false);
                 }
             }
         }
@@ -345,38 +344,31 @@ public class StatsTabUI {
                             guiGraphics.blit(skill.getIcon(), rightX + 5, rightY + 3, 0, 0, 16, 16, 16, 16);
                         }
 
-                        // Title with gold yellow color
+                        // Title
                         Component skillDisplayName = skill.getDisplayName();
-                        guiGraphics.drawString(font, "§l§6" + skillDisplayName.getString(), rightX + 25, rightY + 3, 0xFFFFFF, false);
+                        guiGraphics.drawString(font, "§d§l" + skillDisplayName.getString(), rightX + 25, rightY + 3, 0xFFE040FB, false);
 
-                        // Draw level indicators as parallelogram shapes
+                        // Level pips
                         int maxLevel = skill.getMaxLevel();
-                        drawLevelIndicators(guiGraphics, rightX + 25, rightY + 12, maxLevel, skillLevel, skillPending);
+                        drawLevelIndicators(guiGraphics, rightX + 25, rightY + 14, maxLevel, skillLevel, skillPending);
 
-                        // Generate scaling description from skill data
+                        // Scaling description
                         String scalingText = generateSkillScalingDescription(skill, skillTarget);
-                        guiGraphics.drawWordWrap(font, Component.literal(scalingText), rightX + 5, rightY + 25, 290, 0xCCCCCC);
+                        guiGraphics.drawWordWrap(font, Component.literal(scalingText), rightX + 5, rightY + 28, 290, 0xCCCCCC);
 
-                        // Level scaling info with stat changes
+                        // Cost and stat changes
                         if (skillTarget < skill.getMaxLevel()) {
                             int skillCost = OriginManager.getSkillCostForNextLevel(skillTarget);
-                            String costText = "§6" + skillCost + " SP";
-                            guiGraphics.drawString(font, costText, rightX + 5, rightY + 120, 0xFFFFFF, false);
-
-                            // Show stat changes from current to target level if there are pending upgrades
+                            guiGraphics.drawString(font, "§e" + skillCost + " SP", rightX + 5, rightY + 122, 0xFFFFAA00, false);
                             if (skillPending > 0) {
                                 String statChanges = generateSkillStatChanges(skill, skillLevel, skillTarget);
                                 if (!statChanges.isEmpty()) {
-                                    guiGraphics.drawString(font, statChanges, rightX + 5, rightY + 110, 0xFFAAAA, false);
+                                    guiGraphics.drawString(font, statChanges, rightX + 5, rightY + 112, 0xFFAAAA, false);
                                 }
                             }
-                        } else {
-                            // At max level - show cost if there are pending upgrades
-                            if (skillPending > 0) {
-                                int skillCost = OriginManager.getSkillCostForNextLevel(skillTarget);
-                                String costText = "§6" + skillCost + " SP";
-                                guiGraphics.drawString(font, costText, rightX + 5, rightY + 120, 0xFFFFFF, false);
-                            }
+                        } else if (skillPending > 0) {
+                            int skillCost = OriginManager.getSkillCostForNextLevel(skillTarget);
+                            guiGraphics.drawString(font, "§e" + skillCost + " SP", rightX + 5, rightY + 122, 0xFFFFAA00, false);
                         }
                     }
                 }

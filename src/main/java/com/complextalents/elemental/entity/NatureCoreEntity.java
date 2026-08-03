@@ -174,7 +174,7 @@ public class NatureCoreEntity extends Mob {
         level().getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
             getBoundingBox().inflate(radius))
             .forEach(entity -> {
-                if (entity != this) {
+                if (entity != this && !(entity instanceof net.minecraft.world.entity.player.Player)) {
                     // Skip allies of the owner - don't damage friendly targets
                     if (owner != null && TeamHelper.isAlly(owner, entity)) {
                         return;

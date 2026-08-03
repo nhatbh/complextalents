@@ -130,19 +130,19 @@ public class OriginTabUI {
     }
 
     public void renderBackgrounds(GuiGraphics guiGraphics, int xOffset, int yOffset, int mouseX, int mouseY, float partialTick) {
-        // Draw origin area background
-        guiGraphics.fill(xOffset + 10, yOffset + 10, xOffset + 240, yOffset + 350, 0xFF333333);
-        guiGraphics.fill(xOffset + 11, yOffset + 11, xOffset + 239, yOffset + 349, 0xFF222222);
+        // Draw origin card background with gold accent border
+        guiGraphics.fill(xOffset + 10, yOffset + 10, xOffset + 245, yOffset + 355, 0xFF3D321A);
+        guiGraphics.fill(xOffset + 11, yOffset + 11, xOffset + 244, yOffset + 354, 0xFF171924);
 
-        // Draw skill area background
-        guiGraphics.fill(xOffset + 260, yOffset + 10, xOffset + 490, yOffset + 350, 0xFF333333);
-        guiGraphics.fill(xOffset + 261, yOffset + 11, xOffset + 489, yOffset + 349, 0xFF222222);
+        // Draw skill card background with magenta accent border
+        guiGraphics.fill(xOffset + 255, yOffset + 10, xOffset + 490, yOffset + 355, 0xFF3A1A3D);
+        guiGraphics.fill(xOffset + 256, yOffset + 11, xOffset + 489, yOffset + 354, 0xFF171924);
     }
 
     public void renderLabels(GuiGraphics guiGraphics, net.minecraft.client.gui.Font font, int xOffset, int yOffset, int mouseX, int mouseY) {
         ResourceLocation originId = ClientOriginData.getOriginId();
         if (originId == null) {
-            guiGraphics.drawString(font, "You do not have an origin selected.", xOffset + 10, yOffset + 10, 0xFFCC0000, false);
+            guiGraphics.drawString(font, "§cNo active origin selected.", xOffset + 20, yOffset + 20, 0xFFCC0000, false);
             return;
         }
 
@@ -150,44 +150,66 @@ public class OriginTabUI {
         if (origin == null) return;
 
         // Origin Area
-        int originX = xOffset + 15;
-        int originY = yOffset + 15;
+        int originX = xOffset + 20;
+        int originY = yOffset + 20;
+
+        // Header tag
+        guiGraphics.drawString(font, "§7[ CLASS ORIGIN ]", originX, originY, 0xFFAAAAAA, false);
+        originY += 12;
 
         // Origin name
         String originName = "§6§l" + origin.getDisplayName().getString().toUpperCase();
         guiGraphics.drawString(font, originName, originX, originY, 0xFFFFAA00, false);
 
-        // Origin description (wrapped)
-        originY += 15;
-        String originDesc = origin.getDescription().getString();
-        if (originDesc.length() > 40) {
-            originDesc = originDesc.substring(0, 40) + "...";
+        // Current Rank Badge
+        int currentOriginLevel = ClientOriginData.getOriginLevel();
+        int pendingOriginLevel = getOriginPending();
+        String rankBadge = "Rank " + currentOriginLevel + "/5";
+        if (pendingOriginLevel > 0) {
+            rankBadge += " §a(+" + pendingOriginLevel + ")";
         }
-        guiGraphics.drawString(font, originDesc, originX, originY, 0xFF888888, false);
+        guiGraphics.drawString(font, "§e" + rankBadge, originX + 130, originY, 0xFFFFD700, false);
 
-        // Scaling table header for origin
-        originY += 50;
+        // Origin description (wrapped)
+        originY += 18;
+        String originDesc = origin.getDescription().getString();
+        guiGraphics.drawWordWrap(font, Component.literal(originDesc), originX, originY, 210, 0xBBCCDDEE);
+
+        // Rank Progress Pips (L1 - L5)
+        originY += 45;
+        guiGraphics.drawString(font, "§7Scaling Profile:", originX, originY, 0xFF888888, false);
+        originY += 12;
+
         for (int i = 1; i <= 5; i++) {
-            int current = ClientOriginData.getOriginLevel() + getOriginPending();
-            String color = (i == current) ? "§e" : "§7";
-            guiGraphics.drawString(font, color + "L" + i, originX + 75 + (i - 1) * 28, originY, 0xFFFFFF, false);
+            int activeTarget = currentOriginLevel + pendingOriginLevel;
+            int pipX = originX + 70 + (i - 1) * 30;
+            boolean isActive = (i <= activeTarget);
+            boolean isPending = (i > currentOriginLevel && i <= activeTarget);
+
+            int pipBg = isPending ? 0xFF2E4D2E : (isActive ? 0xFF5D4810 : 0xFF222533);
+            int pipBorder = isPending ? 0xFF55FF55 : (isActive ? 0xFFFFD700 : 0xFF3D4258);
+            guiGraphics.fill(pipX, originY - 2, pipX + 26, originY + 10, pipBorder);
+            guiGraphics.fill(pipX + 1, originY - 1, pipX + 25, originY + 9, pipBg);
+
+            String text = "L" + i;
+            guiGraphics.drawString(font, (isActive ? "§f" : "§7") + text, pipX + 7, originY, 0xFFFFFF, false);
         }
 
         // Scaling table rows for origin
         Map<String, ScaledStat> originStats = new HashMap<>(origin.getScaledStats());
-        originY += 12;
+        originY += 18;
         int row = 0;
         String[] priority = {"Cooldown", "Cost"};
         for (String key : priority) {
-            if (originStats.containsKey(key) && row < 4) {
-                renderTableRow(guiGraphics, font, originX, originY + row * 11, originStats.get(key), true);
+            if (originStats.containsKey(key) && row < 5) {
+                renderTableRow(guiGraphics, font, originX, originY + row * 13, originStats.get(key), true);
                 row++;
             }
         }
         for (var entry : originStats.entrySet()) {
-            if (row >= 4) break;
+            if (row >= 5) break;
             if (entry.getKey().equals("Cooldown") || entry.getKey().equals("Cost")) continue;
-            renderTableRow(guiGraphics, font, originX, originY + row * 11, entry.getValue(), true);
+            renderTableRow(guiGraphics, font, originX, originY + row * 13, entry.getValue(), true);
             row++;
         }
 
@@ -197,26 +219,48 @@ public class OriginTabUI {
             Skill skill = SkillRegistry.getInstance().getSkill(activeSkillId);
             if (skill != null) {
                 int skillX = xOffset + 265;
-                int skillY = yOffset + 15;
+                int skillY = yOffset + 20;
+
+                // Header tag
+                guiGraphics.drawString(font, "§7[ SIGNATURE ABILITY ]", skillX, skillY, 0xFFAAAAAA, false);
+                skillY += 12;
 
                 // Skill name
                 String skillName = "§d§l" + skill.getDisplayName().getString().toUpperCase();
                 guiGraphics.drawString(font, skillName, skillX, skillY, 0xFFFF00FF, false);
 
-                // Skill description
-                skillY += 15;
-                String skillDesc = skill.getDescription().getString();
-                if (skillDesc.length() > 40) {
-                    skillDesc = skillDesc.substring(0, 40) + "...";
+                // Skill Level Badge
+                int currentSkillLevel = getActiveSkillLevel();
+                int pendingSkillLevel = getSkillPending();
+                String skillBadge = "Lvl " + currentSkillLevel + "/5";
+                if (pendingSkillLevel > 0) {
+                    skillBadge += " §a(+" + pendingSkillLevel + ")";
                 }
-                guiGraphics.drawString(font, skillDesc, skillX, skillY, 0xFF888888, false);
+                guiGraphics.drawString(font, "§b" + skillBadge, skillX + 130, skillY, 0xFF00E5FF, false);
 
-                // Scaling table header for skill
-                skillY += 50;
+                // Skill description
+                skillY += 18;
+                String skillDesc = skill.getDescription().getString();
+                guiGraphics.drawWordWrap(font, Component.literal(skillDesc), skillX, skillY, 210, 0xBBCCDDEE);
+
+                // Rank Progress Pips (L1 - L5)
+                skillY += 45;
+                guiGraphics.drawString(font, "§7Ability Scaling:", skillX, skillY, 0xFF888888, false);
+                skillY += 12;
+
                 for (int i = 1; i <= 5; i++) {
-                    int current = getActiveSkillLevel() + getSkillPending();
-                    String color = (i == current) ? "§e" : "§7";
-                    guiGraphics.drawString(font, color + "L" + i, skillX + 75 + (i - 1) * 28, skillY, 0xFFFFFF, false);
+                    int activeTarget = currentSkillLevel + pendingSkillLevel;
+                    int pipX = skillX + 70 + (i - 1) * 30;
+                    boolean isActive = (i <= activeTarget);
+                    boolean isPending = (i > currentSkillLevel && i <= activeTarget);
+
+                    int pipBg = isPending ? 0xFF2E4D2E : (isActive ? 0xFF4A194A : 0xFF222533);
+                    int pipBorder = isPending ? 0xFF55FF55 : (isActive ? 0xFFE040FB : 0xFF3D4258);
+                    guiGraphics.fill(pipX, skillY - 2, pipX + 26, skillY + 10, pipBorder);
+                    guiGraphics.fill(pipX + 1, skillY - 1, pipX + 25, skillY + 9, pipBg);
+
+                    String text = "L" + i;
+                    guiGraphics.drawString(font, (isActive ? "§f" : "§7") + text, pipX + 7, skillY, 0xFFFFFF, false);
                 }
 
                 // Scaling table rows for skill
@@ -231,18 +275,18 @@ public class OriginTabUI {
                 if (skill.getResourceType() != null) skillStats.put("Cost", new ScaledStat("Cost", costs));
                 skillStats.putAll(skill.getScaledStats());
 
-                skillY += 12;
+                skillY += 18;
                 row = 0;
                 for (String key : priority) {
-                    if (skillStats.containsKey(key) && row < 4) {
-                        renderTableRow(guiGraphics, font, skillX, skillY + row * 11, skillStats.get(key), false);
+                    if (skillStats.containsKey(key) && row < 5) {
+                        renderTableRow(guiGraphics, font, skillX, skillY + row * 13, skillStats.get(key), false);
                         row++;
                     }
                 }
                 for (var entry : skillStats.entrySet()) {
-                    if (row >= 4) break;
+                    if (row >= 5) break;
                     if (entry.getKey().equals("Cooldown") || entry.getKey().equals("Cost")) continue;
-                    renderTableRow(guiGraphics, font, skillX, skillY + row * 11, entry.getValue(), false);
+                    renderTableRow(guiGraphics, font, skillX, skillY + row * 13, entry.getValue(), false);
                     row++;
                 }
             }
@@ -251,7 +295,7 @@ public class OriginTabUI {
 
     private void renderTableRow(GuiGraphics guiGraphics, net.minecraft.client.gui.Font font, int x, int y, ScaledStat stat, boolean isOrigin) {
         String label = stat.displayName().getString();
-        if (label.length() > 12) label = label.substring(0, 10) + "..";
+        if (label.length() > 11) label = label.substring(0, 9) + "..";
         guiGraphics.drawString(font, "§8" + label, x, y, 0xFF888888, false);
 
         double[] values = stat.values();
@@ -260,7 +304,7 @@ public class OriginTabUI {
             String color = (i == current) ? "§f" : "§7";
             double v = values[Math.min(i - 1, values.length - 1)];
             String formattedVal = formatValue(v);
-            guiGraphics.drawString(font, color + formattedVal, x + 75 + (i - 1) * 28, y, 0xFFFFFF, false);
+            guiGraphics.drawString(font, color + formattedVal, x + 70 + (i - 1) * 30, y, 0xFFFFFF, false);
         }
     }
 

@@ -139,8 +139,8 @@ public class UnstableBioEnergyEffect extends MobEffect {
         // Deal damage to all non-ally entities in range
         level.getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(EXPLOSION_RANGE))
             .forEach(target -> {
-                // Don't damage the exploding entity (already dead)
-                if (target == entity) {
+                // Don't damage the exploding entity (already dead) or players
+                if (target == entity || target instanceof net.minecraft.world.entity.player.Player) {
                     return;
                 }
 

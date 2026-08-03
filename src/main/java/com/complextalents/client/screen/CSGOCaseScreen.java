@@ -71,7 +71,10 @@ public class CSGOCaseScreen extends Screen {
         int buttonX = (this.width - buttonWidth) / 2;
         int buttonY = this.height - 45;
 
-        this.collectButton = this.addRenderableWidget(Button.builder(Component.literal("§lCOLLECT REWARD"), (btn) -> this.onClose())
+        this.collectButton = this.addRenderableWidget(Button.builder(Component.literal("§lCOLLECT REWARD"), (btn) -> {
+            com.complextalents.network.PacketHandler.sendToServer(new com.complextalents.network.caseopening.C2SClaimCaseRewardPacket(winningReward));
+            this.onClose();
+        })
                 .pos(buttonX, buttonY)
                 .size(buttonWidth, buttonHeight)
                 .build());

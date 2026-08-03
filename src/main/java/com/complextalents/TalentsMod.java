@@ -57,7 +57,7 @@ public class TalentsMod {
         OPEffects.register(modEventBus);
         HighPriestEffects.register(modEventBus);
         AssassinEffects.register(modEventBus);
-        com.complextalents.impl.darkmage.effect.DarkMageEffects.MOB_EFFECTS.register(modEventBus);
+        com.complextalents.effect.ModEffects.register(modEventBus);
 
         // Register common attributes
         ModAttributes.register(modEventBus);
@@ -120,6 +120,7 @@ public class TalentsMod {
         AssassinRegistrar.register();
         ElementalMageOrigin.register();
         com.complextalents.impl.warrior.WarriorRegistrar.register();
+        // com.complextalents.impl.pixie.origin.PixieOrigin.register(); // Temporarily disabled
         LOGGER.info("Example origins registered");
     }
 
@@ -163,6 +164,22 @@ public class TalentsMod {
         // Register leveling commands
         com.complextalents.leveling.command.LevelingCommand.register(event.getServer().getCommands().getDispatcher());
         LOGGER.info("Leveling commands registered");
+
+        // Register crate commands
+        com.complextalents.command.CrateCommand.register(event.getServer().getCommands().getDispatcher());
+        LOGGER.info("Crate commands registered");
+
+        // Register DPS commands
+        com.complextalents.dps.command.DPSCommand.register(event.getServer().getCommands().getDispatcher());
+        LOGGER.info("DPS commands registered");
+
+        // Register Damage Test command
+        com.complextalents.command.DamageTestCommand.register(event.getServer().getCommands().getDispatcher());
+        LOGGER.info("Damage Test command registered");
+
+        // Register Live Damage Tracker command
+        com.complextalents.command.DamageTrackerCommand.register(event.getServer().getCommands().getDispatcher());
+        LOGGER.info("Damage Tracker command registered");
     }
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = net.minecraftforge.api.distmarker.Dist.CLIENT)

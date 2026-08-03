@@ -63,5 +63,6 @@
   "item.complextalents.vampirism_gem": "Vampirism Rune",
   "item.complextalents.pierce_gem": "Pierce Rune",
   "item.complextalents.overclock_gem": "Overclock Rune",
-  "item.complextalents.recast_gem": "Recast Rune"
+  "item.complextalents.recast_gem": "Recast Rune",
+  "attribute.complextalents.heal_and_shield_power": "Heal and Shield Power"
 }

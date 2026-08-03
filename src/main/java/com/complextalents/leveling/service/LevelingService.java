@@ -103,11 +103,17 @@ public class LevelingService {
 
         // Add XP to storage
         PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
+        int oldLevel = data.getLevel(player.getUUID());
         data.addXP(player.getUUID(), finalAmount);
+        int newLevel = data.getLevel(player.getUUID());
 
         // Fire post-event (immutable, for notifications)
         XPAwardedEvent awardedEvent = new XPAwardedEvent(player, source, amount, finalAmount, context);
         MinecraftForge.EVENT_BUS.post(awardedEvent);
+
+        if (newLevel > oldLevel) {
+            fireLevelUpEvent(player, oldLevel, newLevel, (newLevel - oldLevel) * 2);
+        }
 
         return true;
     }

@@ -121,32 +121,61 @@ public class WarriorOriginHandler {
             }
         }
 
-        // Handle incoming damage
+        // Handle incoming damage & damage reduction / Cheat Death
         if (event.getEntity() instanceof ServerPlayer player) {
             if (isWarrior(player)) {
                 markCombat(player);
-                // 1. SSS Shield (Origin Passive)
                 double points = OriginManager.getResource(player);
-                if (StyleRank.getRank(points) == StyleRank.SSS) {
-                    if (PassiveManager.hasPassiveStacks(player, "sss_shield", 1)) {
-                        event.setAmount(0);
-                        event.setCanceled(true);
-                        PassiveManager.setPassiveStacks(player, "sss_shield", 0);
+                StyleRank rank = StyleRank.getRank(points);
 
-                        double resetPoints = OriginManager.getOriginStat(player, "shieldBreakReset");
-                        OriginManager.setResource(player, resetPoints);
+                // 1. Damage Reduction scaling on Style Rank up to maxDR at SSS Rank
+                double maxDR = OriginManager.getOriginStat(player, "maxDamageReduction");
+                double drFraction = switch (rank) {
+                    case D -> 0.0;
+                    case C -> 0.15;
+                    case B -> 0.30;
+                    case A -> 0.50;
+                    case S -> 0.70;
+                    case SS -> 0.85;
+                    case SSS -> 1.00;
+                };
+                double reduction = maxDR * drFraction;
+                float finalDamage = (float) (event.getAmount() * (1.0 - reduction));
 
-                        player.sendSystemMessage(
-                                Component.literal("\u00A7c[SSS SHIELD SHATTERED] \u00A77Style reset to "
-                                        + StyleRank.getRank(resetPoints).name + "!"));
-                        return;
+                // 2. Cheat Death (The Shatter) at SSS Rank (950+ Style)
+                if (rank == StyleRank.SSS && finalDamage >= player.getHealth()) {
+                    event.setAmount(0);
+                    event.setCanceled(true);
+
+                    // Style Meter Shatters -> reset to B-Rank (250 Points)
+                    OriginManager.setResource(player, 250.0);
+
+                    // Remove True Hit Immunity effect immediately on Shatter
+                    var stunImmunityEffect = net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS.getValue(
+                            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("efn", "sin_stun_immunity"));
+                    if (stunImmunityEffect != null && player.hasEffect(stunImmunityEffect)) {
+                        player.removeEffect(stunImmunityEffect);
                     }
+
+                    player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                            net.minecraft.sounds.SoundEvents.GLASS_BREAK, net.minecraft.sounds.SoundSource.PLAYERS,
+                            1.2f, 0.8f);
+
+                    if (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                        serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.EXPLOSION,
+                                player.getX(), player.getY() + 1.0, player.getZ(),
+                                15, 0.4, 0.4, 0.4, 0.1);
+                    }
+
+                    player.sendSystemMessage(Component.literal("\u00A7cDeath Evasion!"), true);
+                    return;
                 }
 
-                // 2. Unmitigated damage penalty
-                if (!event.isCanceled()) {
-                    modifyStylePoints(player, -200);
-                }
+                // Apply reduced damage
+                event.setAmount(finalDamage);
+
+                // 3. Unmitigated damage penalty to Style points
+                modifyStylePoints(player, -200);
             }
         }
     }
@@ -157,6 +186,22 @@ public class WarriorOriginHandler {
             if (isWarrior(player)) {
                 double stylePoints = OriginManager.getResource(player);
                 StyleRank rank = StyleRank.getRank(stylePoints);
+
+                // Apply True Hit Immunity potion effect (efn:sin_stun_immunity) while at SSS
+                // Rank
+                var stunImmunityEffect = net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS.getValue(
+                        net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("efn", "sin_stun_immunity"));
+                if (stunImmunityEffect != null) {
+                    if (rank == StyleRank.SSS) {
+                        if (!player.hasEffect(stunImmunityEffect)
+                                || player.getEffect(stunImmunityEffect).getDuration() < 20) {
+                            player.addEffect(new net.minecraft.world.effect.MobEffectInstance(stunImmunityEffect, 40, 0,
+                                    false, false, true));
+                        }
+                    } else if (player.hasEffect(stunImmunityEffect)) {
+                        player.removeEffect(stunImmunityEffect);
+                    }
+                }
 
                 if (rank.decayPerSecond > 0) {
                     long lastCombat = LAST_COMBAT_TIME.getOrDefault(player.getUUID(), 0L);
@@ -181,9 +226,6 @@ public class WarriorOriginHandler {
         if (attacker instanceof ServerPlayer player && isWarrior(player)) {
             markCombat(player);
         }
-
-        // Handle assists (simplified)
-        // In a real mod, we'd check recent damage history
     }
 
     private static void markCombat(ServerPlayer player) {
@@ -206,13 +248,8 @@ public class WarriorOriginHandler {
         double next = Math.max(0, Math.min(1000, current + delta));
         OriginManager.setResource(player, next);
 
-        // Grant SSS Shield if reached SSS Rank and doesn't have it
-        if (next >= StyleRank.SSS.min) {
-            if (!com.complextalents.passive.PassiveManager.hasPassiveStacks(player, "sss_shield", 1)) {
-                com.complextalents.passive.PassiveManager.setPassiveStacks(player, "sss_shield", 1);
-                player.sendSystemMessage(net.minecraft.network.chat.Component
-                        .literal("\u00A76[SSS RANK REACHED] \u00A7fShield activated!"));
-            }
+        if (current < StyleRank.SSS.min && next >= StyleRank.SSS.min) {
+            player.sendSystemMessage(Component.literal("\u00A76SSSmokin' Sexy Style!"), true);
         }
     }
 
@@ -237,10 +274,26 @@ public class WarriorOriginHandler {
                     container.getDataManager().setDataSync(SkillDataKeys.PENALTY.get(), 0.0F);
                     container.getDataManager().setDataSync(SkillDataKeys.PENALTY_RESTORE_COUNTER.get(),
                             player.tickCount);
+                    player.sendSystemMessage(Component.literal("\u00A7aParried!"), true);
                 }
-                player.sendSystemMessage(
-                        Component.literal(String.format("Warrior Guard: Parry=%b | Consumed=%.2f | CurrentStamina=%.2f",
-                                event.isParry(), refund, playerpatch.getStamina())));
+            }
+        }
+    }
+
+    /**
+     * When a player selects the Warrior origin, automatically grant them the
+     * epicfight:guard skill.
+     */
+    @SubscribeEvent
+    public static void onOriginChange(com.complextalents.origin.events.OriginChangeEvent event) {
+        if (event.getChangeType() == com.complextalents.origin.events.OriginChangeEvent.ChangeType.SET
+                && WarriorOrigin.ID.equals(event.getOriginId())) {
+            ServerPlayer player = event.getPlayer();
+            var server = player.getServer();
+            if (server != null) {
+                String cmd = "epicfight skill add " + player.getGameProfile().getName() + " guard epicfight:guard";
+                server.getCommands().performPrefixedCommand(
+                        server.createCommandSourceStack().withSuppressedOutput(), cmd);
             }
         }
     }

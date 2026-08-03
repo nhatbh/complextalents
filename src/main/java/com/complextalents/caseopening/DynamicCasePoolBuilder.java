@@ -305,8 +305,8 @@ public class DynamicCasePoolBuilder {
                     customName = Component.literal("§6★ " + stack.getHoverName().getString());
                 }
                 int weight = perItemWeight;
-                if (stack.getItem() instanceof com.complextalents.item.RefinementGemItem || stack.getItem() instanceof com.complextalents.item.MagicAugmentItem) {
-                    weight = perItemWeight * 3; // 3x higher drop chance than individual gear/spells in the same tier
+                if (stack.getItem() instanceof com.complextalents.item.RefinementGemItem) {
+                    weight = perItemWeight * 3;
                 }
                 pool.add(new CaseReward(stack.copy(), rarity, weight, customName));
             }

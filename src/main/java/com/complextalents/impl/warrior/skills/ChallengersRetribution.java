@@ -95,11 +95,10 @@ public class ChallengersRetribution {
 
         public static ShieldData deserializeNBT(CompoundTag tag) {
             return new ShieldData(
-                tag.getDouble("health"),
-                tag.getDouble("maxHealth"),
-                tag.getDouble("absorbedDamage"),
-                tag.getLong("startTime")
-            );
+                    tag.getDouble("health"),
+                    tag.getDouble("maxHealth"),
+                    tag.getDouble("absorbedDamage"),
+                    tag.getLong("startTime"));
         }
     }
 
@@ -115,7 +114,7 @@ public class ChallengersRetribution {
                 .maxChannelTime(5.0) // Maximum 5 second charge
                 .scaledCooldown(new double[] { 45.0, 40.0, 35.0, 30.0, 30.0 })
                 .scaledStat("tauntRange", new double[] { 5, 6, 7, 8, 10 })
-                .scaledStat("baseHp", new double[] { 5, 8, 12, 16, 20 })
+                .scaledStat("baseHp", new double[] { 25.0, 35.0, 45.0, 55.0, 65.0 })
                 .scaledStat("reflectPercent", new double[] { 0.5, 0.75, 1.0, 1.25, 1.6 })
                 .onActive(ChallengersRetribution::startCharge)
                 .onRelease(ChallengersRetribution::releaseCharge)
@@ -130,48 +129,22 @@ public class ChallengersRetribution {
         double points = OriginManager.getResource(player);
         WarriorOriginHandler.StyleRank rank = WarriorOriginHandler.StyleRank.getRank(points);
 
-        double baseHp = context.getStat("baseHp");
-        double rankMult = 1.0;
-        double rankBonusMult = 1.0;
+        double baseHp = context != null ? context.getStat("baseHp") : 25.0;
+        // Rank Multipliers: D (1.0x - No penalty), C (1.1x), B (1.2x), A (1.3x), S
+        // (1.4x), SS (1.5x), SSS (1.6x)
+        double rankMult = switch (rank) {
+            case D -> 1.0;
+            case C -> 1.1;
+            case B -> 1.2;
+            case A -> 1.3;
+            case S -> 1.4;
+            case SS -> 1.5;
+            case SSS -> 1.6;
+        };
 
-        // Rank Multipliers: D (0.5x), C (0.7x), B (1.0x), A (1.5x), S (2.0x), SS
-        // (3.0x), SSS (4.0x)
-        // Bonus HP Multipliers: D (0.1x), C (0.2x), B (0.4x), A (0.6x), S (0.8x), SS
-        // (0.9x), SSS (1.0x)
-        switch (rank) {
-            case D -> {
-                rankMult = 0.5;
-                rankBonusMult = 0.1;
-            }
-            case C -> {
-                rankMult = 0.7;
-                rankBonusMult = 0.2;
-            }
-            case B -> {
-                rankMult = 1.0;
-                rankBonusMult = 0.4;
-            }
-            case A -> {
-                rankMult = 1.5;
-                rankBonusMult = 0.6;
-            }
-            case S -> {
-                rankMult = 2.0;
-                rankBonusMult = 0.8;
-            }
-            case SS -> {
-                rankMult = 3.0;
-                rankBonusMult = 0.9;
-            }
-            case SSS -> {
-                rankMult = 4.0;
-                rankBonusMult = 1.0;
-            }
-        }
-
-        double bonusMaxHp = Math.max(0, player.getMaxHealth() - 20.0);
-        double maxBonusContrib = bonusMaxHp * 0.5;
-        double shieldHp = (baseHp * rankMult) + (maxBonusContrib * rankBonusMult);
+        // Base Max HP is 20. Shield scales with player's Max HP ratio.
+        double maxHpRatio = Math.max(1.0, player.getMaxHealth() / 20.0);
+        double shieldHp = (baseHp * maxHpRatio) * rankMult;
 
         ACTIVE_SHIELDS.put(player.getUUID(), new ShieldData(shieldHp));
 
@@ -196,7 +169,7 @@ public class ChallengersRetribution {
         }
 
         // Taunt nearby enemies
-        double tauntRange = context.getStat("tauntRange");
+        double tauntRange = context != null ? context.getStat("tauntRange") : 5.0;
         AABB area = player.getBoundingBox().inflate(tauntRange);
         player.level().getEntitiesOfClass(LivingEntity.class, area, e -> e != player).forEach(entity -> {
             entity.setLastHurtByMob(player);
@@ -204,9 +177,6 @@ public class ChallengersRetribution {
                 mob.setTarget(player);
             }
         });
-
-        player.sendSystemMessage(Component.literal("\u00A76[CHARGING] \u00A7fShield: " + String.format("%.1f", shieldHp)
-                + " HP | Taunting nearby enemies!"));
 
         // FX: Roar, Shield Block, and Taunt Particle
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDER_DRAGON_GROWL,
@@ -252,65 +222,66 @@ public class ChallengersRetribution {
             if (kbAttr != null)
                 kbAttr.removeModifier(KB_RESIST_UUID);
 
-            if (data.health > 0) {
-                // Shield survived - award XP based on total absorbed damage
-                double parryXP = XPFormula.calculateWarriorPerfectParryXP(data.absorbedDamage);
-                ChunkPos chunkPos = new ChunkPos(player.blockPosition());
-                XPContext xpContext = XPContext.builder()
-                        .source(XPSource.WARRIOR_PARRY)
-                        .chunkPos(chunkPos)
-                        .rawAmount(parryXP)
-                        .metadata("damageAbsorbed", data.absorbedDamage)
-                        .metadata("shieldMaxHealth", data.maxHealth)
-                        .metadata("shieldRemainingHealth", data.health)
-                        .build();
-                LevelingService.getInstance().awardXP(player, parryXP, XPSource.WARRIOR_PARRY, xpContext);
+            // Award XP based on total absorbed damage
+            double parryXP = XPFormula.calculateWarriorPerfectParryXP(data.absorbedDamage);
+            ChunkPos chunkPos = new ChunkPos(player.blockPosition());
+            XPContext xpContext = XPContext.builder()
+                    .source(XPSource.WARRIOR_PARRY)
+                    .chunkPos(chunkPos)
+                    .rawAmount(parryXP)
+                    .metadata("damageAbsorbed", data.absorbedDamage)
+                    .metadata("shieldMaxHealth", data.maxHealth)
+                    .metadata("shieldRemainingHealth", data.health)
+                    .build();
+            LevelingService.getInstance().awardXP(player, parryXP, XPSource.WARRIOR_PARRY, xpContext);
 
-                // Reflect Damage
-                double reflectMult = context.getStat("reflectPercent");
-                double damage = data.absorbedDamage * reflectMult;
-
-                // Release AoE burst
-                double burstRange = 6.0;
-                AABB area = player.getBoundingBox().inflate(burstRange);
-                player.level().getEntitiesOfClass(LivingEntity.class, area, e -> e != player).forEach(entity -> {
-                    entity.hurt(player.damageSources().mobAttack(player), (float) damage);
-
-                    // Knockback
-                    double kbMagnitude = 1.5 + (data.absorbedDamage * 0.1);
-                    Vec3 dir = entity.position().subtract(player.position()).normalize();
-                    entity.knockback(kbMagnitude, -dir.x, -dir.z);
-                });
-
-                player.sendSystemMessage(Component.literal(
-                        "\u00A7a[RELEASE] \u00A7fUnleashed " + String.format("%.1f", damage) + " reflect damage!"));
-
-                // Epic Fight Animation: Play current weapon attack animation
-                ServerPlayerPatch playerPatch = EpicFightCapabilities.getEntityPatch(player, ServerPlayerPatch.class);
-                if (playerPatch != null) {
-                    CapabilityItem itemCap = playerPatch.getHoldingItemCapability(InteractionHand.MAIN_HAND);
-                    // BlockType.GUARD is used here as a reference pattern from GuardSkill
-                    List<AnimationAccessor<? extends AttackAnimation>> anim = itemCap.getAutoAttackMotion(playerPatch);
-                    if (anim != null) {
-                        playerPatch.playAnimationSynchronized(anim.get(0), 0.0F);
-                    }
-                }
-
-                // FX: Reflect Sounds (Clang + Explode) and Particle
-                player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                        net.minecraft.sounds.SoundEvent.createVariableRangeEvent(
-                                ResourceLocation.fromNamespaceAndPath("complextalents", "grandmaster.gate_hit")),
-                        SoundSource.PLAYERS, 1.0f, 1.0f);
-                player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                        SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 1.0f, 1.2f);
-
-                Vector3f rotation = new Vector3f(0, (float) Math.toRadians(-player.getYRot() + 180), 0);
-                PacketHandler.sendToNearby(new S2CSpawnAAAParticlePacket(
-                        ResourceLocation.fromNamespaceAndPath("complextalents", "reflect"),
-                        player.position().add(0, 1.2, 0),
-                        rotation,
-                        0.4f), (net.minecraft.server.level.ServerLevel) player.level(), player.position());
+            // Reflect Damage
+            double reflectMult = 1.0;
+            if (context != null) {
+                reflectMult = context.getStat("reflectPercent");
+            } else {
+                int level = com.complextalents.skill.SkillManager.getSkillLevel(player, ID);
+                double[] scale = new double[] { 0.5, 0.75, 1.0, 1.25, 1.6 };
+                reflectMult = scale[Math.min(4, Math.max(0, level - 1))];
             }
+            double damage = data.absorbedDamage * reflectMult;
+
+            // Release AoE burst
+            double burstRange = 6.0;
+            AABB area = player.getBoundingBox().inflate(burstRange);
+            player.level().getEntitiesOfClass(LivingEntity.class, area, e -> e != player).forEach(entity -> {
+                entity.hurt(player.damageSources().mobAttack(player), (float) damage);
+
+                // Knockback
+                double kbMagnitude = 1.5 + (data.absorbedDamage * 0.1);
+                Vec3 dir = entity.position().subtract(player.position()).normalize();
+                entity.knockback(kbMagnitude, -dir.x, -dir.z);
+            });
+
+            // Epic Fight Animation: Play current weapon attack animation
+            ServerPlayerPatch playerPatch = EpicFightCapabilities.getEntityPatch(player, ServerPlayerPatch.class);
+            if (playerPatch != null) {
+                CapabilityItem itemCap = playerPatch.getHoldingItemCapability(InteractionHand.MAIN_HAND);
+                List<AnimationAccessor<? extends AttackAnimation>> anim = itemCap.getAutoAttackMotion(playerPatch);
+                if (anim != null && !anim.isEmpty()) {
+                    playerPatch.playAnimationSynchronized(anim.get(0), 0.0F);
+                }
+            }
+
+            // FX: Reflect Sounds (Clang + Explode) and Particle
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                    net.minecraft.sounds.SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath("complextalents", "grandmaster.gate_hit")),
+                    SoundSource.PLAYERS, 1.0f, 1.0f);
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 1.0f, 1.2f);
+
+            Vector3f rotation = new Vector3f(0, (float) Math.toRadians(-player.getYRot() + 180), 0);
+            PacketHandler.sendToNearby(new S2CSpawnAAAParticlePacket(
+                    ResourceLocation.fromNamespaceAndPath("complextalents", "reflect"),
+                    player.position().add(0, 1.2, 0),
+                    rotation,
+                    0.4f), (net.minecraft.server.level.ServerLevel) player.level(), player.position());
         }
     }
 
@@ -330,36 +301,7 @@ public class ChallengersRetribution {
                         SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, 0.8f, 0.8f);
 
                 if (data.health <= 0) {
-                    // Shield BROKEN - remove without awarding XP
-                    ACTIVE_SHIELDS.remove(player.getUUID());
-
-                    // Clear HUD
-                    OriginManager.getCapability(player).ifPresent(cap -> {
-                        cap.setShieldValue(0);
-                        cap.setShieldMax(0);
-                    });
-
-                    // Remove Attributes
-                    var speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
-                    if (speedAttr != null)
-                        speedAttr.removeModifier(SLOWNESS_UUID);
-                    var kbAttr = player.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
-                    if (kbAttr != null)
-                        kbAttr.removeModifier(KB_RESIST_UUID);
-
-                    player.sendSystemMessage(Component.literal("\u00A7c[SHIELD BROKEN] \u00A77Skill canceled!"));
-
-                    // Epic Fight Animation: Play GUARD_BREAK animation
-                    ServerPlayerPatch playerPatch = EpicFightCapabilities.getEntityPatch(player,
-                            ServerPlayerPatch.class);
-                    if (playerPatch != null) {
-                        CapabilityItem itemCap = playerPatch.getHoldingItemCapability(InteractionHand.MAIN_HAND);
-                        AnimationAccessor<? extends StaticAnimation> anim = itemCap.getGuardMotion(null,
-                                yesman.epicfight.skill.guard.GuardSkill.BlockType.GUARD_BREAK, playerPatch);
-                        if (anim != null) {
-                            playerPatch.playAnimationSynchronized(anim, 0.0F);
-                        }
-                    }
+                    releaseCharge(null, player, 0.0);
                 } else {
                     // Update HUD
                     OriginManager.getCapability(player).ifPresent(cap -> {
@@ -408,7 +350,7 @@ public class ChallengersRetribution {
         if (tag.contains("health")) {
             ShieldData data = ShieldData.deserializeNBT(tag);
             ACTIVE_SHIELDS.put(player.getUUID(), data);
-            
+
             // Re-apply HUD
             OriginManager.getCapability(player).ifPresent(cap -> {
                 cap.setShieldMax(data.maxHealth);
@@ -417,7 +359,7 @@ public class ChallengersRetribution {
 
             // Re-apply attributes if still valid
             applyRetributionAttributes(player);
-            
+
             TalentsMod.LOGGER.info("[SKILL PERSIST] Restored Challenger's Retribution for {}", player.getUUID());
         }
     }

@@ -32,6 +32,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.joml.Vector3f;
 
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraftforge.registries.ForgeRegistries;
+
 import java.util.List;
 
 /**
@@ -39,6 +43,25 @@ import java.util.List;
  */
 @Mod.EventBusSubscriber(modid = TalentsMod.MODID)
 public class ShadowWalkEventHandler {
+
+    private static final ResourceLocation UNTARGETABLE_ID = ResourceLocation.fromNamespaceAndPath("basedefensev2", "untargetable");
+
+    public static void applyUntargetableEffect(ServerPlayer player) {
+        MobEffect untargetable = ForgeRegistries.MOB_EFFECTS.getValue(UNTARGETABLE_ID);
+        if (untargetable != null) {
+            MobEffectInstance current = player.getEffect(untargetable);
+            if (current == null || current.getDuration() < 40) {
+                player.addEffect(new MobEffectInstance(untargetable, 100, 0, false, false));
+            }
+        }
+    }
+
+    public static void removeUntargetableEffect(ServerPlayer player) {
+        MobEffect untargetable = ForgeRegistries.MOB_EFFECTS.getValue(UNTARGETABLE_ID);
+        if (untargetable != null && player.hasEffect(untargetable)) {
+            player.removeEffect(untargetable);
+        }
+    }
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -97,19 +120,10 @@ public class ShadowWalkEventHandler {
         double recovery = SkillManager.getSkillStat(player, ShadowWalkSkill.ID, "stealthGaugeRecovery");
 
         if (isStealthed) {
-            // Drain gauge near mobs (Distance-based)
-            List<Mob> nearbyMobs = player.level().getEntitiesOfClass(Mob.class, player.getBoundingBox().inflate(10.0));
+            // Decreased depletion range: 5.0 blocks (down from 10.0)
+            List<Mob> nearbyMobs = player.level().getEntitiesOfClass(Mob.class, player.getBoundingBox().inflate(5.0));
             if (!nearbyMobs.isEmpty()) {
-                // Check if this is the start of drain (transition from recovery to drain)
-                boolean wasDraining = player.getPersistentData().getBoolean("StealthDrainActive");
-                if (!wasDraining) {
-                    // Play drain warning sound on transition
-                    player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(),
-                            SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.8f, 1.2f);
-                }
-                player.getPersistentData().putBoolean("StealthDrainActive", true);
-
-                double minDistance = 10.0;
+                double minDistance = 5.0;
                 for (Mob mob : nearbyMobs) {
                     double dist = mob.distanceTo(player);
                     if (dist < minDistance) {
@@ -117,28 +131,47 @@ public class ShadowWalkEventHandler {
                     }
                 }
 
-                // Scaling drain: Full rate (2.0) at 3.0 blocks or less.
-                // At 10.0 blocks, drain is 0.0 (already handled by outer if).
-                // Linear scaling between 3.0 and 10.0.
-                double drainRate;
-                if (minDistance <= 3.0) {
-                    drainRate = 2.0;
-                } else {
-                    // (10 - distance) / (10 - 3) * 2.0
-                    drainRate = ((10.0 - minDistance) / 7.0) * 2.0;
+                int exposureTicks = player.getPersistentData().getInt("StealthExposureTicks") + 1;
+                player.getPersistentData().putInt("StealthExposureTicks", exposureTicks);
+
+                boolean wasDraining = player.getPersistentData().getBoolean("StealthDrainActive");
+                if (!wasDraining && exposureTicks > 15) {
+                    // Play drain warning sound when grace period ends
+                    player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(),
+                            SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.8f, 1.2f);
+                    player.getPersistentData().putBoolean("StealthDrainActive", true);
                 }
-                currentGauge -= drainRate;
+
+                // Grace Period: First 15 ticks (0.75s) of brief exposure cause 0 drain
+                if (exposureTicks > 15) {
+                    // Distance scaling: Full rate 1.5 at <= 2.0 blocks, linear scale to 5.0 blocks
+                    double distanceFactor;
+                    if (minDistance <= 2.0) {
+                        distanceFactor = 1.5;
+                    } else {
+                        distanceFactor = ((5.0 - minDistance) / 3.0) * 1.5;
+                    }
+
+                    // Accelerating time multiplier: ramps up from 1.0x to 5.0x the longer player lingers
+                    double timeRamp = 1.0 + Math.min(4.0, (exposureTicks - 15) * 0.05);
+                    double drainRate = distanceFactor * timeRamp;
+
+                    currentGauge -= drainRate;
+                }
             } else {
                 // Recover gauge when away from mobs while stealthed
                 player.getPersistentData().putBoolean("StealthDrainActive", false);
+                player.getPersistentData().putInt("StealthExposureTicks", 0);
                 currentGauge += recovery / 20.0;
             }
 
             if (currentGauge <= 0) {
                 player.removeEffect(AssassinEffects.SHADOW_WALK.get());
+                removeUntargetableEffect(player);
                 player.setInvisible(false);
                 currentGauge = 0;
                 player.getPersistentData().putBoolean("StealthDrainActive", false);
+                player.getPersistentData().putInt("StealthExposureTicks", 0);
                 alertNearbyMobs(player);
 
                 // Discovery FX
@@ -151,6 +184,7 @@ public class ShadowWalkEventHandler {
                 if (!player.isInvisible()) {
                     player.setInvisible(true);
                 }
+                applyUntargetableEffect(player);
                 // Force mobs already targeting us to drop target
                 List<Mob> targetingMe = player.level().getEntitiesOfClass(Mob.class,
                         player.getBoundingBox().inflate(16.0),
@@ -160,6 +194,7 @@ public class ShadowWalkEventHandler {
                 }
             }
         } else {
+            removeUntargetableEffect(player);
             // Recover gauge when not stealthed - Slowed by half
             currentGauge += (recovery / 20.0) / 2.0;
 
@@ -187,6 +222,7 @@ public class ShadowWalkEventHandler {
 
                 // Break stealth on damage and aggro nearby mobs
                 victim.removeEffect(AssassinEffects.SHADOW_WALK.get());
+                removeUntargetableEffect(victim);
                 victim.setInvisible(false);
                 alertNearbyMobs(victim);
 
@@ -221,6 +257,7 @@ public class ShadowWalkEventHandler {
             }
             if (attacker.hasEffect(AssassinEffects.SHADOW_WALK.get())) {
                 attacker.removeEffect(AssassinEffects.SHADOW_WALK.get());
+                removeUntargetableEffect(attacker);
                 attacker.setInvisible(false);
 
                 // Consume stealth gauge based on attack type
@@ -241,9 +278,22 @@ public class ShadowWalkEventHandler {
                 if (com.complextalents.impl.assassin.util.AssassinUtils.isBackstab(attacker, event.getEntity())) {
                     double apBuff = SkillManager.getSkillStat(attacker, ShadowWalkSkill.ID, "stealthBackstabBuff");
                     double buffDuration = SkillManager.getSkillStat(attacker, ShadowWalkSkill.ID, "stealthBuffDuration");
+                    int durationTicks = (int) (buffDuration * 20);
 
                     // Apply custom Ambush effect for correct multiplicative damage scaling
-                    attacker.addEffect(new MobEffectInstance(AssassinEffects.AMBUSH.get(), (int) (buffDuration * 20), 0));
+                    attacker.addEffect(new MobEffectInstance(AssassinEffects.AMBUSH.get(), durationTicks, 0));
+
+                    // 1. Apply True Hit Immunity (efn:sin_stun_immunity)
+                    var stunImmunityEffect = ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation.fromNamespaceAndPath("efn", "sin_stun_immunity"));
+                    if (stunImmunityEffect != null) {
+                        attacker.addEffect(new MobEffectInstance(stunImmunityEffect, durationTicks, 0, false, false, true));
+                    }
+
+                    // 2. Apply Shield (100% Max HP Absorption for durationTicks)
+                    float shieldAmount = (float) (attacker.getMaxHealth() * 1.00);
+                    int amp = Math.max(0, (int) (shieldAmount / 4.0f) - 1);
+                    attacker.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.ABSORPTION, durationTicks, amp, false, true, true));
+                    attacker.setAbsorptionAmount(Math.max(attacker.getAbsorptionAmount(), shieldAmount));
 
                     // Apply scaling to the initial backstab hit immediately
                     float finalBackstabDamage = (float) (event.getAmount() * (1.0 + apBuff));

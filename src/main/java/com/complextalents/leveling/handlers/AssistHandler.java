@@ -71,8 +71,8 @@ public class AssistHandler {
 
             // Check if player has assist within window
             if (AssistTracker.hasAssist(player.getUUID(), victimId, currentTime, ASSIST_WINDOW_MS)) {
-                // Calculate assist XP (same as killer XP)
-                double baseXP = com.complextalents.leveling.util.XPFormula.calculatePrimaryXP(victim.getMaxHealth());
+                // Calculate assist XP
+                double baseXP = com.complextalents.leveling.util.XPFormula.calculateAssistXP(victim.getMaxHealth());
 
                 // Build context
                 XPContext context = XPContext.builder()

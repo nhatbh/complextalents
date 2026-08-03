@@ -19,6 +19,7 @@ public class SpellStateManager {
     }
 
     public void toggle(String uniqueId, int cost) {
+        if (cost < 0) return; // Cannot purchase unlearnable spells
         if (isPending(uniqueId)) {
             parent.removeFromCart(getTypeFromId(uniqueId), uniqueId);
         } else {

@@ -28,7 +28,6 @@ public class HarmonicConvergenceSkill {
     // Level Scaling Arrays
     private static final double[] MANA_BASE = { 10.0, 15.0, 20.0, 25.0, 40.0 };
     private static final double[] MANA_MULT = { 5.0, 8.0, 12.0, 16.0, 25.0 };
-    private static final double[] RES_BASE = { 15.0, 18.0, 20.0, 22.0, 25.0 }; // Resonance refund per echo
     private static final double[] CRIT_PER_STACK = { 0.10, 0.12, 0.15, 0.17, 0.20 };
     private static final double[] CD_BASE = { 0.25, 0.30, 0.35, 0.40, 0.50 };
     private static final double[] CD_MULT = { 0.15, 0.20, 0.25, 0.30, 0.40 };
@@ -38,7 +37,7 @@ public class HarmonicConvergenceSkill {
                 .nature(SkillNature.ACTIVE)
                 .displayName("Harmonic Convergence")
                 .description(
-                        "Tiêu hao Prismatic Echoes (cần >=1) để hoàn Mana & Resonance, gia tăng sát thương trong 10s dựa trên số Echoes tiêu thụ và giúp mọi phép dùng trúng kẻ địch lập tức phản ứng với nguyên tố kích hoạt gần nhất.")
+                        "Tiêu hao Prismatic Echoes (cần >=1) để hoàn Mana, gia tăng sát thương trong 10s dựa trên số Echoes tiêu thụ và giúp mọi phép dùng trúng kẻ địch lập tức phản ứng với nguyên tố kích hoạt gần nhất.")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/elementalmage/harmonic_convergence.png"))
@@ -46,7 +45,6 @@ public class HarmonicConvergenceSkill {
                 .scaledCooldown(new double[] { 10.0, 10.0, 10.0, 10.0, 10.0 })
                 .scaledStat("base_mana_restore", "Base Mana Restore", MANA_BASE)
                 .scaledStat("spell_power_mana_mult", "Spell Power Mana Mult", MANA_MULT)
-                .scaledStat("resonance_refund", "Resonance Refund", RES_BASE)
                 .scaledStat("crit_per_stack", "Crit Per Stack", CRIT_PER_STACK)
                 .scaledStat("crit_dmg_base", "Crit Dmg Base", CD_BASE)
                 .scaledStat("crit_dmg_mult", "Crit Dmg Mult", CD_MULT)
@@ -64,7 +62,8 @@ public class HarmonicConvergenceSkill {
                     ServerPlayer serverPlayer = (ServerPlayer) player;
                     int level = Math.min(Math.max(context.skillLevel() - 1, 0), 4);
 
-                    var cap = serverPlayer.getCapability(ElementalMageDataProvider.ELEMENTAL_DATA).orElseThrow(IllegalStateException::new);
+                    var cap = serverPlayer.getCapability(ElementalMageDataProvider.ELEMENTAL_DATA)
+                            .orElseThrow(IllegalStateException::new);
 
                     // Read consumed Echo count & lock current Harmony Multiplier & Apex element
                     int echoCount = cap.getEchoCount();
@@ -78,9 +77,8 @@ public class HarmonicConvergenceSkill {
                     // Fetch raw Spell Power
                     double spellPower = serverPlayer.getAttributeValue(AttributeRegistry.SPELL_POWER.get());
 
-                    // Phase 1: Engine Refund (Mana + Resonance)
+                    // Phase 1: Engine Refund (Mana)
                     double manaRestored = echoCount * (MANA_BASE[level] + (spellPower * MANA_MULT[level]));
-                    double resonanceRestored = echoCount * RES_BASE[level];
 
                     // Apply Mana Recovery
                     try {
@@ -89,13 +87,8 @@ public class HarmonicConvergenceSkill {
                         double maxMana = serverPlayer.getAttributeValue(AttributeRegistry.MAX_MANA.get());
                         magicData.setMana((float) Math.min(maxMana, magicData.getMana() + manaRestored));
                         PacketDistributor.sendToPlayer(serverPlayer, new SyncManaPacket(magicData));
-                    } catch (Exception ignored) {}
-
-                    // Apply Resonance Recovery
-                    serverPlayer.getCapability(OriginDataProvider.ORIGIN_DATA).ifPresent(originData -> {
-                        originData.modifyResource(resonanceRestored);
-                        originData.sync();
-                    });
+                    } catch (Exception ignored) {
+                    }
 
                     // Phase 2: 10-Second Convergence Buff Parameters
                     double critChance = Math.min(1.0, echoCount * CRIT_PER_STACK[level]);
@@ -121,8 +114,8 @@ public class HarmonicConvergenceSkill {
                             50, 0.5, 0.5, 0.5, 0.2);
 
                     serverPlayer.sendSystemMessage(Component.literal(String.format(
-                            "\u00A7b\u2728 Harmonic Convergence! \u00A7fRefunded \u00A7b%.0f Mana \u00A7f& \u00A79%.0f Resonance\u00A7f. Locked Multiplier at \u00A7e%.1fx\u00A7f (+%.0f%% Crit, +%.0f%% Crit Dmg) for 10s!",
-                            manaRestored, resonanceRestored, lockedHarmonyMult, critChance * 100.0, hardCappedCritDmg * 100.0)));
+                            "\u00A7b\u2728 Harmonic Convergence! \u00A7fRefunded \u00A7b%.0f Mana\u00A7f. Locked Multiplier at \u00A7e%.1fx\u00A7f (+%.0f%% Crit, +%.0f%% Crit Dmg) for 10s!",
+                            manaRestored, lockedHarmonyMult, critChance * 100.0, hardCappedCritDmg * 100.0)));
                 })
                 .register();
     }

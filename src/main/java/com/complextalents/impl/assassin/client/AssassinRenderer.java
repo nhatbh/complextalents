@@ -143,6 +143,9 @@ public class AssassinRenderer implements OriginRenderer {
         ResourceLocation assassinId = ResourceLocation.fromNamespaceAndPath("complextalents", "assassin");
         boolean isAssassin = assassinId.equals(ClientOriginData.getOriginId());
 
+        // Reset shader color to full opacity so stealth rendering does not dim indicators
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+
         for (Entity entity : mc.level.entitiesForRendering()) {
             if (!(entity instanceof LivingEntity livingEntity) || entity == mc.player)
                 continue;
@@ -218,7 +221,7 @@ public class AssassinRenderer implements OriginRenderer {
     @SubscribeEvent
     public static void onRenderLivingPost(RenderLivingEvent.Post<?, ?> event) {
         LivingEntity entity = event.getEntity();
-        if (entity == Minecraft.getInstance().player && entity.hasEffect(AssassinEffects.SHADOW_WALK.get())) {
+        if (entity.hasEffect(AssassinEffects.SHADOW_WALK.get())) {
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         }
     }
@@ -227,12 +230,10 @@ public class AssassinRenderer implements OriginRenderer {
             float partialTicks) {
         poseStack.pushPose();
 
-        // Lift slightly off ground
-        poseStack.translate(0, 0.05, 0);
+        // Lift slightly off ground to prevent z-fighting
+        poseStack.translate(0, 0.08, 0);
 
         // Rotate to match entity's Y rotation (Smooth with partial ticks)
-        // Entity Y Rot: 0 = South, 90 = West, 180 = North, 270 = East
-        // We want to render the arc behind the entity.
         float yRot = entity.getViewYRot(partialTicks);
         poseStack.mulPose(Axis.YP.rotationDegrees(-yRot));
 
@@ -241,16 +242,12 @@ public class AssassinRenderer implements OriginRenderer {
         Matrix4f pose = poseStack.last().pose();
 
         float width = Math.max(entity.getBbWidth(), 0.8f);
-        float innerRadius = width * 1.1f;
-        float outerRadius = width * 1.15f; // Slimmer!
+        float innerRadius = width * 1.05f;
+        float outerRadius = width * 1.35f; // Increased thickness for high visibility
 
-        // Render a single arc from -45 to 45 degrees (North / Behind if facing South)
-        // In our coordinate system (sin(a), -cos(a)):
-        // a=0 is North (0, -1)
-        // If entity faces South (yRot=0), its back is North.
-        float startAngle = -45f;
-        float endAngle = 45f;
-        int segments = 20;
+        float startAngle = -50f;
+        float endAngle = 50f;
+        int segments = 24;
         int light = 15728880;
 
         // Cooldown check
@@ -265,12 +262,12 @@ public class AssassinRenderer implements OriginRenderer {
 
                 // Render grey filling arc based on progress
                 float currentEnd = startAngle + (endAngle - startAngle) * progress;
-                renderArcSegments(vc, pose, startAngle, currentEnd, segments, innerRadius, outerRadius, 0.5f, 0.5f,
-                        0.5f, 0.5f, light);
+                renderArcSegments(vc, pose, startAngle, currentEnd, segments, innerRadius, outerRadius, 0.6f, 0.6f,
+                        0.6f, 0.85f, light);
             } else {
-                // Ready: Full red arc
-                renderArcSegments(vc, pose, startAngle, endAngle, segments, innerRadius, outerRadius, 1.0f, 0.0f, 0.0f,
-                        0.5f, light);
+                // Ready: Genuinely bright, vibrant glowing red arc
+                renderArcSegments(vc, pose, startAngle, endAngle, segments, innerRadius, outerRadius, 1.0f, 0.1f, 0.1f,
+                        0.95f, light);
             }
         }
 

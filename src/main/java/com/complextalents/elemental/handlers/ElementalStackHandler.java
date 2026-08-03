@@ -3,6 +3,7 @@ package com.complextalents.elemental.handlers;
 import com.complextalents.TalentsMod;
 import com.complextalents.config.ElementalReactionConfig;
 import com.complextalents.elemental.ElementStack;
+import com.complextalents.elemental.ElementalReaction;
 import com.complextalents.elemental.ElementalStackTracker;
 import com.complextalents.elemental.ElementType;
 import com.complextalents.elemental.api.OPContext;
@@ -52,21 +53,15 @@ public class ElementalStackHandler {
 
         LivingEntity target = event.getTarget();
         LivingEntity source = event.getSource();
-        ElementType element = event.getElement();
+        ElementType newElement = event.getElement();
 
-        // Server-side only
-        if (target.level().isClientSide) return;
+        // Server-side only, non-player targets only, no ENDER element stacks
+        if (target == null || target.level().isClientSide || newElement == null || newElement == ElementType.ENDER || target instanceof net.minecraft.world.entity.player.Player) return;
 
-        // Validate inputs
-        if (target == null || element == null) {
-            TalentsMod.LOGGER.warn("Invalid ElementalDamageEvent: target={}, element={}", target, element);
-            return;
-        }
         // Fire pre-application event (allows cancellation before stack is applied)
-        ElementStackPreAppliedEvent preEvent = new ElementStackPreAppliedEvent(target, source, element, 1);
+        ElementStackPreAppliedEvent preEvent = new ElementStackPreAppliedEvent(target, source, newElement, 1);
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(preEvent);
 
-        // Check if pre-event was canceled
         if (preEvent.isCanceled()) {
             return;
         }
@@ -75,51 +70,114 @@ public class ElementalStackHandler {
             UUID targetId = target.getUUID();
             Map<ElementType, ElementStack> elements = ElementalStackTracker.getOrCreateEntityStacks(targetId);
 
-            // Check if element already exists
-            ElementStack existingStack = elements.get(element);
-            if (existingStack != null) {
-                // Element already applied, just refresh it
-                // Replace with new stack to update the applied tick
-                ElementStack newStack = new ElementStack(element, target, source);
-                elements.put(element, newStack);
+            // An entity can only hold 1 stack of 1 type of element of the most recent instance of elemental damage.
+            // Retrieve existing stack if present.
+            ElementStack existingStack = elements.isEmpty() ? null : elements.values().iterator().next();
+            ElementType existingElement = existingStack != null ? existingStack.getElement() : null;
 
+            ServerPlayer playerSource = source instanceof ServerPlayer p ? p : null;
 
-                // Spawn particle effects for stack refresh
-                if (target.level() instanceof ServerLevel) {
-                    Vec3 particlePos = target.position().add(0, target.getBbHeight() / 2, 0);
-                    SpawnElementFXPacket packet = new SpawnElementFXPacket(particlePos, element, 1);
-                    PacketHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), packet);
+            // 1. APEX CATALYST check (Harmonic Convergence instant reaction window)
+            if (playerSource != null && playerSource.hasEffect(com.complextalents.elemental.effects.ElementalEffects.HARMONIC_CONVERGENCE.get())) {
+                var capOpt = playerSource.getCapability(com.complextalents.impl.elementalmage.ElementalMageDataProvider.ELEMENTAL_DATA).resolve();
+                if (capOpt.isPresent()) {
+                    ElementType apexElement = capOpt.get().getApexElement();
+                    if (apexElement != null && newElement.canReactWith(apexElement)) {
+                        ElementalReaction apexReaction = newElement.getReactionWith(apexElement);
+                        if (apexReaction != null) {
+                            boolean executed = com.complextalents.elemental.registry.ReactionRegistry.getInstance().executeReaction(
+                                    target, apexReaction, newElement, apexElement, playerSource, 1.0f
+                            );
+                            if (executed) {
+                                TalentsMod.LOGGER.info("APEX_CATALYST: Instant reaction {} triggered between {} and stored Apex {}",
+                                        apexReaction, newElement, apexElement);
+                                if (existingElement != null) {
+                                    ElementalStackRemovedEvent removedEvent = new ElementalStackRemovedEvent(
+                                            target, existingElement, ElementalStackRemovedEvent.RemovalReason.REACTION_CONSUMED
+                                    );
+                                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(removedEvent);
+                                }
+                                elements.clear();
+                                return;
+                            }
+                        }
+                    }
                 }
-                return;
             }
 
-            // Use the potentially modified stack count from the pre-event
-            int stackCount = preEvent.getStackCount();
+            // 2. Normal reaction check with existing element stack on target
+            if (existingElement != null && existingElement.canReactWith(newElement)) {
+                ElementalReaction reaction = existingElement.getReactionWith(newElement);
+                if (reaction != null) {
+                    com.complextalents.elemental.api.IReactionStrategy strategy =
+                            com.complextalents.elemental.registry.ReactionRegistry.getInstance().getStrategy(reaction);
 
-            // Fire the stack applied event (fires after stack is actually applied)
-            ElementStackAppliedEvent stackEvent = new ElementStackAppliedEvent(target, source, element, stackCount);
+                    if (strategy != null) {
+                        boolean executed = false;
+                        if (playerSource != null) {
+                            executed = com.complextalents.elemental.registry.ReactionRegistry.getInstance().executeReaction(
+                                    target, reaction, newElement, existingElement, playerSource, 1.0f
+                            );
+                        } else {
+                            com.complextalents.elemental.api.ReactionContext context =
+                                    com.complextalents.elemental.api.ReactionContext.builder()
+                                            .target(target)
+                                            .reaction(reaction)
+                                            .triggeringElement(newElement)
+                                            .existingElement(existingElement)
+                                            .damageMultiplier(1.0f)
+                                            .elementalMastery(1.0f)
+                                            .level((ServerLevel) target.level())
+                                            .build();
+                            if (strategy.canTrigger(context)) {
+                                strategy.execute(context);
+                                executed = true;
+                            }
+                        }
+
+                        if (executed) {
+                            if (playerSource != null && com.complextalents.impl.elementalmage.origin.ElementalMageOrigin.isElementalMage(playerSource)) {
+                                playerSource.getCapability(com.complextalents.impl.elementalmage.ElementalMageDataProvider.ELEMENTAL_DATA)
+                                        .ifPresent(cap -> cap.addEcho(newElement));
+                            }
+
+                            if (strategy.consumesStacks()) {
+                                ElementalStackRemovedEvent removedEvent = new ElementalStackRemovedEvent(
+                                        target, existingElement, ElementalStackRemovedEvent.RemovalReason.REACTION_CONSUMED
+                                );
+                                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(removedEvent);
+                                elements.clear(); // Stack consumed by reaction (0 stacks remain)
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 3. Apply / Refresh single stack of newElement (overwrites any previous stack)
+            elements.clear(); // Enforce strict 1 stack maximum of the most recent elemental damage instance
+
+            int stackCount = preEvent.getStackCount();
+            ElementStackAppliedEvent stackEvent = new ElementStackAppliedEvent(target, source, newElement, stackCount);
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(stackEvent);
 
-
-            // Check if event was canceled
             if (stackEvent.isCanceled()) {
                 return;
             }
 
-            // Create and add the new element stack
-            ElementStack stack = new ElementStack(element, target, source);
-            elements.put(element, stack);
+            ElementStack stack = new ElementStack(newElement, target, source);
+            elements.put(newElement, stack);
 
-
-            // Spawn particle effects for stack application
-            if (target.level() instanceof ServerLevel) {
-                Vec3 particlePos = target.position().add(0, target.getBbHeight() / 2, 0);
-                SpawnElementFXPacket packet = new SpawnElementFXPacket(particlePos, element, 1);
-                PacketHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), packet);
+            if (playerSource != null) {
+                ElementalStackTracker.addTracking(playerSource.getUUID(), targetId);
             }
 
-
-            // Overwhelming Power logic is disabled
+            // Spawn particle effects for stack application / refresh
+            if (target.level() instanceof ServerLevel) {
+                Vec3 particlePos = target.position().add(0, target.getBbHeight() / 2, 0);
+                SpawnElementFXPacket packet = new SpawnElementFXPacket(particlePos, newElement, 1);
+                PacketHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), packet);
+            }
 
         } catch (Exception e) {
             TalentsMod.LOGGER.error("Error handling ElementalDamageEvent for entity {}: {}",

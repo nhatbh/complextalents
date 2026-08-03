@@ -2,103 +2,83 @@ package com.complextalents.impl.darkmage.origin;
 
 import com.complextalents.TalentsMod;
 import com.complextalents.impl.darkmage.client.DarkMageRenderer;
+import com.complextalents.impl.darkmage.skill.VoidReversalSkill;
 import com.complextalents.origin.OriginBuilder;
 import com.complextalents.origin.OriginManager;
+import com.complextalents.passive.PassiveStackDef;
 import com.complextalents.stats.ClassCostMatrix;
 import com.complextalents.stats.StatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 /**
- * Dark Mage Origin - Infinite Scaling Soul Harvester.
+ * Dark Mage Origin — High-Risk Arcane Risk-Manager.
  * <p>
- * A high-risk, high-reward playstyle that rewards sustained combat.
- * The longer you fight and kill, the stronger you become.
- * Death is punishing but not permanent - Phylactery saves you at the cost of
- * souls.
+ * Operates on Arcane Entropy (0%-100%) generated, flushed, and detonated by the
+ * 4 Arcane schools.
+ * Consumes Entropy via Void Reversal for guaranteed survival or via Eldritch
+ * spells for nuclear burst damage.
  * </p>
- * <p>
- * Offers exponential HP-for-Power scaling. Use Blood Pact to tap into your soul
- * reserves,
- * granting increased cast speed and soul-scaled mana regeneration.
- * </p>
- *
- * <h3>Passive: Soul Siphon</h3>
- * <ul>
- * <li>Gain souls from killed enemies (amount = enemy max health / 40)</li>
- * <li>Souls are UNCAPPED - can grow indefinitely</li>
- * <li>Souls provide damage bonus ONLY during Blood Pact</li>
- * </ul>
- *
- * <h3>Passive: Phylactery (Death-Defy)</h3>
- * <ul>
- * <li>Auto-triggers on fatal damage if souls > 0</li>
- * <li>Sets HP to 1, loses 50% of souls</li>
- * <li>5-minute internal cooldown</li>
- * </ul>
- *
- * <h3>Active: Blood Pact (Toggle)</h3>
- * <ul>
- * <li>HP drain per second: 8%/7%/6%/5%/4% (by level)</li>
- * <li>Cast Speed bonus: +10%/20%/30%/40%/50% (by level)</li>
- * <li>Soul-scaled Mana Regeneration while active: 1.0 + (souls / 200.0)</li>
- * <li>Soul damage bonus: +0.05%/0.1%/0.15%/0.2%/0.25% per soul (by level)</li>
- * <li>30 second cooldown after toggling off</li>
- * </ul>
  */
-@Mod.EventBusSubscriber(modid = TalentsMod.MODID)
 public class DarkMageOrigin {
 
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("complextalents", "dark_mage");
 
-    /**
-     * Register the Dark Mage origin.
-     * Call this during mod initialization.
-     */
+    // Evocation
+    public static final double[] EVOCATION_SHIELD_POISE_BONUS = { 0.10, 0.15, 0.20, 0.25, 0.30 };
+    public static final double[] EVOCATION_ENTROPY_GEN = { 10.0, 12.0, 15.0, 18.0, 20.0 };
+
+    // Ender
+    public static final double[] VOID_STRIKE_DURATION = { 2.0, 2.5, 3.0, 3.5, 4.0 };
+    public static final double[] ENDER_FLANK_DOWNED_MULT = { 1.4, 1.6, 1.8, 2.0, 2.2 };
+
+    // Blood
+    public static final double[] BLOOD_ENTROPY_FLUSH = { 20.0, 25.0, 30.0, 35.0, 40.0 };
+    public static final double[] BLOOD_DOWNED_LIFESTEAL_MULT = { 1.2, 1.4, 1.6, 1.8, 2.0 };
+    public static final double[] BLOOD_HP_COST_PCT = { 0.25, 0.22, 0.20, 0.18, 0.15 };
+
+    // Eldritch
+    public static final double[] ELDRITCH_REQUIRED_THRESHOLD = { 85.0, 80.0, 75.0, 70.0, 65.0 };
+    public static final double[] ELDRITCH_MAX_NUKE_MULT = { 1.5, 1.75, 2.0, 2.25, 2.5 };
+    public static final double[] ELDRITCH_BACKFIRE_SELF_DMG = { 0.25, 0.20, 0.15, 0.10, 0.05 };
+    public static final double[] ELDRITCH_BACKFIRE_SILENCE_SEC = { 4.0, 3.5, 3.0, 2.5, 2.0 };
+
     public static void register() {
         OriginBuilder.create("complextalents", "dark_mage")
                 .displayName("Dark Mage")
                 .description(Component.literal(
-                        "Pháp sư Huyết Thuật. Hạ gục kẻ địch rơi ra Soul Orbs dựa trên Max HP mục tiêu. Bật Blood Pact tự đốt Current HP để tăng Shadow Spell Power và chuyển sát thương phép nhận vào thành Bleed 3s. Tắt Blood Pact sẽ kích nổ các Soul Orbs tạo sóng sát thương diện rộng."))
+                        "Pháp sư thao túng Hắc Thuật không tiêu tốn Mana mà tích tụ Entropy. Thi triển phép thuật thường làm tăng Entropy, phép Máu dùng Máu để giải tỏa Entropy. Khi Entropy vượt vạch đỏ, dùng phép Eldritch sẽ bị Chiếm Hữu (tăng mạnh Chí Mạng Phép nhưng chỉ dùng được phép Eldritch). Dùng phép Eldritch quá sớm sẽ Tẩu Hoả Nhập Ma, gây sát thương lên bản thân và bị Câm Lặng."))
                 .maxLevel(5)
-                .baseStat(StatType.AP, 4)
-                .baseStat(StatType.MAX_MANA, 2)
-                // HP drain rates for Blood Pact: 8%/7%/6%/5%/4% Current HP per second
-                .scaledStat("bloodPactHpDrainPercent", "HP Drain/sec", new double[] { 0.08, 0.07, 0.06, 0.05, 0.04 })
-                // Shadow Spell Power bonus: +10%/20%/30%/40%/50%
-                .scaledStat("bloodPactSpellPowerBonus", "Spell Power Bonus",
-                        new double[] { 0.10, 0.20, 0.30, 0.40, 0.50 })
-                // Harvest Heal Base Percent: 2%/3%/4%/5%/6%
-                .scaledStat("harvestHealPercent", "Harvest Heal",
-                        new double[] { 0.02, 0.03, 0.04, 0.05, 0.06 })
-                // Harvest Frenzy Cast Speed: +10%/15%/20%/25%/30%
-                .scaledStat("harvestFrenzyCastSpeed", "Frenzy Cast Speed",
-                        new double[] { 0.10, 0.15, 0.20, 0.25, 0.30 })
-                // Detonation Base Damage per Density V: 10/15/20/25/35
-                .scaledStat("detonationBaseDamage", "Detonation Base Dmg",
-                        new double[] { 10.0, 15.0, 20.0, 25.0, 35.0 })
-                // Rebound Heal Percent: 30%/35%/40%/45%/50%
-                .scaledStat("reboundHealPercent", "Rebound Heal",
-                        new double[] { 0.30, 0.35, 0.40, 0.45, 0.50 })
-                .passiveStack("blood_pact_active", com.complextalents.passive.PassiveStackDef.create("blood_pact_active")
-                        .maxStacks(1).displayName("Blood Pact Active").build())
-                .passiveStack("blood_pact_ticks", com.complextalents.passive.PassiveStackDef.create("blood_pact_ticks")
-                        .maxStacks(72000).displayName("Blood Pact Ticks").build())
-                .passiveStack("blood_pact_dmg", com.complextalents.passive.PassiveStackDef.create("blood_pact_dmg")
-                        .maxStacks(500).displayName("Blood Pact Dmg Bonus").build())
-                .passiveSkill("Soul Siphon",
-                        "Hạ gục kẻ địch rơi ra Soul Orbs tích trữ sức mạnh dựa trên Max HP kẻ địch.")
-                .passiveSkill("Blood Magic",
-                        "Chuyển sát thương phép nhận vào thành Bleed giảm dần trong 3s khi đang bật Blood Pact.")
-                .activeSkill("Blood Pact",
-                        "Bật/Tắt: Đốt Current HP để tăng liên tục Shadow Spell Power. Tắt kỹ năng để kích nổ Soul Orbs tạo sóng sát thương diện rộng.",
+                .baseStat(StatType.AP, 5)
+                .baseStat(StatType.HEAL_AND_SHIELD, -6)
+                // Scaling definitions
+                .scaledStat("evo_shield_poise", "Evocation Shield/Poise Bonus", EVOCATION_SHIELD_POISE_BONUS)
+                .scaledStat("evo_entropy_gen", "Evocation Entropy Gen", EVOCATION_ENTROPY_GEN)
+                .scaledStat("ender_duration", "Void Strike Duration", VOID_STRIKE_DURATION)
+                .scaledStat("ender_flank_mult", "Void Strike Flank/Downed Mult", ENDER_FLANK_DOWNED_MULT)
+                .scaledStat("blood_flush", "Blood Entropy Flush", BLOOD_ENTROPY_FLUSH)
+                .scaledStat("blood_lifesteal_mult", "Blood Downed Lifesteal Mult", BLOOD_DOWNED_LIFESTEAL_MULT)
+                .scaledStat("blood_hp_cost", "Blood HP Cost (% Current)", BLOOD_HP_COST_PCT)
+                .scaledStat("eldritch_threshold", "Eldritch Threshold (%)", ELDRITCH_REQUIRED_THRESHOLD)
+                .scaledStat("eldritch_nuke_mult", "Eldritch Nuke Mult", ELDRITCH_MAX_NUKE_MULT)
+                .scaledStat("eldritch_backfire_hp", "Eldritch Backfire HP (% Max)", ELDRITCH_BACKFIRE_SELF_DMG)
+                .scaledStat("eldritch_silence_sec", "Eldritch Silence (s)", ELDRITCH_BACKFIRE_SILENCE_SEC)
+
+                // Passive Stacks
+                .passiveStack("entropy", PassiveStackDef.create("entropy")
+                        .maxStacks(100).displayName("Arcane Entropy").build())
+
+                .passiveSkill("Hắc Thuật & Entropy",
+                        "Phép thuật thường làm tăng Entropy, phép Máu dùng Máu để giảm Entropy. Khi Entropy vượt mốc vạch đỏ, dùng phép Eldritch sẽ bị Linh Hồn Nhập (tăng mạnh Phép Chí Mạng). Nếu dùng phép Eldritch khi Entropy chưa đủ vạch đỏ sẽ bị Hắc Thuật Quật Khấu.")
+                .activeSkill("Hư Không Hoán Chuyển",
+                        "Xóa sạch toàn bộ thanh Entropy tích tụ để tạo Lá Chắn Hư Không bảo vệ bản thân và lập tức dịch chuyển lùi về phía sau.",
                         ResourceLocation.fromNamespaceAndPath("complextalents",
-                                "textures/skill/darkmage/bloodpact.png"))
-                .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "blood_pact"))
+                                "textures/skill/darkmage/aspectofthewolf.png"))
+                .activeSkillId(VoidReversalSkill.ID)
+                .levelArmorCalc(lvl -> lvl <= 1 ? 0.0 : Math.round(Math.pow(lvl - 1, 1.15) * 0.8))
+                .levelToughnessCalc(lvl -> lvl <= 1 ? 0.0 : Math.min(25.0, Math.pow(lvl - 1, 1.1) * 0.25))
+                .levelHealthCalc(lvl -> 0.0)
                 .renderer(new DarkMageRenderer())
                 .register();
 
@@ -108,19 +88,32 @@ public class DarkMageOrigin {
                 .cost(StatType.AP, 1)
                 .cost(StatType.ARMOR_PEN, 2)
                 .cost(StatType.LUCK_CRIT, 2)
-                .cost(StatType.MAX_HP, 2)
+                .cost(StatType.MAX_HP, 3)
                 .cost(StatType.MAX_MANA, 2)
-                .cost(StatType.MOBILITY, 3)
-                .cost(StatType.CDR, 2)
-                .spellMasteryCostMultiplier(1.0) // Dark Mage normal with spells, 100% cost
-                .weaponMasteryCostMultiplier(2.0); // Dark Mage weak with weapons, 200% cost
+                .cost(StatType.HEAL_AND_SHIELD, 4)
+                .cost(StatType.CDR, 1)
+                .spellMasteryCostMultiplier(1.0)
+                // Arcane Elements (1x cost)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.EVOCATION, 1.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ENDER, 1.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.BLOOD, 1.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ELDRITCH, 1.0)
+                // Primal Elements (3x cost)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.FIRE, 3.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ICE, 3.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.LIGHTNING, 3.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.NATURE, 3.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.AQUA, 3.0)
+                // Cannot learn Holy spells (-1.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.HOLY, -1.0)
+                .weaponMasteryCostMultiplier(2.0);
 
-        TalentsMod.LOGGER.info("Dark Mage origin registered");
+        // Register Void Reversal Skill
+        VoidReversalSkill.register();
+
+        TalentsMod.LOGGER.info("Dark Mage (Arcane Entropy) origin registered");
     }
 
-    /**
-     * Check if a player is a Dark Mage.
-     */
     public static boolean isDarkMage(ServerPlayer player) {
         return ID.equals(OriginManager.getOriginId(player));
     }

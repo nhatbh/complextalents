@@ -69,29 +69,49 @@ public class SpellCritHandler {
 
             // Read casting item stack for Precision & Fatal augments
             io.redspace.ironsspellbooks.api.spells.AbstractSpell spell = event.getSpellDamageSource().spell();
-            net.minecraft.world.item.ItemStack castingStack = com.complextalents.refinement.SpellAugmentEventHandler.getCastingItemStack(caster, spell);
+            net.minecraft.world.item.ItemStack castingStack = com.complextalents.refinement.SpellAugmentEventHandler
+                    .getCastingItemStack(caster, spell);
             if (!castingStack.isEmpty()) {
-                java.util.List<net.minecraft.nbt.CompoundTag> augments = com.complextalents.refinement.SpellAugmentEventHandler.getAugmentsForSpell(castingStack, spell);
+                java.util.List<net.minecraft.nbt.CompoundTag> augments = com.complextalents.refinement.SpellAugmentEventHandler
+                        .getAugmentsForSpell(castingStack, spell);
                 for (net.minecraft.nbt.CompoundTag aug : augments) {
                     try {
-                        com.complextalents.item.MagicAugmentItem.AugmentType type = com.complextalents.item.MagicAugmentItem.AugmentType.valueOf(aug.getString("Type"));
-                        com.complextalents.caseopening.DynamicCasePoolBuilder.CrateRarity rarity = com.complextalents.caseopening.DynamicCasePoolBuilder.CrateRarity.values()[Math.min(4, Math.max(0, aug.getInt("Tier")))];
+                        com.complextalents.item.MagicAugmentItem.AugmentType type = com.complextalents.item.MagicAugmentItem.AugmentType
+                                .valueOf(aug.getString("Type"));
+                        com.complextalents.caseopening.DynamicCasePoolBuilder.CrateRarity rarity = com.complextalents.caseopening.DynamicCasePoolBuilder.CrateRarity
+                                .values()[Math.min(4, Math.max(0, aug.getInt("Tier")))];
                         int tLvl = rarity.ordinal() + 1;
                         if (type == com.complextalents.item.MagicAugmentItem.AugmentType.PRECISION) {
-                            critChance += switch (tLvl) { case 2 -> 0.06; case 3 -> 0.10; case 4 -> 0.15; default -> 0.20; };
+                            critChance += switch (tLvl) {
+                                case 2 -> 0.06;
+                                case 3 -> 0.10;
+                                case 4 -> 0.15;
+                                default -> 0.20;
+                            };
                         }
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
                 }
             }
 
             // Inject Harmonic Convergence Buffs
-            double convergenceDamBonus = 0.0;
+            double bonusCritDamage = 0.0;
             if (caster.hasEffect(com.complextalents.elemental.effects.ElementalEffects.HARMONIC_CONVERGENCE.get())) {
-                var cap = caster.getCapability(com.complextalents.impl.elementalmage.ElementalMageDataProvider.ELEMENTAL_DATA).resolve();
+                var cap = caster
+                        .getCapability(com.complextalents.impl.elementalmage.ElementalMageDataProvider.ELEMENTAL_DATA)
+                        .resolve();
                 if (cap.isPresent()) {
                     critChance += cap.get().getConvergenceCritChance();
-                    convergenceDamBonus = cap.get().getConvergenceCritDamage();
+                    bonusCritDamage += cap.get().getConvergenceCritDamage();
                 }
+            }
+
+            // Inject Possessed Buffs (Dark Mage: scaled by Void Reversal active skill level)
+            if (caster.hasEffect(com.complextalents.effect.ModEffects.POSSESSED.get()) && com.complextalents.impl.darkmage.origin.DarkMageOrigin.isDarkMage(caster)) {
+                int skillLevel = Math.min(5, Math.max(1, com.complextalents.skill.SkillManager.getSkillLevel(caster, com.complextalents.impl.darkmage.skill.VoidReversalSkill.ID)));
+                int idx = skillLevel - 1;
+                critChance += com.complextalents.impl.darkmage.skill.VoidReversalSkill.POSSESSED_CRIT_CHANCE[idx];
+                bonusCritDamage += com.complextalents.impl.darkmage.skill.VoidReversalSkill.POSSESSED_CRIT_DAMAGE[idx];
             }
 
             if (critChance <= 0.0)
@@ -105,19 +125,28 @@ public class SpellCritHandler {
             // Crit! Apply damage multiplier
             AttributeInstance critDamageInst = caster.getAttribute(SpellCritAttributes.SPELL_CRIT_DAMAGE.get());
             double critDamage = (critDamageInst != null) ? critDamageInst.getValue() : 1.5;
-            critDamage += convergenceDamBonus;
+            critDamage += bonusCritDamage;
 
             if (!castingStack.isEmpty()) {
-                java.util.List<net.minecraft.nbt.CompoundTag> augments = com.complextalents.refinement.SpellAugmentRecipe.getAugments(castingStack);
+                java.util.List<net.minecraft.nbt.CompoundTag> augments = com.complextalents.refinement.SpellAugmentRecipe
+                        .getAugments(castingStack);
                 for (net.minecraft.nbt.CompoundTag aug : augments) {
                     try {
-                        com.complextalents.item.MagicAugmentItem.AugmentType type = com.complextalents.item.MagicAugmentItem.AugmentType.valueOf(aug.getString("Type"));
-                        com.complextalents.caseopening.DynamicCasePoolBuilder.CrateRarity rarity = com.complextalents.caseopening.DynamicCasePoolBuilder.CrateRarity.values()[Math.min(4, Math.max(0, aug.getInt("Tier")))];
+                        com.complextalents.item.MagicAugmentItem.AugmentType type = com.complextalents.item.MagicAugmentItem.AugmentType
+                                .valueOf(aug.getString("Type"));
+                        com.complextalents.caseopening.DynamicCasePoolBuilder.CrateRarity rarity = com.complextalents.caseopening.DynamicCasePoolBuilder.CrateRarity
+                                .values()[Math.min(4, Math.max(0, aug.getInt("Tier")))];
                         int tLvl = rarity.ordinal() + 1;
                         if (type == com.complextalents.item.MagicAugmentItem.AugmentType.FATAL) {
-                            critDamage += switch (tLvl) { case 2 -> 0.20; case 3 -> 0.32; case 4 -> 0.45; default -> 0.60; };
+                            critDamage += switch (tLvl) {
+                                case 2 -> 0.20;
+                                case 3 -> 0.32;
+                                case 4 -> 0.45;
+                                default -> 0.60;
+                            };
                         }
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
                 }
             }
 

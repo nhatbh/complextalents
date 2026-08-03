@@ -1,185 +1,166 @@
 package com.complextalents.impl.darkmage.client;
 
-import com.complextalents.impl.darkmage.effect.DarkMageEffects;
+import com.complextalents.impl.darkmage.origin.DarkMageOrigin;
 import com.complextalents.origin.client.OriginRenderer;
 import com.complextalents.passive.client.ClientPassiveStackData;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
+import org.joml.Matrix4f;
 
 /**
- * Refined HUD renderer for the Dark Mage origin.
- * Displays:
- * - When Soul Stasis is active: A full arc in Blue with remaining Stasis duration.
- * - When Blood Pact is active: A filling arc in Crimson Red showing duration until the next ramping stage.
+ * Minimalist Arc HUD renderer for Dark Mage Arcane Entropy.
+ * Renders a clean 240-degree arc around the crosshair.
+ * Smoothly lerps decay, and when Possessed, smoothly shows remaining Possession duration (15s -> 0s).
  */
 public class DarkMageRenderer implements OriginRenderer {
 
-    private static final float ARC_INNER_RADIUS = 25f;
-    private static final float ARC_OUTER_RADIUS = 28f;
-    private static final float ARC_LENGTH = 120f; // degrees
-
-    // Right side arc angles (spans 300° to 420°)
-    private static final float ARC_TOP_ANGLE = 300f;
-    private static final float ARC_BOTTOM_ANGLE = 420f;
-
-    // Color definitions (ARGB)
-    private static final int ARC_BG_COLOR = 0x99000000;
-
-    // Soul Stasis Colors (Blue / Cyan)
-    private static final int STASIS_ARC_COLOR = 0xCC00E5FF;
-    private static final int STASIS_GLOW_COLOR = 0x4400E5FF;
-    private static final int STASIS_TEXT_COLOR = 0x9900E5FF;
-
-    // Ramping Stage Colors (Crimson / Blood Red)
-    private static final int RAMP_ARC_COLOR = 0xCCFF0044;
-    private static final int RAMP_MAX_COLOR = 0xCCFF2200;
-    private static final int RAMP_GLOW_COLOR = 0x44FF0033;
-    private static final int RAMP_TEXT_COLOR = 0x99FF3344;
+    private float smoothProgress = 0.0f;
 
     @Override
     public void renderHUD(GuiGraphics graphics, int screenWidth, int screenHeight) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
 
-        int centerX = screenWidth / 2;
-        int centerY = screenHeight / 2;
+        int entropy = ClientPassiveStackData.getStackCount("entropy");
+        int originLevel = Math.min(4, Math.max(0, com.complextalents.origin.client.ClientOriginData.getOriginLevel() - 1));
+        double threshold = DarkMageOrigin.ELDRITCH_REQUIRED_THRESHOLD[originLevel];
 
-        boolean isStasis = mc.player.hasEffect(DarkMageEffects.SOUL_STASIS.get());
-        int isBloodPactActive = ClientPassiveStackData.getStackCount("blood_pact_active");
-        int activeTicks = ClientPassiveStackData.getStackCount("blood_pact_ticks");
+        MobEffectInstance possessedEffect = mc.player.getEffect(com.complextalents.effect.ModEffects.POSSESSED.get());
+        boolean isPossessed = (possessedEffect != null);
+        boolean isRedline = entropy >= threshold;
 
-        if (!isStasis && isBloodPactActive == 0) {
-            return; // Don't render anything if inactive
+        float targetProgress;
+        if (isPossessed) {
+            // Smoothly show remaining Possession duration (300 ticks max = 15s)
+            float maxDuration = 300.0f;
+            float currentDuration = (float) possessedEffect.getDuration();
+            targetProgress = Math.min(1.0f, Math.max(0.0f, currentDuration / maxDuration));
+        } else {
+            targetProgress = Math.min(1.0f, Math.max(0.0f, entropy / 100.0f));
         }
 
+        // Smooth HUD lerp animation across frames
+        smoothProgress = Mth.lerp(0.12f, smoothProgress, targetProgress);
+        if (Math.abs(smoothProgress - targetProgress) < 0.001f) {
+            smoothProgress = targetProgress;
+        }
+
+        float centerX = screenWidth / 2.0f;
+        float centerY = screenHeight / 2.0f;
+
+        // Arc Parameters around crosshair
+        float radiusInner = 16.0f;
+        float radiusOuter = 20.0f;
+        float startAngle = -120.0f; // Start top-left
+        float totalSweep = 240.0f;  // Total arc angle (deg)
+
+        float filledSweep = totalSweep * smoothProgress;
+
         RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-        int dmgPct = ClientPassiveStackData.getStackCount("blood_pact_dmg");
+        Matrix4f matrix = graphics.pose().last().pose();
+        Tesselator tesselator = Tesselator.getInstance();
+        BufferBuilder bufferBuilder = tesselator.getBuilder();
 
-        if (isStasis) {
-            // State 1: Soul Stasis Active -> Full Arc in Blue + Stasis Duration + Damage Bonus
-            var effect = mc.player.getEffect(DarkMageEffects.SOUL_STASIS.get());
-            int durationTicks = effect != null ? effect.getDuration() : 0;
-            float seconds = durationTicks / 20.0f;
+        // 1. Background Arc Track (Darker when Possessed)
+        int trackColor = isPossessed ? 0x88440066 : 0x55220033;
+        drawArcSegment(tesselator, bufferBuilder, matrix, centerX, centerY, radiusInner, radiusOuter, 
+                startAngle, totalSweep, trackColor);
 
-            // Background Arc
-            drawArcSegment(centerX, centerY, ARC_INNER_RADIUS, ARC_OUTER_RADIUS, ARC_TOP_ANGLE, ARC_BOTTOM_ANGLE, 20, ARC_BG_COLOR);
-
-            // Glow Effect
-            drawArcSegment(centerX, centerY, ARC_INNER_RADIUS - 1.5f, ARC_OUTER_RADIUS + 1.5f, ARC_TOP_ANGLE, ARC_BOTTOM_ANGLE, 20, STASIS_GLOW_COLOR);
-
-            // Full Blue Arc
-            drawArcSegment(centerX, centerY, ARC_INNER_RADIUS, ARC_OUTER_RADIUS, ARC_TOP_ANGLE, ARC_BOTTOM_ANGLE, 20, STASIS_ARC_COLOR);
-
-            // Label next to arc
-            renderLabel(graphics, mc, centerX, centerY, String.format("%.1fs", seconds), dmgPct, STASIS_TEXT_COLOR);
-
-        } else {
-            // State 2: Blood Pact Active (Ramping) -> Filling Arc in Crimson Red for Stage Duration + Damage Bonus
-            float activeSeconds = activeTicks / 20.0f;
-            float timeInStage = activeSeconds % 5.0f;
-            float timeUntilNextStage = 5.0f - timeInStage;
-            float fillRatio = timeInStage / 5.0f;
-            boolean isMaxRamp = activeSeconds >= 30.0f;
-
-            if (isMaxRamp) {
-                fillRatio = 1.0f;
-                timeUntilNextStage = 0.0f;
+        // 2. Filled Progress Arc (Possessed = Glowing Void Magenta Pulse, Redline = Red, Normal = Violet)
+        if (smoothProgress > 0.001f) {
+            int arcColor;
+            long time = System.currentTimeMillis();
+            if (isPossessed) {
+                // Pulsing Void Magenta/Cyan for Locked Possessed State
+                float pulse = (float) ((Math.sin(time / 100.0) + 1.0) / 2.0);
+                int r = (int) (160 + pulse * 60);
+                int g = (int) (0 + pulse * 40);
+                int b = (int) (220 + pulse * 35);
+                arcColor = (255 << 24) | (r << 16) | (g << 8) | b;
+            } else if (isRedline) {
+                // Vibrant Pulsing Red for Redline
+                float pulse = (float) ((Math.sin(time / 150.0) + 1.0) / 2.0);
+                int r = 255;
+                int g = (int) (30 + pulse * 40);
+                int b = (int) (30 + pulse * 40);
+                arcColor = (240 << 24) | (r << 16) | (g << 8) | b;
+            } else {
+                // Arcane Violet / Purple
+                arcColor = 0xEEA033FF;
             }
 
-            // Background Arc
-            drawArcSegment(centerX, centerY, ARC_INNER_RADIUS, ARC_OUTER_RADIUS, ARC_TOP_ANGLE, ARC_BOTTOM_ANGLE, 20, ARC_BG_COLOR);
+            drawArcSegment(tesselator, bufferBuilder, matrix, centerX, centerY, radiusInner, radiusOuter, 
+                    startAngle, filledSweep, arcColor);
+        }
 
-            if (isMaxRamp) {
-                drawArcSegment(centerX, centerY, ARC_INNER_RADIUS - 1.5f, ARC_OUTER_RADIUS + 1.5f, ARC_TOP_ANGLE, ARC_BOTTOM_ANGLE, 20, RAMP_GLOW_COLOR);
-            }
-
-            // Filling Arc (fills from bottom upwards)
-            if (fillRatio > 0f) {
-                float fillLength = ARC_LENGTH * fillRatio;
-                int fillColor = isMaxRamp ? RAMP_MAX_COLOR : RAMP_ARC_COLOR;
-                drawArcSegment(centerX, centerY, ARC_INNER_RADIUS, ARC_OUTER_RADIUS, ARC_BOTTOM_ANGLE - fillLength, ARC_BOTTOM_ANGLE, Math.max(1, (int) (20 * fillRatio)), fillColor);
-            }
-
-            // Label next to arc
-            String labelText = isMaxRamp ? "MAX" : String.format("%.1fs", timeUntilNextStage);
-            renderLabel(graphics, mc, centerX, centerY, labelText, dmgPct, RAMP_TEXT_COLOR);
+        // 3. Threshold Tick Marker (Hidden during Possession for clean countdown arc)
+        if (!isPossessed) {
+            float thresholdProgress = (float) (threshold / 100.0);
+            float thresholdAngle = startAngle + (totalSweep * thresholdProgress);
+            drawTickMarker(tesselator, bufferBuilder, matrix, centerX, centerY, radiusInner - 2, radiusOuter + 2, thresholdAngle, 0xFFFFFFFF);
         }
 
         RenderSystem.disableBlend();
     }
 
-    private void renderLabel(GuiGraphics graphics, Minecraft mc, int centerX, int centerY, String timeText, int dmgPct, int color) {
-        int textX = (int) (centerX + ARC_OUTER_RADIUS + 8);
-        int timeY = centerY - 8;
-        int dmgY = centerY + 2;
+    private void drawArcSegment(Tesselator tesselator, BufferBuilder bufferBuilder, Matrix4f matrix, float cx, float cy, 
+                                float rInner, float rOuter, float startAngleDeg, float sweepAngleDeg, int color) {
+        int segments = Math.max(8, (int) (Math.abs(sweepAngleDeg) / 3.0f));
+        float startRad = (float) Math.toRadians(startAngleDeg - 90);
+        float sweepRad = (float) Math.toRadians(sweepAngleDeg);
 
-        graphics.pose().pushPose();
-        graphics.pose().scale(0.7f, 0.7f, 0.7f);
-
-        // Timer Text
-        graphics.drawString(mc.font, timeText, (int) (textX / 0.7f), (int) (timeY / 0.7f), color);
-
-        // Damage Bonus Text (Gold highlight)
-        if (dmgPct > 0) {
-            String dmgText = "+" + dmgPct + "% Dmg";
-            graphics.drawString(mc.font, dmgText, (int) (textX / 0.7f), (int) (dmgY / 0.7f), 0x99FFD700);
-        }
-
-        graphics.pose().popPose();
-    }
-
-    private void drawArcSegment(float cx, float cy, float innerRadius, float outerRadius, float startAngle, float endAngle, int segments, int color) {
         int a = (color >> 24) & 0xFF;
         int r = (color >> 16) & 0xFF;
         int g = (color >> 8) & 0xFF;
         int b = color & 0xFF;
 
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        RenderSystem.enableDepthTest();
+        bufferBuilder.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+        for (int i = 0; i <= segments; i++) {
+            float angle = startRad + (sweepRad * (i / (float) segments));
+            float cos = (float) Math.cos(angle);
+            float sin = (float) Math.sin(angle);
 
-        Tesselator tesselator = Tesselator.getInstance();
-        var buf = tesselator.getBuilder();
+            float xOuter = cx + rOuter * cos;
+            float yOuter = cy + rOuter * sin;
+            float xInner = cx + rInner * cos;
+            float yInner = cy + rInner * sin;
 
-        buf.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
-
-        float angleStep = (endAngle - startAngle) / segments;
-
-        for (int i = 0; i < segments; i++) {
-            float a1 = startAngle + angleStep * i;
-            float a2 = startAngle + angleStep * (i + 1);
-
-            double rad1 = Math.toRadians(a1);
-            double rad2 = Math.toRadians(a2);
-
-            float cos1 = (float) Math.cos(rad1);
-            float sin1 = (float) Math.sin(rad1);
-            float cos2 = (float) Math.cos(rad2);
-            float sin2 = (float) Math.sin(rad2);
-
-            float outer1x = cx + cos1 * outerRadius;
-            float outer1y = cy + sin1 * outerRadius;
-            float outer2x = cx + cos2 * outerRadius;
-            float outer2y = cy + sin2 * outerRadius;
-            float inner1x = cx + cos1 * innerRadius;
-            float inner1y = cy + sin1 * innerRadius;
-            float inner2x = cx + cos2 * innerRadius;
-            float inner2y = cy + sin2 * innerRadius;
-
-            buf.vertex(outer1x, outer1y, 0).color(r, g, b, a).endVertex();
-            buf.vertex(inner1x, inner1y, 0).color(r, g, b, a).endVertex();
-            buf.vertex(outer2x, outer2y, 0).color(r, g, b, a).endVertex();
-
-            buf.vertex(inner1x, inner1y, 0).color(r, g, b, a).endVertex();
-            buf.vertex(inner2x, inner2y, 0).color(r, g, b, a).endVertex();
-            buf.vertex(outer2x, outer2y, 0).color(r, g, b, a).endVertex();
+            bufferBuilder.vertex(matrix, xOuter, yOuter, 0).color(r, g, b, a).endVertex();
+            bufferBuilder.vertex(matrix, xInner, yInner, 0).color(r, g, b, a).endVertex();
         }
+        tesselator.end();
+    }
 
+    private void drawTickMarker(Tesselator tesselator, BufferBuilder bufferBuilder, Matrix4f matrix, float cx, float cy, 
+                                float rInner, float rOuter, float angleDeg, int color) {
+        float rad = (float) Math.toRadians(angleDeg - 90);
+        float cos = (float) Math.cos(rad);
+        float sin = (float) Math.sin(rad);
+
+        float xOuter = cx + rOuter * cos;
+        float yOuter = cy + rOuter * sin;
+        float xInner = cx + rInner * cos;
+        float yInner = cy + rInner * sin;
+
+        int a = (color >> 24) & 0xFF;
+        int r = (color >> 16) & 0xFF;
+        int g = (color >> 8) & 0xFF;
+        int b = color & 0xFF;
+
+        bufferBuilder.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
+        bufferBuilder.vertex(matrix, xInner, yInner, 0).color(r, g, b, a).endVertex();
+        bufferBuilder.vertex(matrix, xOuter, yOuter, 0).color(r, g, b, a).endVertex();
         tesselator.end();
     }
 }

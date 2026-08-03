@@ -75,9 +75,6 @@ minecraft {
             // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             property 'forge.logging.console.level', 'debug'
 
-            // Disable Mixin refmaps in dev environment to prevent issues with dependencies
-            property 'mixin.env.disableRefMap', 'true'
-
             mods {
                 "${mod_id}" {
                     source sourceSets.main
@@ -149,7 +146,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 repositories {
     // Put repositories for dependencies here
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
-    // mavenLocal()
+    mavenLocal()
     // Iron's Spellbooks repository for testing integration
     maven {
         name = "Iron's Maven - Release"
@@ -199,12 +196,6 @@ repositories {
         forRepositories(fg.repository)
         filter { includeGroup "maven.modrinth" }
     }
-
-    // If you have mod jar dependencies in ./libs, you can declare them as a repository like so.
-    // See https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:flat_dir_resolver
-    // flatDir {
-    //     dir 'libs'
-    // }
 }
 
 dependencies {
@@ -214,6 +205,7 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     // Iron's Spellbooks - Required dependency for spell damage integration
     // Using compileOnly to allow compilation without requiring the mod to be present
@@ -222,7 +214,7 @@ dependencies {
 	implementation fg.deobf("maven.modrinth:aaa-particles:1.20.1-1.4.10-forge")
 	implementation fg.deobf("maven.modrinth:architectury-api:9.2.14+forge")
     implementation fg.deobf("maven.modrinth:epic-fight:${epicfight_version}")
-    // implementation fg.deobf("com.nhatbh.basedefensev2:basedefensev2:1.0.0")
+    implementation fg.deobf("com.nhatbh.basedefensev2:basedefensev2:1.0.0")
     // WorldEdit Forge (CurseForge artifact for MC 1.20.1)
     // If you change WorldEdit version, update the file ID accordingly.
     implementation fg.deobf("dev.shadowsoffire:Placebo:${minecraft_version}-${placeboVersion}")

@@ -41,6 +41,16 @@ public class ModAttributes {
             ).setSyncable(true)
     );
 
+    public static final RegistryObject<Attribute> HEAL_AND_SHIELD_POWER = ATTRIBUTES.register(
+            "heal_and_shield_power",
+            () -> new RangedAttribute(
+                    "attribute.complextalents.heal_and_shield_power",
+                    0.4,
+                    0.0,
+                    100.0
+            ).setSyncable(true)
+    );
+
     public static void register(IEventBus modEventBus) {
         ATTRIBUTES.register(modEventBus);
     }
@@ -49,5 +59,6 @@ public class ModAttributes {
     public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
         event.add(EntityType.PLAYER, SPELL_CRIT_CHANCE.get());
         event.add(EntityType.PLAYER, SPELL_CRIT_DAMAGE.get());
+        event.add(EntityType.PLAYER, HEAL_AND_SHIELD_POWER.get());
     }
 }

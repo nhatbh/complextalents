@@ -1,54 +1,39 @@
 package com.complextalents.elemental;
 
 public enum ElementType {
+    // Elemental Schools (Primal Cycle)
     FIRE,
-    AQUA,
-    LIGHTNING,
     ICE,
+    LIGHTNING,
     NATURE,
-    ENDER;
+    AQUA,
+
+    // Arcane Schools (Unique Mechanics)
+    HOLY,
+    EVOCATION,
+    ENDER,
+    ELDRITCH,
+    BLOOD;
 
     public boolean canReactWith(ElementType other) {
         if (other == null || this == other) return false;
+        // Non-primal elemental schools do not undergo standard elemental reactions
+        if (this == ENDER || other == ENDER || this == HOLY || other == HOLY ||
+            this == EVOCATION || other == EVOCATION || this == ELDRITCH || other == ELDRITCH ||
+            this == BLOOD || other == BLOOD) return false;
 
         return switch (this) {
-            case FIRE -> other == AQUA || other == ICE || other == LIGHTNING || other == NATURE || other == ENDER;
-            case AQUA -> other == FIRE || other == ICE || other == LIGHTNING || other == NATURE || other == ENDER;
-            case ICE -> other == FIRE || other == AQUA || other == LIGHTNING || other == NATURE || other == ENDER;
-            case LIGHTNING -> other == FIRE || other == AQUA || other == ICE || other == NATURE || other == ENDER;
-            case NATURE -> other == FIRE || other == AQUA || other == ICE || other == LIGHTNING || other == ENDER;
-            case ENDER -> true; // Ender reacts with all elements
+            case FIRE -> other == AQUA || other == ICE || other == LIGHTNING || other == NATURE;
+            case AQUA -> other == FIRE || other == ICE || other == LIGHTNING || other == NATURE;
+            case ICE -> other == FIRE || other == AQUA || other == LIGHTNING || other == NATURE;
+            case LIGHTNING -> other == FIRE || other == AQUA || other == ICE || other == NATURE;
+            case NATURE -> other == FIRE || other == AQUA || other == ICE || other == LIGHTNING;
+            default -> false;
         };
     }
 
     public ElementalReaction getReactionWith(ElementType other) {
         if (!canReactWith(other)) return null;
-
-        // Handle Ender special cases
-        if (this == ENDER && other == FIRE) {
-            return ElementalReaction.VOIDFIRE;
-        }
-        if (this == FIRE && other == ENDER) {
-            return ElementalReaction.VOIDFIRE;
-        }
-        if (this == ENDER && other == ICE) {
-            return ElementalReaction.FRACTURE;
-        }
-        if (this == ICE && other == ENDER) {
-            return ElementalReaction.FRACTURE;
-        }
-        if (this == ENDER && other == AQUA) {
-            return ElementalReaction.SPRING;
-        }
-        if (this == AQUA && other == ENDER) {
-            return ElementalReaction.SPRING;
-        }
-        if (this == ENDER && other == LIGHTNING) {
-            return ElementalReaction.FLUX;
-        }
-        if (this == LIGHTNING && other == ENDER) {
-            return ElementalReaction.FLUX;
-        }
 
         // Return reactions that have strategy implementations
         return switch (this) {
@@ -84,6 +69,7 @@ public enum ElementType {
                 case FIRE -> ElementalReaction.BURNING;
                 case ICE -> ElementalReaction.PERMAFROST;
                 case AQUA -> ElementalReaction.BLOOM;
+                case LIGHTNING -> ElementalReaction.OVERGROWTH;
                 default -> null;
             };
             default -> null;

@@ -79,6 +79,7 @@ public class UpgradeCart {
     }
 
     public boolean canAfford(int cost) {
+        if (cost < 0) return false;
         if (!net.minecraftforge.fml.loading.FMLEnvironment.dist.isClient()) return false;
         return getRemainingSP() >= cost;
     }

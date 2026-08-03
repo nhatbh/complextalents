@@ -32,6 +32,9 @@ public class BuiltOrigin implements Origin {
     private BiFunction<Integer, ServerPlayer, Double> dynamicMaxResourceCalc;
     private final java.util.List<OriginSkillDisplay> displaySkills;
     private final ResourceLocation activeSkillId;
+    private final java.util.function.IntToDoubleFunction levelArmorCalc;
+    private final java.util.function.IntToDoubleFunction levelToughnessCalc;
+    private final java.util.function.IntToDoubleFunction levelHealthCalc;
 
     /**
      * Create a BuiltOrigin from an OriginBuilder.
@@ -50,6 +53,9 @@ public class BuiltOrigin implements Origin {
         this.dynamicMaxResourceCalc = builder.getDynamicMaxResourceCalc();
         this.displaySkills = builder.getDisplaySkills();
         this.activeSkillId = builder.getActiveSkillId();
+        this.levelArmorCalc = builder.getLevelArmorCalc();
+        this.levelToughnessCalc = builder.getLevelToughnessCalc();
+        this.levelHealthCalc = builder.getLevelHealthCalc();
     }
 
     @Override
@@ -144,4 +150,27 @@ public class BuiltOrigin implements Origin {
         return activeSkillId;
     }
 
+    @Override
+    public double getLevelArmorBonus(int playerLevel) {
+        if (this.levelArmorCalc != null) {
+            return this.levelArmorCalc.applyAsDouble(playerLevel);
+        }
+        return Origin.super.getLevelArmorBonus(playerLevel);
+    }
+
+    @Override
+    public double getLevelToughnessBonus(int playerLevel) {
+        if (this.levelToughnessCalc != null) {
+            return this.levelToughnessCalc.applyAsDouble(playerLevel);
+        }
+        return Origin.super.getLevelToughnessBonus(playerLevel);
+    }
+
+    @Override
+    public double getLevelHealthBonus(int playerLevel) {
+        if (this.levelHealthCalc != null) {
+            return this.levelHealthCalc.applyAsDouble(playerLevel);
+        }
+        return Origin.super.getLevelHealthBonus(playerLevel);
+    }
 }

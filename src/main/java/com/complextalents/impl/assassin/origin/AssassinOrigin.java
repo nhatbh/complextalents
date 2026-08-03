@@ -33,7 +33,7 @@ public class AssassinOrigin {
                         "Sát thủ tàng hình dồn sát thương. Đánh lén từ phía sau lưng tăng 30%-80% sát thương mục tiêu nhận vào từ cả đội trong 8-16s. Tấn công từ trạng thái Stealth giúp tăng 30%-100% Move Speed để rút lui."))
                 .maxLevel(5)
                 .baseStat(StatType.FLAT_AD, 4)
-                .baseStat(StatType.MOBILITY, 2)
+                .baseStat(StatType.HEAL_AND_SHIELD, -6)
                 .renderer(new AssassinRenderer())
                 // Passive: Expose Weakness
                 .scaledStat("exposeDamageAmp", new double[] { 0.30, 0.40, 0.50, 0.60, 0.80 })
@@ -49,6 +49,10 @@ public class AssassinOrigin {
                         "Vào trạng thái tàng hình, tăng Move Speed và khiến đòn đánh tiếp theo gây thêm sát thương từ phía sau lưng.",
                         null)
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "shadow_walk"))
+                // Level defensive scaling (Assassin = Agile Flanker controlled curve)
+                .levelArmorCalc(lvl -> lvl <= 1 ? 0.0 : Math.round(Math.pow(lvl - 1, 1.15) * 0.6))
+                .levelToughnessCalc(lvl -> lvl <= 1 ? 0.0 : Math.min(20.0, Math.pow(lvl - 1, 1.1) * 0.15))
+                .levelHealthCalc(lvl -> 0.0)
                 .register();
 
         ClassCostMatrix.defineCosts(ID)
@@ -57,11 +61,12 @@ public class AssassinOrigin {
                 .cost(StatType.AP, 4)
                 .cost(StatType.ARMOR_PEN, 1)
                 .cost(StatType.LUCK_CRIT, 1)
-                .cost(StatType.MAX_HP, 4)
+                .cost(StatType.MAX_HP, 5)
                 .cost(StatType.MAX_MANA, 4)
-                .cost(StatType.MOBILITY, 1)
+                .cost(StatType.HEAL_AND_SHIELD, 4)
                 .cost(StatType.CDR, 3)
                 .spellMasteryCostMultiplier(3.0) // Assassin terrible with spells, 300% cost
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ELDRITCH, -1.0)
                 .weaponMasteryCostMultiplier(1.0); // Assassin normal with melee weapons, 100% cost
 
         TalentsMod.LOGGER.info("Assassin origin registered");

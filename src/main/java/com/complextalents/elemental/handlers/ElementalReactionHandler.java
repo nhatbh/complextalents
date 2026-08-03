@@ -66,93 +66,11 @@ public class ElementalReactionHandler {
 
         LivingEntity target = event.getTarget();
         LivingEntity source = event.getSource();
-        ElementType newElement = event.getElement();
 
-        if (target == null || target.level().isClientSide) return;
-        if (!(source instanceof ServerPlayer player)) return;
-        if (!ElementalMageOrigin.isElementalMage(player)) return;
-
-        UUID targetId = target.getUUID();
-        ElementalStackTracker.addTracking(player.getUUID(), targetId);
-
-        // --- APEX CATALYST (Harmonic Convergence Instant Reaction Window) ---
-        if (player.hasEffect(ElementalEffects.HARMONIC_CONVERGENCE.get())) {
-            var capOpt = player.getCapability(ElementalMageDataProvider.ELEMENTAL_DATA).resolve();
-            if (capOpt.isPresent()) {
-                ElementType apexElement = capOpt.get().getApexElement();
-                if (apexElement != null && newElement.canReactWith(apexElement)) {
-                    ElementalReaction apexReaction = newElement.getReactionWith(apexElement);
-                    if (apexReaction != null) {
-                        // Check Resonance Cost
-                        if (hasAndDeductResonance(player, REACTION_COST)) {
-                            ReactionRegistry.getInstance().executeReaction(
-                                    target, apexReaction, newElement, apexElement, player, 1.0f
-                            );
-                            TalentsMod.LOGGER.info("APEX_CATALYST: Instant reaction {} triggered between {} and stored Apex {}",
-                                    apexReaction, newElement, apexElement);
-                            return; // Apex reaction executed!
-                        }
-                    }
-                }
-            }
+        if (target == null || target.level().isClientSide || target instanceof net.minecraft.world.entity.player.Player) return;
+        if (source instanceof ServerPlayer player) {
+            ElementalStackTracker.addTracking(player.getUUID(), target.getUUID());
         }
-
-        // --- NORMAL REACTION CHECK ---
-        Map<ElementType, ElementStack> elements = ElementalStackTracker.getEntityStacks(targetId);
-        if (elements == null || elements.isEmpty()) return;
-
-        for (Map.Entry<ElementType, ElementStack> entry : elements.entrySet()) {
-            ElementType existingElement = entry.getKey();
-
-            if (existingElement == newElement || !existingElement.canReactWith(newElement)) {
-                continue;
-            }
-
-            ElementalReaction reaction = existingElement.getReactionWith(newElement);
-            if (reaction == null) continue;
-
-            IReactionStrategy strategy = ReactionRegistry.getInstance().getStrategy(reaction);
-            if (strategy == null) continue;
-
-            // Check Resonance Cost
-            if (!hasAndDeductResonance(player, REACTION_COST)) {
-                player.sendSystemMessage(net.minecraft.network.chat.Component.literal("\u00A7cInsufficient Resonance to trigger reaction!"));
-                continue;
-            }
-
-            // Trigger standard reaction
-            boolean executed = ReactionRegistry.getInstance().executeReaction(
-                    target, reaction, newElement, existingElement, player, 1.0f
-            );
-
-            if (executed) {
-                // Echo acquired upon reaction activation!
-                player.getCapability(ElementalMageDataProvider.ELEMENTAL_DATA).ifPresent(cap -> cap.addEcho(newElement));
-
-                if (strategy.consumesStacks()) {
-                    ElementalStackRemovedEvent removedEvent = new ElementalStackRemovedEvent(
-                            target, existingElement, ElementalStackRemovedEvent.RemovalReason.REACTION_CONSUMED
-                    );
-                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(removedEvent);
-                    elements.remove(existingElement);
-                }
-            }
-
-            break; // Max 1 reaction per stack application
-        }
-    }
-
-    private static boolean hasAndDeductResonance(ServerPlayer player, double cost) {
-        var originDataCap = player.getCapability(com.complextalents.origin.capability.OriginDataProvider.ORIGIN_DATA);
-        if (originDataCap.isPresent()) {
-            var data = originDataCap.resolve().get();
-            if (data.getResource() >= cost) {
-                data.modifyResource(-cost);
-                data.sync();
-                return true;
-            }
-        }
-        return false;
     }
 
     public static void onEntityDeath(UUID entityId) {

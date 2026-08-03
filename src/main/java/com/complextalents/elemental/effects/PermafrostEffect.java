@@ -38,6 +38,10 @@ public class PermafrostEffect extends MobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
+        if (entity instanceof net.minecraft.world.entity.player.Player) {
+            entity.removeEffect(this);
+            return;
+        }
         // Only apply on server side
         if (entity.level().isClientSide) {
             return;
@@ -83,6 +87,9 @@ public class PermafrostEffect extends MobEffect {
     @Override
     public void addAttributeModifiers(LivingEntity entity, net.minecraft.world.entity.ai.attributes.AttributeMap attributeMap, int amplifier) {
         super.addAttributeModifiers(entity, attributeMap, amplifier);
+        if (entity instanceof net.minecraft.world.entity.player.Player) {
+            return;
+        }
 
         // Apply significant slowness - reduces movement speed by 60%
         var speedInstance = attributeMap.getInstance(Attributes.MOVEMENT_SPEED);

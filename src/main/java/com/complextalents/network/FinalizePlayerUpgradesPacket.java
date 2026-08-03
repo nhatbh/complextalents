@@ -16,6 +16,7 @@ import com.complextalents.weaponmastery.capability.IWeaponMasteryData;
 import com.complextalents.weaponmastery.capability.WeaponMasteryDataProvider;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
+import io.redspace.ironsspellbooks.api.spells.SpellRarity;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -176,23 +177,18 @@ public class FinalizePlayerUpgradesPacket {
                 }
             });
 
-            // 3. Verify Spell Mastery
+            // 3. Verify Spell Purchases (with additive tier upgrade credit)
             player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(mastery -> {
-                // 1. Calculate and verify Mastery Upgrades
-                for (UpgradeData.MasteryUpgrade upgrade : spellMasteryUpgrades) {
-                    int currentMastery = mastery.getMasteryLevel(upgrade.schoolId());
-                    if (upgrade.tier() == currentMastery + 1) {
-                        totalCost[0] += SpellMasteryManager.getMasteryBuyUpCost(upgrade.tier(), activeOrigin);
-                        validatedSpellMasteries.add(upgrade);
-                    }
-                }
-
-                // 2. Calculate and verify Spell Purchases
                 for (UpgradeData.SpellPurchase purchase : spellPurchases) {
                     AbstractSpell spell = SpellRegistry.getSpell(purchase.spellId());
-                    if (spell != null && !mastery.isSpellLearned(purchase.spellId(), purchase.level())) {
-                        totalCost[0] += SpellMasteryManager.getSpellCost(spell.getRarity(purchase.level()), activeOrigin);
-                        validatedSpellPurchases.add(purchase);
+                    if (spell != null) {
+                        int entryLevel = SpellMasteryManager.getMinLevelForRarity(spell, spell.getRarity(purchase.level()));
+                        if (!mastery.isSpellLearned(purchase.spellId(), entryLevel)) {
+                            int cost = SpellMasteryManager.getSpellUpgradeCost(spell, entryLevel, mastery, activeOrigin);
+                            if (cost < 0) continue;
+                            totalCost[0] += cost;
+                            validatedSpellPurchases.add(new UpgradeData.SpellPurchase(purchase.spellId(), entryLevel));
+                        }
                     }
                 }
             });
@@ -267,31 +263,13 @@ public class FinalizePlayerUpgradesPacket {
                     masteryData.sync();
                 });
 
-                // Apply Spells
+                // Apply Spells (Full UI Purchase yields physical scroll item)
                 player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(mastery -> {
-                    // 3. Process Mastery Upgrades FIRST
-                    for (UpgradeData.MasteryUpgrade upgrade : validatedSpellMasteries) {
-                        int currentMastery = mastery.getMasteryLevel(upgrade.schoolId());
-                        if (upgrade.tier() == currentMastery + 1) {
-                            int cost = SpellMasteryManager.getMasteryBuyUpCost(upgrade.tier(), activeOrigin);
-                            mastery.purchaseMastery(upgrade.schoolId(), upgrade.tier(), cost);
-                        }
-                    }
-
-                    // 4. Process Spell Purchases
                     for (UpgradeData.SpellPurchase purchase : validatedSpellPurchases) {
                         AbstractSpell spell = SpellRegistry.getSpell(purchase.spellId());
                         if (spell != null && !mastery.isSpellLearned(purchase.spellId(), purchase.level())) {
-                            int cost = SpellMasteryManager.getSpellCost(spell.getRarity(purchase.level()), activeOrigin);
-
-                            // Double check mastery requirements (after upgrades)
-                            int reqMastery = spell.getRarity(purchase.level()).getValue();
-                            if (mastery.getMasteryLevel(spell.getSchoolType().getId()) >= reqMastery) {
-                                mastery.learnSpell(purchase.spellId(), purchase.level());
-                                giveScroll(ctx.getSender(), purchase.spellId(), purchase.level());
-                            } else {
-                                totalCost[0] -= cost;
-                            }
+                            mastery.learnSpell(purchase.spellId(), purchase.level());
+                            giveScroll(ctx.getSender(), purchase.spellId(), purchase.level());
                         }
                     }
                     mastery.sync();

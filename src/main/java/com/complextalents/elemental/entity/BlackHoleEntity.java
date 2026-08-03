@@ -150,7 +150,7 @@ public class BlackHoleEntity extends Mob {
         level().getEntitiesOfClass(LivingEntity.class,
             getBoundingBox().inflate(PULL_RANGE))
             .forEach(entity -> {
-                if (entity != this) {
+                if (entity != this && !(entity instanceof net.minecraft.world.entity.player.Player)) {
                     // Skip allies of the owner - don't pull friendly targets
                     if (owner != null && TeamHelper.isAlly(owner, entity)) {
                         return;
@@ -191,7 +191,7 @@ public class BlackHoleEntity extends Mob {
         level().getEntitiesOfClass(LivingEntity.class,
             getBoundingBox().inflate(DAMAGE_RANGE))
             .forEach(entity -> {
-                if (entity != this) {
+                if (entity != this && !(entity instanceof net.minecraft.world.entity.player.Player)) {
                     // Skip allies of the owner - don't damage friendly targets
                     if (owner != null && TeamHelper.isAlly(owner, entity)) {
                         return;

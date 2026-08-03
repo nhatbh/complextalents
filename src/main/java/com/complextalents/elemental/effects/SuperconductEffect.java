@@ -34,6 +34,9 @@ public class SuperconductEffect extends MobEffect {
     @Override
     public void addAttributeModifiers(LivingEntity entity, net.minecraft.world.entity.ai.attributes.AttributeMap attributeMap, int amplifier) {
         super.addAttributeModifiers(entity, attributeMap, amplifier);
+        if (entity instanceof net.minecraft.world.entity.player.Player) {
+            return;
+        }
 
         // Apply -50% armor modifier
         var armorInstance = attributeMap.getInstance(Attributes.ARMOR);
