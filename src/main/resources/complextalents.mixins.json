@@ -6,9 +6,11 @@
   "refmap": "complextalents.refmap.json",
   "mixins": [
     "AbstractSpellMixin",
+    "EnchantmentHelperMixin",
     "FoodDataMixin",
     "GreaterHealSpellMixin",
     "IceTombSpellMixin",
+    "ItemStackMixin",
     "MagicManagerMixin",
     "epicfight.GuardSkillMixin"
   ],
