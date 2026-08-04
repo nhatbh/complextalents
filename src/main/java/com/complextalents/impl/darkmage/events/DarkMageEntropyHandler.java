@@ -107,24 +107,24 @@ public class DarkMageEntropyHandler {
 
             // 2. Blood Synergy (HP Cost & Flush Entropy)
             if ("blood".equalsIgnoreCase(schoolPath)) {
-                // Get current Blood Exhaustion stack count (0, 1, 2, or 3)
+                // Get current Blood Exhaustion stack count (0 to 7)
                 int stacks = 0;
                 MobEffectInstance existingEffect = serverPlayer.getEffect(ModEffects.BLOOD_EXHAUSTION.get());
                 if (existingEffect != null) {
-                    stacks = Math.min(3, existingEffect.getAmplifier() + 1);
+                    stacks = Math.min(7, existingEffect.getAmplifier() + 1);
                 }
 
-                // Escalating HP Cost: 1.0x at 0 stacks, 1.5x at 1 stack, 2.0x at 2 stacks, 2.5x at 3 stacks
-                float costMultiplier = 1.0f + (stacks * 0.5f);
-                float hpCost = (float) (serverPlayer.getMaxHealth() * manaRatio * costMultiplier);
+                // Escalating HP Cost: base ratio matches entropy ratio (35% of max HP per 100% mana cost), escalating per stack
+                float costMultiplier = 1.0f + (stacks * 0.2f);
+                float hpCost = (float) (serverPlayer.getMaxHealth() * (manaRatio * 0.35f) * costMultiplier);
                 serverPlayer.setHealth(Math.max(1.0f, serverPlayer.getHealth() - hpCost));
 
-                // Apply/Stack Blood Exhaustion effect for 10s (200 ticks), up to max 3 stacks (amp 2)
-                int nextAmp = Math.min(2, stacks); // amplifier 0 = 1 stack, amp 1 = 2 stacks, amp 2 = 3 stacks
+                // Apply/Stack Blood Exhaustion effect for 10s (200 ticks), up to max 7 stacks (amplifier 6)
+                int nextAmp = Math.min(6, stacks); // amplifier 0..6 = 1..7 stacks
                 serverPlayer.addEffect(new MobEffectInstance(ModEffects.BLOOD_EXHAUSTION.get(), 200, nextAmp));
 
                 if (!isPossessed) {
-                    int flushAmt = (int) Math.round(manaRatio * 100.0);
+                    int flushAmt = (int) Math.round(manaRatio * 35.0);
                     PassiveManager.modifyPassiveStacks(serverPlayer, "entropy", -flushAmt);
                 }
             }
@@ -153,7 +153,7 @@ public class DarkMageEntropyHandler {
             // 4. Other Non-Blood, Non-Eldritch Spells (Evoke, Ender, Fire, Holy, Ice, etc. -> Gain Entropy & Check Overload)
             else {
                 if (!isPossessed) {
-                    int gainAmt = (int) Math.round(manaRatio * 100.0);
+                    int gainAmt = (int) Math.round(manaRatio * 35.0);
                     PassiveManager.modifyPassiveStacks(serverPlayer, "entropy", gainAmt);
 
                     int currentEntropy = PassiveManager.getPassiveStacks(serverPlayer, "entropy");

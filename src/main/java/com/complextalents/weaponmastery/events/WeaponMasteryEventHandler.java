@@ -19,59 +19,57 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
+@Mod.EventBusSubscriber(modid = TalentsMod.MODID)
 public class WeaponMasteryEventHandler {
 
-    @Mod.EventBusSubscriber(modid = TalentsMod.MODID)
-    public static class ServerEvents {
-        @SubscribeEvent
-        public static void onLivingDamage(LivingDamageEvent event) {
-            if (event.getSource().getEntity() instanceof Player player) {
-                if (player.level().isClientSide) return;
+    @SubscribeEvent
+    public static void onLivingDamage(LivingDamageEvent event) {
+        if (event.getSource().getEntity() instanceof Player player) {
+            if (player.level().isClientSide) return;
 
-                ItemStack mainHandItem = player.getMainHandItem();
-                if (mainHandItem.isEmpty()) return;
+            ItemStack mainHandItem = player.getMainHandItem();
+            if (mainHandItem.isEmpty()) return;
 
-                ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(mainHandItem.getItem());
-                if (itemId == null) return;
+            ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(mainHandItem.getItem());
+            if (itemId == null) return;
 
-                IWeaponMasteryData.WeaponPath path = WeaponMasteryManager.getInstance().getWeaponPath(itemId);
-                if (path != null) {
-                    // Accumulate damage, capped at current health of target
-                    double actualDamage = Math.min(event.getAmount(), event.getEntity().getHealth());
-                    if (actualDamage <= 0) return;
-                    
-                    player.getCapability(WeaponMasteryDataProvider.WEAPON_MASTERY_DATA).ifPresent(data -> {
-                        data.addAccumulatedDamage(path, actualDamage);
-                    });
-                }
+            IWeaponMasteryData.WeaponPath path = WeaponMasteryManager.getInstance().getWeaponPath(itemId);
+            if (path != null) {
+                // Accumulate damage, capped at current health of target
+                double actualDamage = Math.min(event.getAmount(), event.getEntity().getHealth());
+                if (actualDamage <= 0) return;
+                
+                player.getCapability(WeaponMasteryDataProvider.WEAPON_MASTERY_DATA).ifPresent(data -> {
+                    data.addAccumulatedDamage(path, actualDamage);
+                });
             }
         }
+    }
 
-        @SubscribeEvent
-        public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-            if (event.phase != TickEvent.Phase.END || event.player.level().isClientSide) return;
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END || event.player.level().isClientSide) return;
 
-            Player player = event.player;
+        Player player = event.player;
 
-            // Weapon Rank Level Requirement Check (every 20 ticks)
-            if (player.tickCount % 20 == 0) {
-                ItemStack mainHandItem = player.getMainHandItem();
-                if (!mainHandItem.isEmpty()) {
-                    ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(mainHandItem.getItem());
-                    if (itemId != null) {
-                        IWeaponMasteryData.WeaponPath path = WeaponMasteryManager.getInstance().getWeaponPath(itemId);
-                        if (path != null) {
-                            int requiredRankLevel = WeaponMasteryManager.getInstance().getRequiredRankValue(itemId);
+        // Weapon Rank Level Requirement Check (every 20 ticks)
+        if (player.tickCount % 20 == 0) {
+            ItemStack mainHandItem = player.getMainHandItem();
+            if (!mainHandItem.isEmpty()) {
+                ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(mainHandItem.getItem());
+                if (itemId != null) {
+                    IWeaponMasteryData.WeaponPath path = WeaponMasteryManager.getInstance().getWeaponPath(itemId);
+                    if (path != null) {
+                        int requiredRankLevel = WeaponMasteryManager.getInstance().getRequiredRankValue(itemId);
 
-                            player.getCapability(WeaponMasteryDataProvider.WEAPON_MASTERY_DATA).ifPresent(data -> {
-                                if (data.getMasteryLevel(path) < requiredRankLevel) {
-                                    // Player lacks mastery level to wield this weapon effectively
-                                    player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 4, false, false, true));
-                                    player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 4, false, false, true));
-                                    player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40, 4, false, false, true));
-                                }
-                            });
-                        }
+                        player.getCapability(WeaponMasteryDataProvider.WEAPON_MASTERY_DATA).ifPresent(data -> {
+                            if (data.getMasteryLevel(path) < requiredRankLevel) {
+                                // Player lacks mastery level to wield this weapon effectively
+                                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 4, false, false, true));
+                                player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 4, false, false, true));
+                                player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40, 4, false, false, true));
+                            }
+                        });
                     }
                 }
             }

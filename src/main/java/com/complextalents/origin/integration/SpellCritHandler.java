@@ -106,9 +106,12 @@ public class SpellCritHandler {
                 }
             }
 
-            // Inject Possessed Buffs (Dark Mage: scaled by Void Reversal active skill level)
-            if (caster.hasEffect(com.complextalents.effect.ModEffects.POSSESSED.get()) && com.complextalents.impl.darkmage.origin.DarkMageOrigin.isDarkMage(caster)) {
-                int skillLevel = Math.min(5, Math.max(1, com.complextalents.skill.SkillManager.getSkillLevel(caster, com.complextalents.impl.darkmage.skill.VoidReversalSkill.ID)));
+            // Inject Possessed Buffs (Dark Mage: scaled by Void Reversal active skill
+            // level)
+            if (caster.hasEffect(com.complextalents.effect.ModEffects.POSSESSED.get())
+                    && com.complextalents.impl.darkmage.origin.DarkMageOrigin.isDarkMage(caster)) {
+                int skillLevel = Math.min(5, Math.max(1, com.complextalents.skill.SkillManager.getSkillLevel(caster,
+                        com.complextalents.impl.darkmage.skill.VoidReversalSkill.ID)));
                 int idx = skillLevel - 1;
                 critChance += com.complextalents.impl.darkmage.skill.VoidReversalSkill.POSSESSED_CRIT_CHANCE[idx];
                 bonusCritDamage += com.complextalents.impl.darkmage.skill.VoidReversalSkill.POSSESSED_CRIT_DAMAGE[idx];

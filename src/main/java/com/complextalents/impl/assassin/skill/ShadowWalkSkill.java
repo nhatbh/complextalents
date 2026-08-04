@@ -23,7 +23,8 @@ public class ShadowWalkSkill {
         SkillBuilder.create("complextalents", "shadow_walk")
                 .nature(SkillNature.ACTIVE)
                 .displayName("Shadow Walk")
-                .description("Chìm vào Stealth tàng hình, tăng 35%-60% Move Speed. Đòn đánh tiếp theo phá Stealth và gây +40%-100% sát thương Backstab (tấn công từ phía sau lưng). Stealth Gauge (thanh ẩn nấp 100-300) bị rút nhanh khi đứng sát kẻ địch 2 khối.")
+                .description(
+                        "Chìm vào Stealth tàng hình, tăng 35%-60% Move Speed. Đòn đánh tiếp theo phá Stealth và gây +40%-100% sát thương Backstab (tấn công từ phía sau lưng). Stealth Gauge (thanh ẩn nấp 100-300) bị rút nhanh khi đứng sát kẻ địch 2 khối.")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/assassin/shadow_walk.png"))
@@ -58,7 +59,8 @@ public class ShadowWalkSkill {
                             context.skillLevel() - 1,
                             false,
                             false));
-                    com.complextalents.impl.assassin.events.ShadowWalkEventHandler.applyUntargetableEffect(serverPlayer);
+                    com.complextalents.impl.assassin.events.ShadowWalkEventHandler
+                            .applyUntargetableEffect(serverPlayer);
 
                     // Play stealth sound and particles
                     level.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),

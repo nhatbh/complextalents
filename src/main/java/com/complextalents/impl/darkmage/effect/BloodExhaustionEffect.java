@@ -6,7 +6,7 @@ import net.minecraft.world.effect.MobEffectCategory;
 /**
  * Blood Corruption / Hemorrhage Effect:
  * Applied when casting consecutive Blood spells.
- * Stacks up to 3 times (amplifier 0, 1, 2).
+ * Stacks up to 7 times (amplifier 0 to 6).
  * Each stack increases HP cost multiplier and decreases Lifesteal yield.
  */
 public class BloodExhaustionEffect extends MobEffect {
