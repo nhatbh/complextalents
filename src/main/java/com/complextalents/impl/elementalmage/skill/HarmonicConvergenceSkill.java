@@ -29,9 +29,9 @@ public class HarmonicConvergenceSkill {
     public static void register() {
         SkillBuilder.create("complextalents", "harmonic_convergence")
                 .nature(SkillNature.ACTIVE)
-                .displayName("Harmonic Convergence")
+                .displayName("Hội Tụ")
                 .description(
-                        "Tiêu hao Prismatic Echoes (cần >=1) để gia tăng sát thương (lên tới 1.5x), tăng Tỷ lệ & Sát thương Bạo kích trong 10s và giúp mọi phép kích hoạt phản ứng Apex.")
+                        "Bộc phát Dấu Ấn Nguyên Tố tích tụ để tăng từ 1.15 đến 1.5 lần sát thương phép theo số Dấu Ấn, tăng 30% đến 60% tỷ lệ bạo kích và đến 100% sát thương bạo kích phép trong 10 giây.")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/elementalmage/harmonic_convergence.png"))

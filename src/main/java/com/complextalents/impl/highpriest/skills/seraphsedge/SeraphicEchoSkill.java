@@ -34,9 +34,9 @@ public class SeraphicEchoSkill {
     public static void register() {
         SkillBuilder.create("complextalents", "seraphic_echo")
                 .nature(SkillNature.ACTIVE)
-                .displayName("Seraphic Echo")
+                .displayName("Thánh Linh Cầu")
                 .description(
-                        "Di chuyển Beacon gây sát thương đường bay (10 Command) hoặc Gắn lên người chơi trong 7s (20 Command, tỏa hào quang Absorption & Speed II 3 khối). Nhắm vào Beacon đang có để kích hoạt Pull/Purify (>=50 Command, hoàn 10 Command): kéo các mục tiêu lân cận về Beacon, giải hiệu ứng bất lợi cho đồng đội và gây sát thương diện rộng.")
+                        "Triệu hồi hoặc điều khiển Thánh Linh Cầu gây 10 đến 25 sát thương diện rộng, tạo lá chắn 5 đến 15 điểm cho đồng minh hoặc tiêu thụ điểm Thánh Mệnh để gom kẻ địch lại và phát nổ bộc phá trừng phạt.")
                 .targeting(TargetType.POSITION)
                 .allowSelfTarget(true)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",

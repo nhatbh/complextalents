@@ -22,22 +22,22 @@ public class ShadowWalkSkill {
     public static void register() {
         SkillBuilder.create("complextalents", "shadow_walk")
                 .nature(SkillNature.ACTIVE)
-                .displayName("Shadow Walk")
+                .displayName("Dạ Hành")
                 .description(
-                        "Chìm vào Stealth tàng hình, tăng 35%-60% Move Speed. Đòn đánh tiếp theo phá Stealth và gây +40%-100% sát thương Backstab. Nhận sát thương trong Stealth sẽ làm giảm Stealth Gauge thay vì bị phát hiện ngay lập tức.")
+                        "Tiến vào trạng thái tàng hình cho tới khi tấn công hoặc bị phát hiện, tăng tốc độ di chuyển và khiến đòn đánh tiếp theo từ phía sau lưng gây thêm sát thương.")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/assassin/shadow_walk.png"))
                 .minChannelTime(1.0)
                 .maxChannelTime(1.0)
                 .scaledCooldown(new double[] { 9999.0, 9999.0, 9999.0, 9999.0, 9999.0 })
-                .scaledStat("stealthMoveSpeed", new double[] { 0.35, 0.40, 0.45, 0.50, 0.60 })
-                .scaledStat("stealthGaugeSize", new double[] { 100.0, 150.0, 200.0, 250.0, 300.0 })
-                .scaledStat("stealthGaugeRecovery", new double[] { 5.0, 7.0, 10.0, 15.0, 20.0 })
-                .scaledStat("stealthBackstabBuff", new double[] { 0.40, 0.50, 0.60, 0.70, 1.0 })
-                .scaledStat("stealthBuffDuration", new double[] { 5.0, 6.0, 7.0, 8.0, 10.0 })
-                .scaledStat("stealthDamageDrain", new double[] { 10.0, 9.0, 8.0, 7.0, 6.0 })
-                .scaledStat("visibilityReduction", new double[] { 0.1, 0.08, 0.06, 0.04, 0.02 }) // Lower is better
+                .scaledStat("stealthMoveSpeed", "Tốc Độ Dạ Hành (%)", new double[] { 0.35, 0.40, 0.45, 0.50, 0.60 })
+                .scaledStat("stealthGaugeSize", "Thanh Tàng Hình", new double[] { 100.0, 150.0, 200.0, 250.0, 300.0 })
+                .scaledStat("stealthGaugeRecovery", "Hồi Thanh Tàng Hình", new double[] { 5.0, 7.0, 10.0, 15.0, 20.0 })
+                .scaledStat("stealthBackstabBuff", "Tăng ST Đánh Lén (%)", new double[] { 0.40, 0.50, 0.60, 0.70, 1.0 })
+                .scaledStat("stealthBuffDuration", "Thời Gian Tăng ST (s)", new double[] { 5.0, 6.0, 7.0, 8.0, 10.0 })
+                .scaledStat("stealthDamageDrain", "Tiêu Thanh Tàng Hình/ST", new double[] { 10.0, 9.0, 8.0, 7.0, 6.0 })
+                .scaledStat("visibilityReduction", "Giảm Ẩn Độ", new double[] { 0.1, 0.08, 0.06, 0.04, 0.02 }) // Lower is better
                 .setMaxLevel(5)
                 .onActive((context, player) -> {
                     if (!(player instanceof ServerPlayer serverPlayer))

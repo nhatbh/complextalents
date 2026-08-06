@@ -30,7 +30,7 @@ public class VoidReversalSkill {
                 .nature(SkillNature.ACTIVE)
                 .displayName("Hư Không Hoán Chuyển")
                 .description(
-                        "Tiêu tán toàn bộ Entropy tích tụ để tạo Lá Chắn Hư Không bảo vệ bản thân và lập tức tốc biến lùi về phía sau, thoát khỏi vòng vây kẻ địch.")
+                        "Tiêu hao toàn bộ Hắc Khí tích tụ để lập tức dịch chuyển lùi về phía sau và tạo lá chắn bảo vệ bằng 1.5 điểm cho mỗi điểm Hắc Khí bị tiêu hao.")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/darkmage/aspectofthewolf.png"))

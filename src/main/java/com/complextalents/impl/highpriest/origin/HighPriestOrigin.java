@@ -99,9 +99,9 @@ public class HighPriestOrigin {
      */
     public static void register() {
         OriginBuilder.create(ID)
-                .displayName("High Priest")
+                .displayName("Đại Tế Tự")
                 .description(Component.literal(
-                        "Tăng 20%-60% Tốc cast và 30%-125% Hiệu lực hồi máu khi không bị nhận sát thương trong 30s. Dùng phép Holy tiêu hao Mana để tích lũy Command (tối đa 100). Điểm Command giúp hoàn Mana, định vị Beacon và kích nổ kéo/giải hiệu ứng từ Seraphic Echo."))
+                        "Sứ giả cuồng tín của Ánh Sáng Thánh Thần. Không thể vung vũ khí cận chiến nhưng mọi thánh thuật giáng xuống gây gấp 2 lần sát thương. Duy trì an toàn trong 30 giây để nhận 20% đến 60% Tốc Độ Thi Pháp và 30% đến 125% Sức Mạnh Hồi Máu. Thi triển thánh thuật tiêu hao mỗi 5 Năng Lượng sẽ dâng nộp 1 điểm Thánh Mệnh để hoàn lại đến 20% Năng Lượng tối đa và triệu hồi Thánh Linh Cầu bảo hộ tín đồ hoặc trừng phạt kẻ dị giáo."))
                 .maxLevel(5)
                 .baseStat(StatType.MAX_MANA, 15)
                 .baseStat(StatType.CDR, 5)
@@ -117,12 +117,12 @@ public class HighPriestOrigin {
                 .passiveStack("grace_cooldown", PassiveStackDef.create("Grace Recovery")
                         .maxStacks(600)
                         .build())
-                .passiveSkill("Grace of the Seraphim",
-                        "Gain scaling Cast Speed and Healing Potency. Overheal grants Absorption. Lost upon taking damage.")
-                .passiveSkill("Seraphic Command",
-                        "Spending mana on holy spells generates Command stacks (5 Mana = 1 Command, max 100). Consuming Command refunds Mana (up to 20% Max Mana). Fuel Seraphic Echo abilities.")
-                .activeSkill("Seraphic Echo",
-                        "Summon or command the Seraphic Orb to strike, shield allies, or pull and purify enemies in a central burst.",
+                .passiveSkill("Ân Sủng Trí Thiên",
+                        "Thánh thần ban cho 20% đến 60% Tốc Độ Thi Pháp và 30% đến 125% Sức Mạnh Hồi Máu khi duy trì trạng thái an toàn trong 30 giây. Hồi máu vượt giới hạn sẽ hóa thành lá chắn bảo vệ. Ân sủng bị hủy ngay khi nhận sát thương.")
+                .passiveSkill("Thánh Mệnh Đột Phá",
+                        "Tiêu hao 5 Năng Lượng khi thi triển thánh thuật sẽ tích tụ 1 điểm Thánh Mệnh, tối đa 100 điểm. Dùng điểm Thánh Mệnh giúp hoàn lại tối đa 20% Năng Lượng và kích nổ uy lực của Thánh Linh Cầu.")
+                .activeSkill("Thánh Linh Cầu",
+                        "Triệu hồi hoặc điều khiển Thánh Linh Cầu gây 10 đến 25 sát thương diện rộng, tạo lá chắn 5 đến 15 điểm cho đồng minh hoặc tiêu thụ điểm Thánh Mệnh để gom kẻ địch lại và phát nổ bộc phá trừng phạt.",
                         ResourceLocation.fromNamespaceAndPath("complextalents",
                                 "textures/skill/highpriest/seraphic_echo.png"))
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "seraphic_echo"))

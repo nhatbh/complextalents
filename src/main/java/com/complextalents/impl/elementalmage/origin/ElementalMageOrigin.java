@@ -27,20 +27,20 @@ public class ElementalMageOrigin {
      */
     public static void register() {
         OriginBuilder.create("complextalents", "elemental_mage")
-                .displayName("Elemental Mage")
+                .displayName("Nguyên Tố Sư")
                 .description(Component.literal(
-                        "Chuyên gia combo phép thuật. Kích hoạt các phản ứng nguyên tố khác nhau để tích lũy tối đa 3 Prismatic Echoes. Dùng Harmonic Convergence tiêu hao Echoes để dồn sát thương cực đại (lên tới 1.5x sát thương phép trong 10s)."))
+                        "Bậc thầy làm chủ các nguyên tố tự nhiên. Kích hoạt chuỗi phản ứng nguyên tố giúp tăng từ 25% đến 130% sát thương phản ứng. Tích tụ đến 3 Dấu Ấn Nguyên Tố từ các phản ứng khác loại để bộc phát trạng thái Hội Tụ gia tăng 1.15 đến 1.5 lần sát thương phép, tăng đến 60% tỷ lệ bạo kích và 100% sát thương bạo kích trong 10 giây."))
 
                 .maxLevel(5)
                 .baseStat(StatType.AP, 3)
                 .baseStat(StatType.MAX_MANA, 6)
                 .baseStat(StatType.HEAL_AND_SHIELD, -6)
-                .scaledStat("reaction_damage_bonus", "Reaction Damage Bonus", REACTION_DAMAGE_BONUS)
-                .passiveSkill("Prismatic Harmony",
-                        "Kích hoạt các phản ứng nguyên tố khác loại để tích lũy tối đa 3 Prismatic Echoes (không tự biến mất). Tăng mạnh sát thương của mọi Phản ứng Nguyên tố (+25% -> +130%).")
+                .scaledStat("reaction_damage_bonus", "ST Phản Ứng (%)", REACTION_DAMAGE_BONUS)
+                .passiveSkill("Hài Hoà",
+                        "Kích hoạt các phản ứng nguyên tố khác loại để tích tụ tối đa 3 Dấu Ấn Nguyên Tố tồn tại vĩnh viễn và gia tăng từ 25% đến 130% sát thương cho mọi phản ứng nguyên tố.")
 
-                .activeSkill("Harmonic Convergence",
-                        "Tiêu hao Prismatic Echoes để gia tăng sát thương phép (lên tới 1.5x), tăng Tỷ lệ & Sát thương Bạo kích, và khiến mọi phép phản ứng trực tiếp với nguyên tố kích hoạt gần nhất.",
+                .activeSkill("Hội Tụ",
+                        "Bộc phát Dấu Ấn Nguyên Tố tích tụ để tăng từ 1.15 đến 1.5 lần sát thương phép theo số Dấu Ấn, tăng 30% đến 60% tỷ lệ bạo kích và đến 100% sát thương bạo kích phép trong 10 giây.",
                         null)
 
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "harmonic_convergence"))

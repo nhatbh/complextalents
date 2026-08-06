@@ -30,8 +30,8 @@ public class FaeSurgeSkill {
     public static void register() {
         SkillBuilder.create("complextalents", "fae_surge")
                 .nature(SkillNature.ACTIVE)
-                .displayName("Fae Surge & Pixie Mark")
-                .description("Tap: Unleash Fae Surge (Speed, Stat Speed, Shield for Host & Pixie Mark on enemies). Hold: Attach, Detach, or Swap target Host.")
+                .displayName("Bộc Phát Tiên Khí & Dấu Ấn Tiên Linh")
+                .description("Nhấn để tạo lá chắn và tăng tốc cho đồng minh, đồng thời khắc dấu ấn nổ sát thương phép lên kẻ địch. Nhấn giữ để nhập thể, hủy nhập thể hoặc chuyển đổi mục tiêu bảo vệ.")
                 .targeting(TargetType.POSITION)
                 .allowSelfTarget(true)
                 .maxRange(32.0)
@@ -39,10 +39,10 @@ public class FaeSurgeSkill {
                 .maxChannelTime(1.0)
                 .scaledCooldown(new double[] { 0.5, 0.5, 0.5, 0.5, 0.5 })
                 .setMaxLevel(5)
-                .scaledStat("speedBuff", new double[] { 0.15, 0.20, 0.25, 0.30, 0.40 })
-                .scaledStat("statSpeedBuff", new double[] { 0.15, 0.20, 0.25, 0.35, 0.50 })
-                .scaledStat("baseShield", new double[] { 100, 150, 200, 260, 350 })
-                .scaledStat("baseDetonationDmg", new double[] { 40, 60, 80, 110, 150 })
+                .scaledStat("speedBuff", "Tăng Tốc Ký Chủ (%)", new double[] { 0.15, 0.20, 0.25, 0.30, 0.40 })
+                .scaledStat("statSpeedBuff", "Tốc Thi Phép (%)", new double[] { 0.15, 0.20, 0.25, 0.35, 0.50 })
+                .scaledStat("baseShield", "Lá Chắn Tiên Khí", new double[] { 100, 150, 200, 260, 350 })
+                .scaledStat("baseDetonationDmg", "ST Bộc Phát Dấu Ấn", new double[] { 40, 60, 80, 110, 150 })
                 .onActive((context, rawPlayer) -> {
                     ServerPlayer player = (ServerPlayer) rawPlayer;
                     PixieData pixieData = PixieDataManager.get(player);

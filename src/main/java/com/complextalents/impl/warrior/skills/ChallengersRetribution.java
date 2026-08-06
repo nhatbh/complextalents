@@ -104,18 +104,18 @@ public class ChallengersRetribution {
 
     public static void register() {
         SkillBuilder.create(ID)
-                .displayName("Challenger's Retribution")
+                .displayName("Khiêu Chiến & Phản Trảm")
                 .description(
-                        "Vào thế đỡ khiên khiêu khích kẻ địch lân cận 5-10 khối, nhận 100% KB Resistance (kháng đẩy lùi tuyệt đối) và hấp thụ sát thương nhận vào. Nhả phím để phản lại 50%-160% sát thương đã hấp thụ thành đòn đánh AoE.")
+                        "Giơ khiên hấp thụ sát thương và khiêu khích kẻ địch xung quanh, sau đó nhả khiên để phản lại sát thương diện rộng bằng 100% đến 200% lượng sát thương đã hấp thụ.")
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/warrior/challengers_retribution.png"))
                 .nature(SkillNature.CHARGE)
                 .setMaxLevel(5)
                 .maxChannelTime(5.0) // Maximum 5 second charge
                 .scaledCooldown(new double[] { 45.0, 40.0, 35.0, 30.0, 30.0 })
-                .scaledStat("tauntRange", new double[] { 5, 6, 7, 8, 10 })
-                .scaledStat("baseHp", new double[] { 25.0, 35.0, 45.0, 55.0, 65.0 })
-                .scaledStat("reflectPercent", new double[] { 0.5, 0.75, 1.0, 1.25, 1.6 })
+                .scaledStat("tauntRange", "Tầm Khiêu Khích (Khối)", new double[] { 5, 6, 7, 8, 10 })
+                .scaledStat("baseHp", "Máu Khiên Cơ Bản", new double[] { 25.0, 35.0, 45.0, 55.0, 65.0 })
+                .scaledStat("reflectPercent", "Tỉ Lệ Phản ST (%)", new double[] { 0.5, 0.75, 1.0, 1.25, 1.6 })
                 .onActive(ChallengersRetribution::startCharge)
                 .onRelease(ChallengersRetribution::releaseCharge)
                 .register();

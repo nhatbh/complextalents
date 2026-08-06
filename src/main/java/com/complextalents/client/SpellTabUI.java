@@ -93,6 +93,15 @@ public class SpellTabUI {
                 .build();
         buttons.add(sortBtn);
 
+        // Build Inscription Table icon button to open Iron's Spell Inscription Table menu directly
+        Button inscriptionBtn = Button.builder(Component.empty(),
+                (btn) -> com.complextalents.network.PacketHandler.sendToServer(new com.complextalents.network.C2SOpenInscriptionTablePacket()))
+                .pos(xOffset + 445, yOffset + 9)
+                .size(20, 20)
+                .tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal("Open Inscription Table")))
+                .build();
+        buttons.add(inscriptionBtn);
+
         // Build filter buttons and spell buttons
         List<SpellTierEntry> filtered = getFilteredSpells();
         this.totalPages = (filtered.size() + SPELLS_PER_PAGE - 1) / SPELLS_PER_PAGE;
@@ -205,6 +214,13 @@ public class SpellTabUI {
     }
 
     public void renderLabels(GuiGraphics guiGraphics, net.minecraft.client.gui.Font font, int xOffset, int yOffset, int mouseX, int mouseY) {
+        // Render Inscription Table icon on top of button
+        net.minecraft.world.item.Item inscriptionTableItem = net.minecraftforge.registries.ForgeRegistries.ITEMS
+                .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "inscription_table"));
+        if (inscriptionTableItem != null && inscriptionTableItem != net.minecraft.world.item.Items.AIR) {
+            guiGraphics.renderItem(new net.minecraft.world.item.ItemStack(inscriptionTableItem), xOffset + 447, yOffset + 11);
+        }
+
         List<SpellTierEntry> filtered = getFilteredSpells();
 
         int xPos = xOffset + 10;

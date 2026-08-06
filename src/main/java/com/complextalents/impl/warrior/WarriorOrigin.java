@@ -20,29 +20,29 @@ public class WarriorOrigin {
 
         // Build and register Warrior origin
         OriginBuilder.create(ID)
-                .displayName("Warrior")
+                .displayName("Đấu Sĩ")
                 .description(
-                        "Đấu sĩ tuyến đầu tích điểm Style (0-1000) từ đòn đánh. Giảm 40%-60% sát thương nhận vào và tăng sát thương theo rank Style. Đạt SSS-Rank (950+) nhận True Hit Immunity; khi nhận sát thương chí mạng sẽ kích hoạt Cheat Death tiêu thụ Style về 250 điểm.")
+                        "Đấu sĩ tuyến đầu tích lũy từ 0 đến 1000 điểm Đấu Khí qua đòn đánh. Giảm 40% đến 60% sát thương nhận vào và tăng đến 12% sát thương theo cấp Đấu Khí. Khi Đấu Khí đạt 950 điểm trở lên sẽ trở nên không thể cản phá, khi nhận sát thương tử thương sẽ tiêu thụ Đấu Khí về 250 điểm để thoát chết.")
                 .resourceType(styleType)
                 .maxLevel(5)
                 .baseStat(StatType.PERCENT_AD, 4)
                 .baseStat(StatType.MAX_HP, 2)
                 .baseStat(StatType.HEAL_AND_SHIELD, -6)
                 // Passive Skill: Vanguard's Momentum - Damage Scaling
-                .scaledStat("momentumDamage_D", new double[] { 0.60, 0.60, 0.60, 0.60, 0.60 })
-                .scaledStat("momentumDamage_C", new double[] { 0.80, 0.80, 0.80, 0.80, 0.80 })
-                .scaledStat("momentumDamage_B", new double[] { 0.95, 0.95, 0.95, 0.95, 0.95 })
-                .scaledStat("momentumDamage_A", new double[] { 1.00, 1.01, 1.02, 1.025, 1.03 })
-                .scaledStat("momentumDamage_S", new double[] { 1.02, 1.03, 1.035, 1.04, 1.05 })
-                .scaledStat("momentumDamage_SS", new double[] { 1.04, 1.05, 1.06, 1.07, 1.08 })
-                .scaledStat("momentumDamage_SSS", new double[] { 1.05, 1.07, 1.09, 1.10, 1.12 })
+                .scaledStat("momentumDamage_D", "ST Rank D", new double[] { 0.60, 0.60, 0.60, 0.60, 0.60 })
+                .scaledStat("momentumDamage_C", "ST Rank C", new double[] { 0.80, 0.80, 0.80, 0.80, 0.80 })
+                .scaledStat("momentumDamage_B", "ST Rank B", new double[] { 0.95, 0.95, 0.95, 0.95, 0.95 })
+                .scaledStat("momentumDamage_A", "ST Rank A", new double[] { 1.00, 1.01, 1.02, 1.025, 1.03 })
+                .scaledStat("momentumDamage_S", "ST Rank S", new double[] { 1.02, 1.03, 1.035, 1.04, 1.05 })
+                .scaledStat("momentumDamage_SS", "ST Rank SS", new double[] { 1.04, 1.05, 1.06, 1.07, 1.08 })
+                .scaledStat("momentumDamage_SSS", "ST Rank SSS", new double[] { 1.05, 1.07, 1.09, 1.10, 1.12 })
                 // Vanguard's Momentum - Max Damage Reduction per origin level (SSS Rank max DR)
-                .scaledStat("maxDamageReduction", new double[] { 0.40, 0.45, 0.50, 0.55, 0.60 })
+                .scaledStat("maxDamageReduction", "Giảm ST Max (%)", new double[] { 0.40, 0.45, 0.50, 0.55, 0.60 })
 
-                .passiveSkill("Vanguard's Momentum",
-                        "Tấn công liên tục để tích điểm Style, tăng sát thương và giảm sát thương gánh chịu. Ở cấp SSS nhận True Hit Immunity và khả năng vỡ Style thoát chết (Cheat Death).")
-                .activeSkill("Challenger's Retribution",
-                        "Đỡ khiên hấp thụ sát thương, khiêu khích kẻ địch lân cận và nhả phím (hoặc khi vỡ khiên) để phản lại sát thương diện rộng.",
+                .passiveSkill("Nhịp Độ Tiên Phong",
+                        "Tấn công liên tục để tích lũy Đấu Khí, giúp giảm 40% đến 60% sát thương gánh chịu và tăng đến 12% sát thương gây ra. Khi Đấu Khí đạt cực hạn, nhận trạng thái không thể cản phá và thoát khỏi một đòn tử thương.")
+                .activeSkill("Khiêu Chiến & Phản Trảm",
+                        "Giơ khiên hấp thụ sát thương và khiêu khích kẻ địch xung quanh, sau đó nhả khiên để phản lại sát thương diện rộng bằng 100% đến 200% lượng sát thương đã hấp thụ.",
                         null)
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "challengers_retribution"))
                 // Level defensive scaling (Warrior = Tank/Frontliner controlled curve)

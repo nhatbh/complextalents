@@ -46,33 +46,33 @@ public class DarkMageOrigin {
 
     public static void register() {
         OriginBuilder.create("complextalents", "dark_mage")
-                .displayName("Dark Mage")
+                .displayName("Hắc Pháp Sư")
                 .description(Component.literal(
-                        "Pháp sư thao túng Hắc Thuật không tiêu tốn Mana mà tích tụ Entropy. Thi triển phép thuật thường làm tăng Entropy, phép Máu dùng Máu để giải tỏa Entropy. Khi Entropy vượt vạch đỏ, dùng phép Eldritch sẽ bị Chiếm Hữu (tăng mạnh Chí Mạng Phép nhưng chỉ dùng được phép Eldritch). Dùng phép Eldritch quá sớm sẽ Tẩu Hoả Nhập Ma, gây sát thương lên bản thân và bị Câm Lặng."))
+                        "Pháp sư bóng tối tích tụ Hắc Khí từ 0 đến 100 điểm thay vì tiêu hao Năng Lượng. Thi triển phép thuật tích 10 đến 20 Hắc Khí, phép Máu dùng 15% đến 25% Máu hiện tại để xả 20 đến 40 Hắc Khí. Khi Hắc Khí vượt ngưỡng 85% xuống 65%, thi triển Cổ Thuật sẽ giáng 1.5 đến 2.5 lần sát thương bộc phát nhưng nếu nôn nóng thi triển sớm sẽ chịu 5% đến 25% sát thương tự hại và bị câm lặng trong 2 đến 4 giây."))
                 .maxLevel(5)
                 .baseStat(StatType.AP, 7)
                 .baseStat(StatType.HEAL_AND_SHIELD, -6)
                 // Scaling definitions
-                .scaledStat("evo_shield_poise", "Evocation Shield/Poise Bonus", EVOCATION_SHIELD_POISE_BONUS)
-                .scaledStat("evo_entropy_gen", "Evocation Entropy Gen", EVOCATION_ENTROPY_GEN)
-                .scaledStat("ender_duration", "Void Strike Duration", VOID_STRIKE_DURATION)
-                .scaledStat("ender_flank_mult", "Void Strike Flank/Downed Mult", ENDER_FLANK_DOWNED_MULT)
-                .scaledStat("blood_flush", "Blood Entropy Flush", BLOOD_ENTROPY_FLUSH)
-                .scaledStat("blood_lifesteal_mult", "Blood Downed Lifesteal Mult", BLOOD_DOWNED_LIFESTEAL_MULT)
-                .scaledStat("blood_hp_cost", "Blood HP Cost (% Current)", BLOOD_HP_COST_PCT)
-                .scaledStat("eldritch_threshold", "Eldritch Threshold (%)", ELDRITCH_REQUIRED_THRESHOLD)
-                .scaledStat("eldritch_nuke_mult", "Eldritch Nuke Mult", ELDRITCH_MAX_NUKE_MULT)
-                .scaledStat("eldritch_backfire_hp", "Eldritch Backfire HP (% Max)", ELDRITCH_BACKFIRE_SELF_DMG)
-                .scaledStat("eldritch_silence_sec", "Eldritch Silence (s)", ELDRITCH_BACKFIRE_SILENCE_SEC)
+                .scaledStat("evo_shield_poise", "Lá Chắn/Poise", EVOCATION_SHIELD_POISE_BONUS)
+                .scaledStat("evo_entropy_gen", "Tích Hắc Khí", EVOCATION_ENTROPY_GEN)
+                .scaledStat("ender_duration", "Thời Gian Hư Không (s)", VOID_STRIKE_DURATION)
+                .scaledStat("ender_flank_mult", "ST Đánh Lén Hư Không", ENDER_FLANK_DOWNED_MULT)
+                .scaledStat("blood_flush", "Xả Hắc Khí", BLOOD_ENTROPY_FLUSH)
+                .scaledStat("blood_lifesteal_mult", "Hút Máu Phép Máu", BLOOD_DOWNED_LIFESTEAL_MULT)
+                .scaledStat("blood_hp_cost", "Tiêu Máu (%)", BLOOD_HP_COST_PCT)
+                .scaledStat("eldritch_threshold", "Ngưỡng Cổ Thuật (%)", ELDRITCH_REQUIRED_THRESHOLD)
+                .scaledStat("eldritch_nuke_mult", "ST Bộc Phát Cổ Thuật", ELDRITCH_MAX_NUKE_MULT)
+                .scaledStat("eldritch_backfire_hp", "ST Tự Harm (%)", ELDRITCH_BACKFIRE_SELF_DMG)
+                .scaledStat("eldritch_silence_sec", "Câm Lặng Tẩu Hỏa (s)", ELDRITCH_BACKFIRE_SILENCE_SEC)
 
                 // Passive Stacks
                 .passiveStack("entropy", PassiveStackDef.create("entropy")
                         .maxStacks(100).displayName("Arcane Entropy").build())
 
                 .passiveSkill("Hắc Thuật & Entropy",
-                        "Phép thuật thường làm tăng Entropy, phép Máu dùng Máu để giảm Entropy. Entropy quyết định sát thương phép (75% ở 0 điểm -> 130% ở 100 điểm). Khi Entropy vượt vạch đỏ, dùng phép Eldritch sẽ bị Linh Hồn Nhập. Dùng phép Eldritch quá sớm sẽ bị Hắc Thuật Quật Khấu.")
+                        "Thi triển phép thuật tích tụ Hắc Khí từ 0 đến 100 điểm và dùng phép Máu tiêu hao 15% đến 25% Máu hiện tại để giải tỏa 20 đến 40 Hắc Khí. Khi Hắc Khí vượt ngưỡng 85% xuống 65%, phép Cổ Thuật sẽ gây 1.5 đến 2.5 lần sát thương bộc phát nhưng nếu thi triển sớm sẽ bị Tẩu Hỏa Nhập Ma nhận sát thương tự hại và câm lặng.")
                 .activeSkill("Hư Không Hoán Chuyển",
-                        "Xóa sạch toàn bộ thanh Entropy tích tụ để tạo Lá Chắn Hư Không bảo vệ bản thân và lập tức dịch chuyển lùi về phía sau.",
+                        "Tiêu hao toàn bộ Hắc Khí tích tụ để lập tức dịch chuyển lùi về phía sau và tạo lá chắn bảo vệ bằng 1.5 điểm cho mỗi điểm Hắc Khí bị tiêu hao.",
                         ResourceLocation.fromNamespaceAndPath("complextalents",
                                 "textures/skill/darkmage/aspectofthewolf.png"))
                 .activeSkillId(VoidReversalSkill.ID)

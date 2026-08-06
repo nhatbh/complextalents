@@ -28,26 +28,26 @@ public class AssassinOrigin {
 
     public static void register() {
         OriginBuilder.create("complextalents", "assassin")
-                .displayName("Assassin")
+                .displayName("Sát Thủ")
                 .description(net.minecraft.network.chat.Component.literal(
-                        "Sát thủ tàng hình dồn sát thương. Đánh lén từ phía sau lưng tăng 30%-80% sát thương mục tiêu nhận vào từ cả đội trong 8-16s. Tấn công từ trạng thái Stealth giúp tăng 30%-100% Move Speed để rút lui."))
+                        "Sát thủ tàng hình dồn sát thương. Đánh lén từ phía sau lưng giúp cả đội gây thêm 30% đến 80% sát thương lên mục tiêu trong 8 đến 16 giây. Tấn công từ trạng thái tàng hình giúp tăng 30% đến 100% tốc độ di chuyển trong 1.5 đến 2.5 giây để rút lui."))
                 .maxLevel(5)
                 .baseStat(StatType.FLAT_AD, 4)
                 .baseStat(StatType.LUCK_CRIT, 10)
                 .baseStat(StatType.HEAL_AND_SHIELD, -6)
                 .renderer(new AssassinRenderer())
                 // Passive: Expose Weakness
-                .scaledStat("exposeDamageAmp", new double[] { 0.30, 0.40, 0.50, 0.60, 0.80 })
-                .scaledStat("exposeDuration", new double[] { 8.0, 10.0, 12.0, 14.0, 16.0 })
-                .scaledStat("exposeCooldown", new double[] { 45.0, 40.0, 35.0, 30.0, 25.0 })
+                .scaledStat("exposeDamageAmp", "Tăng ST Đánh Lén (%)", new double[] { 0.30, 0.40, 0.50, 0.60, 0.80 })
+                .scaledStat("exposeDuration", "Thời Gian Vạch Trần (s)", new double[] { 8.0, 10.0, 12.0, 14.0, 16.0 })
+                .scaledStat("exposeCooldown", "Hồi Chiêu Vạch Trần (s)", new double[] { 45.0, 40.0, 35.0, 30.0, 25.0 })
 
                 // Passive: The Disengage
-                .scaledStat("disengageMoveSpeed", new double[] { 0.30, 0.45, 0.60, 0.75, 1.00 })
-                .scaledStat("disengageDuration", new double[] { 1.5, 1.5, 2.0, 2.0, 2.5 })
-                .passiveSkill("Expose Weakness", "Đánh cận chiến từ phía sau lưng giúp cả đội gây thêm 30%-80% sát thương lên mục tiêu.")
-                .passiveSkill("The Disengage", "Tăng mạnh Move Speed để rút lui sau khi tấn công từ trạng thái tàng hình.")
-                .activeSkill("Shadow Walk",
-                        "Vào trạng thái tàng hình, tăng Move Speed và khiến đòn đánh tiếp theo gây thêm sát thương từ phía sau lưng.",
+                .scaledStat("disengageMoveSpeed", "Tốc Độ Rút Lực (%)", new double[] { 0.30, 0.45, 0.60, 0.75, 1.00 })
+                .scaledStat("disengageDuration", "Thời Gian Rút Lực (s)", new double[] { 1.5, 1.5, 2.0, 2.0, 2.5 })
+                .passiveSkill("Vạch Trần Điểm Yếu", "Đánh cận chiến từ phía sau lưng giúp toàn đội gây thêm 30% đến 80% sát thương lên mục tiêu trong 8 đến 16 giây.")
+                .passiveSkill("Né Tránh Rút Lực", "Tăng 30% đến 100% tốc độ di chuyển trong 1.5 đến 2.5 giây sau khi tấn công từ trạng thái tàng hình.")
+                .activeSkill("Dạ Hành",
+                        "Tiến vào trạng thái tàng hình cho tới khi tấn công hoặc bị phát hiện, tăng tốc độ di chuyển và khiến đòn đánh tiếp theo từ phía sau lưng gây thêm sát thương.",
                         null)
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "shadow_walk"))
                 // Level defensive scaling (Assassin = Agile Flanker controlled curve)

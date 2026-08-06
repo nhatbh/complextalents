@@ -408,13 +408,12 @@ public class OriginManager {
      */
     public static int getCostForNextLevel(int currentLevel) {
         return switch (currentLevel) {
-            case 0 -> 5; // Initial selection is usually free or handled elsewhere
-            case 1 -> 10;
-            case 2 -> 15;
-            case 3 -> 20;
-            case 4 -> 25;
-            case 5 -> 30;
-            default -> 30;
+            case 0 -> 2;
+            case 1 -> 5;
+            case 2 -> 8;
+            case 3 -> 11;
+            case 4 -> 15;
+            default -> 15;
         };
     }
 
@@ -426,13 +425,12 @@ public class OriginManager {
      */
     public static int getSkillCostForNextLevel(int currentLevel) {
         return switch (currentLevel) {
-            case 0 -> 5;
-            case 1 -> 10;
-            case 2 -> 15;
-            case 3 -> 20;
-            case 4 -> 25;
-            case 5 -> 30;
-            default -> 30;
+            case 0 -> 2;
+            case 1 -> 5;
+            case 2 -> 8;
+            case 3 -> 11;
+            case 4 -> 15;
+            default -> 15;
         };
     }
 
@@ -440,7 +438,7 @@ public class OriginManager {
         if (originId == null)
             return false;
         String path = originId.getPath();
-        return "elemental_mage".equals(path) || "dark_mage".equals(path) || "high_priest".equals(path);
+        return "elemental_mage".equals(path) || "dark_mage".equals(path) || "high_priest".equals(path) || "spellblade".equals(path);
     }
 
     private static void giveStarterSpellBook(ServerPlayer player) {

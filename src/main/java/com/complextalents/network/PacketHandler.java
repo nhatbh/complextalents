@@ -355,6 +355,12 @@ public class PacketHandler {
                                 com.complextalents.spellfx.network.S2CSpellBackSplatterPacket::decode,
                                 com.complextalents.spellfx.network.S2CSpellBackSplatterPacket::handle);
 
+                INSTANCE.registerMessage(packetId++,
+                                C2SOpenInscriptionTablePacket.class,
+                                C2SOpenInscriptionTablePacket::encode,
+                                C2SOpenInscriptionTablePacket::decode,
+                                C2SOpenInscriptionTablePacket::handle);
+
                 TalentsMod.LOGGER.info("Network packets registered");
         }
 

@@ -23,12 +23,12 @@ public class SpellbladeOverchargeSkill {
                 .nature(SkillNature.ACTIVE)
                 .displayName("Quá Tải")
                 .description(
-                        "Bộc phát trạng thái Quá Tải trong 30s: Chuyển hóa Sức Mạnh Ma Thuật (AP) thành Sức Mạnh Công Kích (AD). Mỗi phép thuật thi triển sẽ duy trì Cường Hóa Nguyên Tố liên tục trong 6s trên mọi đòn đánh mà không bị mất đi sau 1 lần chém.")
+                        "Bộc phát ma lực trong 30 giây: Cường hóa Sức Mạnh Cận Chiến thêm 15% đến 35% Sức Mạnh Ma Thuật hiện có và duy trì cường hóa nguyên tố liên tục trong 6 giây cho mọi đòn chém sau mỗi lần thi phép.")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/spellblade/spellblade.png"))
                 .scaledCooldown(SpellbladeOrigin.ACTIVE_COOLDOWN)
-                .scaledStat("ap_to_ad_conversion", "AP to AD Conversion (%)", AP_TO_AD_CONVERSION)
+                .scaledStat("ap_to_ad_conversion", "Tỷ Lệ AP->AD (%)", AP_TO_AD_CONVERSION)
                 .setMaxLevel(5)
                 .onActive((context, player) -> {
                     if (!(player instanceof ServerPlayer serverPlayer))

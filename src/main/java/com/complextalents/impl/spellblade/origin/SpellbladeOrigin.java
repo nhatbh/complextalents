@@ -66,18 +66,18 @@ public class SpellbladeOrigin {
 
     public static void register() {
         OriginBuilder.create("complextalents", "spellblade")
-                .displayName("Spellblade")
+                .displayName("Ma Kiếm Sĩ")
                 .description(Component.literal(
-                        "Bậc thầy kết hợp giữa vật lý và pháp thuật. Thi triển phép để yểm ma lực lên vũ khí, biến đòn chém thành đòn bộc phá nguyên tố và hồi Mana trên đòn đánh."))
+                        "Bậc thầy dung hợp ma thuật và kiếm thuật. Mỗi đòn chém giúp hồi lại 1% đến 3% Năng Lượng tối đa. Thi triển phép thuật sẽ yểm ma lực lên lưỡi kiếm, giúp đòn chém kế tiếp bộc phát hiệu ứng nguyên tố tương ứng."))
                 .maxLevel(5)
                 .baseStat(StatType.AP, 2)
                 .baseStat(StatType.FLAT_AD, 2)
                 .baseStat(StatType.HEAL_AND_SHIELD, -6)
-                .scaledStat("base_mana_per_hit", "Base Mana per Hit (% Max)", BASE_MANA_PER_HIT)
+                .scaledStat("base_mana_per_hit", "Hồi Mana/Hit (%)", BASE_MANA_PER_HIT)
                 .passiveSkill("Dệt Năng Lượng",
-                        "Mỗi nhát chém cận chiến giúp hồi lại % Mana tối đa (vũ khí vung càng chậm, Mana hồi càng nhiều). Khi thi triển phép thuật, lưỡi kiếm được nạp Năng Lượng Nguyên Tố, giúp đòn chém kế tiếp bộc phá hiệu ứng nguyên tố tương ứng.")
-                .activeSkill("Ma Kiếm Quá Tải",
-                        "Bộc phát trạng thái Quá Tải trong 30s: Chuyển hóa Sức Mạnh Ma Thuật (AP) thành Sức Mạnh Cận Chiến (AD). Mỗi phép thuật thi triển sẽ duy trì Cường Hóa Nguyên Tố liên tục trong 6s trên mọi đòn đánh.",
+                        "Đòn chém cận chiến giúp hồi 1% đến 3% Năng Lượng tối đa dựa trên tốc độ vung kiếm. Khi thi triển phép thuật, lưỡi kiếm được nạp ma lực để đòn chém kế tiếp bộc phát hiệu ứng nguyên tố tương ứng.")
+                .activeSkill("Quá Tải",
+                        "Bộc phát ma lực trong 30 giây: Cường hóa Sức Mạnh Cận Chiến thêm 15% đến 35% Sức Mạnh Ma Thuật hiện có và duy trì cường hóa nguyên tố liên tục trong 6 giây cho mọi đòn chém sau mỗi lần thi phép.",
                         ResourceLocation.fromNamespaceAndPath("complextalents",
                                 "textures/skill/spellblade/spellblade.png"))
                 .activeSkillId(SpellbladeOverchargeSkill.ID)
