@@ -27,7 +27,7 @@ public enum StatType {
             () -> ForgeRegistries.ATTRIBUTES
                     .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "max_mana"))),
     HEAL_AND_SHIELD("Heal & Shield", 0.10, () -> com.complextalents.registry.ModAttributes.HEAL_AND_SHIELD_POWER.get()),
-    CDR("Cooldown Reduction", 5.0, () -> ForgeRegistries.ATTRIBUTES
+    CDR("Ability Haste", 5.0, () -> ForgeRegistries.ATTRIBUTES
             .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "cooldown_reduction")));
 
     private final String displayName;

@@ -1,12 +1,11 @@
 package com.complextalents.network.elementalmage;
 
+import com.complextalents.elemental.ElementalReaction;
 import com.complextalents.elemental.ElementType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -14,15 +13,17 @@ import java.util.function.Supplier;
  */
 public class ElementalMageSyncPacket {
 
-    private final List<ElementType> echoes;
+    private final int echoCount;
+    private final ElementalReaction lastReaction;
     private final ElementType apexElement;
     private final float lockedHarmonyMultiplier;
     private final float convergenceCritChance;
     private final float convergenceCritDamage;
 
-    public ElementalMageSyncPacket(List<ElementType> echoes, ElementType apexElement,
+    public ElementalMageSyncPacket(int echoCount, ElementalReaction lastReaction, ElementType apexElement,
                                    float lockedHarmonyMultiplier, float critChance, float critDamage) {
-        this.echoes = echoes != null ? echoes : new ArrayList<>();
+        this.echoCount = echoCount;
+        this.lastReaction = lastReaction;
         this.apexElement = apexElement;
         this.lockedHarmonyMultiplier = lockedHarmonyMultiplier;
         this.convergenceCritChance = critChance;
@@ -30,9 +31,11 @@ public class ElementalMageSyncPacket {
     }
 
     public static void encode(ElementalMageSyncPacket msg, FriendlyByteBuf buf) {
-        buf.writeInt(msg.echoes.size());
-        for (ElementType type : msg.echoes) {
-            buf.writeEnum(type);
+        buf.writeInt(msg.echoCount);
+
+        buf.writeBoolean(msg.lastReaction != null);
+        if (msg.lastReaction != null) {
+            buf.writeEnum(msg.lastReaction);
         }
 
         buf.writeBoolean(msg.apexElement != null);
@@ -46,11 +49,10 @@ public class ElementalMageSyncPacket {
     }
 
     public static ElementalMageSyncPacket decode(FriendlyByteBuf buf) {
-        int size = buf.readInt();
-        List<ElementType> decodedEchoes = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            decodedEchoes.add(buf.readEnum(ElementType.class));
-        }
+        int echoCount = buf.readInt();
+
+        boolean hasLastReaction = buf.readBoolean();
+        ElementalReaction lastReaction = hasLastReaction ? buf.readEnum(ElementalReaction.class) : null;
 
         boolean hasApex = buf.readBoolean();
         ElementType apex = hasApex ? buf.readEnum(ElementType.class) : null;
@@ -59,7 +61,7 @@ public class ElementalMageSyncPacket {
         float critChance = buf.readFloat();
         float critDamage = buf.readFloat();
 
-        return new ElementalMageSyncPacket(decodedEchoes, apex, lockedMult, critChance, critDamage);
+        return new ElementalMageSyncPacket(echoCount, lastReaction, apex, lockedMult, critChance, critDamage);
     }
 
     public static void handle(ElementalMageSyncPacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -69,7 +71,8 @@ public class ElementalMageSyncPacket {
             if (player == null) return;
 
             player.getCapability(com.complextalents.impl.elementalmage.ElementalMageDataProvider.ELEMENTAL_DATA).ifPresent(cap -> {
-                cap.setEchoes(msg.echoes);
+                cap.setEchoCount(msg.echoCount);
+                cap.setLastReaction(msg.lastReaction);
                 cap.setApexElement(msg.apexElement);
                 cap.setLockedHarmonyMultiplier(msg.lockedHarmonyMultiplier);
                 cap.setConvergenceCritChance(msg.convergenceCritChance);

@@ -288,6 +288,13 @@ public class PacketHandler {
                                 ElementalMageSyncPacket::decode,
                                 ElementalMageSyncPacket::handle);
 
+                // Spellblade data sync packet
+                INSTANCE.registerMessage(packetId++,
+                                com.complextalents.network.spellblade.SpellbladeDataSyncPacket.class,
+                                com.complextalents.network.spellblade.SpellbladeDataSyncPacket::encode,
+                                com.complextalents.network.spellblade.SpellbladeDataSyncPacket::decode,
+                                com.complextalents.network.spellblade.SpellbladeDataSyncPacket::handle);
+
                 INSTANCE.registerMessage(packetId++,
                                 LevelDataSyncPacket.class,
                                 LevelDataSyncPacket::encode,
@@ -335,6 +342,18 @@ public class PacketHandler {
                                 C2SLearnSpellPromptPacket::encode,
                                 C2SLearnSpellPromptPacket::new,
                                 C2SLearnSpellPromptPacket::handle);
+
+                INSTANCE.registerMessage(packetId++,
+                                com.complextalents.spellfx.network.S2CSpellFXPacket.class,
+                                com.complextalents.spellfx.network.S2CSpellFXPacket::encode,
+                                com.complextalents.spellfx.network.S2CSpellFXPacket::decode,
+                                com.complextalents.spellfx.network.S2CSpellFXPacket::handle);
+
+                INSTANCE.registerMessage(packetId++,
+                                com.complextalents.spellfx.network.S2CSpellBackSplatterPacket.class,
+                                com.complextalents.spellfx.network.S2CSpellBackSplatterPacket::encode,
+                                com.complextalents.spellfx.network.S2CSpellBackSplatterPacket::decode,
+                                com.complextalents.spellfx.network.S2CSpellBackSplatterPacket::handle);
 
                 TalentsMod.LOGGER.info("Network packets registered");
         }

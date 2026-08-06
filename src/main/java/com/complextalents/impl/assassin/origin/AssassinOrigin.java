@@ -33,6 +33,7 @@ public class AssassinOrigin {
                         "Sát thủ tàng hình dồn sát thương. Đánh lén từ phía sau lưng tăng 30%-80% sát thương mục tiêu nhận vào từ cả đội trong 8-16s. Tấn công từ trạng thái Stealth giúp tăng 30%-100% Move Speed để rút lui."))
                 .maxLevel(5)
                 .baseStat(StatType.FLAT_AD, 4)
+                .baseStat(StatType.LUCK_CRIT, 10)
                 .baseStat(StatType.HEAL_AND_SHIELD, -6)
                 .renderer(new AssassinRenderer())
                 // Passive: Expose Weakness

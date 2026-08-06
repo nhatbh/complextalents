@@ -35,13 +35,13 @@ public class WarriorOriginHandler {
     private static final long COMBAT_TIMEOUT_MS = 5000; // 5 seconds of no activity
 
     public enum StyleRank {
-        D("D", "Dull", 0, 99, 1.0, 5, 0.7, 0x99888888), // Gray (5 pts/sec decay)
-        C("C", "Cool", 100, 249, 1.0, 10, 1.0, 0x99AAAAAA), // Light Gray (10 pts/sec decay)
-        B("B", "Bravo", 250, 449, 0.9, 5, 1.1, 0x9944DD44), // Green
-        A("A", "Awesome", 450, 699, 0.75, 15, 1.2, 0x994444FF), // Blue
-        S("S", "Stylish!", 700, 849, 0.5, 30, 1.3, 0x99AA44FF), // Purple
-        SS("SS", "Spectacular!", 850, 949, 0.25, 60, 1.4, 0x99FF8844), // Orange
-        SSS("SSS", "Smokin' Sexy Style!!", 950, 1000, 0.1, 100, 1.5, 0x99FF4444); // Red
+        D("D", "Dull", 0, 99, 1.0, 5, 0.60, 0x99888888), // Gray (5 pts/sec decay)
+        C("C", "Cool", 100, 249, 1.0, 10, 0.80, 0x99AAAAAA), // Light Gray (10 pts/sec decay)
+        B("B", "Bravo", 250, 449, 0.9, 5, 0.95, 0x9944DD44), // Green
+        A("A", "Awesome", 450, 699, 0.75, 15, 1.01, 0x994444FF), // Blue
+        S("S", "Stylish!", 700, 849, 0.5, 30, 1.03, 0x99AA44FF), // Purple
+        SS("SS", "Spectacular!", 850, 949, 0.25, 60, 1.06, 0x99FF8844), // Orange
+        SSS("SSS", "Smokin' Sexy Style!!", 950, 1000, 0.1, 100, 1.10, 0x99FF4444); // Red
 
         public final String name;
         public final String fullName;
@@ -85,6 +85,9 @@ public class WarriorOriginHandler {
     public static void onAttack(AttackEntityEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             if (isWarrior(player)) {
+                if (event.getTarget() instanceof net.minecraft.world.entity.player.Player) {
+                    return; // Do not gain style points or trigger combat on hitting players
+                }
                 markCombat(player);
                 addStylePoints(player, 10 + RANDOM.nextInt(10)); // Base gain on hit
             }

@@ -33,6 +33,19 @@ import java.util.Set;
 public class SpellMasteryManager {
 
     /**
+     * Registers a learned spell into Iron's Spellbooks SyncedSpellData if it requires learning (e.g. Eldritch spells).
+     */
+    public static void onSpellLearned(ServerPlayer player, AbstractSpell spell) {
+        if (player == null || spell == null) return;
+        if (spell.getSchoolType() != null && "eldritch".equalsIgnoreCase(spell.getSchoolType().getId().getPath())) {
+            io.redspace.ironsspellbooks.api.magic.MagicData magicData = io.redspace.ironsspellbooks.api.magic.MagicData.getPlayerMagicData(player);
+            if (magicData != null && magicData.getSyncedData() != null) {
+                magicData.getSyncedData().learnSpell(spell);
+            }
+        }
+    }
+
+    /**
      * Returns the lowest level of a spell for a given rarity tier.
      */
     public static int getMinLevelForRarity(AbstractSpell spell, SpellRarity rarity) {
@@ -81,9 +94,11 @@ public class SpellMasteryManager {
         if (spell != null && spell.getSchoolType() != null && "eldritch".equalsIgnoreCase(spell.getSchoolType().getId().getPath())) {
             ResourceLocation activeOrigin = player.getCapability(OriginDataProvider.ORIGIN_DATA)
                     .map(data -> data.getActiveOrigin()).orElse(null);
-            if (!ResourceLocation.fromNamespaceAndPath("complextalents", "dark_mage").equals(activeOrigin)) {
+            boolean isDarkMage = ResourceLocation.fromNamespaceAndPath("complextalents", "dark_mage").equals(activeOrigin);
+            boolean isSpellblade = ResourceLocation.fromNamespaceAndPath("complextalents", "spellblade").equals(activeOrigin);
+            if (!isDarkMage && !isSpellblade) {
                 return Optional.of(new CastResult(CastResult.Type.FAILURE,
-                        Component.literal("Only Dark Mages can learn and cast Eldritch spells!").withStyle(ChatFormatting.RED)));
+                        Component.literal("Only Dark Mages and Spellblades can learn and cast Eldritch spells!").withStyle(ChatFormatting.RED)));
             }
         }
 

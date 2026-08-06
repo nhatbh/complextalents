@@ -173,7 +173,8 @@ public class HighPriestOrigin {
         // Check if Grace is on (binary state)
         if (PassiveManager.getPassiveStacks(player, "grace") > 0) {
             // Calculate healing potency bonus
-            double bonusMultiplier = OriginManager.getOriginStat(player, "healingPotency");
+            double healShieldPower = player.getAttributeValue(com.complextalents.registry.ModAttributes.HEAL_AND_SHIELD_POWER.get());
+            double bonusMultiplier = OriginManager.getOriginStat(player, "healingPotency") * healShieldPower;
             float originalHealAmount = event.getHealAmount();
             float bonusHeal = originalHealAmount * (float) bonusMultiplier;
             float totalHeal = originalHealAmount + bonusHeal;
@@ -226,7 +227,8 @@ public class HighPriestOrigin {
         int absorptionDuration = (int) OriginManager.getOriginStat(player, "absorptionDuration");
 
         // Calculate absorption health to grant
-        float absorptionHealthToGrant = (float) (overheal * conversionRate);
+        double healShieldPower = player.getAttributeValue(com.complextalents.registry.ModAttributes.HEAL_AND_SHIELD_POWER.get());
+        float absorptionHealthToGrant = (float) (overheal * conversionRate * healShieldPower);
 
         if (absorptionHealthToGrant > 0) {
             // Add absorption hearts directly to the target

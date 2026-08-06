@@ -100,6 +100,8 @@ public class FaeSurgeSkill {
                         }
 
                         shieldAmount += (ap * 0.50);
+                        double healShieldPower = player.getAttributeValue(com.complextalents.registry.ModAttributes.HEAL_AND_SHIELD_POWER.get());
+                        shieldAmount *= healShieldPower;
 
                         // Host Buff (Applies ONLY to host)
                         if (pixieData.isAttached() && pixieData.getHostUUID().isPresent()) {

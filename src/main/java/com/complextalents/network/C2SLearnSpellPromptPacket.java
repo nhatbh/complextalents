@@ -72,6 +72,7 @@ public class C2SLearnSpellPromptPacket {
 
                     // Learn spell
                     mastery.learnSpell(spellId, level);
+                    SpellMasteryManager.onSpellLearned(player, spell);
                     mastery.sync();
 
                     // Play level up sound & announce

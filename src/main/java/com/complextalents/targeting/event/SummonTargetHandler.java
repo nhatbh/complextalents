@@ -8,6 +8,7 @@ import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -35,22 +36,40 @@ public class SummonTargetHandler {
     }
 
     /**
-     * Safety Net Handler: Cancels incoming damage if a summon somehow bypassing
-     * target checks attacks a player.
+     * Prevents players from manually left-clicking player-summoned entities.
+     */
+    @SubscribeEvent
+    public static void onAttackEntity(AttackEntityEvent event) {
+        if (event.getTarget() instanceof LivingEntity livingTarget && isSummonedEntity(livingTarget)) {
+            event.setCanceled(true); // Cancels player left-click melee attack
+        }
+    }
+
+    /**
+     * Safety Net Handler: Cancels damage between players and player-summoned entities in both directions.
      */
     @SubscribeEvent
     public static void onLivingAttack(LivingAttackEvent event) {
-        if (event.getEntity() instanceof Player) {
-            Entity attacker = event.getSource().getEntity();
+        LivingEntity victim = event.getEntity();
+        Entity attacker = event.getSource().getEntity();
+
+        // 1. Prevents summons from attacking players
+        if (victim instanceof Player) {
             if (attacker instanceof LivingEntity livingAttacker && isSummonedEntity(livingAttacker)) {
-                event.setCanceled(true); // Block the attack
+                event.setCanceled(true); // Block summon -> player damage
+            }
+        }
+
+        // 2. Prevents players or player-summons from attacking player-summoned mobs
+        if (isSummonedEntity(victim)) {
+            if (attacker instanceof Player || (attacker instanceof LivingEntity livingAttacker && isSummonedEntity(livingAttacker))) {
+                event.setCanceled(true); // Block player/summon -> summon damage
             }
         }
     }
 
     /**
-     * Checks if an entity is owned by a player (via OwnableEntity or persistent NBT
-     * owner UUID).
+     * Checks if an entity is owned by a player (via OwnableEntity or persistent NBT owner UUID).
      * Prevents player-summoned entities from targeting players while allowing
      * hostile mob summons to work normally.
      */
@@ -63,24 +82,39 @@ public class SummonTargetHandler {
             if (ownable.getOwner() instanceof Player) {
                 return true;
             }
-            if (ownable.getOwnerUUID() != null && entity.level().getPlayerByUUID(ownable.getOwnerUUID()) != null) {
-                return true;
+            if (ownable.getOwnerUUID() != null) {
+                if (entity.level().getPlayerByUUID(ownable.getOwnerUUID()) != null) {
+                    return true;
+                }
+                if (entity.getServer() != null && entity.getServer().getPlayerList().getPlayer(ownable.getOwnerUUID()) != null) {
+                    return true;
+                }
             }
         }
 
         // 2. Persistent NBT owner UUID check (covers mods using custom owner NBT keys)
         CompoundTag nbt = entity.getPersistentData();
         if (nbt != null) {
-            String[] ownerKeys = { "Owner", "OwnerUUID", "SummonerUUID", "MasterUUID", "CasterUUID", "OwnerId" };
+            String[] ownerKeys = { 
+                "Owner", "OwnerUUID", "SummonerUUID", "MasterUUID", "CasterUUID", "OwnerId",
+                "casterUUID", "caster_uuid", "summoner_uuid", "owner_uuid"
+            };
             for (String key : ownerKeys) {
                 if (nbt.hasUUID(key)) {
-                    if (entity.level().getPlayerByUUID(nbt.getUUID(key)) != null) {
+                    java.util.UUID uuid = nbt.getUUID(key);
+                    if (entity.level().getPlayerByUUID(uuid) != null) {
+                        return true;
+                    }
+                    if (entity.getServer() != null && entity.getServer().getPlayerList().getPlayer(uuid) != null) {
                         return true;
                     }
                 } else if (nbt.contains(key, CompoundTag.TAG_STRING)) {
                     try {
                         java.util.UUID uuid = java.util.UUID.fromString(nbt.getString(key));
                         if (entity.level().getPlayerByUUID(uuid) != null) {
+                            return true;
+                        }
+                        if (entity.getServer() != null && entity.getServer().getPlayerList().getPlayer(uuid) != null) {
                             return true;
                         }
                     } catch (IllegalArgumentException ignored) {

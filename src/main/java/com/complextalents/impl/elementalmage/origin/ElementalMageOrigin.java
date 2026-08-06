@@ -8,13 +8,10 @@ import com.complextalents.stats.StatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 /**
- * The Elemental Mage Origin - Masters of raw Evocation magic.
- * Scales attributes based on a mathematical framework utilizing the Balance
- * Metric and diminishing returns.
+ * The Elemental Mage Origin - Masters of elemental combo magic.
  */
 @Mod.EventBusSubscriber(modid = TalentsMod.MODID)
 public class ElementalMageOrigin {
@@ -32,18 +29,18 @@ public class ElementalMageOrigin {
         OriginBuilder.create("complextalents", "elemental_mage")
                 .displayName("Elemental Mage")
                 .description(Component.literal(
-                        "Chuyên gia combo phép thuật. Kích hoạt phản ứng để tích lũy tới 6 Prismatic Echoes, tăng tối đa 1.5x sát thương phép. Dùng Harmonic Convergence tiêu hao Echoes để hoàn Mana và dồn sát thương cực đại."))
+                        "Chuyên gia combo phép thuật. Kích hoạt các phản ứng nguyên tố khác nhau để tích lũy tối đa 3 Prismatic Echoes. Dùng Harmonic Convergence tiêu hao Echoes để dồn sát thương cực đại (lên tới 1.5x sát thương phép trong 10s)."))
 
                 .maxLevel(5)
-                .baseStat(StatType.AP, 6)
-                .baseStat(StatType.MAX_MANA, 10)
+                .baseStat(StatType.AP, 3)
+                .baseStat(StatType.MAX_MANA, 6)
                 .baseStat(StatType.HEAL_AND_SHIELD, -6)
                 .scaledStat("reaction_damage_bonus", "Reaction Damage Bonus", REACTION_DAMAGE_BONUS)
                 .passiveSkill("Prismatic Harmony",
-                        "Kích hoạt phản ứng nguyên tố để tích lũy Prismatic Echoes (tăng tối đa 1.5x sát thương). Tăng mạnh sát thương của mọi Phản ứng Nguyên tố (+25% -> +130%).")
+                        "Kích hoạt các phản ứng nguyên tố khác loại để tích lũy tối đa 3 Prismatic Echoes (không tự biến mất). Tăng mạnh sát thương của mọi Phản ứng Nguyên tố (+25% -> +130%).")
 
                 .activeSkill("Harmonic Convergence",
-                        "Tiêu hao Prismatic Echoes để hoàn Mana, gia tăng sát thương và khiến mọi phép phản ứng trực tiếp với nguyên tố vừa dùng.",
+                        "Tiêu hao Prismatic Echoes để gia tăng sát thương phép (lên tới 1.5x), tăng Tỷ lệ & Sát thương Bạo kích, và khiến mọi phép phản ứng trực tiếp với nguyên tố kích hoạt gần nhất.",
                         null)
 
                 .activeSkillId(ResourceLocation.fromNamespaceAndPath("complextalents", "harmonic_convergence"))
@@ -97,35 +94,7 @@ public class ElementalMageOrigin {
     /**
      * Check if a player is an Elemental Mage.
      */
-    public static boolean isElementalMage(net.minecraft.server.level.ServerPlayer player) {
+    public static boolean isElementalMage(ServerPlayer player) {
         return ID.equals(OriginManager.getOriginId(player));
-    }
-
-    /**
-     * Server tick handler:
-     * Decay Prismatic Echoes after 12 seconds (240 ticks) without elemental damage.
-     */
-    @SubscribeEvent
-    public static void onPlayerTick(net.minecraftforge.event.TickEvent.PlayerTickEvent event) {
-        if (event.side.isClient() || event.phase != net.minecraftforge.event.TickEvent.Phase.END)
-            return;
-
-        if (!(event.player instanceof ServerPlayer serverPlayer))
-            return;
-
-        if (!isElementalMage(serverPlayer))
-            return;
-
-        long gameTime = serverPlayer.level().getGameTime();
-
-        // Echo Decay Check (every tick)
-        serverPlayer.getCapability(com.complextalents.impl.elementalmage.ElementalMageDataProvider.ELEMENTAL_DATA)
-                .ifPresent(cap -> {
-                    if (cap.getEchoCount() > 0) {
-                        if (gameTime - cap.getLastDamageTick() >= 240L) { // 12 seconds = 240 ticks
-                            cap.clearEchoes();
-                        }
-                    }
-                });
     }
 }

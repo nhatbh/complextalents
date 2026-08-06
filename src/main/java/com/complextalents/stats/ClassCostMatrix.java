@@ -57,7 +57,9 @@ public class ClassCostMatrix {
      */
     public static double getSchoolSpellMasteryCostMultiplier(ResourceLocation originId, ResourceLocation schoolId) {
         if (schoolId != null && "eldritch".equalsIgnoreCase(schoolId.getPath())) {
-            if (!ResourceLocation.fromNamespaceAndPath("complextalents", "dark_mage").equals(originId)) {
+            boolean isDarkMage = ResourceLocation.fromNamespaceAndPath("complextalents", "dark_mage").equals(originId);
+            boolean isSpellblade = ResourceLocation.fromNamespaceAndPath("complextalents", "spellblade").equals(originId);
+            if (!isDarkMage && !isSpellblade) {
                 return -1.0;
             }
         }

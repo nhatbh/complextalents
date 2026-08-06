@@ -89,6 +89,7 @@ public class SpellScrollLearnHandler {
 
                     // Learn spell tier entry level into capability (Never consumes physical scroll!)
                     mastery.learnSpell(spellId, entryLevel);
+                    SpellMasteryManager.onSpellLearned(serverPlayer, spell);
                     mastery.sync();
 
                     // Play sound & feedback message

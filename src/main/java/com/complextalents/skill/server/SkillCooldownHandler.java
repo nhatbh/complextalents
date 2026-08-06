@@ -200,7 +200,8 @@ public class SkillCooldownHandler {
             skillData.setToggleActive(skillId, true);
             double cooldown = skill.getActiveCooldown(skillLevel);
             if (cooldown > 0) {
-                skillData.setCooldown(skillId, cooldown);
+                double hasteMultiplier = getAbilityHasteCooldownMultiplier(player);
+                skillData.setCooldown(skillId, cooldown * hasteMultiplier);
             }
             player.sendSystemMessage(Component.literal("\u00A7aToggle skill activated"));
             // Consume initial resource cost for toggle-on
@@ -211,10 +212,11 @@ public class SkillCooldownHandler {
             return;
         }
 
-        // For non-toggle skills: apply cooldown
+        // For non-toggle skills: apply cooldown scaled by Ability Haste
         double cooldown = skill.getActiveCooldown(skillLevel);
         if (cooldown > 0) {
-            skillData.setCooldown(skillId, cooldown);
+            double hasteMultiplier = getAbilityHasteCooldownMultiplier(player);
+            skillData.setCooldown(skillId, cooldown * hasteMultiplier);
         }
 
         // Consume resources
@@ -336,5 +338,18 @@ public class SkillCooldownHandler {
                     ResourceLocation id = net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS.getKey(effect.getEffect());
                     return id != null && "basedefensev2".equals(id.getNamespace()) && "downed".equals(id.getPath());
                 });
+    }
+
+    /**
+     * Get active skill cooldown multiplier based on player's Ability Haste / CDR attribute.
+     */
+    private static double getAbilityHasteCooldownMultiplier(ServerPlayer player) {
+        net.minecraft.world.entity.ai.attributes.Attribute attr = net.minecraftforge.registries.ForgeRegistries.ATTRIBUTES
+                .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "cooldown_reduction"));
+        if (attr != null && player.getAttributes().hasAttribute(attr)) {
+            double cdrVal = player.getAttributeValue(attr);
+            return Math.max(0.2, 1.0 - cdrVal);
+        }
+        return 1.0;
     }
 }

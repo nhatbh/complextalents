@@ -1,5 +1,6 @@
 package com.complextalents.impl.elementalmage;
 
+import com.complextalents.elemental.ElementalReaction;
 import com.complextalents.elemental.ElementType;
 import com.complextalents.network.PacketHandler;
 import com.complextalents.network.elementalmage.ElementalMageSyncPacket;
@@ -7,24 +8,21 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Utility class for managing Elemental Mage data & attributes.
  * Acts as a helper wrapper around the IPlayerElementalMageData capability.
  */
 public class ElementalMageData {
 
-    public static List<ElementType> getEchoes(Player player) {
+    public static int getEchoCount(Player player) {
         return player.getCapability(ElementalMageDataProvider.ELEMENTAL_DATA)
-                .map(IPlayerElementalMageData::getEchoes)
-                .orElse(Collections.emptyList());
+                .map(IPlayerElementalMageData::getEchoCount)
+                .orElse(0);
     }
 
-    public static boolean addEcho(Player player, ElementType element) {
+    public static boolean addEcho(Player player, ElementalReaction reaction, ElementType element) {
         return player.getCapability(ElementalMageDataProvider.ELEMENTAL_DATA)
-                .map(cap -> cap.addEcho(element))
+                .map(cap -> cap.addEcho(reaction, element))
                 .orElse(false);
     }
 
@@ -35,7 +33,7 @@ public class ElementalMageData {
     public static float getEffectiveHarmonyMultiplier(Player player) {
         return player.getCapability(ElementalMageDataProvider.ELEMENTAL_DATA)
                 .map(IPlayerElementalMageData::getEffectiveHarmonyMultiplier)
-                .orElse(0.5f);
+                .orElse(1.0f);
     }
 
     /**
@@ -44,7 +42,8 @@ public class ElementalMageData {
     public static void syncToClient(ServerPlayer player) {
         player.getCapability(ElementalMageDataProvider.ELEMENTAL_DATA).ifPresent(cap -> {
             PacketHandler.sendTo(new ElementalMageSyncPacket(
-                    cap.getEchoes(),
+                    cap.getEchoCount(),
+                    cap.getLastReaction(),
                     cap.getApexElement(),
                     cap.getLockedHarmonyMultiplier(),
                     cap.getConvergenceCritChance(),

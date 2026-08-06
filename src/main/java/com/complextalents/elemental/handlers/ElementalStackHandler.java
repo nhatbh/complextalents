@@ -138,7 +138,7 @@ public class ElementalStackHandler {
                         if (executed) {
                             if (playerSource != null && com.complextalents.impl.elementalmage.origin.ElementalMageOrigin.isElementalMage(playerSource)) {
                                 playerSource.getCapability(com.complextalents.impl.elementalmage.ElementalMageDataProvider.ELEMENTAL_DATA)
-                                        .ifPresent(cap -> cap.addEcho(newElement));
+                                        .ifPresent(cap -> cap.addEcho(reaction, newElement));
                             }
 
                             if (strategy.consumesStacks()) {

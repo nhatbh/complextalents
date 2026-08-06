@@ -1,6 +1,7 @@
 package com.complextalents.mixin;
 
 import com.complextalents.registry.ModAttributes;
+import com.complextalents.spellfx.events.SpellPowerPenaltyHandler;
 import com.complextalents.spellmastery.SpellMasteryManager;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
@@ -11,6 +12,9 @@ import io.redspace.ironsspellbooks.api.config.SpellConfigManager;
 import io.redspace.ironsspellbooks.api.config.SpellConfigParameter;
 import io.redspace.ironsspellbooks.spells.evocation.ShieldSpell;
 import io.redspace.ironsspellbooks.spells.holy.*;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -28,11 +32,61 @@ public abstract class AbstractSpellMixin {
     @Shadow protected int baseSpellPower;
     @Shadow protected int spellPowerPerLevel;
 
+    @Inject(method = "getEffectiveCastTime", at = @At("RETURN"), cancellable = true)
+    private void complextalents$dynamicallyIncreaseCastTime(int spellLevel, LivingEntity entity, CallbackInfoReturnable<Integer> cir) {
+        if (entity == null) return;
+        AbstractSpell spell = (AbstractSpell) (Object) this;
+        int originalCastTime = cir.getReturnValue();
+
+        // Don't apply cast time penalties to instant spells (0 ticks)
+        if (originalCastTime <= 0) return;
+
+        double penaltyMultiplier = SpellPowerPenaltyHandler.calculatePenaltyMultiplier(
+                spell, entity, SpellPowerPenaltyHandler.spellPenaltyWeight
+        );
+
+        if (penaltyMultiplier > 1.0) {
+            int penalizedCastTime = (int) Math.ceil(originalCastTime * penaltyMultiplier);
+            cir.setReturnValue(penalizedCastTime);
+        }
+    }
+
     @Inject(method = "canBeCastedBy", at = @At("HEAD"), cancellable = true)
     private void complextalents$canBeCastedBy(int spellLevel, CastSource castSource, MagicData playerMagicData, Player player, CallbackInfoReturnable<CastResult> cir) {
         Optional<CastResult> masteryResult = SpellMasteryManager.verifyCast((AbstractSpell) (Object) this, spellLevel, castSource, player);
         if (masteryResult.isPresent()) {
             cir.setReturnValue(masteryResult.get());
+            return;
+        }
+
+        if (player == null) return;
+
+        AbstractSpell spell = (AbstractSpell) (Object) this;
+        int originalCost = spell.getManaCost(spellLevel);
+
+        double weight = spell.getEffectiveCastTime(spellLevel, player) <= 0
+                ? SpellPowerPenaltyHandler.instantSpellPenaltyWeight
+                : SpellPowerPenaltyHandler.spellPenaltyWeight;
+
+        double penaltyMultiplier = SpellPowerPenaltyHandler.calculatePenaltyMultiplier(spell, player, weight);
+
+        if (penaltyMultiplier > 1.0 && castSource.consumesMana()) {
+            int penalizedCost = (int) Math.ceil(originalCost * penaltyMultiplier);
+            boolean hasEnoughMana = playerMagicData.getMana() - penalizedCost >= 0;
+            boolean hasRecastForSpell = playerMagicData.getPlayerRecasts().hasRecastForSpell(spell.getSpellId());
+
+            if (!hasRecastForSpell && !hasEnoughMana) {
+                if (player instanceof ServerPlayer serverPlayer) {
+                    int extraMana = penalizedCost - originalCost;
+                    serverPlayer.sendSystemMessage(Component.literal(
+                            String.format("§cYour immense power demands more mana! (Cost: %d + %d)", originalCost, extraMana)
+                    ));
+                }
+                cir.setReturnValue(new CastResult(
+                        CastResult.Type.FAILURE,
+                        Component.translatable("ui.irons_spellbooks.cast_error_mana", spell.getDisplayName(player)).withStyle(ChatFormatting.RED)
+                ));
+            }
         }
     }
 

@@ -4,10 +4,8 @@ import com.complextalents.TalentsMod;
 import com.complextalents.impl.assassin.effect.AssassinEffects;
 import com.complextalents.origin.client.OriginRenderer;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Camera;
@@ -47,7 +45,7 @@ public class AssassinRenderer implements OriginRenderer {
     private static final float ARC_OUTER_RADIUS = 28f;
     private static final float ARC_LENGTH = 120f; // degrees
     private static final int ARC_SEGMENTS = 40;
-    
+
     // Arc position (left side) - spans from 120° to 240°
     private static final float ARC_BOTTOM_ANGLE = 120f;
 
@@ -101,7 +99,7 @@ public class AssassinRenderer implements OriginRenderer {
 
     private void renderLabels(GuiGraphics graphics, int centerX, int centerY, double gauge, double maxGauge) {
         Minecraft mc = Minecraft.getInstance();
-        
+
         // Stealth label (left side)
         String label = "STEALTH";
         int labelWidth = mc.font.width(label);
@@ -143,7 +141,8 @@ public class AssassinRenderer implements OriginRenderer {
         ResourceLocation assassinId = ResourceLocation.fromNamespaceAndPath("complextalents", "assassin");
         boolean isAssassin = assassinId.equals(ClientOriginData.getOriginId());
 
-        // Reset shader color to full opacity so stealth rendering does not dim indicators
+        // Reset shader color to full opacity so stealth rendering does not dim
+        // indicators
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         for (Entity entity : mc.level.entitiesForRendering()) {
@@ -166,8 +165,8 @@ public class AssassinRenderer implements OriginRenderer {
                 poseStack.pushPose();
                 poseStack.translate(dx, dy, dz);
 
-                // 2. Render Backstab Arc (Assassin only)
-                if (isAssassin) {
+                // 2. Render Backstab Arc (Assassin only, non-Player living targets)
+                if (isAssassin && !(livingEntity instanceof Player)) {
                     renderBackstabArc(poseStack, bufferSource, livingEntity, partialTick);
                 }
 
@@ -226,15 +225,32 @@ public class AssassinRenderer implements OriginRenderer {
         }
     }
 
+    private static final java.util.Map<Integer, Float> LOCKED_BACKSTAB_YAW = new java.util.HashMap<>();
+
     private static void renderBackstabArc(PoseStack poseStack, MultiBufferSource buffer, LivingEntity entity,
             float partialTicks) {
+        if (entity == null || entity instanceof Player || !entity.isAlive())
+            return;
+
+        Minecraft mc = Minecraft.getInstance();
+        Player localPlayer = mc.player;
+
+        float yRot;
+        if (localPlayer != null && localPlayer.distanceTo(entity) <= 2.0) {
+            yRot = LOCKED_BACKSTAB_YAW.computeIfAbsent(entity.getId(), id -> entity.getViewYRot(partialTicks));
+        } else {
+            if (localPlayer == null || localPlayer.distanceTo(entity) > 2.5 || !entity.isAlive()) {
+                LOCKED_BACKSTAB_YAW.remove(entity.getId());
+            }
+            yRot = entity.getViewYRot(partialTicks);
+        }
+
         poseStack.pushPose();
 
         // Lift slightly off ground to prevent z-fighting
         poseStack.translate(0, 0.08, 0);
 
-        // Rotate to match entity's Y rotation (Smooth with partial ticks)
-        float yRot = entity.getViewYRot(partialTicks);
+        // Rotate to match entity's Y rotation (or locked Y rotation)
         poseStack.mulPose(Axis.YP.rotationDegrees(-yRot));
 
         com.mojang.blaze3d.vertex.VertexConsumer vc = buffer
@@ -376,7 +392,7 @@ public class AssassinRenderer implements OriginRenderer {
     }
 
     private void drawArcSegment(GuiGraphics graphics, float cx, float cy, float innerRadius, float outerRadius,
-                                float startAngle, float endAngle, int segments, int color) {
+            float startAngle, float endAngle, int segments, int color) {
         int a = (color >> 24) & 0xFF;
         int r = (color >> 16) & 0xFF;
         int g = (color >> 8) & 0xFF;
@@ -387,7 +403,8 @@ public class AssassinRenderer implements OriginRenderer {
 
         Tesselator tesselator = Tesselator.getInstance();
         var buf = tesselator.getBuilder();
-        buf.begin(com.mojang.blaze3d.vertex.VertexFormat.Mode.TRIANGLES, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
+        buf.begin(com.mojang.blaze3d.vertex.VertexFormat.Mode.TRIANGLES,
+                com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
 
         float angleStep = (endAngle - startAngle) / segments;
         for (int i = 0; i < segments; i++) {
@@ -422,7 +439,7 @@ public class AssassinRenderer implements OriginRenderer {
     }
 
     private void drawArcOutline(GuiGraphics graphics, float cx, float cy, float radius,
-                                float startAngle, float endAngle, int segments, int color) {
+            float startAngle, float endAngle, int segments, int color) {
         int a = (color >> 24) & 0xFF;
         int r = (color >> 16) & 0xFF;
         int g = (color >> 8) & 0xFF;
@@ -433,7 +450,8 @@ public class AssassinRenderer implements OriginRenderer {
 
         Tesselator tesselator = Tesselator.getInstance();
         var buf = tesselator.getBuilder();
-        buf.begin(com.mojang.blaze3d.vertex.VertexFormat.Mode.LINES, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
+        buf.begin(com.mojang.blaze3d.vertex.VertexFormat.Mode.LINES,
+                com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
 
         float angleStep = (endAngle - startAngle) / segments;
         for (int i = 0; i < segments; i++) {

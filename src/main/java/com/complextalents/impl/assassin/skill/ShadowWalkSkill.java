@@ -24,7 +24,7 @@ public class ShadowWalkSkill {
                 .nature(SkillNature.ACTIVE)
                 .displayName("Shadow Walk")
                 .description(
-                        "Chìm vào Stealth tàng hình, tăng 35%-60% Move Speed. Đòn đánh tiếp theo phá Stealth và gây +40%-100% sát thương Backstab (tấn công từ phía sau lưng). Stealth Gauge (thanh ẩn nấp 100-300) bị rút nhanh khi đứng sát kẻ địch 2 khối.")
+                        "Chìm vào Stealth tàng hình, tăng 35%-60% Move Speed. Đòn đánh tiếp theo phá Stealth và gây +40%-100% sát thương Backstab. Nhận sát thương trong Stealth sẽ làm giảm Stealth Gauge thay vì bị phát hiện ngay lập tức.")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/assassin/shadow_walk.png"))
@@ -36,7 +36,7 @@ public class ShadowWalkSkill {
                 .scaledStat("stealthGaugeRecovery", new double[] { 5.0, 7.0, 10.0, 15.0, 20.0 })
                 .scaledStat("stealthBackstabBuff", new double[] { 0.40, 0.50, 0.60, 0.70, 1.0 })
                 .scaledStat("stealthBuffDuration", new double[] { 5.0, 6.0, 7.0, 8.0, 10.0 })
-                .scaledStat("stealthDamagePenalty", new double[] { 3.0, 3.0, 3.0, 3.0, 3.0 })
+                .scaledStat("stealthDamageDrain", new double[] { 10.0, 9.0, 8.0, 7.0, 6.0 })
                 .scaledStat("visibilityReduction", new double[] { 0.1, 0.08, 0.06, 0.04, 0.02 }) // Lower is better
                 .setMaxLevel(5)
                 .onActive((context, player) -> {

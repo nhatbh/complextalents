@@ -70,8 +70,10 @@ public class SeraphicEchoSkill {
                         holySpellPower = player.getAttributeValue(holyPowerAttr);
                     }
 
+                    double healShieldPower = player.getAttributeValue(com.complextalents.registry.ModAttributes.HEAL_AND_SHIELD_POWER.get());
+
                     baseDamage *= holySpellPower;
-                    shieldAmount *= holySpellPower;
+                    shieldAmount *= (holySpellPower * healShieldPower);
 
                     Vec3 targetPos;
                     Entity targetEntity = null;
@@ -126,7 +128,7 @@ public class SeraphicEchoSkill {
 
                         // Continuous scaling from 50 (t=0.0) to 100 (t=1.0)
                         double scalingT = Math.min(1.0, Math.max(0.0, (consumedCommand - 50) / 50.0));
-                        double absorptionShield = (purifyShieldBase + (purifyShieldMult * holySpellPower)) * scalingT;
+                        double absorptionShield = (purifyShieldBase + (purifyShieldMult * holySpellPower)) * scalingT * healShieldPower;
 
                         int pulledCount = sword.executeVariablePull(scalingT, purifyDamageMult, absorptionShield);
 

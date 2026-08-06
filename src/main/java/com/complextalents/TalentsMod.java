@@ -120,7 +120,9 @@ public class TalentsMod {
         AssassinRegistrar.register();
         ElementalMageOrigin.register();
         com.complextalents.impl.warrior.WarriorRegistrar.register();
-        // com.complextalents.impl.pixie.origin.PixieOrigin.register(); // Temporarily disabled
+        com.complextalents.impl.spellblade.SpellbladeRegistrar.register();
+        // com.complextalents.impl.pixie.origin.PixieOrigin.register(); // Temporarily
+        // disabled
         LOGGER.info("Example origins registered");
     }
 
@@ -192,6 +194,11 @@ public class TalentsMod {
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
     public static class ForgeEvents {
+        @SubscribeEvent
+        public static void onRegisterCommands(net.minecraftforge.event.RegisterCommandsEvent event) {
+            com.complextalents.command.WeaponClassifyCommand.register(event.getDispatcher());
+        }
+
         @SubscribeEvent
         public static void onAddReloadListeners(net.minecraftforge.event.AddReloadListenerEvent event) {
             event.addListener(com.complextalents.weaponmastery.WeaponMasteryManager.getInstance());

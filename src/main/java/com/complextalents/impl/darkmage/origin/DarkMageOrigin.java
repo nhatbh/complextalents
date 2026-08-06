@@ -50,7 +50,7 @@ public class DarkMageOrigin {
                 .description(Component.literal(
                         "Pháp sư thao túng Hắc Thuật không tiêu tốn Mana mà tích tụ Entropy. Thi triển phép thuật thường làm tăng Entropy, phép Máu dùng Máu để giải tỏa Entropy. Khi Entropy vượt vạch đỏ, dùng phép Eldritch sẽ bị Chiếm Hữu (tăng mạnh Chí Mạng Phép nhưng chỉ dùng được phép Eldritch). Dùng phép Eldritch quá sớm sẽ Tẩu Hoả Nhập Ma, gây sát thương lên bản thân và bị Câm Lặng."))
                 .maxLevel(5)
-                .baseStat(StatType.AP, 5)
+                .baseStat(StatType.AP, 7)
                 .baseStat(StatType.HEAL_AND_SHIELD, -6)
                 // Scaling definitions
                 .scaledStat("evo_shield_poise", "Evocation Shield/Poise Bonus", EVOCATION_SHIELD_POISE_BONUS)
@@ -70,13 +70,13 @@ public class DarkMageOrigin {
                         .maxStacks(100).displayName("Arcane Entropy").build())
 
                 .passiveSkill("Hắc Thuật & Entropy",
-                        "Phép thuật thường làm tăng Entropy, phép Máu dùng Máu để giảm Entropy. Khi Entropy vượt mốc vạch đỏ, dùng phép Eldritch sẽ bị Linh Hồn Nhập (tăng mạnh Phép Chí Mạng). Nếu dùng phép Eldritch khi Entropy chưa đủ vạch đỏ sẽ bị Hắc Thuật Quật Khấu.")
+                        "Phép thuật thường làm tăng Entropy, phép Máu dùng Máu để giảm Entropy. Entropy quyết định sát thương phép (75% ở 0 điểm -> 130% ở 100 điểm). Khi Entropy vượt vạch đỏ, dùng phép Eldritch sẽ bị Linh Hồn Nhập. Dùng phép Eldritch quá sớm sẽ bị Hắc Thuật Quật Khấu.")
                 .activeSkill("Hư Không Hoán Chuyển",
                         "Xóa sạch toàn bộ thanh Entropy tích tụ để tạo Lá Chắn Hư Không bảo vệ bản thân và lập tức dịch chuyển lùi về phía sau.",
                         ResourceLocation.fromNamespaceAndPath("complextalents",
                                 "textures/skill/darkmage/aspectofthewolf.png"))
                 .activeSkillId(VoidReversalSkill.ID)
-                .levelArmorCalc(lvl -> lvl <= 1 ? 0.0 : Math.round(Math.pow(lvl - 1, 1.15) * 0.8))
+                .levelArmorCalc(lvl -> lvl <= 1 ? 0.0 : Math.round(Math.pow(lvl - 1, 1.15) * 0.65))
                 .levelToughnessCalc(lvl -> lvl <= 1 ? 0.0 : Math.min(25.0, Math.pow(lvl - 1, 1.1) * 0.25))
                 .levelHealthCalc(lvl -> 0.0)
                 .renderer(new DarkMageRenderer())
@@ -97,7 +97,7 @@ public class DarkMageOrigin {
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.EVOCATION, 1.0)
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ENDER, 1.0)
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.BLOOD, 1.0)
-                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ELDRITCH, 1.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ELDRITCH, 2.0)
                 // Primal Elements (3x cost)
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.FIRE, 3.0)
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ICE, 3.0)

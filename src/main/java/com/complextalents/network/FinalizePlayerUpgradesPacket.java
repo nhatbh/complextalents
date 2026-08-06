@@ -263,13 +263,14 @@ public class FinalizePlayerUpgradesPacket {
                     masteryData.sync();
                 });
 
-                // Apply Spells (Full UI Purchase yields physical scroll item)
+                // Apply Spells (Full UI Purchase yields physical scroll item and registers learning for Eldritch system)
                 player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(mastery -> {
                     for (UpgradeData.SpellPurchase purchase : validatedSpellPurchases) {
                         AbstractSpell spell = SpellRegistry.getSpell(purchase.spellId());
                         if (spell != null && !mastery.isSpellLearned(purchase.spellId(), purchase.level())) {
                             mastery.learnSpell(purchase.spellId(), purchase.level());
                             giveScroll(ctx.getSender(), purchase.spellId(), purchase.level());
+                            SpellMasteryManager.onSpellLearned(ctx.getSender(), spell);
                         }
                     }
                     mastery.sync();

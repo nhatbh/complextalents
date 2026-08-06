@@ -92,9 +92,12 @@ public class StatModifierApplier {
                         AttributeModifier.Operation.ADDITION, uuid);
                 break;
             case CDR:
-                double cdrPercentage = totalValue / (100.0 + totalValue);
-                updateModAttribute(player, "irons_spellbooks", "cooldown_reduction", cdrPercentage,
-                        AttributeModifier.Operation.MULTIPLY_TOTAL, uuid);
+                // Ability Haste formula: Haste / (100 + Haste) = Cooldown & Cast Time Reduction %
+                double hasteFraction = totalValue / (100.0 + totalValue);
+                updateModAttribute(player, "irons_spellbooks", "cooldown_reduction", hasteFraction,
+                        AttributeModifier.Operation.ADDITION, uuid);
+                updateModAttribute(player, "irons_spellbooks", "cast_time_reduction", hasteFraction,
+                        AttributeModifier.Operation.ADDITION, uuid);
                 break;
         }
     }

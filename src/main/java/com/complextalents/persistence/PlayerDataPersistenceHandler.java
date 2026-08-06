@@ -147,7 +147,18 @@ public class PlayerDataPersistenceHandler {
             }
         });
         
-        player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(com.complextalents.spellmastery.capability.ISpellMasteryData::sync);
+        player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(cap -> {
+            cap.sync();
+            io.redspace.ironsspellbooks.api.magic.MagicData magicData = io.redspace.ironsspellbooks.api.magic.MagicData.getPlayerMagicData(player);
+            if (magicData != null && magicData.getSyncedData() != null) {
+                for (ResourceLocation spellId : cap.getLearnedSpells()) {
+                    io.redspace.ironsspellbooks.api.spells.AbstractSpell spell = io.redspace.ironsspellbooks.api.registry.SpellRegistry.getSpell(spellId);
+                    if (spell != null && spell.getSchoolType() != null && "eldritch".equalsIgnoreCase(spell.getSchoolType().getId().getPath())) {
+                        magicData.getSyncedData().learnSpell(spell);
+                    }
+                }
+            }
+        });
 
         // Origin specific data handlers
         UUID playerId = player.getUUID();

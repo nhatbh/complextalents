@@ -67,6 +67,11 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
         for (JsonElement element : jsonArray) {
             JsonObject obj = element.getAsJsonObject();
             if (obj.has("item_id") && obj.has("path") && obj.has("skill_level")) {
+                boolean excluded = obj.has("excluded") && obj.get("excluded").getAsBoolean();
+                if (excluded) {
+                    continue; // Skip excluded weapons from mastery mappings
+                }
+
                 String itemIdStr = obj.get("item_id").getAsString();
                 String pathStr = obj.get("path").getAsString();
                 String skillLevelStr = obj.get("skill_level").getAsString();
@@ -79,7 +84,7 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
                     weaponToPathMap.put(itemId, path);
                     weaponToRequiredRankMap.put(itemId, requiredRankLevel);
                 } else {
-                    LOGGER.warn("Invalid WeaponPath '{}' for item '{}'", pathStr, itemIdStr);
+                    LOGGER.warn("Unassigned or invalid WeaponPath '{}' for item '{}'", pathStr, itemIdStr);
                 }
             }
         }

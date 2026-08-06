@@ -5,6 +5,7 @@ import com.complextalents.effect.ModEffects;
 import com.complextalents.impl.darkmage.origin.DarkMageOrigin;
 import com.complextalents.origin.OriginManager;
 import com.complextalents.passive.PassiveManager;
+import io.redspace.ironsspellbooks.api.events.SpellDamageEvent;
 import io.redspace.ironsspellbooks.api.events.SpellOnCastEvent;
 import io.redspace.ironsspellbooks.api.events.SpellPreCastEvent;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
@@ -85,6 +86,9 @@ public class DarkMageEntropyHandler {
             AbstractSpell spell = SpellRegistry.getSpell(event.getSpellId());
             if (spell == null || spell.getSchoolType() == null)
                 return;
+
+            // Reset out-of-combat decay timer whenever a spell is cast
+            serverPlayer.getPersistentData().putInt("darkmage_decay_ticks", 0);
 
             int manaCost = spell.getManaCost(event.getSpellLevel());
             double maxMana = serverPlayer.getAttributeValue(AttributeRegistry.MAX_MANA.get());
@@ -180,7 +184,11 @@ public class DarkMageEntropyHandler {
 
     /**
      * Natural Entropy Decay out of combat:
-     * When not ENGAGED and not POSSESSED, entropy decays naturally over time (5 entropy per second).
+     * When not ENGAGED and not POSSESSED, entropy decays with an accelerating curve:
+     * - 0-3s out of combat: -1 entropy/sec (Grace period)
+     * - 4-6s out of combat: -3 entropy/sec (Moderate decay)
+     * - 7-10s out of combat: -6 entropy/sec (Fast decay)
+     * - >10s out of combat: -10 entropy/sec (Accelerated rapid flush)
      */
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -194,13 +202,55 @@ public class DarkMageEntropyHandler {
             if (!DarkMageOrigin.isDarkMage(serverPlayer))
                 return;
 
-            // If Possessed or Engaged, entropy cannot go down naturally
-            if (serverPlayer.hasEffect(ModEffects.POSSESSED.get()) || serverPlayer.hasEffect(ModEffects.ENGAGED.get()))
+            // If Possessed or Engaged in combat, reset decay timer and pause decay
+            if (serverPlayer.hasEffect(ModEffects.POSSESSED.get()) || serverPlayer.hasEffect(ModEffects.ENGAGED.get())) {
+                serverPlayer.getPersistentData().putInt("darkmage_decay_ticks", 0);
                 return;
+            }
 
             int currentEntropy = PassiveManager.getPassiveStacks(serverPlayer, "entropy");
             if (currentEntropy > 0) {
-                PassiveManager.modifyPassiveStacks(serverPlayer, "entropy", -5);
+                int decayTicks = serverPlayer.getPersistentData().getInt("darkmage_decay_ticks") + 20;
+                serverPlayer.getPersistentData().putInt("darkmage_decay_ticks", decayTicks);
+
+                int decaySec = decayTicks / 20;
+                int decayAmount;
+                if (decaySec <= 3) {
+                    decayAmount = 1;  // Grace period: slow decay (1/s)
+                } else if (decaySec <= 6) {
+                    decayAmount = 3;  // Moderate decay (3/s)
+                } else if (decaySec <= 10) {
+                    decayAmount = 6;  // Fast decay (6/s)
+                } else {
+                    decayAmount = 10; // Accelerated rapid decay (10/s)
+                }
+
+                PassiveManager.modifyPassiveStacks(serverPlayer, "entropy", -decayAmount);
+            } else {
+                serverPlayer.getPersistentData().putInt("darkmage_decay_ticks", 0);
+            }
+        }
+    }
+
+    /**
+     * Scaling Spell Damage based on Arcane Entropy:
+     * Dark Mages deal lower damage at low Entropy (0% = 75% damage)
+     * and higher damage at high Entropy (100% = 130% damage).
+     */
+    @SubscribeEvent
+    public static void onSpellDamage(SpellDamageEvent event) {
+        if (event.getSpellDamageSource() != null && event.getSpellDamageSource().getEntity() instanceof ServerPlayer caster) {
+            if (DarkMageOrigin.isDarkMage(caster)) {
+                int currentEntropy = PassiveManager.getPassiveStacks(caster, "entropy");
+
+                // If Possessed, treat as max 100% entropy
+                if (caster.hasEffect(ModEffects.POSSESSED.get())) {
+                    currentEntropy = 100;
+                }
+
+                // Scaling curve: 0.75x at 0% entropy -> 1.30x at 100% entropy
+                double multiplier = 0.75 + (currentEntropy / 100.0) * 0.55;
+                event.setAmount((float) (event.getAmount() * multiplier));
             }
         }
     }

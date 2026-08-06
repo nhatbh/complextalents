@@ -2,15 +2,11 @@ package com.complextalents.impl.elementalmage.skill;
 
 import com.complextalents.elemental.ElementType;
 import com.complextalents.elemental.effects.ElementalEffects;
-import com.complextalents.impl.elementalmage.ElementalMageData;
 import com.complextalents.impl.elementalmage.ElementalMageDataProvider;
-import com.complextalents.origin.capability.OriginDataProvider;
 import com.complextalents.skill.SkillBuilder;
 import com.complextalents.skill.SkillNature;
 import com.complextalents.targeting.TargetType;
 import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
-import io.redspace.ironsspellbooks.network.SyncManaPacket;
-import io.redspace.ironsspellbooks.setup.PacketDistributor;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -26,8 +22,6 @@ public class HarmonicConvergenceSkill {
             "harmonic_convergence");
 
     // Level Scaling Arrays
-    private static final double[] MANA_BASE = { 10.0, 15.0, 20.0, 25.0, 40.0 };
-    private static final double[] MANA_MULT = { 5.0, 8.0, 12.0, 16.0, 25.0 };
     private static final double[] CRIT_PER_STACK = { 0.10, 0.12, 0.15, 0.17, 0.20 };
     private static final double[] CD_BASE = { 0.25, 0.30, 0.35, 0.40, 0.50 };
     private static final double[] CD_MULT = { 0.15, 0.20, 0.25, 0.30, 0.40 };
@@ -37,14 +31,12 @@ public class HarmonicConvergenceSkill {
                 .nature(SkillNature.ACTIVE)
                 .displayName("Harmonic Convergence")
                 .description(
-                        "Tiêu hao Prismatic Echoes (cần >=1) để hoàn Mana, gia tăng sát thương trong 10s dựa trên số Echoes tiêu thụ và giúp mọi phép dùng trúng kẻ địch lập tức phản ứng với nguyên tố kích hoạt gần nhất.")
+                        "Tiêu hao Prismatic Echoes (cần >=1) để gia tăng sát thương (lên tới 1.5x), tăng Tỷ lệ & Sát thương Bạo kích trong 10s và giúp mọi phép kích hoạt phản ứng Apex.")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/elementalmage/harmonic_convergence.png"))
                 .setMaxLevel(5)
                 .scaledCooldown(new double[] { 10.0, 10.0, 10.0, 10.0, 10.0 })
-                .scaledStat("base_mana_restore", "Base Mana Restore", MANA_BASE)
-                .scaledStat("spell_power_mana_mult", "Spell Power Mana Mult", MANA_MULT)
                 .scaledStat("crit_per_stack", "Crit Per Stack", CRIT_PER_STACK)
                 .scaledStat("crit_dmg_base", "Crit Dmg Base", CD_BASE)
                 .scaledStat("crit_dmg_mult", "Crit Dmg Mult", CD_MULT)
@@ -65,32 +57,25 @@ public class HarmonicConvergenceSkill {
                     var cap = serverPlayer.getCapability(ElementalMageDataProvider.ELEMENTAL_DATA)
                             .orElseThrow(IllegalStateException::new);
 
-                    // Read consumed Echo count & lock current Harmony Multiplier & Apex element
                     int echoCount = cap.getEchoCount();
-                    ElementType apex = cap.getEchoes().isEmpty() ? cap.getApexElement() : cap.getEchoes().get(0);
-                    float lockedHarmonyMult = cap.getLiveHarmonyMultiplier();
+                    ElementType apex = cap.getApexElement();
+
+                    // Calculate activated multiplier based on consumed Echo count:
+                    // 1 Echo -> 1.15x, 2 Echoes -> 1.30x, 3 Echoes -> 1.50x
+                    float activeMultiplier = switch (echoCount) {
+                        case 1 -> 1.15f;
+                        case 2 -> 1.30f;
+                        default -> 1.50f;
+                    };
 
                     cap.setApexElement(apex);
-                    cap.setLockedHarmonyMultiplier(lockedHarmonyMult);
-                    cap.clearEchoes(); // Reset combo bar & lock accumulation
+                    cap.setLockedHarmonyMultiplier(activeMultiplier);
+                    cap.clearEchoes(); // Clear echo count & lastReaction, lock accumulation
 
                     // Fetch raw Spell Power
                     double spellPower = serverPlayer.getAttributeValue(AttributeRegistry.SPELL_POWER.get());
 
-                    // Phase 1: Engine Refund (Mana)
-                    double manaRestored = echoCount * (MANA_BASE[level] + (spellPower * MANA_MULT[level]));
-
-                    // Apply Mana Recovery
-                    try {
-                        io.redspace.ironsspellbooks.api.magic.MagicData magicData = io.redspace.ironsspellbooks.api.magic.MagicData
-                                .getPlayerMagicData(serverPlayer);
-                        double maxMana = serverPlayer.getAttributeValue(AttributeRegistry.MAX_MANA.get());
-                        magicData.setMana((float) Math.min(maxMana, magicData.getMana() + manaRestored));
-                        PacketDistributor.sendToPlayer(serverPlayer, new SyncManaPacket(magicData));
-                    } catch (Exception ignored) {
-                    }
-
-                    // Phase 2: 10-Second Convergence Buff Parameters
+                    // 10-Second Convergence Buff Parameters
                     double critChance = Math.min(1.0, echoCount * CRIT_PER_STACK[level]);
                     double rawCritDmg = CD_BASE[level] + Math.max(0.0, (spellPower - 1.0) * CD_MULT[level]);
                     double hardCappedCritDmg = Math.min(1.0, rawCritDmg); // Hard-capped at max +100% bonus
@@ -99,7 +84,7 @@ public class HarmonicConvergenceSkill {
                     cap.setConvergenceCritDamage((float) hardCappedCritDmg);
                     cap.sync();
 
-                    // Apply 10s mob effect
+                    // Apply 10s mob effect (HARMONIC_CONVERGENCE effect handles reset on expire)
                     serverPlayer.addEffect(new MobEffectInstance(ElementalEffects.HARMONIC_CONVERGENCE.get(), 200, 0));
 
                     // Play SFX & Particles
@@ -114,8 +99,8 @@ public class HarmonicConvergenceSkill {
                             50, 0.5, 0.5, 0.5, 0.2);
 
                     serverPlayer.sendSystemMessage(Component.literal(String.format(
-                            "\u00A7b\u2728 Harmonic Convergence! \u00A7fRefunded \u00A7b%.0f Mana\u00A7f. Locked Multiplier at \u00A7e%.1fx\u00A7f (+%.0f%% Crit, +%.0f%% Crit Dmg) for 10s!",
-                            manaRestored, lockedHarmonyMult, critChance * 100.0, hardCappedCritDmg * 100.0)));
+                            "\u00A7b\u2728 Harmonic Convergence! \u00A7fActivated \u00A7e%.2fx Spell Damage\u00A7f (+%.0f%% Crit, +%.0f%% Crit Dmg) for 10s!",
+                            activeMultiplier, critChance * 100.0, hardCappedCritDmg * 100.0)));
                 })
                 .register();
     }

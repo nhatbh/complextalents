@@ -99,6 +99,7 @@ public class SpellMasteryCommand {
                         com.complextalents.leveling.handlers.LevelingSyncHandler.syncPlayerLevelData(player);
 
                         mastery.learnSpell(spellId, entryLevel);
+                        SpellMasteryManager.onSpellLearned(player, spell);
                         mastery.sync();
 
                         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -156,6 +157,8 @@ public class SpellMasteryCommand {
             for (ServerPlayer player : targets) {
                 player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(data -> {
                     data.learnSpell(spellId, level);
+                    AbstractSpell spell = SpellRegistry.getSpell(spellId);
+                    SpellMasteryManager.onSpellLearned(player, spell);
                     ctx.getSource().sendSuccess(() -> Component.literal("\u00A7aLearned spell " + spellId + " at lvl " + level + " for " + player.getName().getString()), true);
                 });
             }

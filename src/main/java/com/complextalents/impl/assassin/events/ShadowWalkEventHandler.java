@@ -101,7 +101,29 @@ public class ShadowWalkEventHandler {
             AssassinData.syncToClient(player);
         }
 
-        // 4. Safety Rail: Check every 100 ticks if CD needs manual reset
+        // 4. Maintain backstab lock on nearby mobs
+        if (player.tickCount % 2 == 0) {
+            List<Mob> nearby = player.level().getEntitiesOfClass(Mob.class, player.getBoundingBox().inflate(6.0));
+            for (Mob mob : nearby) {
+                double dist = player.distanceTo(mob);
+                var data = mob.getPersistentData();
+                if (dist <= 2.0) {
+                    if (!data.contains("AssassinLockedBackstabX")) {
+                        net.minecraft.world.phys.Vec3 targetLook = mob.getLookAngle();
+                        data.putDouble("AssassinLockedBackstabX", targetLook.x);
+                        data.putDouble("AssassinLockedBackstabY", targetLook.y);
+                        data.putDouble("AssassinLockedBackstabZ", targetLook.z);
+                        data.putFloat("AssassinLockedBackstabYaw", mob.getYRot());
+                    }
+                } else if (dist > 2.5) {
+                    if (data.contains("AssassinLockedBackstabX")) {
+                        com.complextalents.impl.assassin.util.AssassinUtils.clearLockedBackstab(mob);
+                    }
+                }
+            }
+        }
+
+        // 5. Safety Rail: Check every 100 ticks if CD needs manual reset
         if (player.tickCount % 100 == 0 && !isStealthed) {
             double currentGauge = AssassinData.getStealthGauge(player);
             double maxGauge = AssassinData.getMaxGauge(player);
@@ -217,21 +239,36 @@ public class ShadowWalkEventHandler {
     public static void onLivingHurt(LivingHurtEvent event) {
         if (event.getEntity() instanceof ServerPlayer victim && AssassinOrigin.isAssassin(victim)) {
             if (victim.hasEffect(AssassinEffects.SHADOW_WALK.get())) {
-                double penalty = SkillManager.getSkillStat(victim, ShadowWalkSkill.ID, "stealthDamagePenalty");
-                event.setAmount((float) (event.getAmount() * penalty));
+                double currentGauge = AssassinData.getStealthGauge(victim);
+                double drainMultiplier = SkillManager.getSkillStat(victim, ShadowWalkSkill.ID, "stealthDamageDrain");
+                if (drainMultiplier <= 0) drainMultiplier = 10.0;
 
-                // Break stealth on damage and aggro nearby mobs
-                victim.removeEffect(AssassinEffects.SHADOW_WALK.get());
-                removeUntargetableEffect(victim);
-                victim.setInvisible(false);
-                alertNearbyMobs(victim);
+                double gaugeLoss = event.getAmount() * drainMultiplier;
+                double newGauge = Math.max(0, currentGauge - gaugeLoss);
+                AssassinData.setStealthGauge(victim, newGauge);
+                AssassinData.syncToClient(victim);
 
-                // Discovery FX
+                // Play stealth hit FX
                 victim.serverLevel().playSound(null, victim.getX(), victim.getY(), victim.getZ(),
-                        SoundEvents.ZOMBIE_VILLAGER_CONVERTED, SoundSource.PLAYERS, 0.8f, 1.0f);
-                victim.serverLevel().sendParticles(ParticleTypes.LARGE_SMOKE,
+                        SoundEvents.ARMOR_EQUIP_CHAIN, SoundSource.PLAYERS, 0.6f, 1.2f);
+                victim.serverLevel().sendParticles(ParticleTypes.SMOKE,
                         victim.getX(), victim.getY() + 1.0, victim.getZ(),
-                        10, 0.3, 0.5, 0.3, 0.05);
+                        5, 0.2, 0.3, 0.2, 0.05);
+
+                if (newGauge <= 0) {
+                    // Break stealth when gauge fully depleted
+                    victim.removeEffect(AssassinEffects.SHADOW_WALK.get());
+                    removeUntargetableEffect(victim);
+                    victim.setInvisible(false);
+                    alertNearbyMobs(victim);
+
+                    // Discovery FX
+                    victim.serverLevel().playSound(null, victim.getX(), victim.getY(), victim.getZ(),
+                            SoundEvents.ZOMBIE_VILLAGER_CONVERTED, SoundSource.PLAYERS, 0.8f, 1.0f);
+                    victim.serverLevel().sendParticles(ParticleTypes.LARGE_SMOKE,
+                            victim.getX(), victim.getY() + 1.0, victim.getZ(),
+                            10, 0.3, 0.5, 0.3, 0.05);
+                }
             }
         }
 

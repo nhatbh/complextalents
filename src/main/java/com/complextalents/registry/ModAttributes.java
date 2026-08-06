@@ -45,7 +45,7 @@ public class ModAttributes {
             "heal_and_shield_power",
             () -> new RangedAttribute(
                     "attribute.complextalents.heal_and_shield_power",
-                    0.4,
+                    1.0,
                     0.0,
                     100.0
             ).setSyncable(true)
