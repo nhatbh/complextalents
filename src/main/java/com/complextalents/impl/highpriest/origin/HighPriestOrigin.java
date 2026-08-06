@@ -27,7 +27,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -449,5 +451,38 @@ public class HighPriestOrigin {
         // Update attributes when Grace or Command stacks change (Command might affect
         // renderer/etc)
         updateAttributes(player);
+    }
+
+    /**
+     * Prevent High Priests from dealing physical melee damage.
+     */
+    @SubscribeEvent
+    public static void onLivingHurtMeleeBlock(LivingHurtEvent event) {
+        if (event.getSource().getEntity() instanceof ServerPlayer player && isHighPriest(player)) {
+            boolean isSpellOrMagic = event.getSource().is(net.minecraft.tags.DamageTypeTags.WITCH_RESISTANT_TO)
+                    || event.getSource().is(net.minecraft.tags.DamageTypeTags.BYPASSES_ARMOR)
+                    || event.getSource().isIndirect()
+                    || "magic".equals(event.getSource().getMsgId())
+                    || "indirectMagic".equals(event.getSource().getMsgId())
+                    || event.getSource().getDirectEntity() instanceof com.complextalents.impl.highpriest.entity.SeraphsEdgeEntity;
+            if (!isSpellOrMagic) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingAttackMeleeBlock(LivingAttackEvent event) {
+        if (event.getSource().getEntity() instanceof ServerPlayer player && isHighPriest(player)) {
+            boolean isSpellOrMagic = event.getSource().is(net.minecraft.tags.DamageTypeTags.WITCH_RESISTANT_TO)
+                    || event.getSource().is(net.minecraft.tags.DamageTypeTags.BYPASSES_ARMOR)
+                    || event.getSource().isIndirect()
+                    || "magic".equals(event.getSource().getMsgId())
+                    || "indirectMagic".equals(event.getSource().getMsgId())
+                    || event.getSource().getDirectEntity() instanceof com.complextalents.impl.highpriest.entity.SeraphsEdgeEntity;
+            if (!isSpellOrMagic) {
+                event.setCanceled(true);
+            }
+        }
     }
 }

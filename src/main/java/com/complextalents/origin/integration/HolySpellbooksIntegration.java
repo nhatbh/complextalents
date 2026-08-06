@@ -70,6 +70,11 @@ public class HolySpellbooksIntegration {
 
             if (caster == null) return;
 
+            // High Priest 2x Holy Spell Damage bonus
+            if (caster instanceof net.minecraft.server.level.ServerPlayer player && com.complextalents.impl.highpriest.origin.HighPriestOrigin.isHighPriest(player)) {
+                event.setAmount(event.getAmount() * 2.0f);
+            }
+
             // Fire holy spell damage event
             float damage = event.getAmount();
             HolySpellDamageEvent holyEvent = new HolySpellDamageEvent(target, caster, damage, spell);
