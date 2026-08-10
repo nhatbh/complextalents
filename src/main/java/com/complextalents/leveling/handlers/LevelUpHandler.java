@@ -55,7 +55,7 @@ public class LevelUpHandler {
 
         // XP required for next level: 100 + (level^1.5 * 30)
         while (true) {
-            double xpForNext = 100 + (Math.pow(level, 1.5) * 30);
+            double xpForNext = com.complextalents.leveling.util.XPFormula.getXPForNextLevel(level);
             if (xpSpent + xpForNext > totalXP) {
                 break; // Can't level up anymore
             }

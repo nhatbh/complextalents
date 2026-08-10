@@ -17,11 +17,6 @@ import java.util.function.Consumer;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
 
-    @Shadow public abstract boolean isDamageableItem();
-    @Shadow public abstract int getMaxDamage();
-    @Shadow public abstract int getDamageValue();
-    @Shadow public abstract void setDamageValue(int damage);
-
     /**
      * Prevents armor in HEAD, CHEST, LEGS, and FEET slots from being completely destroyed.
      * When taking damage that would break the armor, cap its damage value at (maxDamage - 1)
@@ -40,7 +35,7 @@ public abstract class ItemStackMixin {
     ) {
         ItemStack self = (ItemStack) (Object) this;
 
-        if (amount <= 0 || !this.isDamageableItem()) {
+        if (amount <= 0 || !self.isDamageableItem()) {
             return;
         }
 
@@ -53,8 +48,8 @@ public abstract class ItemStackMixin {
             return;
         }
 
-        int maxDamage = this.getMaxDamage();
-        int currentDamage = this.getDamageValue();
+        int maxDamage = self.getMaxDamage();
+        int currentDamage = self.getDamageValue();
 
         // Calculate potential new damage without breaking
         int damageToAdd = amount;
@@ -65,7 +60,7 @@ public abstract class ItemStackMixin {
 
         if (currentDamage + damageToAdd >= maxDamage) {
             // Cap damage at maxDamage - 1 (leaving exactly 1 durability)
-            this.setDamageValue(Math.max(0, maxDamage - 1));
+            self.setDamageValue(Math.max(0, maxDamage - 1));
             // Cancel the normal break flow so onBroken consumer (which plays sound and breaks item) is not called
             ci.cancel();
         }

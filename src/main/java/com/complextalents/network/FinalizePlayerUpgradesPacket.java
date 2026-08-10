@@ -162,10 +162,14 @@ public class FinalizePlayerUpgradesPacket {
                     int proposedNewLevel = currentLevel;
                     boolean valid = true;
 
+                    int playerLevel = levelingData.getLevel(player.getUUID());
                     for (int i = 0; i < requestedLevels; i++) {
-                        if (proposedNewLevel >= 25) { valid = false; break; }
+                        if (proposedNewLevel >= 15) { valid = false; break; }
                         double requiredDamageForNext = WeaponMasteryManager.getInstance().getDamageRequiredForNextLevel(proposedNewLevel);
                         if (accumulatedDamage < requiredDamageForNext) { valid = false; break; }
+
+                        int requiredPlayerLevel = WeaponMasteryManager.getInstance().getRequiredPlayerLevelForTier(proposedNewLevel + 1);
+                        if (playerLevel < requiredPlayerLevel) { valid = false; break; }
 
                         totalCost[0] += WeaponMasteryManager.getInstance().getSPCostForNextLevel(proposedNewLevel, activeOrigin);
                         proposedNewLevel++;

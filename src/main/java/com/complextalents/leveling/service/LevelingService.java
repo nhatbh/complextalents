@@ -247,6 +247,30 @@ public class LevelingService {
     }
 
     /**
+     * Sets a player's total accumulated XP and automatically recalculates their level, 
+     * current XP progress towards the next level, and earned Skill Points.
+     * Synchronizes updated leveling data to the client.
+     *
+     * @param player Target player
+     * @param newTotalXP New total accumulated XP amount
+     */
+    public void setTotalXP(ServerPlayer player, double newTotalXP) {
+        Objects.requireNonNull(player, "Player cannot be null");
+        PlayerLevelingData data = PlayerLevelingData.get(player.getServer());
+        int oldLevel = data.getLevel(player.getUUID());
+        
+        data.setTotalXP(player.getUUID(), newTotalXP);
+        int newLevel = data.getLevel(player.getUUID());
+
+        com.complextalents.leveling.handlers.LevelingSyncHandler.syncPlayerLevelData(player);
+
+        if (newLevel != oldLevel) {
+            int spDifference = (newLevel - oldLevel) * 2;
+            fireLevelUpEvent(player, oldLevel, newLevel, Math.max(0, spDifference));
+        }
+    }
+
+    /**
      * Fires a level-up event for a player.
      * This is called by LevelUpHandler when checking for level progression.
      *

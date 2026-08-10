@@ -32,6 +32,7 @@ public class SkillBuilder {
     private boolean allowSelfTarget = false;
     private boolean targetAllyOnly = false;
     private boolean targetPlayerOnly = false;
+    private boolean canTargetPlayer = true;
     private int maxLevel = 1;
     private ResourceLocation icon = null;
     private final java.util.Map<String, ScaledStat> scaledStats = new java.util.HashMap<>();
@@ -49,6 +50,7 @@ public class SkillBuilder {
     // Channeling properties
     private double minChannelTime = 0.0;
     private double maxChannelTime = 0.0;
+    private boolean holdAtMaxChannel = false;
 
     // Scaling arrays for cooldown, cost, and toggle cost
     private double[] scaledActiveCooldown = null;
@@ -278,6 +280,38 @@ public class SkillBuilder {
      */
     public SkillBuilder targetPlayerOnly(boolean playerOnly) {
         this.targetPlayerOnly = playerOnly;
+        return this;
+    }
+
+    /**
+     * Set whether this skill can target player entities.
+     * Defaults to true.
+     *
+     * @param canTarget true if the skill can target players
+     * @return this builder
+     */
+    public SkillBuilder canTargetPlayer(boolean canTarget) {
+        this.canTargetPlayer = canTarget;
+        return this;
+    }
+
+    /**
+     * Set whether this skill holds at max channel duration allowing the player to aim,
+     * instead of auto-releasing when max channel time expires.
+     *
+     * @param hold true if the skill should hold at max channel to allow aiming
+     * @return this builder
+     */
+    public SkillBuilder holdAtMaxChannel(boolean hold) {
+        this.holdAtMaxChannel = hold;
+        return this;
+    }
+
+    /**
+     * Alias for {@link #holdAtMaxChannel(boolean)}.
+     */
+    public SkillBuilder holdToAim(boolean hold) {
+        this.holdAtMaxChannel = hold;
         return this;
     }
 
@@ -582,8 +616,10 @@ public class SkillBuilder {
     boolean isAllowSelfTarget() { return allowSelfTarget; }
     boolean isTargetAllyOnly() { return targetAllyOnly; }
     boolean isTargetPlayerOnly() { return targetPlayerOnly; }
+    boolean isCanTargetPlayer() { return canTargetPlayer; }
     double getMinChannelTime() { return minChannelTime; }
     double getMaxChannelTime() { return maxChannelTime; }
+    boolean isHoldAtMaxChannel() { return holdAtMaxChannel; }
     BiConsumer<Skill.ExecutionContext, Object> getActiveHandler() { return activeHandler; }
     Consumer<Object> getPassiveHandler() { return passiveHandler; }
     ChanneledHandler getChanneledHandler() { return channeledHandler; }

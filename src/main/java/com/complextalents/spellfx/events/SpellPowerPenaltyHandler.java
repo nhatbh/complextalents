@@ -12,20 +12,23 @@ import net.minecraftforge.fml.common.Mod;
 
 /**
  * Event handler for Spell Power Penalty calculations.
- * Dynamically increases cast time and mana cost for spells based on excess spell power.
+ * Dynamically increases cast time and mana cost for spells based on excess
+ * spell power.
  */
 @Mod.EventBusSubscriber(modid = TalentsMod.MODID)
 public class SpellPowerPenaltyHandler {
 
-    public static double penaltyThreshold = 0.0;
-    public static double spellPenaltyWeight = 1.0;
-    public static double instantSpellPenaltyWeight = 1.0;
+    public static double penaltyThreshold = 1.0; // Grace threshold: +100% bonus spell power before penalty starts
+    public static double spellPenaltyWeight = 0.40; // Reduced from 1.0 to 0.25 (25% weight)
+    public static double instantSpellPenaltyWeight = 0.50; // Reduced from 1.0 to 0.15 (15% weight)
 
     /**
-     * Calculates penalty multiplier based on general and school-specific spell power above threshold.
+     * Calculates penalty multiplier based on general and school-specific spell
+     * power above threshold.
      */
     public static double calculatePenaltyMultiplier(AbstractSpell spell, LivingEntity entity, double weight) {
-        if (entity == null || spell == null) return 1.0;
+        if (entity == null || spell == null)
+            return 1.0;
 
         double generalPower = 1.0;
         double schoolPower = 1.0;
@@ -55,7 +58,8 @@ public class SpellPowerPenaltyHandler {
         }
 
         AbstractSpell spell = SpellRegistry.getSpell(event.getSpellId());
-        if (spell == null) return;
+        if (spell == null)
+            return;
 
         double weight = spell.getEffectiveCastTime(event.getSpellLevel(), event.getEntity()) <= 0
                 ? instantSpellPenaltyWeight

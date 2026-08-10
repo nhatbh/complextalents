@@ -92,4 +92,22 @@ public class XPFormula {
     public static double calculateWarriorPerfectParryXP(double absorbedDamage) {
         return 3.0 * Math.pow(absorbedDamage, 0.55);
     }
+
+    /**
+     * XP required to advance from a given level to the next: $100 + (Level^{1.5} \times 30)$
+     */
+    public static double getXPForNextLevel(int level) {
+        return 100 + (Math.pow(Math.max(1, level), 1.5) * 30);
+    }
+
+    /**
+     * Calculates cumulative total XP required to reach a specific target level from Level 1.
+     */
+    public static double getTotalXPForLevel(int targetLevel) {
+        double total = 0;
+        for (int k = 1; k < targetLevel; k++) {
+            total += getXPForNextLevel(k);
+        }
+        return total;
+    }
 }

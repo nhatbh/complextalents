@@ -1,6 +1,7 @@
 package com.complextalents.impl.spellblade.events;
 
 import com.complextalents.TalentsMod;
+import com.nhatbh.basedefensev2.api.PoiseAPI;
 import com.complextalents.effect.ModEffects;
 import com.complextalents.impl.spellblade.SpellbladeData;
 import com.complextalents.impl.spellblade.origin.SpellbladeOrigin;
@@ -39,21 +40,35 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.UUID;
 import com.complextalents.util.UUIDHelper;
 
+import com.complextalents.network.PacketHandler;
+import com.complextalents.spellfx.network.S2CSpellFXPacket;
+import yesman.epicfight.world.entity.ai.attribute.EpicFightAttributes;
 import com.complextalents.impl.spellblade.SpellbladeDataProvider;
 import com.complextalents.impl.spellblade.skill.SpellbladeOverchargeSkill;
 import com.complextalents.skill.SkillManager;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 @Mod.EventBusSubscriber(modid = TalentsMod.MODID)
 public class SpellbladeEventHandler {
 
     private static final UUID OVERCHARGE_AD_MODIFIER_UUID = UUIDHelper.generateAttributeModifierUUID("spellblade",
             "overcharge_ad");
+    private static final UUID EVOCATION_IMPACT_MODIFIER_UUID = UUIDHelper.generateAttributeModifierUUID("spellblade",
+            "evocation_impact");
+    private static final ThreadLocal<Boolean> IS_PROCESSING_HURT = ThreadLocal.withInitial(() -> false);
 
     /**
      * Intercept spell casting for Spellblade players:
      * - Swaps active weapon imbue to cast spell's school.
-     * - During Overcharge: grants 6 seconds (120 ticks) of enhanced attacks.
-     * - Outside Overcharge: grants 1 single-strike imbue charge.
+     * - Default Imbue Mechanic: grants 6 seconds (120 ticks) of elemental imbue.
+     * - During Overcharge Stance: element switches instantly, imbue is infinite.
      */
     @SubscribeEvent
     public static void onSpellCast(SpellOnCastEvent event) {
@@ -70,19 +85,32 @@ public class SpellbladeEventHandler {
 
             String schoolPath = spell.getSchoolType().getId().getPath();
             SpellSchool school = SpellSchool.fromString(schoolPath);
-            if (school == null)
-                return;
+            if (school != null) {
+                // Set active element to cast spell's school
+                SpellbladeData.setActiveElement(serverPlayer, school);
 
-            // Set active element to cast spell's school
-            SpellbladeData.setActiveElement(serverPlayer, school);
-
-            if (SpellbladeData.isOverchargeActive(serverPlayer)) {
-                // Overcharge Active: Grant 6 seconds (120 ticks) of enhanced attacks, resetting
-                // timer
+                // Grant default 6 seconds (120 ticks) of elemental imbue duration
                 SpellbladeData.setEnhancedAttackTicks(serverPlayer, 120);
-            } else {
-                // Outside Overcharge: Grant 1 single-strike imbue charge
-                SpellbladeData.setHasImbueCharge(serverPlayer, true);
+            }
+
+            // Virtual Mana Consumption (usable strictly for spell casting)
+            int manaCost = spell.getManaCost(event.getSpellLevel());
+            if (manaCost > 0) {
+                float virtualMana = SpellbladeData.getVirtualMana(serverPlayer);
+                if (virtualMana > 0) {
+                    float virtualUsed = Math.min(virtualMana, (float) manaCost);
+                    SpellbladeData.setVirtualMana(serverPlayer, virtualMana - virtualUsed);
+
+                    // Refund virtual mana portion to real mana reserve
+                    MagicData magicData = MagicData.getPlayerMagicData(serverPlayer);
+                    if (magicData != null) {
+                        double maxMana = serverPlayer.getAttributeValue(AttributeRegistry.MAX_MANA.get());
+                        if (maxMana <= 0) maxMana = 100.0;
+                        float newMana = (float) Math.min(maxMana, magicData.getMana() + virtualUsed);
+                        magicData.setMana(newMana);
+                        PacketDistributor.sendToPlayer(serverPlayer, new SyncManaPacket(magicData));
+                    }
+                }
             }
         } catch (Exception ignored) {
         }
@@ -90,10 +118,9 @@ public class SpellbladeEventHandler {
 
     /**
      * Intercept melee strikes by Spellblade players:
-     * 1. Mana Weaver Passive: restores mana inversely proportional to weapon attack
-     * speed.
-     * 2. Triggers active elemental imbue effects (if in Overcharge 6s window OR
-     * holding single-strike charge).
+     * - Normal Mode: Mana Weaver Passive restores mana based on inverse attack speed.
+     * - Overcharge Stance Mode: Consumes mana per hit based on raw AD gain and AP bonus magic damage.
+     *   If mana is insufficient, Overcharge Stance automatically deactivates.
      */
     @SubscribeEvent
     public static void onAttackEntity(AttackEntityEvent event) {
@@ -103,193 +130,377 @@ public class SpellbladeEventHandler {
             return;
 
         int originLevel = Math.min(5, Math.max(1, OriginManager.getOriginLevel(player)));
-        int idx = originLevel - 1;
+        int originIdx = originLevel - 1;
 
-        // 1. Mana Weaver Passive: Restore Mana based on inverse attack speed
         double attackSpeed = player.getAttributeValue(Attributes.ATTACK_SPEED);
         if (attackSpeed <= 0.2)
             attackSpeed = 0.2;
         double weightMult = 1.0 / attackSpeed;
 
-        double baseManaPct = SpellbladeOrigin.BASE_MANA_PER_HIT[idx];
-
-        try {
-            MagicData magicData = MagicData.getPlayerMagicData(player);
-            if (magicData != null) {
+        // 1. Accumulate Virtual Mana Pool (up to 50% of max mana) ONLY during Overcharge Stance
+        boolean isStanceOn = SpellbladeData.isOverchargeStance(player);
+        if (isStanceOn) {
+            try {
                 double maxMana = player.getAttributeValue(AttributeRegistry.MAX_MANA.get());
                 if (maxMana <= 0)
                     maxMana = 100.0;
-                float manaRestored = (float) (maxMana * baseManaPct * weightMult);
-                float newMana = (float) Math.min(maxMana, magicData.getMana() + manaRestored);
-                magicData.setMana(newMana);
-                PacketDistributor.sendToPlayer(player, new SyncManaPacket(magicData));
+                float virtualManaCap = (float) (maxMana * 0.5);
+
+                double baseManaPct = SpellbladeOrigin.BASE_MANA_PER_HIT[originIdx];
+                float virtualGained = (float) (maxMana * baseManaPct * weightMult);
+
+                float currentVirtual = SpellbladeData.getVirtualMana(player);
+                float newVirtual = Math.min(virtualManaCap, currentVirtual + virtualGained);
+                SpellbladeData.setVirtualMana(player, newVirtual);
+            } catch (Exception ignored) {
             }
-        } catch (Exception ignored) {
+        } else {
+            if (SpellbladeData.getVirtualMana(player) > 0) {
+                SpellbladeData.setVirtualMana(player, 0.0f);
+            }
+        }
+
+        if (!isStanceOn) {
+            // Normal Mode: Mana Weaver Passive - Restore Mana based on inverse attack speed
+            double baseManaPct = SpellbladeOrigin.BASE_MANA_PER_HIT[originIdx];
+
+            try {
+                MagicData magicData = MagicData.getPlayerMagicData(player);
+                if (magicData != null) {
+                    double maxMana = player.getAttributeValue(AttributeRegistry.MAX_MANA.get());
+                    if (maxMana <= 0)
+                        maxMana = 100.0;
+                    float manaRestored = (float) (maxMana * baseManaPct * weightMult);
+                    float newMana = (float) Math.min(maxMana, magicData.getMana() + manaRestored);
+                    magicData.setMana(newMana);
+                    PacketDistributor.sendToPlayer(player, new SyncManaPacket(magicData));
+                }
+            } catch (Exception ignored) {
+            }
+        } else {
+            // Overcharge Stance Mode: Consume Mana per hit and calculate AP bonus magic damage (ONLY if elemental imbue is active)
+            SpellSchool activeElement = SpellbladeData.getActiveElement(player);
+            boolean isImbueActive = (SpellbladeData.getEnhancedAttackTicks(player) > 0 || SpellbladeData.hasImbueCharge(player)) && activeElement != null;
+
+            if (isImbueActive) {
+                int skillLevel = Math.min(5, Math.max(1, SkillManager.getSkillLevel(player, SpellbladeOverchargeSkill.ID)));
+                int skillIdx = skillLevel - 1;
+
+                double totalAd = player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+                double adGain = Math.max(1.0, totalAd - 1.0); // Raw weapon damage gain by subtracting 1.0 unarmed AD
+                double effectiveAp = SpellbladeData.getEffectiveAP(player, activeElement);
+
+                double bonusMagicDmg = adGain * effectiveAp * SpellbladeOrigin.AP_DAMAGE_GAIN_RATIO[skillIdx];
+
+                double manaDrainCost = SpellbladeOrigin.BASE_MANA_DRAIN_PER_HIT[skillIdx]
+                        + (bonusMagicDmg * SpellbladeOrigin.MANA_DRAIN_DAMAGE_SCALING[skillIdx]);
+
+                try {
+                    MagicData magicData = MagicData.getPlayerMagicData(player);
+                    if (magicData != null) {
+                        boolean insufficientMana = magicData.getMana() < manaDrainCost;
+
+                        // Consume remaining mana (or set to 0 if insufficient)
+                        float newMana = (float) Math.max(0.0, magicData.getMana() - manaDrainCost);
+                        magicData.setMana(newMana);
+                        PacketDistributor.sendToPlayer(player, new SyncManaPacket(magicData));
+
+                        // Still register hit as enhanced
+                        player.getPersistentData().putDouble("SpellbladeBonusMagicDmg", bonusMagicDmg);
+                        player.getPersistentData().putBoolean("SpellbladeWasStanceHit", true);
+                        if (activeElement != null) {
+                            player.getPersistentData().putString("SpellbladeStanceElement", activeElement.name());
+                        }
+
+                        if (insufficientMana) {
+                            // Out of Mana -> Deactivate Overcharge Stance AFTER registering the enhanced strike
+                            SpellbladeData.setOverchargeStance(player, false);
+                            ServerLevel level = player.serverLevel();
+                            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                                    SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.8f, 1.2f);
+                            level.sendParticles(ParticleTypes.SMOKE, player.getX(), player.getY() + 1.0, player.getZ(),
+                                    25, 0.3, 0.5, 0.3, 0.05);
+                        }
+                    }
+                } catch (Exception ignored) {
+                }
+            }
         }
     }
 
     /**
-     * Intercept damage dealt by Spellblade players to apply Elemental Imbue
-     * enhancements and Eldritch Rift absorption.
+     * Intercept damage dealt by Spellblade players to apply Enhanced Elemental Imbue
+     * and Overcharge Stance AP magic damage.
      */
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {
-        // Track Eldritch Rift damage absorption on target NBT
-        LivingEntity victim = event.getEntity();
-        if (victim != null && victim.hasEffect(ModEffects.ELDRITCH_RIFT.get())) {
-            double absorbed = victim.getPersistentData().getDouble("EldritchRiftAbsorbedDamage");
-            victim.getPersistentData().putDouble("EldritchRiftAbsorbedDamage", absorbed + event.getAmount());
+        if (IS_PROCESSING_HURT.get()) {
+            return;
         }
+        try {
+            IS_PROCESSING_HURT.set(true);
 
-        // Handle attacker Spellblade imbue triggers (Melee hit only)
-        if (!(event.getSource().getEntity() instanceof ServerPlayer player))
-            return;
-        if (!SpellbladeOrigin.isSpellblade(player))
-            return;
+            // Track Eldritch Rift damage absorption on target NBT
+            LivingEntity victim = event.getEntity();
+            if (victim != null && victim.hasEffect(ModEffects.ELDRITCH_RIFT.get())) {
+                double absorbed = victim.getPersistentData().getDouble("EldritchRiftAbsorbedDamage");
+                victim.getPersistentData().putDouble("EldritchRiftAbsorbedDamage", absorbed + event.getAmount());
+            }
 
-        // Verify direct melee hit
-        if (event.getSource().getDirectEntity() != player)
-            return;
-        if (event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE)
-                || event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_FIRE)
-                || event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)
-                || event.getSource().isIndirect())
-            return;
-        if (com.complextalents.elemental.integration.ModIntegrationHandler.isIronSpellbooksLoaded()) {
-            if (event.getSource() instanceof io.redspace.ironsspellbooks.damage.SpellDamageSource)
+            // Handle attacker Spellblade imbue triggers (Melee hit only)
+            if (!(event.getSource().getEntity() instanceof ServerPlayer player))
                 return;
-        }
+            if (!SpellbladeOrigin.isSpellblade(player))
+                return;
 
-        boolean isOvercharge = SpellbladeData.isOverchargeActive(player);
-        int enhancedTicks = SpellbladeData.getEnhancedAttackTicks(player);
-        boolean hasCharge = SpellbladeData.hasImbueCharge(player);
+            // Verify direct melee hit
+            if (event.getSource().getDirectEntity() != player)
+                return;
+            if (event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE)
+                    || event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_FIRE)
+                    || event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)
+                    || event.getSource().isIndirect())
+                return;
+            // 1. Accumulate Virtual Mana Pool (ONLY during Overcharge Stance) & Reduce Spell Cooldowns on melee hit
+            int hitOriginLevel = Math.min(5, Math.max(1, OriginManager.getOriginLevel(player)));
+            int hitOriginIdx = hitOriginLevel - 1;
+            double attackSpeed = player.getAttributeValue(Attributes.ATTACK_SPEED);
+            if (attackSpeed <= 0.2) attackSpeed = 0.2;
+            double weightMult = 1.0 / attackSpeed;
 
-        boolean isImbueActive = (isOvercharge && enhancedTicks > 0) || (!isOvercharge && hasCharge);
-        if (!isImbueActive)
-            return;
-
-        SpellSchool activeElement = SpellbladeData.getActiveElement(player);
-        if (activeElement == null)
-            return;
-
-        int originLevel = Math.min(5, Math.max(1, OriginManager.getOriginLevel(player)));
-        int idx = originLevel - 1;
-
-        double attackSpeed = player.getAttributeValue(Attributes.ATTACK_SPEED);
-        if (attackSpeed <= 0.2)
-            attackSpeed = 0.2;
-        double weightMult = 1.0 / attackSpeed;
-
-        // Effective AP scaling with School-Specific Spell Power
-        double effectiveAp = SpellbladeData.getEffectiveAP(player, activeElement);
-
-        ServerLevel level = player.serverLevel();
-
-        double imbueWeight = isOvercharge ? weightMult : 1.0;
-
-        switch (activeElement) {
-            case FIRE: {
-                // Bonus Fire Damage normalized by attack speed during Overcharge
-                float bonusDmg = (float) (((event.getAmount() * SpellbladeOrigin.FIRE_DMG_MULT[idx])
-                        + (effectiveAp * SpellbladeOrigin.FIRE_AP_RATIO[idx])) * imbueWeight);
-                victim.hurt(level.damageSources().inFire(), bonusDmg);
-                break;
-            }
-            case ICE: {
-                // Freeze duration normalized by attack speed during Overcharge
-                double freezeSec = (SpellbladeOrigin.ICE_FREEZE_BASE_SEC[idx]
-                        + (effectiveAp * SpellbladeOrigin.ICE_FREEZE_AP_SCALING[idx])) * imbueWeight;
-                int freezeTicks = (int) (freezeSec * 20);
-                victim.setTicksFrozen(victim.getTicksFrozen() + freezeTicks);
-                break;
-            }
-            case LIGHTNING: {
-                // Radius Splash Dmg + Haste Buff normalized by attack speed during Overcharge
-                float splashDmg = (float) ((SpellbladeOrigin.LIGHTNING_SPLASH_BASE_DMG[idx]
-                        + (effectiveAp * SpellbladeOrigin.LIGHTNING_AP_RATIO[idx])) * imbueWeight);
-                AABB radiusBox = victim.getBoundingBox().inflate(4.0);
-                for (LivingEntity nearby : level.getEntitiesOfClass(LivingEntity.class, radiusBox,
-                        e -> e != player && e != victim)) {
-                    nearby.hurt(level.damageSources().lightningBolt(), splashDmg);
-                    level.sendParticles(ParticleTypes.FLASH, nearby.getX(), nearby.getY() + 1.0, nearby.getZ(), 1, 0, 0,
-                            0, 0);
-                    level.sendParticles(ParticleTypes.ELECTRIC_SPARK, nearby.getX(), nearby.getY() + 1.0, nearby.getZ(),
-                            8, 0.3, 0.3, 0.3, 0.1);
-                }
-                level.sendParticles(ParticleTypes.FLASH, victim.getX(), victim.getY() + 1.0, victim.getZ(), 1, 0, 0, 0,
-                        0);
-                // Apply Custom Lightning Haste effect (Attack Speed boost) to player
-                player.addEffect(
-                        new MobEffectInstance(ModEffects.LIGHTNING_HASTE.get(), 100, idx, false, false, false));
-                break;
-            }
-            case NATURE: {
-                // Absorption Shield on hit normalized by attack speed during Overcharge
-                float shieldAmount = (float) ((SpellbladeOrigin.NATURE_SHIELD_BASE[idx]
-                        + (effectiveAp * SpellbladeOrigin.NATURE_SHIELD_AP_RATIO[idx])) * imbueWeight);
-                player.setAbsorptionAmount(Math.max(player.getAbsorptionAmount(), shieldAmount));
-                break;
-            }
-            case AQUA: {
-                // Water Mana Battery normalized by attack speed during Overcharge
-                float bonusMana = (float) ((SpellbladeOrigin.WATER_MANA_BASE[idx]
-                        + (effectiveAp * SpellbladeOrigin.WATER_MANA_AP_RATIO[idx])) * imbueWeight);
+            boolean isStanceActive = SpellbladeData.isOverchargeStance(player);
+            if (isStanceActive) {
                 try {
-                    MagicData magicData = MagicData.getPlayerMagicData(player);
-                    if (magicData != null) {
-                        double maxMana = player.getAttributeValue(AttributeRegistry.MAX_MANA.get());
-                        float newMana = (float) Math.min(maxMana, magicData.getMana() + bonusMana);
-                        magicData.setMana(newMana);
-                        PacketDistributor.sendToPlayer(player, new SyncManaPacket(magicData));
-                    }
+                    double maxMana = player.getAttributeValue(AttributeRegistry.MAX_MANA.get());
+                    if (maxMana <= 0) maxMana = 100.0;
+                    float virtualManaCap = (float) (maxMana * 0.5);
+
+                    double baseManaPct = SpellbladeOrigin.BASE_MANA_PER_HIT[hitOriginIdx];
+                    float virtualGained = (float) (maxMana * baseManaPct * weightMult);
+
+                    float currentVirtual = SpellbladeData.getVirtualMana(player);
+                    float newVirtual = Math.min(virtualManaCap, currentVirtual + virtualGained);
+                    SpellbladeData.setVirtualMana(player, newVirtual);
+                } catch (Exception ignored) {}
+            } else {
+                if (SpellbladeData.getVirtualMana(player) > 0) {
+                    SpellbladeData.setVirtualMana(player, 0.0f);
+                }
+            }
+
+            // Trigger Impact & Screen Shake feedback (debounced to once per swing)
+            long currentGameTime = player.level().getGameTime();
+            long lastImpactTick = player.getPersistentData().getLong("SpellbladeLastImpactTick");
+
+            if (currentGameTime - lastImpactTick > 6) {
+                player.getPersistentData().putLong("SpellbladeLastImpactTick", currentGameTime);
+
+                boolean wasStanceHit = player.getPersistentData().getBoolean("SpellbladeWasStanceHit");
+                boolean isStanceOn = SpellbladeData.isOverchargeStance(player) || wasStanceHit;
+                int enhancedTicks = SpellbladeData.getEnhancedAttackTicks(player);
+                boolean hasCharge = SpellbladeData.hasImbueCharge(player);
+
+                SpellSchool activeElement = SpellbladeData.getActiveElement(player);
+                if (activeElement == null && wasStanceHit && player.getPersistentData().contains("SpellbladeStanceElement")) {
+                    try {
+                        activeElement = SpellSchool.valueOf(player.getPersistentData().getString("SpellbladeStanceElement"));
+                    } catch (Exception ignored) {}
+                }
+
+                boolean isImbued = activeElement != null && (enhancedTicks > 0 || hasCharge);
+                int flashColor = isImbued ? getSchoolColorHex(activeElement) : 0;
+                
+                // Query weapon stun potential / impact attribute from Epic Fight
+                double impactStat = 1.0;
+                var impactAttr = player.getAttribute(EpicFightAttributes.IMPACT.get());
+                if (impactAttr != null) {
+                    impactStat = impactAttr.getValue();
+                }
+
+                // Impact intensity scales dynamically with weapon stun potential (e.g. Dagger ~22, Sword ~35, Greatsword ~65)
+                double stanceMult = isStanceOn ? 1.35 : 1.0;
+                int impactIntensity = Math.min(100, Math.max(15, (int) (35.0 * Math.sqrt(impactStat) * stanceMult)));
+
+                PacketHandler.sendTo(new S2CSpellFXPacket(impactIntensity, flashColor, 0.18f), player);
+            }
+
+            boolean wasStanceHit = player.getPersistentData().getBoolean("SpellbladeWasStanceHit");
+            player.getPersistentData().remove("SpellbladeWasStanceHit");
+            boolean isStanceOn = SpellbladeData.isOverchargeStance(player) || wasStanceHit;
+            int enhancedTicks = SpellbladeData.getEnhancedAttackTicks(player);
+            boolean hasCharge = SpellbladeData.hasImbueCharge(player);
+
+            ServerLevel level = player.serverLevel();
+
+            SpellSchool activeElement = SpellbladeData.getActiveElement(player);
+            if (activeElement == null && wasStanceHit && player.getPersistentData().contains("SpellbladeStanceElement")) {
+                try {
+                    activeElement = SpellSchool.valueOf(player.getPersistentData().getString("SpellbladeStanceElement"));
                 } catch (Exception ignored) {
                 }
-                break;
             }
-            case EVOCATION: {
-                // Shockwave Knockback normalized by attack speed during Overcharge
-                double knockbackDist = SpellbladeOrigin.EVOCATION_KNOCKBACK_DIST[idx] * imbueWeight;
-                Vec3 vec = victim.position().subtract(player.position()).normalize().scale(knockbackDist * 0.4);
-                victim.setDeltaMovement(victim.getDeltaMovement().add(vec.x, 0.3, vec.z));
-                level.sendParticles(ParticleTypes.EXPLOSION, victim.getX(), victim.getY() + 1.0, victim.getZ(), 3, 0.4,
-                        0.4, 0.4, 0.1);
-                level.playSound(null, victim.getX(), victim.getY(), victim.getZ(),
-                        SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 0.8f, 1.2f);
-                break;
-            }
-            case BLOOD: {
-                // Bleed DoT & Anti-Heal status normalized by attack speed during Overcharge
-                player.addEffect(new MobEffectInstance(ModEffects.BLOOD_BLEED.get(), 80, idx, false, false, false));
-                float bleedDmg = (float) ((SpellbladeOrigin.BLOOD_BLEED_DOT_BASE[idx]
-                        + effectiveAp * SpellbladeOrigin.BLOOD_BLEED_AP_RATIO[idx]) * imbueWeight);
-                victim.hurt(level.damageSources().magic(), bleedDmg);
-                break;
-            }
-            case ENDER: {
-                // Armor Pierce % converted directly to True / Void damage + base void dmg + AP
-                // scaling
-                double piercePct = SpellbladeOrigin.ENDER_ARMOR_PIERCE_PCT[idx];
-                float bonusVoid = (float) ((SpellbladeOrigin.ENDER_VOID_BASE_DMG[idx] + event.getAmount() * piercePct
-                        + (effectiveAp * SpellbladeOrigin.ENDER_VOID_AP_RATIO[idx])) * imbueWeight);
-                event.setAmount((float) (event.getAmount() * (1.0 - piercePct)));
-                victim.hurt(level.damageSources().magic(), bonusVoid);
-                break;
-            }
-            case ELDRITCH: {
-                // Reality Collapse Rift: duration scaled by attack speed during Overcharge
-                int durationTicks = (int) (60 * imbueWeight);
-                victim.addEffect(
-                        new MobEffectInstance(ModEffects.ELDRITCH_RIFT.get(), durationTicks, idx, false, false, false));
-                break;
-            }
-        }
+            player.getPersistentData().remove("SpellbladeStanceElement");
 
-        // Spawn Iron's Spellbooks impact particles with directional attack velocity
-        spawnElementalImpactParticles(level, player, victim, activeElement);
+            boolean isImbueActive = (enhancedTicks > 0 || hasCharge) && activeElement != null;
 
-        // Consume single-strike charge if outside Overcharge
-        if (!isOvercharge) {
-            SpellbladeData.setHasImbueCharge(player, false);
+            // Apply Overcharge AP bonus magic damage on hit (ONLY when overcharged AND has an active elemental imbue)
+            if (isStanceOn && isImbueActive && player.getPersistentData().contains("SpellbladeBonusMagicDmg")) {
+                double bonusMagicDmg = player.getPersistentData().getDouble("SpellbladeBonusMagicDmg");
+                player.getPersistentData().remove("SpellbladeBonusMagicDmg");
+                if (bonusMagicDmg > 0) {
+                    victim.hurt(level.damageSources().indirectMagic(null, player), (float) bonusMagicDmg);
+                }
+            } else {
+                player.getPersistentData().remove("SpellbladeBonusMagicDmg");
+            }
+
+            // If no active element or imbue, skip elemental imbue effects and particles
+            if (!isImbueActive) {
+                if (!isStanceOn && enhancedTicks <= 0) {
+                    SpellbladeData.setHasImbueCharge(player, false);
+                }
+                return;
+            }
+
+            int originLevel = Math.min(5, Math.max(1, OriginManager.getOriginLevel(player)));
+            int originIdx = originLevel - 1;
+
+            int skillLevel = Math.min(5, Math.max(1, SkillManager.getSkillLevel(player, SpellbladeOverchargeSkill.ID)));
+            int skillIdx = skillLevel - 1;
+
+            double enhancedMult = isStanceOn ? SpellbladeOrigin.ENHANCED_EFFECT_MULT[skillIdx] : 1.0;
+
+            // Effective AP scaling with School-Specific Spell Power
+            double effectiveAp = SpellbladeData.getEffectiveAP(player, activeElement);
+
+            switch (activeElement) {
+                case FIRE: {
+                    // Fire: Deal bonus magic damage AND light target on fire
+                    float bonusDmg = (float) (((event.getAmount() * SpellbladeOrigin.FIRE_DMG_MULT[originIdx])
+                            + (effectiveAp * SpellbladeOrigin.FIRE_AP_RATIO[originIdx])) * enhancedMult * weightMult);
+                    victim.hurt(level.damageSources().indirectMagic(null, player), bonusDmg);
+                    if (!(victim instanceof Player)) {
+                        int burnSec = (int) Math.max(2, Math.round(5.0 * weightMult * enhancedMult));
+                        victim.setSecondsOnFire(burnSec);
+                    }
+                    break;
+                }
+                case ICE: {
+                    // Ice: Apply freeze stacks (duration scales with AP & weightMult)
+                    if (!(victim instanceof Player)) {
+                        double freezeSec = (SpellbladeOrigin.ICE_FREEZE_BASE_SEC[originIdx]
+                                + (effectiveAp * SpellbladeOrigin.ICE_FREEZE_AP_SCALING[originIdx])) * enhancedMult * weightMult;
+                        int freezeTicks = (int) (freezeSec * 20);
+                        victim.setTicksFrozen(victim.getTicksFrozen() + freezeTicks);
+                    }
+                    break;
+                }
+                case LIGHTNING: {
+                    // Lightning: Fixed AoE splash distance (5-8m radius), damage scales with AP, weightMult & enhancedMult
+                    double radius = Math.min(8.0, 5.0 + originIdx * 0.5 + effectiveAp * 0.05);
+                    float splashDmg = (float) ((SpellbladeOrigin.LIGHTNING_SPLASH_BASE_DMG[originIdx]
+                            + (effectiveAp * SpellbladeOrigin.LIGHTNING_AP_RATIO[originIdx])) * enhancedMult * weightMult);
+                    AABB radiusBox = victim.getBoundingBox().inflate(radius);
+                    for (LivingEntity nearby : level.getEntitiesOfClass(LivingEntity.class, radiusBox,
+                            e -> e != player && e != victim && !(e instanceof Player))) {
+                        nearby.hurt(level.damageSources().indirectMagic(null, player), splashDmg);
+                        level.sendParticles(ParticleTypes.FLASH, nearby.getX(), nearby.getY() + 1.0, nearby.getZ(), 1, 0, 0, 0, 0);
+                        level.sendParticles(ParticleTypes.ELECTRIC_SPARK, nearby.getX(), nearby.getY() + 1.0, nearby.getZ(), 8, 0.3, 0.3, 0.3, 0.1);
+                    }
+                    level.sendParticles(ParticleTypes.FLASH, victim.getX(), victim.getY() + 1.0, victim.getZ(), 1, 0, 0, 0, 0);
+                    break;
+                }
+                case NATURE: {
+                    // Nature: Gain Absorption Shield (shield amount scales with AP & weightMult)
+                    float shieldAmount = (float) ((SpellbladeOrigin.NATURE_SHIELD_BASE[originIdx]
+                            + (effectiveAp * SpellbladeOrigin.NATURE_SHIELD_AP_RATIO[originIdx])) * enhancedMult * weightMult);
+                    player.setAbsorptionAmount(Math.max(player.getAbsorptionAmount(), shieldAmount));
+                    break;
+                }
+                case AQUA: {
+                    // Aqua: Gain Attack Speed (Haste) on self AND apply Tidal Erosion (max 3 stacks, -5% armor per stack) to victim
+                    int hasteAmp = Math.min(4, (int) (effectiveAp / 25.0));
+                    int hasteDuration = (int) ((80 + effectiveAp * 2.0) * weightMult * enhancedMult);
+                    player.addEffect(new MobEffectInstance(ModEffects.LIGHTNING_HASTE.get(), hasteDuration, hasteAmp, false, false, false));
+
+                    if (victim != null && !(victim instanceof Player)) {
+                        int currentAmp = victim.hasEffect(ModEffects.TIDAL_EROSION.get())
+                                ? victim.getEffect(ModEffects.TIDAL_EROSION.get()).getAmplifier()
+                                : -1;
+                        int newAmp = Math.min(2, currentAmp + 1); // 0 = 1 stack (-5%), 1 = 2 stacks (-10%), 2 = 3 stacks (-15%)
+                        victim.addEffect(new MobEffectInstance(ModEffects.TIDAL_EROSION.get(), hasteDuration, newAmp, false, false, true));
+                    }
+                    break;
+                }
+                case EVOCATION: {
+                    // Evocation: Increase weapon Impact attribute aggressively scaling with weapon weight (weightMult^1.75)
+                    try {
+                        double aggressiveWeight = Math.pow(weightMult, 1.75);
+                        double bonusImpact = (1.5 + effectiveAp * 0.05) * enhancedMult * aggressiveWeight;
+                        var impactAttr = player.getAttribute(EpicFightAttributes.IMPACT.get());
+                        if (impactAttr != null) {
+                            impactAttr.removeModifier(EVOCATION_IMPACT_MODIFIER_UUID);
+                            impactAttr.addTransientModifier(new AttributeModifier(EVOCATION_IMPACT_MODIFIER_UUID, "EvocationImpactBonus", bonusImpact, AttributeModifier.Operation.ADDITION));
+                        }
+                    } catch (Exception ignored) {}
+                    level.sendParticles(ParticleTypes.EXPLOSION, victim.getX(), victim.getY() + 1.0, victim.getZ(), 3, 0.4, 0.4, 0.4, 0.1);
+                    level.playSound(null, victim.getX(), victim.getY(), victim.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 0.8f, 1.2f);
+                    break;
+                }
+                case BLOOD: {
+                    // Blood: Apply Bleed DoT (deals static 1% Max HP per sec, duration scales with AP, weightMult & enhancedMult)
+                    if (!(victim instanceof Player)) {
+                        int bleedDuration = (int) ((80 + effectiveAp * 2.0) * weightMult * enhancedMult);
+                        victim.addEffect(new MobEffectInstance(ModEffects.BLOOD_BLEED.get(), bleedDuration, 0, false, false, false));
+                    }
+                    break;
+                }
+                case ENDER: {
+                    // Ender: Bonus Void damage ONLY registers when target's poise/shield is down (using PoiseAPI)
+                    boolean isPoiseBroken = PoiseAPI.isExhausted(victim)
+                            || (PoiseAPI.hasPoise(victim) && PoiseAPI.getCurrentPoise(victim) <= 0.001f);
+                    if (isPoiseBroken) {
+                        double shieldMult = 1.5 + effectiveAp * 0.01;
+                        float bonusVoid = (float) ((SpellbladeOrigin.ENDER_VOID_BASE_DMG[originIdx] + event.getAmount() * 0.5
+                                + (effectiveAp * SpellbladeOrigin.ENDER_VOID_AP_RATIO[originIdx])) * enhancedMult * weightMult * shieldMult);
+                        victim.hurt(level.damageSources().indirectMagic(null, player), bonusVoid);
+                    }
+                    break;
+                }
+                case ELDRITCH: {
+                    // Eldritch: Void Execute — Triggers if target HP <= % max HP threshold AND (Current HP + Current Poise) <= Execute Cap
+                    if (!(victim instanceof Player)) {
+                        double maxHpPct = 0.05 + (originIdx * 0.025); // 5% at level 1 up to 15% at level 5
+                        float hpThreshold = (float) (victim.getMaxHealth() * maxHpPct * enhancedMult);
+
+                        float currentHp = victim.getHealth();
+                        float currentPoise = (PoiseAPI.hasPoise(victim) && !PoiseAPI.isExhausted(victim))
+                                ? Math.max(0.0f, PoiseAPI.getCurrentPoise(victim))
+                                : 0.0f;
+                        float totalHpPlusPoise = currentHp + currentPoise;
+
+                        float executeCap = (float) ((20.0 + effectiveAp * 2.5) * weightMult * enhancedMult);
+
+                        if (currentHp <= hpThreshold && totalHpPlusPoise <= executeCap) {
+                            // Execute target!
+                            victim.hurt(level.damageSources().indirectMagic(null, player), currentHp + currentPoise + 100.0f);
+                            level.sendParticles(ParticleTypes.EXPLOSION, victim.getX(), victim.getY() + 1.0, victim.getZ(), 10, 0.5, 0.5, 0.5, 0.1);
+                            level.playSound(null, victim.getX(), victim.getY(), victim.getZ(), SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 0.8f, 1.5f);
+                        }
+                    }
+                    break;
+                }
+            }
+
+            // Spawn Iron's Spellbooks impact particles with directional attack velocity
+            spawnElementalImpactParticles(level, player, victim, activeElement);
+
+            // Consume single-strike charge if outside Overcharge and enhanced duration expired
+            if (!isStanceOn && enhancedTicks <= 0) {
+                SpellbladeData.setHasImbueCharge(player, false);
+            }
+        } finally {
+            IS_PROCESSING_HURT.set(false);
         }
     }
 
@@ -301,19 +512,22 @@ public class SpellbladeEventHandler {
         if (event.getEffectInstance() != null
                 && event.getEffectInstance().getEffect() == ModEffects.ELDRITCH_RIFT.get()) {
             LivingEntity victim = event.getEntity();
-            if (victim != null && victim.level() instanceof ServerLevel level) {
+            if (victim != null && !(victim instanceof Player) && victim.level() instanceof ServerLevel level) {
                 double absorbedDmg = victim.getPersistentData().getDouble("EldritchRiftAbsorbedDamage");
                 victim.getPersistentData().remove("EldritchRiftAbsorbedDamage");
                 if (absorbedDmg > 0) {
                     int amp = Math.min(4, Math.max(0, event.getEffectInstance().getAmplifier()));
                     double pct = SpellbladeOrigin.ELDRITCH_ABSORBED_BASE_PCT[amp];
-                    if (event.getEntity().getLastHurtByMob() instanceof Player player) {
+                    Player player = null;
+                    if (event.getEntity().getLastHurtByMob() instanceof Player p) {
+                        player = p;
                         double effectiveAp = SpellbladeData.getEffectiveAP(player, SpellSchool.ELDRITCH);
                         pct += effectiveAp * SpellbladeOrigin.ELDRITCH_ABSORBED_AP_RATIO[amp];
                     }
                     float explosionDmg = (float) (absorbedDmg * pct);
 
-                    victim.hurt(level.damageSources().magic(), explosionDmg);
+                    var dmgSource = player != null ? level.damageSources().indirectMagic(null, player) : level.damageSources().magic();
+                    victim.hurt(dmgSource, explosionDmg);
                     level.playSound(null, victim.getX(), victim.getY(), victim.getZ(),
                             SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 1.0f, 1.2f);
                     level.sendParticles(ParticleTypes.EXPLOSION, victim.getX(), victim.getY() + 1.0, victim.getZ(), 10,
@@ -325,9 +539,7 @@ public class SpellbladeEventHandler {
 
     /**
      * Server tick for Spellblade players:
-     * - Updates Overcharge stance window ticks.
-     * - Updates 6-second enhanced attack ticks.
-     * - Manages dynamic AP to AD conversion attribute modifier during Overcharge.
+     * - Decrements 6-second enhanced attack ticks if active.
      */
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -341,9 +553,6 @@ public class SpellbladeEventHandler {
         if (player.level().isClientSide()) {
             if (SpellbladeOrigin.ID.equals(com.complextalents.origin.client.ClientOriginData.getOriginId())) {
                 player.getCapability(SpellbladeDataProvider.SPELLBLADE_DATA).ifPresent(cap -> {
-                    if (cap.getOverchargeTicks() > 0) {
-                        cap.setOverchargeTicks(cap.getOverchargeTicks() - 1);
-                    }
                     if (cap.getEnhancedAttackTicks() > 0) {
                         cap.setEnhancedAttackTicks(cap.getEnhancedAttackTicks() - 1);
                     }
@@ -356,36 +565,6 @@ public class SpellbladeEventHandler {
             if (!SpellbladeOrigin.isSpellblade(serverPlayer))
                 return;
 
-            int overchargeTicks = SpellbladeData.getOverchargeTicks(serverPlayer);
-            if (overchargeTicks > 0) {
-                SpellbladeData.setOverchargeTicks(serverPlayer, overchargeTicks - 1);
-
-                // Apply dynamic AP -> AD conversion modifier during Overcharge based on active
-                // skill level
-                int skillLevel = Math.min(5,
-                        Math.max(1, SkillManager.getSkillLevel(serverPlayer, SpellbladeOverchargeSkill.ID)));
-                int idx = skillLevel - 1;
-
-                double ap = serverPlayer.getAttributeValue(AttributeRegistry.SPELL_POWER.get());
-                double bonusAp = Math.max(0.0, ap - 1.0);
-                double bonusAdPct = bonusAp * SpellbladeOverchargeSkill.AP_TO_AD_CONVERSION[idx];
-
-                AttributeInstance adInst = serverPlayer.getAttribute(Attributes.ATTACK_DAMAGE);
-                if (adInst != null) {
-                    adInst.removeModifier(OVERCHARGE_AD_MODIFIER_UUID);
-                    if (bonusAdPct > 0) {
-                        adInst.addTransientModifier(new AttributeModifier(OVERCHARGE_AD_MODIFIER_UUID,
-                                "Spellblade Overcharge AD", bonusAdPct, AttributeModifier.Operation.MULTIPLY_TOTAL));
-                    }
-                }
-            } else {
-                // Remove AD modifier when Overcharge is inactive
-                AttributeInstance adInst = serverPlayer.getAttribute(Attributes.ATTACK_DAMAGE);
-                if (adInst != null && adInst.getModifier(OVERCHARGE_AD_MODIFIER_UUID) != null) {
-                    adInst.removeModifier(OVERCHARGE_AD_MODIFIER_UUID);
-                }
-            }
-
             int enhancedTicks = SpellbladeData.getEnhancedAttackTicks(serverPlayer);
             if (enhancedTicks > 0) {
                 SpellbladeData.setEnhancedAttackTicks(serverPlayer, enhancedTicks - 1);
@@ -395,6 +574,8 @@ public class SpellbladeEventHandler {
 
     private static void spawnElementalImpactParticles(ServerLevel level, ServerPlayer player, LivingEntity victim,
             SpellSchool school) {
+        if (school == null || victim == null)
+            return;
         Vec3 startPos = victim.position().add(0, victim.getBbHeight() * 0.5, 0);
         Vec3 attackDir = victim.position().subtract(player.position());
         if (attackDir.lengthSqr() < 0.0001) {
@@ -443,5 +624,105 @@ public class SpellbladeEventHandler {
                 }
             }
         }
+    }
+
+    /**
+     * Display Overcharge Stance bonus magic damage tooltip on held weapons for Spellblade players.
+     */
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public static void onItemTooltip(ItemTooltipEvent event) {
+        Player player = event.getEntity();
+        if (player == null)
+            return;
+
+        ItemStack stack = event.getItemStack();
+        if (stack.isEmpty())
+            return;
+
+        if (!(stack.getItem() instanceof SwordItem || stack.getItem() instanceof DiggerItem)) {
+            if (!stack.getAttributeModifiers(EquipmentSlot.MAINHAND).containsKey(Attributes.ATTACK_DAMAGE)) {
+                return;
+            }
+        }
+
+        // Check if player is holding this item in mainhand
+        if (player.getMainHandItem() != stack)
+            return;
+
+        if (!SpellbladeOrigin.ID.equals(com.complextalents.origin.client.ClientOriginData.getOriginId()))
+            return;
+
+        var capOpt = player.getCapability(SpellbladeDataProvider.SPELLBLADE_DATA).resolve();
+        if (capOpt.isEmpty())
+            return;
+
+        var cap = capOpt.get();
+        if (!cap.isOverchargeStance())
+            return;
+
+        double totalAd = player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+        double adGain = Math.max(1.0, totalAd - 1.0);
+        SpellSchool activeSchool = cap.getActiveElement();
+        double effectiveAp = SpellbladeData.getEffectiveAP(player, activeSchool);
+
+        int skillLevel = Math.min(5, Math.max(1, com.complextalents.skill.client.ClientSkillData.getSkillLevel(SpellbladeOverchargeSkill.ID)));
+        int skillIdx = skillLevel - 1;
+
+        double bonusMagicDmg = adGain * effectiveAp * SpellbladeOrigin.AP_DAMAGE_GAIN_RATIO[skillIdx];
+        double aquaMult = (activeSchool == SpellSchool.AQUA) ? 0.5 : 1.0;
+        double manaDrainCost = (SpellbladeOrigin.BASE_MANA_DRAIN_PER_HIT[skillIdx]
+                + (bonusMagicDmg * SpellbladeOrigin.MANA_DRAIN_DAMAGE_SCALING[skillIdx])) * aquaMult;
+
+        String schoolName = activeSchool != null ? activeSchool.name() : "RAW MAGIC";
+        ChatFormatting schoolColor = activeSchool != null ? getSchoolFormatting(activeSchool) : ChatFormatting.LIGHT_PURPLE;
+
+        Component tooltipLine = Component.literal("  + ")
+                .append(Component.literal(String.format("%.1f", bonusMagicDmg)).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
+                .append(Component.literal(" Bonus Magic Damage (").withStyle(ChatFormatting.DARK_PURPLE))
+                .append(Component.literal(schoolName).withStyle(schoolColor, ChatFormatting.BOLD))
+                .append(Component.literal(" Overcharge)").withStyle(ChatFormatting.DARK_PURPLE));
+
+        Component drainLine = Component.literal("  - ")
+                .append(Component.literal(String.format("%.1f", manaDrainCost)).withStyle(ChatFormatting.AQUA))
+                .append(Component.literal(" Mana per hit").withStyle(ChatFormatting.GRAY));
+
+        event.getToolTip().add(Component.empty());
+        event.getToolTip().add(Component.literal("When in Main Hand (Overcharge Stance):").withStyle(ChatFormatting.GRAY));
+        event.getToolTip().add(tooltipLine);
+        event.getToolTip().add(drainLine);
+    }
+
+    private static ChatFormatting getSchoolFormatting(SpellSchool school) {
+        if (school == null)
+            return ChatFormatting.WHITE;
+        return switch (school) {
+            case FIRE -> ChatFormatting.RED;
+            case ICE -> ChatFormatting.AQUA;
+            case LIGHTNING -> ChatFormatting.YELLOW;
+            case NATURE -> ChatFormatting.GREEN;
+            case AQUA -> ChatFormatting.DARK_AQUA;
+            case EVOCATION -> ChatFormatting.WHITE;
+            case BLOOD -> ChatFormatting.DARK_RED;
+            case ENDER -> ChatFormatting.DARK_PURPLE;
+            case ELDRITCH -> ChatFormatting.DARK_PURPLE;
+            case HOLY -> ChatFormatting.GOLD;
+        };
+    }
+
+    private static int getSchoolColorHex(SpellSchool school) {
+        if (school == null) return 0xFFFFFFFF;
+        return switch (school) {
+            case FIRE -> 0xE05A47;
+            case ICE -> 0x6BBBC9;
+            case LIGHTNING -> 0xCFB34A;
+            case NATURE -> 0x68A378;
+            case AQUA -> 0x5592C2;
+            case EVOCATION -> 0xE0E0E0;
+            case BLOOD -> 0xB22222;
+            case ENDER -> 0x9366BF;
+            case ELDRITCH -> 0x8A2BE2;
+            case HOLY -> 0xFFFFE0;
+        };
     }
 }

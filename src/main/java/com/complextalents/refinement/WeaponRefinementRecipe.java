@@ -24,9 +24,42 @@ public class WeaponRefinementRecipe implements SmithingRecipe {
         this.id = id;
     }
 
+    /**
+     * Checks if a weapon has recyclable XP (60% of XP gained beyond its starting tier base XP).
+     */
+    public static boolean isRecyclableWeapon(ItemStack stack) {
+        if (stack == null || stack.isEmpty()) return false;
+        int startingTier = WeaponMasteryManager.getInstance().getWeaponTier(stack);
+        if (startingTier <= 0) return false;
+
+        int totalXp = WeaponMasteryManager.getRefineXp(stack);
+        int baseRank = WeaponMasteryManager.getBaseCumulativeLevelForStartingTier(startingTier);
+        int startingXp = WeaponMasteryManager.getXpForRank(baseRank);
+
+        int gainedXp = Math.max(0, totalXp - startingXp);
+        return gainedXp > 0;
+    }
+
+    /**
+     * Calculates the recyclable XP from a weapon:
+     * 60% of actual refined XP (total XP minus starting tier base XP).
+     */
+    public static int getRecyclableXp(ItemStack stack) {
+        if (stack == null || stack.isEmpty()) return 0;
+        int startingTier = WeaponMasteryManager.getInstance().getWeaponTier(stack);
+        if (startingTier <= 0) return 0;
+
+        int totalXp = WeaponMasteryManager.getRefineXp(stack);
+        int baseRank = WeaponMasteryManager.getBaseCumulativeLevelForStartingTier(startingTier);
+        int startingXp = WeaponMasteryManager.getXpForRank(baseRank);
+
+        int gainedXp = Math.max(0, totalXp - startingXp);
+        return (int) (gainedXp * 0.60);
+    }
+
     @Override
     public boolean isTemplateIngredient(ItemStack stack) {
-        return stack.getItem() instanceof RefinementGemItem;
+        return stack.getItem() instanceof RefinementGemItem || isRecyclableWeapon(stack);
     }
 
     @Override
@@ -36,68 +69,134 @@ public class WeaponRefinementRecipe implements SmithingRecipe {
 
     @Override
     public boolean isAdditionIngredient(ItemStack stack) {
-        return WeaponMasteryManager.getInstance().getWeaponTier(stack) > 0;
+        return false; // Addition slot (Slot 2) is unused for refinement/recycling
     }
 
     @Override
     public boolean matches(Container container, Level level) {
-        ItemStack gemStack = container.getItem(0);       // Left: Refinement Gem
-        ItemStack mainStack = container.getItem(1);      // Middle: Main Weapon
-        ItemStack sacStack = container.getItem(2);       // Right: Sacrificial Weapon
+        ItemStack slot0 = container.getItem(0);       // Template slot (Gem OR Sacrifice Weapon)
+        ItemStack mainStack = container.getItem(1);   // Base slot (Target Weapon to enhance)
+        ItemStack slot2 = container.getItem(2);       // Addition slot (Must be empty)
 
-        if (gemStack.isEmpty() || mainStack.isEmpty() || sacStack.isEmpty()) {
+        if (!slot2.isEmpty() || mainStack.isEmpty() || slot0.isEmpty()) {
             return false;
         }
 
-        // 1. Validate Gem
-        if (!(gemStack.getItem() instanceof RefinementGemItem gemItem)) {
+        int targetTier = WeaponMasteryManager.getInstance().getWeaponTier(mainStack);
+        if (targetTier <= 0) {
             return false;
         }
 
-        // 2. Validate Weapons & Items Match
-        if (mainStack.getItem() != sacStack.getItem()) {
+        // Check if target weapon is already at max XP (Rank 20 Pinnacle = 5.5M XP)
+        int maxCumRank = WeaponMasteryManager.getMaxCumulativeRankForStartingTier(targetTier);
+        int maxXp = WeaponMasteryManager.getXpForRank(maxCumRank);
+        int currentXp = WeaponMasteryManager.getRefineXp(mainStack);
+
+        if (currentXp >= maxXp) {
             return false;
         }
 
-        int weaponTier = WeaponMasteryManager.getInstance().getWeaponTier(mainStack);
-        if (weaponTier <= 0) {
-            return false;
+        // Mode 1: Refinement Gem in Template slot (Slot 0)
+        if (slot0.getItem() instanceof RefinementGemItem) {
+            return true;
         }
 
-        // 3. Max Rank Check based on Weapon Level Rank (Novice: 1, Apprentice: 2, Adept: 3, Expert: 4, Master: 5)
-        int maxRank = getMaxRefineRankForTier(weaponTier);
-        int currentRank = getRefineRank(mainStack);
-        if (currentRank >= maxRank) {
-            return false;
+        // Mode 2: Weapon Recycling Recipe (Sacrifice weapon in Template slot 0)
+        if (isRecyclableWeapon(slot0) && slot0 != mainStack) {
+            return getRecyclableXp(slot0) > 0;
         }
 
-        // 4. Gem Tier Match Check (Gem Tier must match weapon tier)
-        CrateRarity requiredGemTier = getGemTierForWeaponTier(weaponTier);
-        if (gemItem.getTier() != requiredGemTier) {
-            return false;
-        }
-
-        // 5. Sacrificial Rank Check (Sacrificial Rank <= Main Rank)
-        int sacRank = getRefineRank(sacStack);
-        if (sacRank > currentRank) {
-            return false;
-        }
-
-        return true;
+        return false;
     }
 
     @Override
     public @NotNull ItemStack assemble(Container container, RegistryAccess registryAccess) {
-        ItemStack mainStack = container.getItem(1);
-        if (mainStack.isEmpty()) return ItemStack.EMPTY;
+        if (!matches(container, null)) return ItemStack.EMPTY;
 
-        // Clone main stack preserving all NBT, enchantments, durability, name, etc.
+        ItemStack slot0 = container.getItem(0);
+        ItemStack mainStack = container.getItem(1);
+
+        // Clone main target weapon preserving NBT, enchantments, durability, name, etc.
         ItemStack result = mainStack.copy();
         result.setCount(1);
 
-        int currentRank = getRefineRank(mainStack);
+        int startingTier = WeaponMasteryManager.getInstance().getWeaponTier(mainStack);
+        int baseRank = WeaponMasteryManager.getBaseCumulativeLevelForStartingTier(startingTier);
+        int maxCumRank = WeaponMasteryManager.getMaxCumulativeRankForStartingTier(startingTier);
+        int maxXp = WeaponMasteryManager.getXpForRank(maxCumRank);
+        int currentXp = WeaponMasteryManager.getRefineXp(mainStack);
+
+        int xpGained = 0;
+        int gemsToConsume = 0;
+        ItemStack sacrificeStack = ItemStack.EMPTY;
+
+        if (slot0.getItem() instanceof RefinementGemItem gemItem) {
+            int gemsAvailable = slot0.getCount();
+            int xpNeeded = maxXp - currentXp;
+            int xpPerGem = WeaponMasteryManager.getGemXpValue(gemItem.getTier());
+
+            int gemsNeeded = (int) Math.ceil((double) xpNeeded / xpPerGem);
+            gemsToConsume = Math.max(1, Math.min(gemsAvailable, gemsNeeded));
+            xpGained = gemsToConsume * xpPerGem;
+        } else if (isRecyclableWeapon(slot0)) {
+            sacrificeStack = slot0;
+            xpGained = getRecyclableXp(sacrificeStack);
+        }
+
+        if (xpGained <= 0) return ItemStack.EMPTY;
+
+        int newXp = Math.min(maxXp, currentXp + xpGained);
+        int newCumRank = WeaponMasteryManager.getRankFromXp(newXp, maxCumRank);
+        int newRefineRank = Math.max(0, newCumRank - baseRank);
+
         CompoundTag tag = result.getOrCreateTag();
-        tag.putInt("RefineRank", currentRank + 1);
+
+        // Ensure RefineSeed exists on mainStack and result
+        java.util.UUID seedUuid = WeaponMasteryManager.getOrCreateRefineSeed(mainStack);
+        tag.putUUID("RefineSeed", seedUuid);
+
+        tag.putInt("RefineXP", newXp);
+        tag.putInt("RefineRank", newRefineRank);
+
+        if (gemsToConsume > 0) {
+            tag.putInt("GemsUsed", gemsToConsume);
+        } else if (!sacrificeStack.isEmpty()) {
+            // Build reset sacrifice weapon stack (XP reset to starting tier base XP, preserving item!)
+            ItemStack resetSacrifice = sacrificeStack.copy();
+            resetSacrifice.setCount(1);
+
+            int sacStartingTier = WeaponMasteryManager.getInstance().getWeaponTier(resetSacrifice);
+            int sacBaseRank = WeaponMasteryManager.getBaseCumulativeLevelForStartingTier(sacStartingTier);
+            int sacStartingXp = WeaponMasteryManager.getXpForRank(sacBaseRank);
+
+            CompoundTag sacTag = resetSacrifice.getOrCreateTag();
+            sacTag.putInt("RefineXP", sacStartingXp);
+            sacTag.putInt("RefineRank", 0);
+
+            if (sacTag.contains("RefineVariances", net.minecraft.nbt.Tag.TAG_LIST)) {
+                sacTag.remove("RefineVariances");
+            }
+
+            tag.put("ResetSacrificeItem", resetSacrifice.save(new CompoundTag()));
+        }
+
+        // Restore all durability damage
+        result.setDamageValue(0);
+
+        // Make Unbreakable on refinement
+        tag.putBoolean("Unbreakable", true);
+
+        // Preserve existing per-level variances and roll for ALL new manual refine ranks gained!
+        net.minecraft.nbt.ListTag varianceList = tag.contains("RefineVariances", net.minecraft.nbt.Tag.TAG_LIST)
+                ? tag.getList("RefineVariances", net.minecraft.nbt.Tag.TAG_FLOAT).copy()
+                : new net.minecraft.nbt.ListTag();
+
+        while (varianceList.size() < newRefineRank) {
+            int rankToRoll = varianceList.size() + 1;
+            float v = WeaponMasteryManager.rollRefineVarianceForRank(result, rankToRoll);
+            varianceList.add(net.minecraft.nbt.FloatTag.valueOf(v));
+        }
+        tag.put("RefineVariances", varianceList);
 
         return result;
     }
@@ -118,15 +217,18 @@ public class WeaponRefinementRecipe implements SmithingRecipe {
     }
 
     public static int getRefineRank(ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().contains("RefineRank")) {
-            return stack.getTag().getInt("RefineRank");
-        }
-        return 0;
+        if (stack == null || stack.isEmpty()) return 0;
+        int startingTier = WeaponMasteryManager.getInstance().getWeaponTier(stack);
+        if (startingTier <= 0) return 0;
+        int baseRank = WeaponMasteryManager.getBaseCumulativeLevelForStartingTier(startingTier);
+        int maxCumRank = WeaponMasteryManager.getMaxCumulativeRankForStartingTier(startingTier);
+        int xp = WeaponMasteryManager.getRefineXp(stack);
+        int cumRank = WeaponMasteryManager.getRankFromXp(xp, maxCumRank);
+        return Math.max(0, cumRank - baseRank);
     }
 
     public static int getMaxRefineRankForTier(int tier) {
-        // Novice = Tier 1 (1 max), Apprentice = Tier 2 (2 max), Adept = Tier 3 (3 max), Expert = Tier 4 (4 max), Master = Tier 5 (5 max)
-        return Math.min(5, Math.max(1, tier));
+        return WeaponMasteryManager.getMaxRefinesForTier(tier);
     }
 
     public static CrateRarity getGemTierForWeaponTier(int tier) {

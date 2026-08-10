@@ -6,6 +6,8 @@ import com.complextalents.targeting.TargetingRequest;
 import com.complextalents.targeting.TargetingSnapshot;
 import com.complextalents.targeting.TargetType;
 import com.complextalents.targeting.client.ClientTargetingResolver;
+import com.complextalents.targeting.client.SmartCastManager;
+import com.complextalents.util.KeyHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -123,11 +125,16 @@ public class SkillCastingClient {
         TargetType targetingType = skill.getTargetingType();
         double maxRange = skill.getMaxRange();
 
+        boolean isShiftDown = KeyHelper.isShiftDown();
+        boolean disableSmartCast = !SmartCastManager.isSmartCastEnabled();
+        boolean forcePlayerOnly = isShiftDown && skill.canTargetPlayer();
+
         TargetingRequest.Builder requestBuilder = TargetingRequest.builder(MC.player)
                 .maxRange(maxRange)
-                .allowTargetSelf(skill.allowsSelfTarget())
+                .allowTargetSelf(skill.allowsSelfTarget() && isShiftDown)
                 .targetAllyOnly(skill.targetsAllyOnly())
-                .targetPlayerOnly(skill.targetsPlayerOnly());
+                .targetPlayerOnly(skill.targetsPlayerOnly() || forcePlayerOnly)
+                .disableSmartCast(disableSmartCast);
 
         return switch (targetingType) {
             case NONE -> TargetingSnapshot.createMinimal(

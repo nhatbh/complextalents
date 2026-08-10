@@ -34,6 +34,7 @@ public class BuiltSkill implements Skill {
     private final boolean allowSelfTarget;
     private final boolean targetAllyOnly;
     private final boolean targetPlayerOnly;
+    private final boolean canTargetPlayer;
     private final int maxLevel;
     private final ResourceLocation icon;
     private final java.util.Map<String, ScaledStat> scaledStats;
@@ -54,6 +55,7 @@ public class BuiltSkill implements Skill {
     // Channeling properties
     private final double minChannelTime;
     private final double maxChannelTime;
+    private final boolean holdAtMaxChannel;
 
     /**
      * Create a BuiltSkill from a SkillBuilder.
@@ -77,6 +79,7 @@ public class BuiltSkill implements Skill {
         this.allowSelfTarget = builder.isAllowSelfTarget();
         this.targetAllyOnly = builder.isTargetAllyOnly();
         this.targetPlayerOnly = builder.isTargetPlayerOnly();
+        this.canTargetPlayer = builder.isCanTargetPlayer();
         this.maxLevel = builder.getMaxLevel();
         this.icon = builder.getIcon();
         this.scaledStats = builder.getScaledStats();
@@ -87,6 +90,7 @@ public class BuiltSkill implements Skill {
         this.scaledToggleCost = builder.getScaledToggleCost();
         this.minChannelTime = builder.getMinChannelTime();
         this.maxChannelTime = builder.getMaxChannelTime();
+        this.holdAtMaxChannel = builder.isHoldAtMaxChannel();
         this.activeHandler = builder.getActiveHandler();
         this.passiveHandler = builder.getPassiveHandler();
         this.channeledHandler = builder.getChanneledHandler();
@@ -193,6 +197,11 @@ public class BuiltSkill implements Skill {
     }
 
     @Override
+    public boolean canTargetPlayer() {
+        return canTargetPlayer;
+    }
+
+    @Override
     public double getToggleCostPerTick() {
         return toggleCostPerTick;
     }
@@ -249,6 +258,11 @@ public class BuiltSkill implements Skill {
     @Override
     public double getMaxChannelTime() {
         return maxChannelTime;
+    }
+
+    @Override
+    public boolean shouldHoldAtMaxChannel() {
+        return holdAtMaxChannel;
     }
 
     @Override

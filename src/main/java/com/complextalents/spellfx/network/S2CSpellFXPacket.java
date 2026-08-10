@@ -16,20 +16,32 @@ import java.util.function.Supplier;
 public class S2CSpellFXPacket {
     private final int manaCost;
     private final int colorHex;
+    private final float maxFlashAlpha;
 
     public S2CSpellFXPacket(int manaCost, int colorHex) {
+        this(manaCost, colorHex, -1.0f);
+    }
+
+    public S2CSpellFXPacket(int manaCost, int colorHex, float maxFlashAlpha) {
         this.manaCost = manaCost;
         this.colorHex = colorHex;
+        this.maxFlashAlpha = maxFlashAlpha;
     }
 
     public S2CSpellFXPacket(FriendlyByteBuf buffer) {
         this.manaCost = buffer.readInt();
         this.colorHex = buffer.readInt();
+        if (buffer.readableBytes() >= 4) {
+            this.maxFlashAlpha = buffer.readFloat();
+        } else {
+            this.maxFlashAlpha = -1.0f;
+        }
     }
 
     public void encode(FriendlyByteBuf buffer) {
         buffer.writeInt(manaCost);
         buffer.writeInt(colorHex);
+        buffer.writeFloat(maxFlashAlpha);
     }
 
     public static S2CSpellFXPacket decode(FriendlyByteBuf buffer) {
@@ -46,6 +58,10 @@ public class S2CSpellFXPacket {
     private void handleClient() {
         var player = Minecraft.getInstance().player;
         if (player == null) return;
-        ClientSpellFXHandler.triggerFeedback(manaCost, colorHex);
+        if (maxFlashAlpha > 0.0f) {
+            ClientSpellFXHandler.triggerFeedback(manaCost, colorHex, maxFlashAlpha);
+        } else {
+            ClientSpellFXHandler.triggerFeedback(manaCost, colorHex);
+        }
     }
 }

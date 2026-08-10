@@ -27,7 +27,15 @@ public interface IPlayerSpellbladeData extends INBTSerializable<CompoundTag> {
 
     void setOverchargeTicks(int ticks);
 
+    boolean isOverchargeStance();
+
+    void setOverchargeStance(boolean active);
+
     boolean isOverchargeActive();
+
+    float getVirtualMana();
+
+    void setVirtualMana(float amount);
 
     void sync();
 }

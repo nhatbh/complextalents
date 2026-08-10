@@ -42,8 +42,9 @@ public class SeraphicEchoSkill {
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/highpriest/seraphs_echo.png"))
                 .maxRange(32.0)
-                .minChannelTime(0.1)
-                .maxChannelTime(0.1)
+                .minChannelTime(0.0)
+                .maxChannelTime(0.5)
+                .holdAtMaxChannel(true)
                 .scaledCooldown(new double[] { 2, 2, 2, 2, 2 })
                 .setMaxLevel(5)
                 .scaledStat("damage", new double[] { 10, 14, 18, 22, 28 })
@@ -79,7 +80,7 @@ public class SeraphicEchoSkill {
                     Entity targetEntity = null;
                     if (targetData.hasEntity()) {
                         targetEntity = targetData.getTargetEntity();
-                        targetPos = targetEntity.position();
+                        targetPos = targetEntity.getBoundingBox().getCenter();
                     } else {
                         targetPos = targetData.getTargetPosition();
                     }

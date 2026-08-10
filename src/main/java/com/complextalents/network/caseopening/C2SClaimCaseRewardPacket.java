@@ -38,44 +38,51 @@ public class C2SClaimCaseRewardPacket {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
-            if (player != null && reward != null) {
-                ItemStack rewardStack = reward.getStack();
-                if (!rewardStack.isEmpty()) {
-                    // Drop item entity directly at player location
-                    player.drop(rewardStack.copy(), false);
-
-                    // Spell Mastery auto-learn hook (supports ISB Spells container and custom NBT)
-                    AbstractSpell rewardedSpell = null;
-                    int rewardedLevel = 1;
-
-                    if (ISpellContainer.isSpellContainer(rewardStack)) {
-                        ISpellContainer container = ISpellContainer.get(rewardStack);
-                        if (container != null && !container.isEmpty()) {
-                            SpellData spellData = container.getSpellAtIndex(0);
-                            if (spellData != null && spellData.getSpell() != null) {
-                                rewardedSpell = spellData.getSpell();
-                                rewardedLevel = spellData.getLevel();
-                            }
-                        }
-                    } else if (rewardStack.hasTag() && rewardStack.getTag().contains("SpellId")) {
-                        ResourceLocation spellId = ResourceLocation.parse(rewardStack.getTag().getString("SpellId"));
-                        rewardedSpell = SpellRegistry.getSpell(spellId);
-                        int rawLevel = rewardStack.getTag().getInt("SpellLevel");
-                        rewardedLevel = rawLevel <= 0 ? 1 : rawLevel;
-                    }
-
-                    if (rewardedSpell != null) {
-                        final AbstractSpell finalSpell = rewardedSpell;
-                        final int entryLevel = SpellMasteryManager.getMinLevelForRarity(finalSpell, finalSpell.getRarity(rewardedLevel));
-
-                        player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(data -> {
-                            data.learnSpell(finalSpell.getSpellResource(), entryLevel);
-                            data.sync();
-                        });
-                    }
-                }
-            }
+            grantRewardToPlayer(player, reward);
         });
         context.setPacketHandled(true);
+    }
+
+    public static void grantRewardToPlayer(ServerPlayer player, CaseReward reward) {
+        if (player != null && reward != null) {
+            ItemStack rewardStack = reward.getStack();
+            if (!rewardStack.isEmpty()) {
+                // Ensure weapon loot applies random refinement within tier if unrefined
+                rewardStack = com.complextalents.weaponmastery.WeaponMasteryManager.applyRandomRefinementForLoot(rewardStack, player.getRandom());
+
+                // Drop item entity directly at player location
+                player.drop(rewardStack.copy(), false);
+
+                // Spell Mastery auto-learn hook (supports ISB Spells container and custom NBT)
+                AbstractSpell rewardedSpell = null;
+                int rewardedLevel = 1;
+
+                if (ISpellContainer.isSpellContainer(rewardStack)) {
+                    ISpellContainer container = ISpellContainer.get(rewardStack);
+                    if (container != null && !container.isEmpty()) {
+                        SpellData spellData = container.getSpellAtIndex(0);
+                        if (spellData != null && spellData.getSpell() != null) {
+                            rewardedSpell = spellData.getSpell();
+                            rewardedLevel = spellData.getLevel();
+                        }
+                    }
+                } else if (rewardStack.hasTag() && rewardStack.getTag().contains("SpellId")) {
+                    ResourceLocation spellId = ResourceLocation.parse(rewardStack.getTag().getString("SpellId"));
+                    rewardedSpell = SpellRegistry.getSpell(spellId);
+                    int rawLevel = rewardStack.getTag().getInt("SpellLevel");
+                    rewardedLevel = rawLevel <= 0 ? 1 : rawLevel;
+                }
+
+                if (rewardedSpell != null) {
+                    final AbstractSpell finalSpell = rewardedSpell;
+                    final int entryLevel = SpellMasteryManager.getMinLevelForRarity(finalSpell, finalSpell.getRarity(rewardedLevel));
+
+                    player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(data -> {
+                        data.learnSpell(finalSpell.getSpellResource(), entryLevel);
+                        data.sync();
+                    });
+                }
+            }
+        }
     }
 }

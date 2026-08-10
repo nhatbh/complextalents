@@ -23,33 +23,43 @@ public class SpellbladeOverchargeSkill {
                 .nature(SkillNature.ACTIVE)
                 .displayName("Quá Tải")
                 .description(
-                        "Bộc phát ma lực trong 30 giây: Cường hóa Sức Mạnh Cận Chiến thêm 15% đến 35% Sức Mạnh Ma Thuật hiện có và duy trì cường hóa nguyên tố liên tục trong 6 giây cho mọi đòn chém sau mỗi lần thi phép.")
+                        "Trạng Thái Quá Tải (hồi chiêu 5s): Phép thi triển ≤ 5s trở thành tức thì (0s). Mỗi đòn chém gây thêm sát thương phép theo AP & AD gain và cường hóa hiệu ứng nguyên tố 1.25x-1.90x, nhưng tiêu hao Mana per hit.")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/spellblade/spellblade.png"))
                 .scaledCooldown(SpellbladeOrigin.ACTIVE_COOLDOWN)
-                .scaledStat("ap_to_ad_conversion", "Tỷ Lệ AP->AD (%)", AP_TO_AD_CONVERSION)
+                .scaledStat("ap_damage_ratio", "Tỷ Lệ AP (%)", SpellbladeOrigin.AP_DAMAGE_GAIN_RATIO)
+                .scaledStat("enhanced_mult", "Bội Số Nguyên Tố", SpellbladeOrigin.ENHANCED_EFFECT_MULT)
                 .setMaxLevel(5)
                 .onActive((context, player) -> {
                     if (!(player instanceof ServerPlayer serverPlayer))
                         return;
                     ServerLevel level = serverPlayer.serverLevel();
 
-                    // Activate 30 seconds Overcharge stance window (600 ticks)
-                    SpellbladeData.setOverchargeTicks(serverPlayer, 600);
+                    // Toggle Overcharge Stance
+                    SpellbladeData.toggleOverchargeStance(serverPlayer);
+                    boolean isStanceOn = SpellbladeData.isOverchargeStance(serverPlayer);
 
                     // Sound & Particle visual effects
-                    level.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
-                            SoundEvents.END_PORTAL_SPAWN, SoundSource.PLAYERS, 0.8f, 1.5f);
-                    level.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
-                            SoundEvents.PLAYER_ATTACK_CRIT, SoundSource.PLAYERS, 1.0f, 0.8f);
+                    if (isStanceOn) {
+                        level.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
+                                SoundEvents.END_PORTAL_SPAWN, SoundSource.PLAYERS, 0.8f, 1.5f);
+                        level.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
+                                SoundEvents.PLAYER_ATTACK_CRIT, SoundSource.PLAYERS, 1.0f, 0.8f);
 
-                    level.sendParticles(ParticleTypes.ELECTRIC_SPARK,
-                            serverPlayer.getX(), serverPlayer.getY() + 1.0, serverPlayer.getZ(),
-                            40, 0.5, 0.8, 0.5, 0.2);
-                    level.sendParticles(ParticleTypes.FLAME,
-                            serverPlayer.getX(), serverPlayer.getY() + 1.0, serverPlayer.getZ(),
-                            25, 0.4, 0.6, 0.4, 0.1);
+                        level.sendParticles(ParticleTypes.ELECTRIC_SPARK,
+                                serverPlayer.getX(), serverPlayer.getY() + 1.0, serverPlayer.getZ(),
+                                40, 0.5, 0.8, 0.5, 0.2);
+                        level.sendParticles(ParticleTypes.FLAME,
+                                serverPlayer.getX(), serverPlayer.getY() + 1.0, serverPlayer.getZ(),
+                                25, 0.4, 0.6, 0.4, 0.1);
+                    } else {
+                        level.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
+                                SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.8f, 1.2f);
+                        level.sendParticles(ParticleTypes.SMOKE,
+                                serverPlayer.getX(), serverPlayer.getY() + 1.0, serverPlayer.getZ(),
+                                20, 0.3, 0.5, 0.3, 0.05);
+                    }
                 })
                 .register();
     }

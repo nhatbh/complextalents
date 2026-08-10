@@ -22,7 +22,7 @@ public class WarriorOrigin {
         OriginBuilder.create(ID)
                 .displayName("Đấu Sĩ")
                 .description(
-                        "Đấu sĩ tuyến đầu tích lũy từ 0 đến 1000 điểm Đấu Khí qua đòn đánh. Giảm 40% đến 60% sát thương nhận vào và tăng đến 12% sát thương theo cấp Đấu Khí. Khi Đấu Khí đạt 950 điểm trở lên sẽ trở nên không thể cản phá, khi nhận sát thương tử thương sẽ tiêu thụ Đấu Khí về 250 điểm để thoát chết.")
+                        "Đấu sĩ tuyến đầu tích lũy từ 0 đến 1000 điểm Đấu Khí qua đòn đánh. Giảm 40% đến 60% sát thương nhận vào, tăng đến 12% sát thương và 35% Tốc Độ Đánh theo cấp Đấu Khí. Khi Đấu Khí đạt 950 điểm trở lên sẽ trở nên không thể cản phá, khi nhận sát thương tử thương sẽ tiêu thụ Đấu Khí về 250 điểm để thoát chết.")
                 .resourceType(styleType)
                 .maxLevel(5)
                 .baseStat(StatType.PERCENT_AD, 4)
@@ -40,7 +40,7 @@ public class WarriorOrigin {
                 .scaledStat("maxDamageReduction", "Giảm ST Max (%)", new double[] { 0.40, 0.45, 0.50, 0.55, 0.60 })
 
                 .passiveSkill("Nhịp Độ Tiên Phong",
-                        "Tấn công liên tục để tích lũy Đấu Khí, giúp giảm 40% đến 60% sát thương gánh chịu và tăng đến 12% sát thương gây ra. Khi Đấu Khí đạt cực hạn, nhận trạng thái không thể cản phá và thoát khỏi một đòn tử thương.")
+                        "Tấn công liên tục để tích lũy Đấu Khí, giúp giảm 40% đến 60% sát thương gánh chịu, tăng đến 12% sát thương gây ra và tăng 5% đến 35% Tốc Độ Đánh. Khi Đấu Khí đạt cực hạn, nhận trạng thái không thể cản phá và thoát khỏi một đòn tử thương.")
                 .activeSkill("Khiêu Chiến & Phản Trảm",
                         "Giơ khiên hấp thụ sát thương và khiêu khích kẻ địch xung quanh, sau đó nhả khiên để phản lại sát thương diện rộng bằng 100% đến 200% lượng sát thương đã hấp thụ.",
                         null)

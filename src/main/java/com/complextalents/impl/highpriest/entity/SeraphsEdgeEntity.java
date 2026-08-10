@@ -37,7 +37,7 @@ import java.util.*;
 public class SeraphsEdgeEntity extends LivingEntity {
 
     // Configuration constants
-    private static final double MOVE_SPEED = 1.2;
+    private static final double MOVE_SPEED = 2;
     private static final double DESPAWN_RANGE = 48.0;
     private static final double PULL_RADIUS = 8.0;
 
@@ -176,7 +176,8 @@ public class SeraphsEdgeEntity extends LivingEntity {
     }
 
     private void applyAttachedAuraEffects() {
-        if (level().isClientSide) return;
+        if (level().isClientSide)
+            return;
 
         List<Player> nearbyPlayers = level().getEntitiesOfClass(
                 Player.class,
@@ -225,7 +226,7 @@ public class SeraphsEdgeEntity extends LivingEntity {
     public void moveTo(Vec3 target) {
         detachPlayer();
         this.wasHovering = (this.targetPos == null);
-        this.targetPos = target.add(0, 1, 0);
+        this.targetPos = target;
         this.hitEntitiesThisMove.clear();
 
         Vec3 direction = targetPos.subtract(position()).normalize();
@@ -327,7 +328,7 @@ public class SeraphsEdgeEntity extends LivingEntity {
                 }
             });
         }
-        
+
         // Play orb pull particle effect
         PacketHandler.sendToNearby(
                 new S2CSpawnAAAParticlePacket(
@@ -375,7 +376,8 @@ public class SeraphsEdgeEntity extends LivingEntity {
                     enemy.position());
         }
 
-        // Grant brief Absorption shield (5s / 100 ticks) to all nearby players regardless of team
+        // Grant brief Absorption shield (5s / 100 ticks) to all nearby players
+        // regardless of team
         if (absorptionShield > 0) {
             List<Player> players = level().getEntitiesOfClass(
                     Player.class,
@@ -424,7 +426,8 @@ public class SeraphsEdgeEntity extends LivingEntity {
 
                 boolean invalidTarget = targetPlayer == null || !targetPlayer.isAlive() || targetPlayer.isRemoved();
                 boolean outOfTimer = attachTicksRemaining <= 0;
-                boolean outOfRange = owner instanceof Player priest && (priest.distanceToSqr(targetPlayer != null ? targetPlayer : this) > DESPAWN_RANGE * DESPAWN_RANGE);
+                boolean outOfRange = owner instanceof Player priest && (priest
+                        .distanceToSqr(targetPlayer != null ? targetPlayer : this) > DESPAWN_RANGE * DESPAWN_RANGE);
 
                 if (invalidTarget || outOfTimer || outOfRange) {
                     discardAndClear();

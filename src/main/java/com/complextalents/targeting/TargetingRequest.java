@@ -24,6 +24,7 @@ public class TargetingRequest {
     private final boolean targetSelfAllowed;
     private final boolean targetAllyOnly;
     private final boolean targetPlayerOnly;
+    private final boolean disableSmartCast;
 
     private TargetingRequest(Builder builder) {
         this.player = builder.player;
@@ -35,6 +36,7 @@ public class TargetingRequest {
         this.targetSelfAllowed = builder.targetSelfAllowed;
         this.targetAllyOnly = builder.targetAllyOnly;
         this.targetPlayerOnly = builder.targetPlayerOnly;
+        this.disableSmartCast = builder.disableSmartCast;
     }
 
     /**
@@ -113,6 +115,13 @@ public class TargetingRequest {
     }
 
     /**
+     * @return Whether smart casting (crosshair proximity search) is disabled
+     */
+    public boolean isDisableSmartCast() {
+        return disableSmartCast;
+    }
+
+    /**
      * Builder for constructing TargetingRequest instances.
      */
     public static class Builder {
@@ -125,6 +134,7 @@ public class TargetingRequest {
         private boolean targetSelfAllowed = false;
         private boolean targetAllyOnly = false;
         private boolean targetPlayerOnly = false;
+        private boolean disableSmartCast = false;
 
         private Builder(Player player) {
             this.player = player;
@@ -233,6 +243,18 @@ public class TargetingRequest {
          */
         public Builder targetPlayerOnly(boolean playerOnly) {
             this.targetPlayerOnly = playerOnly;
+            return this;
+        }
+
+        /**
+         * Set whether smart casting (proximity search) is disabled.
+         * When true, smart casting is bypassed and strict raycasting is used.
+         *
+         * @param disable true to disable smart casting
+         * @return this builder
+         */
+        public Builder disableSmartCast(boolean disable) {
+            this.disableSmartCast = disable;
             return this;
         }
 

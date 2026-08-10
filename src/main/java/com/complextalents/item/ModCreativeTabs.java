@@ -25,12 +25,6 @@ public class ModCreativeTabs {
                     .icon(() -> new ItemStack(ModItems.MYSTERIOUS_LOOT.get()))
                     .title(Component.translatable("creativetab.complextalents.tab"))
                     .displayItems((parameters, output) -> {
-                        output.accept(ModItems.INFERNO_TESTER.get());
-                        output.accept(ModItems.GREATFLOOD_TESTER.get());
-                        output.accept(ModItems.SANDSTORM_TESTER.get());
-                        output.accept(ModItems.SUPERCELL_TESTER.get());
-                        output.accept(ModItems.NIFTHELM_TESTER.get());
-
                         // Default Mysterious Loot Box
                         output.accept(new ItemStack(ModItems.MYSTERIOUS_LOOT.get()));
 

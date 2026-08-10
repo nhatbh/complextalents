@@ -20,6 +20,7 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> ELDRITCH_RIFT = MOB_EFFECTS.register("eldritch_rift", com.complextalents.impl.spellblade.effect.EldritchRiftEffect::new);
     public static final RegistryObject<MobEffect> BLOOD_BLEED = MOB_EFFECTS.register("blood_bleed", com.complextalents.impl.spellblade.effect.BloodBleedEffect::new);
     public static final RegistryObject<MobEffect> LIGHTNING_HASTE = MOB_EFFECTS.register("lightning_haste", com.complextalents.impl.spellblade.effect.LightningHasteEffect::new);
+    public static final RegistryObject<MobEffect> TIDAL_EROSION = MOB_EFFECTS.register("tidal_erosion", com.complextalents.impl.spellblade.effect.TidalErosionEffect::new);
 
     public static void register(IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);

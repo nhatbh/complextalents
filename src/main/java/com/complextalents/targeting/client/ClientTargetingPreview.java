@@ -3,6 +3,7 @@ package com.complextalents.targeting.client;
 import com.complextalents.skill.Skill;
 import com.complextalents.skill.client.ChannelManager;
 import com.complextalents.targeting.*;
+import com.complextalents.util.KeyHelper;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -10,6 +11,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.TickEvent;
@@ -41,8 +43,6 @@ public class ClientTargetingPreview {
     private static TargetingSnapshot snapshot;
     private static TargetType currentTargetingType;
 
-    private ClientTargetingPreview() {}
-
     /**
      * Update the targeting preview based on the channeling skill's configuration.
      * Only updates when actively channeling a skill.
@@ -54,18 +54,13 @@ public class ClientTargetingPreview {
         }
 
         // Only render preview when channeling
-        if (!ChannelManager.isChanneling()) {
+        if (!ChannelManager.isChanneling() || MC.player == null) {
             snapshot = null;
             currentTargetingType = null;
             return;
         }
 
         Player player = MC.player;
-        if (player == null) {
-            snapshot = null;
-            currentTargetingType = null;
-            return;
-        }
 
         // Get the skill currently being channeled
         Skill skill = ChannelManager.getCurrentChannelingSkill();
@@ -81,10 +76,15 @@ public class ClientTargetingPreview {
         TargetingRequest.Builder requestBuilder = TargetingRequest.builder(player)
                 .maxRange(skill.getMaxRange());
 
+        boolean isShiftDown = KeyHelper.isShiftDown();
+        boolean disableSmartCast = !SmartCastManager.isSmartCastEnabled();
+        boolean forcePlayerOnly = isShiftDown && skill.canTargetPlayer();
+
         // Set allowed types and shared filters
-        requestBuilder.allowTargetSelf(skill.allowsSelfTarget())
+        requestBuilder.allowTargetSelf(skill.allowsSelfTarget() && isShiftDown)
                 .targetAllyOnly(skill.targetsAllyOnly())
-                .targetPlayerOnly(skill.targetsPlayerOnly());
+                .targetPlayerOnly(skill.targetsPlayerOnly() || forcePlayerOnly)
+                .disableSmartCast(disableSmartCast);
 
         switch (currentTargetingType) {
             case NONE -> {
@@ -168,74 +168,76 @@ public class ClientTargetingPreview {
         float g = snapshot.isAlly() ? 1.0f : 0.0f;
         float b = 0.0f;
 
-        // Get entity bounding box
-        Vec3 pos = snapshot.getTargetPosition();
-        float x = (float) pos.x;
-        float y = (float) pos.y;
-        float z = (float) pos.z;
-
-        // Entity dimensions (use approximate sizes)
-        float width = entity.getBbWidth() * 0.5f + 0.2f;
-        float height = entity.getBbHeight() + 0.1f;
-        float eyeY = (float) entity.getEyeY();
+        AABB box = entity.getBoundingBox().inflate(0.1);
+        float minX = (float) box.minX;
+        float minY = (float) box.minY;
+        float minZ = (float) box.minZ;
+        float maxX = (float) box.maxX;
+        float maxY = (float) box.maxY;
+        float maxZ = (float) box.maxZ;
 
         VertexConsumer vc = buffer.getBuffer(RenderType.lines());
 
-        // Draw 3D box around entity
-        // Bottom rectangle
-        box(vc, pose, x - width, y, z - width, x + width, y + height, z + width, r, g, b, 0.5f);
-
-        // Draw "X" on top
-        line(vc, pose, x - width * 0.7f, eyeY + 0.3f, z - width * 0.7f,
-                x + width * 0.7f, eyeY + 0.3f, z + width * 0.7f, r, g, b, 0.7f);
-        line(vc, pose, x + width * 0.7f, eyeY + 0.3f, z - width * 0.7f,
-                x - width * 0.7f, eyeY + 0.3f, z + width * 0.7f, r, g, b, 0.7f);
+        // Draw 3D box around entity bounding box
+        box(vc, pose, minX, minY, minZ, maxX, maxY, maxZ, r, g, b, 0.5f);
     }
 
     /**
      * Render reticle for position targeting.
-     * Shows a crosshair and circle at the target position on the ground.
+     * Shows a bright, high-visibility dual circle and crosshair at the target position.
      */
     private static void renderPositionReticle(PoseStack pose, MultiBufferSource buffer) {
         VertexConsumer vc = buffer.getBuffer(RenderType.lines());
         Vec3 p = snapshot.getTargetPosition();
 
         float x = (float) p.x;
-        float y = (float) p.y + 0.01f; // prevent z-fighting
+        float y = (float) p.y + 0.03f; // prevent z-fighting
         float z = (float) p.z;
-        float size = 0.7f;
+        float size = 0.8f;
 
-        // Cross
-        line(vc, pose, x - size, y, z, x + size, y, z, 1, 1, 1, 0.7f);
-        line(vc, pose, x, y, z - size, x, y, z + size, 1, 1, 1, 0.7f);
+        // Vibrant Cyan / Gold color for position target
+        float r = 0.0f;
+        float g = 0.9f;
+        float b = 1.0f;
+        float a = 1.0f;
 
-        // Circle outline
-        circle(vc, pose, x, y, z, size * 1.5f, 24, 1, 1, 1, 0.5f);
+        // Bold Crosshair lines
+        line(vc, pose, x - size, y, z, x + size, y, z, r, g, b, a);
+        line(vc, pose, x, y, z - size, x, y, z + size, r, g, b, a);
 
-        // Diagonal fills
-        line(vc, pose, x - size * 0.5f, y, z - size * 0.5f, x + size * 0.5f, y, z + size * 0.5f, 1, 1, 1, 0.3f);
-        line(vc, pose, x + size * 0.5f, y, z - size * 0.5f, x - size * 0.5f, y, z + size * 0.5f, 1, 1, 1, 0.3f);
+        // Dual Concentric Circles for high visibility
+        circle(vc, pose, x, y, z, size * 1.2f, 32, r, g, b, 1.0f);
+        circle(vc, pose, x, y, z, size * 1.6f, 32, r, g, b, 0.8f);
+
+        // Corner tick accents
+        float corner = size * 0.6f;
+        line(vc, pose, x - corner, y, z - corner, x + corner, y, z + corner, r, g, b, 0.7f);
+        line(vc, pose, x + corner, y, z - corner, x - corner, y, z + corner, r, g, b, 0.7f);
     }
 
     /**
      * Render reticle for direction targeting.
-     * Shows a crosshair at target point with a range circle at player position.
+     * Shows a bright crosshair and target circle.
      */
     private static void renderDirectionReticle(PoseStack pose, MultiBufferSource buffer) {
         Vec3 p = snapshot.getTargetPosition();
 
         float x = (float) p.x;
-        float y = (float) p.y + 0.01f;
+        float y = (float) p.y + 0.03f;
         float z = (float) p.z;
-        float size = 0.7f;
+        float size = 0.8f;
 
-        // Small crosshair at target position
         VertexConsumer vc = buffer.getBuffer(RenderType.lines());
-        line(vc, pose, x - size, y, z, x + size, y, z, 1, 0.8f, 0.4f, 0.6f);
-        line(vc, pose, x, y, z - size, x, y, z + size, 1, 0.8f, 0.4f, 0.6f);
+        // Bright Orange / Amber glow for direction target
+        float r = 1.0f;
+        float g = 0.7f;
+        float b = 0.1f;
 
-        // Small circle
-        circle(vc, pose, x, y, z, size, 12, 1, 0.8f, 0.4f, 0.4f);
+        line(vc, pose, x - size, y, z, x + size, y, z, r, g, b, 1.0f);
+        line(vc, pose, x, y, z - size, x, y, z + size, r, g, b, 1.0f);
+
+        circle(vc, pose, x, y, z, size * 1.2f, 32, r, g, b, 1.0f);
+        circle(vc, pose, x, y, z, size * 1.5f, 32, r, g, b, 0.8f);
     }
     /* ================= HELPERS ================= */
 

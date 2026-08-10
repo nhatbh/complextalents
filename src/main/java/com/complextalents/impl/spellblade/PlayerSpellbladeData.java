@@ -12,6 +12,8 @@ public class PlayerSpellbladeData implements IPlayerSpellbladeData {
     private int enhancedAttackTicks = 0;
     private boolean imbueCharge = false;
     private int overchargeTicks = 0;
+    private boolean overchargeStance = false;
+    private float virtualMana = 0.0f;
 
     public void setPlayer(Player player) {
         this.player = player;
@@ -72,8 +74,35 @@ public class PlayerSpellbladeData implements IPlayerSpellbladeData {
     }
 
     @Override
+    public boolean isOverchargeStance() {
+        return overchargeStance;
+    }
+
+    @Override
+    public void setOverchargeStance(boolean active) {
+        if (this.overchargeStance != active) {
+            this.overchargeStance = active;
+            sync();
+        }
+    }
+
+    @Override
     public boolean isOverchargeActive() {
-        return overchargeTicks > 0;
+        return overchargeStance || overchargeTicks > 0;
+    }
+
+    @Override
+    public float getVirtualMana() {
+        return virtualMana;
+    }
+
+    @Override
+    public void setVirtualMana(float amount) {
+        float oldVal = this.virtualMana;
+        this.virtualMana = Math.max(0.0f, amount);
+        if (Math.abs(oldVal - this.virtualMana) > 0.1f) {
+            sync();
+        }
     }
 
     @Override
@@ -92,6 +121,8 @@ public class PlayerSpellbladeData implements IPlayerSpellbladeData {
         tag.putInt("enhanced_attack_ticks", enhancedAttackTicks);
         tag.putBoolean("imbue_charge", imbueCharge);
         tag.putInt("overcharge_ticks", overchargeTicks);
+        tag.putBoolean("overcharge_stance", overchargeStance);
+        tag.putFloat("virtual_mana", virtualMana);
         return tag;
     }
 
@@ -109,5 +140,7 @@ public class PlayerSpellbladeData implements IPlayerSpellbladeData {
         this.enhancedAttackTicks = nbt.getInt("enhanced_attack_ticks");
         this.imbueCharge = nbt.getBoolean("imbue_charge");
         this.overchargeTicks = nbt.getInt("overcharge_ticks");
+        this.overchargeStance = nbt.getBoolean("overcharge_stance");
+        this.virtualMana = nbt.getFloat("virtual_mana");
     }
 }

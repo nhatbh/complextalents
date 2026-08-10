@@ -98,7 +98,7 @@ public class LevelingSyncHandler {
         // Get level, XP, and calculate XP for next level
         int playerLevel = levelingData.getLevel(uuid);
         double currentXP = levelingData.getCurrentXP(uuid);
-        double xpForNext = 100 + (Math.pow(playerLevel, 1.5) * 50);
+        double xpForNext = com.complextalents.leveling.util.XPFormula.getXPForNextLevel(playerLevel);
         int availableSP = levelingData.getAvailableSkillPoints(uuid);
 
         // Get fatigue multiplier for current chunk

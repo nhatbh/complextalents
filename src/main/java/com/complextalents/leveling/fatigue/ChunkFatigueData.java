@@ -14,14 +14,15 @@ public class ChunkFatigueData extends SavedData {
 
     private static final String DATA_NAME = "complex_talents_chunk_fatigue";
     
-    // Recovery rate: 1% every 1200 ticks (1 minute)
-    private static final double RECOVERY_RATE = 0.01;
-    private static final int RECOVERY_INTERVAL = 1200;
+    // Recovery rate: 2% every 300 ticks (15 seconds)
+    private static final double RECOVERY_RATE = 0.02;
+    private static final int RECOVERY_INTERVAL = 300;
 
-    // Degradation: 2.5% per mob kill (0% after 40 mobs)
-    private static final double DEGRADATION_PER_KILL = 0.025;
+    // Degradation: 0.5% per mob kill (25% floor reached after 150 kills)
+    private static final double DEGRADATION_PER_KILL = 0.005;
+    private static final double MIN_FATIGUE_MULTIPLIER = 0.25;
 
-    // Map of ChunkPos (as Long) to current multiplier (0.0 to 1.0)
+    // Map of ChunkPos (as Long) to current multiplier (0.25 to 1.0)
     private final Map<Long, Double> fatigueMap = new HashMap<>();
     private int lastTickTime = 0;
 
@@ -51,9 +52,9 @@ public class ChunkFatigueData extends SavedData {
         long key = pos.toLong();
         double current = fatigueMap.getOrDefault(key, 1.0);
         
-        // Scale degradation: 30 XP (standard kill) = 2.5% degradation
+        // Scale degradation: 30 XP (standard kill) = 0.5% degradation
         double weight = xpAmount / 30.0;
-        double next = Math.max(0, current - (DEGRADATION_PER_KILL * weight));
+        double next = Math.max(MIN_FATIGUE_MULTIPLIER, current - (DEGRADATION_PER_KILL * weight));
         
         fatigueMap.put(key, next);
         setDirty();

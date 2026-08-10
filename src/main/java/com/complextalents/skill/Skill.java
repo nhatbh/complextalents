@@ -171,6 +171,22 @@ public interface Skill extends PassiveOwner {
     boolean targetsPlayerOnly();
 
     /**
+     * Whether this skill can target player entities.
+     * Returns true by default for ENTITY targeting skills unless restricted.
+     */
+    default boolean canTargetPlayer() {
+        return getTargetingType() == TargetType.ENTITY;
+    }
+
+    /**
+     * Whether this skill holds at max channel duration allowing the player to aim,
+     * instead of auto-releasing when max channel time expires.
+     */
+    default boolean shouldHoldAtMaxChannel() {
+        return false;
+    }
+
+    /**
      * Resource cost per tick while toggled on
      */
     double getToggleCostPerTick();

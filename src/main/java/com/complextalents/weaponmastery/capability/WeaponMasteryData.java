@@ -182,7 +182,7 @@ public class WeaponMasteryData implements IWeaponMasteryData {
 
         updateModifier(Attributes.ATTACK_DAMAGE, BLADEMASTER_AD, "Blademaster AD", flatAd, AttributeModifier.Operation.ADDITION);
         updateModifier(Attributes.ATTACK_SPEED, BLADEMASTER_AS, "Blademaster AS", attackSpeed, AttributeModifier.Operation.MULTIPLY_BASE);
-        updateModifier(Attributes.ATTACK_DAMAGE, BLADEMASTER_PERCENT_AD, "Blademaster % AD", capstonePercentAd, AttributeModifier.Operation.MULTIPLY_BASE);
+        updateModifier(Attributes.ATTACK_DAMAGE, BLADEMASTER_PERCENT_AD, "Blademaster % AD", capstonePercentAd, AttributeModifier.Operation.MULTIPLY_TOTAL);
     }
 
     private void applyColossusRewards() {
@@ -195,7 +195,7 @@ public class WeaponMasteryData implements IWeaponMasteryData {
         double maxHp = (sRanks * 2.0);
         double capstonePercentHp = (level >= 15 ? 0.15 : 0);
 
-        updateModifier(Attributes.ATTACK_DAMAGE, COLOSSUS_AD, "Colossus AD", percentAd, AttributeModifier.Operation.MULTIPLY_BASE);
+        updateModifier(Attributes.ATTACK_DAMAGE, COLOSSUS_AD, "Colossus AD", percentAd, AttributeModifier.Operation.MULTIPLY_TOTAL);
         updateModifier(Attributes.MAX_HEALTH, COLOSSUS_HP, "Colossus HP", maxHp, AttributeModifier.Operation.ADDITION);
         updateModifier(Attributes.MAX_HEALTH, COLOSSUS_PERCENT_HP, "Colossus % HP", capstonePercentHp, AttributeModifier.Operation.MULTIPLY_BASE);
     }
@@ -209,7 +209,7 @@ public class WeaponMasteryData implements IWeaponMasteryData {
         double flatArmor = (sLevel * 0.5);
         double capstonePercentArmor = (level >= 15 ? 0.20 : 0);
 
-        updateModifier(Attributes.ATTACK_DAMAGE, VANGUARD_AD, "Vanguard AD", percentAd, AttributeModifier.Operation.MULTIPLY_BASE);
+        updateModifier(Attributes.ATTACK_DAMAGE, VANGUARD_AD, "Vanguard AD", percentAd, AttributeModifier.Operation.MULTIPLY_TOTAL);
         updateModifier(Attributes.ARMOR, VANGUARD_ARMOR, "Vanguard Armor", flatArmor, AttributeModifier.Operation.ADDITION);
         updateModifier(Attributes.ARMOR, VANGUARD_PERCENT_ARMOR, "Vanguard % Armor", capstonePercentArmor, AttributeModifier.Operation.MULTIPLY_BASE);
     }
@@ -240,7 +240,7 @@ public class WeaponMasteryData implements IWeaponMasteryData {
         double capstoneCritDamage = (level >= 15 ? 0.25 : 0);
 
         updateModModifier("attributeslib", "armor_pierce", JUGGERNAUT_ARMOR_PEN, "Juggernaut Armor Pen", armorPen, AttributeModifier.Operation.ADDITION);
-        updateModifier(Attributes.ATTACK_DAMAGE, JUGGERNAUT_AD, "Juggernaut % AD", percentAd, AttributeModifier.Operation.MULTIPLY_BASE);
+        updateModifier(Attributes.ATTACK_DAMAGE, JUGGERNAUT_AD, "Juggernaut % AD", percentAd, AttributeModifier.Operation.MULTIPLY_TOTAL);
         updateModModifier("attributeslib", "crit_damage", JUGGERNAUT_CRIT_DAMAGE, "Juggernaut Crit Damage", capstoneCritDamage, AttributeModifier.Operation.MULTIPLY_BASE);
     }
 

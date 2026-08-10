@@ -77,16 +77,33 @@ public class WeaponTabUI {
                 int nextCost = getAdjustedWeaponCost(currentLevel);
                 boolean canAfford = cart.canAfford(nextCost);
 
-                if (isDamageUnlocked && canAfford) {
+                int playerLevel = com.complextalents.leveling.client.ClientLevelingData.getLevel();
+                int requiredPlayerLevel = WeaponMasteryManager.getInstance().getRequiredPlayerLevelForTier(currentLevel + 1);
+                boolean isLevelUnlocked = playerLevel >= requiredPlayerLevel;
+
+                Component tooltipComponent;
+                if (!isLevelUnlocked) {
+                    tooltipComponent = Component.literal("\u00A7cRequires Player Level " + requiredPlayerLevel);
+                } else if (!isDamageUnlocked) {
+                    tooltipComponent = Component.literal("\u00A7cRequires " + (int) requiredDamage + " Accumulated Damage");
+                } else if (!canAfford) {
+                    tooltipComponent = Component.literal("\u00A7cRequires " + nextCost + " SP");
+                } else {
+                    tooltipComponent = Component.literal("\u00A7aUpgrade to Level " + (currentLevel + 1) + " (" + nextCost + " SP)");
+                }
+
+                if (isDamageUnlocked && canAfford && isLevelUnlocked) {
                     upgradeBtn = Button.builder(Component.literal("+"), (btn) -> adjust(path, 1))
                             .pos(plusX, btnY)
                             .size(plusW, 16)
+                            .tooltip(net.minecraft.client.gui.components.Tooltip.create(tooltipComponent))
                             .build();
                     upgradeBtn.active = true;
                 } else {
                     upgradeBtn = Button.builder(Component.literal("+"), (btn) -> {})
                             .pos(plusX, btnY)
                             .size(plusW, 16)
+                            .tooltip(net.minecraft.client.gui.components.Tooltip.create(tooltipComponent))
                             .build();
                     upgradeBtn.active = false;
                 }

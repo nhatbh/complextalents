@@ -72,6 +72,14 @@ public class ClientInputHandler {
                 return;
             }
         }
+        // Check TOGGLE_SMART_CAST key
+        if (event.getAction() == GLFW.GLFW_PRESS && event.getKey() == getKeyCode(KeyBindings.TOGGLE_SMART_CAST)) {
+            if (KeyBindings.TOGGLE_SMART_CAST.consumeClick()) {
+                com.complextalents.targeting.client.SmartCastManager.toggleSmartCast();
+                return;
+            }
+        }
+
         if (event.getAction() == GLFW.GLFW_RELEASE && event.getKey() == getKeyCode(KeyBindings.SKILL_1)) {
             handleSkillKeyRelease(0);
         }
@@ -108,9 +116,14 @@ public class ClientInputHandler {
         if (SkillCastingClient.isChanneling()) {
             double maxTime = SkillCastingClient.getMaxChannelTime();
             if (maxTime > 0) {
-                long currentTimeMs = SkillCastingClient.getCurrentChannelTime();
-                if (currentTimeMs >= maxTime * 1000) {
-                    handleSkillKeyRelease(SkillCastingClient.getCurrentSlot());
+                Skill skill = SkillCastingClient.getCurrentChannelingSkill();
+                boolean holdAtMax = skill != null && skill.shouldHoldAtMaxChannel();
+
+                if (!holdAtMax) {
+                    long currentTimeMs = SkillCastingClient.getCurrentChannelTime();
+                    if (currentTimeMs >= maxTime * 1000) {
+                        handleSkillKeyRelease(SkillCastingClient.getCurrentSlot());
+                    }
                 }
             }
         }
@@ -202,6 +215,7 @@ public class ClientInputHandler {
             KeyBindings.register();
             event.register(KeyBindings.SKILL_1);
             event.register(KeyBindings.OPEN_PROGRESSION);
+            event.register(KeyBindings.TOGGLE_SMART_CAST);
             TalentsMod.LOGGER.info("Registered skill key mappings");
         }
     }

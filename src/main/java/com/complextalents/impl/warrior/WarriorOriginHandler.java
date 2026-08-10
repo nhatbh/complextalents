@@ -190,8 +190,7 @@ public class WarriorOriginHandler {
                 double stylePoints = OriginManager.getResource(player);
                 StyleRank rank = StyleRank.getRank(stylePoints);
 
-                // Apply True Hit Immunity potion effect (efn:sin_stun_immunity) while at SSS
-                // Rank
+                // Apply True Hit Immunity potion effect (efn:sin_stun_immunity) while at SSS Rank
                 var stunImmunityEffect = net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS.getValue(
                         net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("efn", "sin_stun_immunity"));
                 if (stunImmunityEffect != null) {

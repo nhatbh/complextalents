@@ -1,6 +1,7 @@
 package com.complextalents.client.screen;
 
 import com.complextalents.client.SpellTabUI;
+import com.complextalents.client.StageTabUI;
 import com.complextalents.client.StatsTabUI;
 import com.complextalents.client.UpgradeCart;
 import com.complextalents.client.WeaponTabUI;
@@ -33,9 +34,10 @@ public class PlayerProgressionScreen extends Screen {
     private final StatsTabUI statsTab;
     private final SpellTabUI spellTab;
     private final WeaponTabUI weaponTab;
+    private final StageTabUI stageTab;
 
-    private int currentTab = 0; // 0=Stats, 1=Spells, 2=Weapons
-    private Button[] tabButtons = new Button[3];
+    private int currentTab = 0; // 0=Stats, 1=Spells, 2=Weapons, 3=Stages
+    private Button[] tabButtons = new Button[4];
     private List<Button> contentButtons = new ArrayList<>();
     private Button finalizeButton;
 
@@ -51,6 +53,7 @@ public class PlayerProgressionScreen extends Screen {
         this.statsTab = new StatsTabUI(cart);
         this.spellTab = new SpellTabUI(cart);
         this.weaponTab = new WeaponTabUI(cart);
+        this.stageTab = new StageTabUI(cart);
     }
 
     @Override
@@ -66,13 +69,13 @@ public class PlayerProgressionScreen extends Screen {
         this.contentButtons.clear();
 
         // Create tab buttons
-        String[] tabNames = {"Stats", "Spells", "Weapons"};
-        for (int i = 0; i < 3; i++) {
+        String[] tabNames = {"Stats", "Spells", "Weapons", "Stages"};
+        for (int i = 0; i < 4; i++) {
             final int tabIndex = i;
             this.tabButtons[i] = this.addRenderableWidget(Button.builder(Component.literal(tabNames[i]),
                     (btn) -> selectTab(tabIndex))
-                    .pos(screenX + 10 + (i * 130), screenY + 35)
-                    .size(120, 20)
+                    .pos(screenX + 10 + (i * 95), screenY + 35)
+                    .size(90, 20)
                     .build());
             updateTabButtonStyle(i);
         }
@@ -93,7 +96,7 @@ public class PlayerProgressionScreen extends Screen {
         if (currentTab != tabIndex) {
             currentTab = tabIndex;
             rebuildContent();
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 4; i++) {
                 updateTabButtonStyle(i);
             }
         }
@@ -117,6 +120,9 @@ public class PlayerProgressionScreen extends Screen {
             case 2:
                 contentButtons.addAll(weaponTab.buildWidgets(this, screenX + 10, screenY + 65));
                 break;
+            case 3:
+                contentButtons.addAll(stageTab.buildWidgets(this, screenX + 10, screenY + 65));
+                break;
         }
 
         // Add all content buttons to renderable widgets
@@ -131,6 +137,7 @@ public class PlayerProgressionScreen extends Screen {
             case 0 -> statsTab.update();
             case 1 -> spellTab.update();
             case 2 -> weaponTab.update();
+            case 3 -> stageTab.updateData();
         }
         rebuildContent();
         updateFinalizeButtonStyle();
@@ -169,18 +176,22 @@ public class PlayerProgressionScreen extends Screen {
         // Render content area background
         guiGraphics.fill(screenX + 10, screenY + 60, screenX + SCREEN_WIDTH - 10, screenY + 430, 0xBB111111);
 
-        // Render current tab content (backgrounds)
-        switch (currentTab) {
-            case 0 -> statsTab.renderBackgrounds(guiGraphics, screenX + 10, screenY + 65, mouseX, mouseY, partialTick);
-            case 1 -> spellTab.renderBackgrounds(guiGraphics, screenX + 10, screenY + 65, mouseX, mouseY, partialTick);
-            case 2 -> weaponTab.renderBackgrounds(guiGraphics, screenX + 10, screenY + 65, mouseX, mouseY, partialTick);
-        }
+        if (currentTab == 3) {
+            stageTab.render(guiGraphics, this.font, screenX + 10, screenY + 65, mouseX, mouseY, partialTick);
+        } else {
+            // Render current tab content (backgrounds)
+            switch (currentTab) {
+                case 0 -> statsTab.renderBackgrounds(guiGraphics, screenX + 10, screenY + 65, mouseX, mouseY, partialTick);
+                case 1 -> spellTab.renderBackgrounds(guiGraphics, screenX + 10, screenY + 65, mouseX, mouseY, partialTick);
+                case 2 -> weaponTab.renderBackgrounds(guiGraphics, screenX + 10, screenY + 65, mouseX, mouseY, partialTick);
+            }
 
-        // Render current tab content (text/labels) - before widgets so they don't appear on top
-        switch (currentTab) {
-            case 0 -> statsTab.renderLabels(guiGraphics, this.font, screenX + 10, screenY + 65, mouseX, mouseY);
-            case 1 -> spellTab.renderLabels(guiGraphics, this.font, screenX + 10, screenY + 65, mouseX, mouseY);
-            case 2 -> weaponTab.renderLabels(guiGraphics, this.font, screenX + 10, screenY + 65, mouseX, mouseY);
+            // Render current tab content (text/labels) - before widgets so they don't appear on top
+            switch (currentTab) {
+                case 0 -> statsTab.renderLabels(guiGraphics, this.font, screenX + 10, screenY + 65, mouseX, mouseY);
+                case 1 -> spellTab.renderLabels(guiGraphics, this.font, screenX + 10, screenY + 65, mouseX, mouseY);
+                case 2 -> weaponTab.renderLabels(guiGraphics, this.font, screenX + 10, screenY + 65, mouseX, mouseY);
+            }
         }
 
         // Render widgets (buttons, etc.) - after labels so buttons appear on top

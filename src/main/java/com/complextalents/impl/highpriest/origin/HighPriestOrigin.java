@@ -105,6 +105,7 @@ public class HighPriestOrigin {
                 .maxLevel(5)
                 .baseStat(StatType.MAX_MANA, 15)
                 .baseStat(StatType.CDR, 5)
+                .baseStat(StatType.AP, 5)
                 // Grace stack - binary state (ON/OFF), lost on damage
                 .passiveStack("grace", PassiveStackDef.create("Grace")
                         .maxStacks(1)
@@ -136,7 +137,8 @@ public class HighPriestOrigin {
                 .scaledStat("overhealToAbsorptionRate", new double[] { 0.30, 0.40, 0.50, 0.60, 0.75 })
                 .scaledStat("absorptionDuration", new double[] { 600.0, 800.0, 1000.0, 1200.0, 1500.0 })
                 .scaledStat("manaRefundPerCommand", new double[] { 0.0020, 0.0020, 0.0020, 0.0020, 0.0020 })
-                // Level defensive scaling (High Priest = Squishy Holy Support, just below Assassin)
+                // Level defensive scaling (High Priest = Squishy Holy Support, just below
+                // Assassin)
                 .levelArmorCalc(lvl -> lvl <= 1 ? 0.0 : Math.round(Math.pow(lvl - 1, 1.15) * 0.55))
                 .levelToughnessCalc(lvl -> lvl <= 1 ? 0.0 : Math.min(15.0, Math.pow(lvl - 1, 1.1) * 0.15))
                 .levelHealthCalc(lvl -> 0.0)
@@ -175,7 +177,8 @@ public class HighPriestOrigin {
         // Check if Grace is on (binary state)
         if (PassiveManager.getPassiveStacks(player, "grace") > 0) {
             // Calculate healing potency bonus
-            double healShieldPower = player.getAttributeValue(com.complextalents.registry.ModAttributes.HEAL_AND_SHIELD_POWER.get());
+            double healShieldPower = player
+                    .getAttributeValue(com.complextalents.registry.ModAttributes.HEAL_AND_SHIELD_POWER.get());
             double bonusMultiplier = OriginManager.getOriginStat(player, "healingPotency") * healShieldPower;
             float originalHealAmount = event.getHealAmount();
             float bonusHeal = originalHealAmount * (float) bonusMultiplier;
@@ -229,7 +232,8 @@ public class HighPriestOrigin {
         int absorptionDuration = (int) OriginManager.getOriginStat(player, "absorptionDuration");
 
         // Calculate absorption health to grant
-        double healShieldPower = player.getAttributeValue(com.complextalents.registry.ModAttributes.HEAL_AND_SHIELD_POWER.get());
+        double healShieldPower = player
+                .getAttributeValue(com.complextalents.registry.ModAttributes.HEAL_AND_SHIELD_POWER.get());
         float absorptionHealthToGrant = (float) (overheal * conversionRate * healShieldPower);
 
         if (absorptionHealthToGrant > 0) {
@@ -464,7 +468,8 @@ public class HighPriestOrigin {
                     || event.getSource().isIndirect()
                     || "magic".equals(event.getSource().getMsgId())
                     || "indirectMagic".equals(event.getSource().getMsgId())
-                    || event.getSource().getDirectEntity() instanceof com.complextalents.impl.highpriest.entity.SeraphsEdgeEntity;
+                    || event.getSource()
+                            .getDirectEntity() instanceof com.complextalents.impl.highpriest.entity.SeraphsEdgeEntity;
             if (!isSpellOrMagic) {
                 event.setCanceled(true);
             }
@@ -479,7 +484,8 @@ public class HighPriestOrigin {
                     || event.getSource().isIndirect()
                     || "magic".equals(event.getSource().getMsgId())
                     || "indirectMagic".equals(event.getSource().getMsgId())
-                    || event.getSource().getDirectEntity() instanceof com.complextalents.impl.highpriest.entity.SeraphsEdgeEntity;
+                    || event.getSource()
+                            .getDirectEntity() instanceof com.complextalents.impl.highpriest.entity.SeraphsEdgeEntity;
             if (!isSpellOrMagic) {
                 event.setCanceled(true);
             }

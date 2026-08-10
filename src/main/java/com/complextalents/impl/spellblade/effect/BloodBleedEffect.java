@@ -9,6 +9,20 @@ public class BloodBleedEffect extends MobEffect {
     }
 
     @Override
+    public boolean isDurationEffectTick(int duration, int amplifier) {
+        return duration % 20 == 0;
+    }
+
+    @Override
+    public void applyEffectTick(net.minecraft.world.entity.LivingEntity entity, int amplifier) {
+        if (!entity.level().isClientSide()) {
+            float maxHp = entity.getMaxHealth();
+            float bleedDmg = (float) Math.ceil(maxHp * 0.01f);
+            entity.hurt(entity.damageSources().magic(), Math.max(1.0f, bleedDmg));
+        }
+    }
+
+    @Override
     public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientMobEffectExtensions> consumer) {
         consumer.accept(new net.minecraftforge.client.extensions.common.IClientMobEffectExtensions() {
             @Override

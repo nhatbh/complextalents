@@ -64,5 +64,9 @@
   "item.complextalents.pierce_gem": "Pierce Rune",
   "item.complextalents.overclock_gem": "Overclock Rune",
   "item.complextalents.recast_gem": "Recast Rune",
-  "attribute.complextalents.heal_and_shield_power": "Heal and Shield Power"
+  "attribute.complextalents.heal_and_shield_power": "Heal and Shield Power",
+  "effect.complextalents.blade_flow": "Blade Flow",
+  "effect.complextalents.tidal_erosion": "Tidal Erosion",
+  "effect.complextalents.overwhelming_force": "Overwhelming Force",
+  "effect.complextalents.overwhelming_force_cd": "Overwhelming Force (Cooldown)"
 }

@@ -12,6 +12,7 @@
     "IceTombSpellMixin",
     "ItemStackMixin",
     "MagicManagerMixin",
+    "SmithingMenuMixin",
     "epicfight.GuardSkillMixin"
   ],
   "server": [],

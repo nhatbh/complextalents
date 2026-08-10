@@ -13,6 +13,7 @@ public class KeyBindings {
     // Key binding constants
     public static KeyMapping SKILL_1;
     public static KeyMapping OPEN_PROGRESSION;
+    public static KeyMapping TOGGLE_SMART_CAST;
 
     public static void register() {
         // Create key bindings
@@ -29,6 +30,14 @@ public class KeyBindings {
                 KeyConflictContext.IN_GAME,
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_K,
+                "key.categories.complextalents"
+        );
+
+        TOGGLE_SMART_CAST = new KeyMapping(
+                "key.complextalents.toggle_smart_cast",
+                KeyConflictContext.IN_GAME,
+                InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_V,
                 "key.categories.complextalents"
         );
 

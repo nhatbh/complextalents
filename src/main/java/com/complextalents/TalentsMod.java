@@ -2,10 +2,8 @@ package com.complextalents;
 
 import com.complextalents.config.ElementalReactionConfig;
 import com.complextalents.elemental.effects.ElementalEffects;
-import com.complextalents.elemental.effects.OPEffects;
 import com.complextalents.elemental.entity.ModEntities;
 import com.complextalents.elemental.integration.ModIntegrationHandler;
-import com.complextalents.elemental.registry.OverwhelmingPowerRegistry;
 import com.complextalents.elemental.registry.ReactionRegistry;
 import com.complextalents.impl.darkmage.DarkMageRegistrar;
 import com.complextalents.impl.elementalmage.origin.ElementalMageOrigin;
@@ -54,7 +52,6 @@ public class TalentsMod {
 
         // Register custom status effects
         ElementalEffects.register(modEventBus);
-        OPEffects.register(modEventBus);
         HighPriestEffects.register(modEventBus);
         AssassinEffects.register(modEventBus);
         com.complextalents.effect.ModEffects.register(modEventBus);
@@ -132,8 +129,7 @@ public class TalentsMod {
 
         // Initialize reaction registry with all registered reactions
         ReactionRegistry.getInstance().initialize();
-        OverwhelmingPowerRegistry.getInstance().initialize();
-        LOGGER.info("Reaction and OP registries initialized");
+        LOGGER.info("Reaction registry initialized");
 
         // Register skill commands
         SkillCommand.register(event.getServer().getCommands().getDispatcher());

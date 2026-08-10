@@ -85,7 +85,7 @@ public class SkillCooldownHandler {
         }
 
         // Check resource cost
-        int skillLevel = skillData.getSkillLevel(skillId);
+        int skillLevel = Math.max(1, skillData.getSkillLevel(skillId));
         double cost = skill.getResourceCost(skillLevel);
         if (cost > 0) {
             if (!hasEnoughResource(player, skill, cost)) {
@@ -192,7 +192,7 @@ public class SkillCooldownHandler {
         }
 
         // Get skill level for scaling
-        int skillLevel = skillData.getSkillLevel(skillId);
+        int skillLevel = Math.max(1, skillData.getSkillLevel(skillId));
 
         // For toggle skills: activate toggle and apply cooldown
         // Cooldown starts when toggle is turned on

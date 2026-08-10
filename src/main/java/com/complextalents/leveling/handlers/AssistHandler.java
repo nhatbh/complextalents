@@ -31,14 +31,20 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = TalentsMod.MODID)
 public class AssistHandler {
 
-    private static final long ASSIST_WINDOW_MS = 10000; // 10 seconds
+    private static final long ASSIST_WINDOW_MS = 180000L; // 3 minutes assist window
 
     /**
      * Records a player's damage on an entity (tracking assists).
+     * Checks both direct and indirect damage sources (spells, projectiles, summons).
      */
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {
-        if (event.getSource().getEntity() instanceof ServerPlayer player) {
+        net.minecraft.world.entity.Entity attacker = event.getSource().getEntity();
+        if (attacker == null) {
+            attacker = event.getSource().getDirectEntity();
+        }
+
+        if (attacker instanceof ServerPlayer player) {
             long timestamp = player.level().getGameTime() * 50; // Convert ticks to milliseconds
             AssistTracker.recordAssist(
                     player.getUUID(),
@@ -64,10 +70,15 @@ public class AssistHandler {
 
         long currentTime = level.getGameTime() * 50; // Convert ticks to milliseconds
 
-        // Award XP to all players who assisted (but didn't kill)
-        for (ServerPlayer player : level.players()) {
+        net.minecraft.world.entity.Entity killerEntity = event.getSource().getEntity();
+        if (killerEntity == null) {
+            killerEntity = event.getSource().getDirectEntity();
+        }
+
+        // Award XP to all online players who assisted (but didn't land the kill)
+        for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
             // Skip the killer (they already got XP from PrimaryXPHandler)
-            if (player == event.getSource().getEntity()) continue;
+            if (player == killerEntity) continue;
 
             // Check if player has assist within window
             if (AssistTracker.hasAssist(player.getUUID(), victimId, currentTime, ASSIST_WINDOW_MS)) {
@@ -98,7 +109,7 @@ public class AssistHandler {
         }
 
         // Also check if the killer was recently healed and award healer assist XP
-        if (event.getSource().getEntity() instanceof ServerPlayer killer) {
+        if (killerEntity instanceof ServerPlayer killer) {
             KillParticipantTracker.recordParticipant(victimId, killer.getUUID(), currentTime);
             // Check if killer was healed and award healer assist XP
             HealerAssistHandler.awardHealerAssist(killer, currentTime, victim.getMaxHealth());

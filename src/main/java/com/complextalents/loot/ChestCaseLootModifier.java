@@ -51,6 +51,14 @@ public class ChestCaseLootModifier extends LootModifier {
 
     @Override
     protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
+        // 0. Apply Weapon Refinement Algorithm to any compatible weapon present in generated loot
+        RandomSource random = context.getRandom();
+        for (ItemStack stack : generatedLoot) {
+            if (stack != null && !stack.isEmpty()) {
+                com.complextalents.weaponmastery.WeaponMasteryManager.applyRandomRefinementForLoot(stack, random);
+            }
+        }
+
         // 1. Verify this is a chest / container loot context
         ResourceLocation tableId = context.getQueriedLootTableId();
         if (tableId == null) return generatedLoot;
@@ -85,7 +93,6 @@ public class ChestCaseLootModifier extends LootModifier {
         // 5. Calculate Distance-Based Drop Chance (10% at spawn -> 35% at 50,000+ blocks out)
         double dropChance = BASE_DROP_CHANCE + ((MAX_DROP_CHANCE - BASE_DROP_CHANCE) * distanceRatio);
 
-        RandomSource random = context.getRandom();
         if (random.nextDouble() >= dropChance) {
             return generatedLoot;
         }

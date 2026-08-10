@@ -1,6 +1,7 @@
 package com.complextalents.leveling.data;
 
 import com.complextalents.TalentsMod;
+import com.complextalents.leveling.util.XPFormula;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.saveddata.SavedData;
 
@@ -174,15 +175,52 @@ public class PlayerLevelingData extends SavedData {
         final int SKILL_POINTS_PER_LEVEL = 2;
 
         // Level-up loop
-        double xpForNext = 100 + (Math.pow(level, 1.5) * 30);
+        double xpForNext = XPFormula.getXPForNextLevel(level);
         while (currentXP >= xpForNext) {
             currentXP -= xpForNext;
             level++;
             totalSkillPoints += SKILL_POINTS_PER_LEVEL;
-            xpForNext = 100 + (Math.pow(level, 1.5) * 30);
+            xpForNext = XPFormula.getXPForNextLevel(level);
         }
 
         LevelStats newStats = new LevelStats(level, currentXP, totalXP, totalSkillPoints, oldStats.getConsumedSkillPoints());
+        playerStats.put(playerId, newStats);
+        setDirty();
+    }
+
+    /**
+     * Sets a player's total XP and automatically recalculates their level, current XP progress, and earned skill points.
+     *
+     * @param playerId The UUID of the player
+     * @param newTotalXP The new total accumulated XP value (non-negative)
+     */
+    public void setTotalXP(UUID playerId, double newTotalXP) {
+        if (newTotalXP < 0) newTotalXP = 0;
+        LevelStats oldStats = getStats(playerId);
+
+        int newLevel = 1;
+        double accumulatedXP = 0;
+
+        while (true) {
+            double xpForNext = XPFormula.getXPForNextLevel(newLevel);
+            if (accumulatedXP + xpForNext > newTotalXP) {
+                break;
+            }
+            accumulatedXP += xpForNext;
+            newLevel++;
+        }
+
+        double currentXP = newTotalXP - accumulatedXP;
+        int totalSkillPoints = (newLevel - 1) * 2;
+        int consumedPoints = Math.min(oldStats.getConsumedSkillPoints(), totalSkillPoints);
+
+        LevelStats newStats = new LevelStats(
+                newLevel,
+                currentXP,
+                newTotalXP,
+                totalSkillPoints,
+                consumedPoints
+        );
         playerStats.put(playerId, newStats);
         setDirty();
     }
@@ -204,10 +242,7 @@ public class PlayerLevelingData extends SavedData {
         if (targetLevel < 1) targetLevel = 1;
         LevelStats oldStats = getStats(playerId);
 
-        double totalXP = 0;
-        for (int k = 1; k < targetLevel; k++) {
-            totalXP += 100 + (Math.pow(k, 1.5) * 30);
-        }
+        double totalXP = XPFormula.getTotalXPForLevel(targetLevel);
         int totalSkillPoints = (targetLevel - 1) * 2;
 
         LevelStats newStats = new LevelStats(

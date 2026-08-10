@@ -41,6 +41,14 @@ public abstract class AbstractSpellMixin {
         // Don't apply cast time penalties to instant spells (0 ticks)
         if (originalCastTime <= 0) return;
 
+        // Spellblade Overcharge Stance: Spells with cast duration <= 5.0 seconds (100 ticks) become instant cast
+        if (entity instanceof Player player && com.complextalents.impl.spellblade.SpellbladeData.isOverchargeStance(player)) {
+            if (originalCastTime <= 100) {
+                cir.setReturnValue(0);
+                return;
+            }
+        }
+
         double penaltyMultiplier = SpellPowerPenaltyHandler.calculatePenaltyMultiplier(
                 spell, entity, SpellPowerPenaltyHandler.spellPenaltyWeight
         );

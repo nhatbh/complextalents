@@ -40,7 +40,12 @@ public class PrimaryXPHandler {
         double baseXP = XPFormula.calculatePrimaryXP(victim.getMaxHealth());
 
         // Award to killer if they're a player
-        if (event.getSource().getEntity() instanceof ServerPlayer killer) {
+        net.minecraft.world.entity.Entity killerEntity = event.getSource().getEntity();
+        if (killerEntity == null) {
+            killerEntity = event.getSource().getDirectEntity();
+        }
+
+        if (killerEntity instanceof ServerPlayer killer) {
             // Build context with metadata
             XPContext context = XPContext.builder()
                     .source(XPSource.PRIMARY_COMBAT)

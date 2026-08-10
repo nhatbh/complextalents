@@ -18,11 +18,18 @@ public class SpellbladeOrigin {
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("complextalents", "spellblade");
 
     // Passive & Active Parameters
-    public static final double[] BASE_MANA_PER_HIT = { 0.02, 0.03, 0.04, 0.05, 0.06 };
-    public static final double[] ACTIVE_COOLDOWN = { 150.0, 140.0, 130.0, 120.0, 100.0 };
-    public static final double[] INITIAL_STANCE_DURATION = { 4.0, 5.0, 6.0, 7.0, 8.0 };
+    // Passive & Active Parameters
+    public static final double[] BASE_MANA_PER_HIT = { 0.06, 0.08, 0.10, 0.12, 0.15 };
+    public static final double[] ACTIVE_COOLDOWN = { 5.0, 5.0, 5.0, 5.0, 5.0 };
+    public static final double[] INITIAL_STANCE_DURATION = { 6.0, 6.0, 6.0, 6.0, 6.0 };
     public static final double[] DURATION_ADDED_PER_CAST = { 2.0, 3.0, 4.0, 5.0, 6.0 };
     public static final double[] MAX_STANCE_CAP = { 30.0, 30.0, 30.0, 30.0, 30.0 };
+
+    // Overcharge Stance Scaling
+    public static final double[] ENHANCED_EFFECT_MULT = { 1.25, 1.40, 1.55, 1.70, 1.90 };
+    public static final double[] AP_DAMAGE_GAIN_RATIO = { 0.40, 0.55, 0.70, 0.85, 1.00 };
+    public static final double[] BASE_MANA_DRAIN_PER_HIT = { 10.0, 10.0, 10.0, 10.0, 10.0 };
+    public static final double[] MANA_DRAIN_DAMAGE_SCALING = { 0.15, 0.135, 0.12, 0.105, 0.09 };
 
     // Fire Imbue
     public static final double[] FIRE_DMG_MULT = { 0.15, 0.20, 0.25, 0.30, 0.40 };
@@ -32,14 +39,14 @@ public class SpellbladeOrigin {
     public static final double[] ICE_FREEZE_BASE_SEC = { 1.0, 1.25, 1.50, 1.75, 2.00 };
     public static final double[] ICE_FREEZE_AP_SCALING = { 0.5, 0.75, 1.0, 1.25, 1.5 };
 
-    // Lightning Imbue
-    public static final double[] LIGHTNING_SPLASH_BASE_DMG = { 4.0, 6.0, 8.0, 10.0, 12.0 };
-    public static final double[] LIGHTNING_AP_RATIO = { 2.0, 3.0, 4.0, 5.0, 6.0 };
+    // Lightning Imbue (Multi-target splash damage nerfed to ~30% of Fire single-target damage boost)
+    public static final double[] LIGHTNING_SPLASH_BASE_DMG = { 1.0, 1.5, 2.0, 2.5, 3.0 };
+    public static final double[] LIGHTNING_AP_RATIO = { 0.5, 0.75, 1.0, 1.25, 1.5 };
     public static final double[] LIGHTNING_HASTE_PCT = { 0.10, 0.15, 0.20, 0.25, 0.30 };
 
-    // Nature Imbue (Cut in half by user request)
-    public static final double[] NATURE_SHIELD_BASE = { 4.0, 7.0, 10.0, 13.0, 16.0 };
-    public static final double[] NATURE_SHIELD_AP_RATIO = { 2.0, 3.0, 4.0, 5.0, 6.0 };
+    // Nature Imbue (Tuned as a clutch survival tool rather than a tanking tool)
+    public static final double[] NATURE_SHIELD_BASE = { 1.5, 2.5, 3.5, 4.5, 5.5 };
+    public static final double[] NATURE_SHIELD_AP_RATIO = { 0.5, 0.75, 1.0, 1.25, 1.5 };
 
     // Water Imbue
     public static final double[] WATER_MANA_BASE = { 4.0, 6.0, 8.0, 10.0, 12.0 };
@@ -68,16 +75,17 @@ public class SpellbladeOrigin {
         OriginBuilder.create("complextalents", "spellblade")
                 .displayName("Ma Kiếm Sĩ")
                 .description(Component.literal(
-                        "Bậc thầy dung hợp ma thuật và kiếm thuật. Mỗi đòn chém giúp hồi lại 1% đến 3% Năng Lượng tối đa. Thi triển phép thuật sẽ yểm ma lực lên lưỡi kiếm, giúp đòn chém kế tiếp bộc phát hiệu ứng nguyên tố tương ứng."))
+                        "Bậc thầy dung hợp ma thuật và kiếm thuật theo phong cách Spell Weaver. Đòn chém giúp hồi 6%-15% Mana tối đa và tích lũy Kho Mana Ảo (tối đa 50% Mana) chỉ dùng cho thi triển phép trong Quá Tải. Phép thuật yểm nguyên tố lên vũ khí trong 6s, hiệu ứng nguyên tố tỉ lệ theo Tốc Độ Đánh của vũ khí (Attack Speed Weight). Khi Quá Tải, phép thi triển ≤ 5s trở thành tức thì (0s) và tăng 1.25x-1.90x hiệu ứng nguyên tố."))
                 .maxLevel(5)
-                .baseStat(StatType.AP, 2)
+                .baseStat(StatType.AP, 4)
+                .baseStat(StatType.MAX_MANA, 2)
                 .baseStat(StatType.FLAT_AD, 2)
                 .baseStat(StatType.HEAL_AND_SHIELD, -6)
                 .scaledStat("base_mana_per_hit", "Hồi Mana/Hit (%)", BASE_MANA_PER_HIT)
                 .passiveSkill("Dệt Năng Lượng",
-                        "Đòn chém cận chiến giúp hồi 1% đến 3% Năng Lượng tối đa dựa trên tốc độ vung kiếm. Khi thi triển phép thuật, lưỡi kiếm được nạp ma lực để đòn chém kế tiếp bộc phát hiệu ứng nguyên tố tương ứng.")
+                        "Đòn chém cận chiến hồi 6%-15% Mana tối đa. Khi Quá Tải, tích lũy Kho Mana Ảo (tối đa 50% Mana) thi triển phép. Phép thuật yểm nguyên tố lên vũ khí trong 6s (tỉ lệ theo Tốc Đánh & AP).")
                 .activeSkill("Quá Tải",
-                        "Bộc phát ma lực trong 30 giây: Cường hóa Sức Mạnh Cận Chiến thêm 15% đến 35% Sức Mạnh Ma Thuật hiện có và duy trì cường hóa nguyên tố liên tục trong 6 giây cho mọi đòn chém sau mỗi lần thi phép.",
+                        "Trạng Thái Quá Tải (hồi chiêu 5s): Phép thuật thi triển ≤ 5s trở thành tức thì (0s). Tăng 1.25x đến 1.90x hiệu ứng nguyên tố yểm trên vũ khí.",
                         ResourceLocation.fromNamespaceAndPath("complextalents",
                                 "textures/skill/spellblade/spellblade.png"))
                 .activeSkillId(SpellbladeOverchargeSkill.ID)
@@ -94,7 +102,7 @@ public class SpellbladeOrigin {
                 .cost(StatType.ARMOR_PEN, 2)
                 .cost(StatType.LUCK_CRIT, 2)
                 .cost(StatType.MAX_HP, 4)
-                .cost(StatType.MAX_MANA, 3)
+                .cost(StatType.MAX_MANA, 2)
                 .cost(StatType.HEAL_AND_SHIELD, 4)
                 .cost(StatType.CDR, 1)
                 .spellMasteryCostMultiplier(1.0)

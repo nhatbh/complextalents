@@ -252,11 +252,16 @@ public class DynamicCasePoolBuilder {
      */
     private static List<CaseReward> buildPoolFromTierMap(Map<Integer, List<Item>> tierMap, CrateRarity crateRarity, String debugTag) {
         Map<Integer, List<ItemStack>> stackTierMap = new HashMap<>();
+        RandomSource random = RandomSource.create();
         for (int t = 1; t <= 5; t++) {
             List<ItemStack> stacks = new ArrayList<>();
             List<Item> items = tierMap != null ? tierMap.getOrDefault(t, Collections.emptyList()) : Collections.emptyList();
             for (Item item : items) {
-                stacks.add(new ItemStack(item));
+                ItemStack stack = new ItemStack(item);
+                if (!(item instanceof com.complextalents.item.RefinementGemItem)) {
+                    stack = com.complextalents.weaponmastery.WeaponMasteryManager.applyRandomRefinementForLoot(stack, random);
+                }
+                stacks.add(stack);
             }
             stackTierMap.put(t, stacks);
         }

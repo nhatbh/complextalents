@@ -15,7 +15,8 @@ public enum XPSource {
     WARRIOR_PARRY("Warrior Parry"),
     HIGHPRIEST_SAVIOR("High Priest Savior"),
     HIGHPRIEST_CROWD_CONTROL("High Priest Crowd Control"),
-    CHEST_LOOT("Chest Loot");
+    CHEST_LOOT("Chest Loot"),
+    API("External API / Quest");
 
     private final String displayName;
 

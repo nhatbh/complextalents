@@ -14,12 +14,16 @@ public class SpellbladeDataSyncPacket {
     private final int enhancedAttackTicks;
     private final boolean imbueCharge;
     private final int overchargeTicks;
+    private final boolean overchargeStance;
+    private final float virtualMana;
 
-    public SpellbladeDataSyncPacket(SpellSchool activeElement, int enhancedAttackTicks, boolean imbueCharge, int overchargeTicks) {
+    public SpellbladeDataSyncPacket(SpellSchool activeElement, int enhancedAttackTicks, boolean imbueCharge, int overchargeTicks, boolean overchargeStance, float virtualMana) {
         this.activeElement = activeElement;
         this.enhancedAttackTicks = enhancedAttackTicks;
         this.imbueCharge = imbueCharge;
         this.overchargeTicks = overchargeTicks;
+        this.overchargeStance = overchargeStance;
+        this.virtualMana = virtualMana;
     }
 
     public static void encode(SpellbladeDataSyncPacket msg, FriendlyByteBuf buf) {
@@ -30,6 +34,8 @@ public class SpellbladeDataSyncPacket {
         buf.writeInt(msg.enhancedAttackTicks);
         buf.writeBoolean(msg.imbueCharge);
         buf.writeInt(msg.overchargeTicks);
+        buf.writeBoolean(msg.overchargeStance);
+        buf.writeFloat(msg.virtualMana);
     }
 
     public static SpellbladeDataSyncPacket decode(FriendlyByteBuf buf) {
@@ -38,8 +44,10 @@ public class SpellbladeDataSyncPacket {
         int enhancedAttackTicks = buf.readInt();
         boolean imbueCharge = buf.readBoolean();
         int overchargeTicks = buf.readInt();
+        boolean overchargeStance = buf.readBoolean();
+        float virtualMana = buf.readFloat();
 
-        return new SpellbladeDataSyncPacket(element, enhancedAttackTicks, imbueCharge, overchargeTicks);
+        return new SpellbladeDataSyncPacket(element, enhancedAttackTicks, imbueCharge, overchargeTicks, overchargeStance, virtualMana);
     }
 
     public static void handle(SpellbladeDataSyncPacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -53,6 +61,8 @@ public class SpellbladeDataSyncPacket {
                 cap.setEnhancedAttackTicks(msg.enhancedAttackTicks);
                 cap.setHasImbueCharge(msg.imbueCharge);
                 cap.setOverchargeTicks(msg.overchargeTicks);
+                cap.setOverchargeStance(msg.overchargeStance);
+                cap.setVirtualMana(msg.virtualMana);
             });
         });
         ctx.get().setPacketHandled(true);

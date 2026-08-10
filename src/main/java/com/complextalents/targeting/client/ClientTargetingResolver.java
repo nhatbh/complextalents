@@ -2,6 +2,7 @@ package com.complextalents.targeting.client;
 
 import com.complextalents.targeting.*;
 import com.complextalents.util.AllyHelper;
+import com.complextalents.util.KeyHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -68,42 +70,101 @@ public class ClientTargetingResolver {
             resolvedTypes.add(TargetType.POSITION);
         }
 
-        /* -------------------- ENTITY RAYCAST -------------------- */
-        if (request.getAllowedTypes().contains(TargetType.ENTITY)
-                || request.getAllowedTypes().contains(TargetType.POSITION)) {
-            EntityHitResult entityHit = raycastEntities(
-                    level,
-                    origin,
-                    maxEnd,
-                    createEntityPredicate(request));
+        /* -------------------- ENTITY TARGETING (SMART SELECTION) -------------------- */
+        if (!request.isDisableSmartCast() && (request.getAllowedTypes().contains(TargetType.ENTITY)
+                || request.getAllowedTypes().contains(TargetType.POSITION))) {
 
-            if (entityHit != null && entityHit.getType() == HitResult.Type.ENTITY) {
-                Entity hit = entityHit.getEntity();
-                Vec3 hitPos = entityHit.getLocation();
-                double hitDistance = origin.distanceTo(hitPos);
+            double maxRange = request.getMaxRange();
+            AABB searchArea = player.getBoundingBox().inflate(maxRange);
+            Predicate<Entity> predicate = createEntityPredicate(request);
 
-                boolean occludedBySolidBlock = hitBlock && hitDistance > distance + 0.5;
+            List<Entity> candidates = level.getEntities((Entity) null, searchArea,
+                    entity -> predicate.test(entity) && entity.isPickable() && !entity.isSpectator());
 
-                if (hitDistance <= request.getMaxRange() && !occludedBySolidBlock) {
-                    if (!request.isRequireLineOfSight()
-                            || hasLineOfSight(level, origin, hitPos, hit)) {
+            Entity bestEntity = null;
+            Vec3 bestTargetPos = null;
+            double maxSearchRadius = request.getEntitySearchRadius() > 0 ? request.getEntitySearchRadius() * 2.5 : 6.0;
+            double maxAllowedScore = 0.50; // ~26.5 degrees maximum crosshair deviation (generous angle)
+            double bestScore = maxAllowedScore;
+            double bestDistance = maxRange;
 
-                        targetEntityId = hit.getId();
-                        hasEntity = true;
-                        targetPosition = hitPos;
-                        distance = hitDistance;
-                        isAlly = AllyHelper.isAlly(player, hit);
+            // Maximum allowed search cone angle (45 degrees)
+            double minCosTheta = Math.cos(Math.toRadians(45.0));
 
-                        resolvedTypes.add(TargetType.ENTITY);
-                        resolvedTypes.add(TargetType.POSITION);
+            for (Entity candidate : candidates) {
+                Vec3 targetPoint = candidate.getBoundingBox().getCenter();
+                Vec3 vecToCandidate = targetPoint.subtract(origin);
+                double candidateDist = vecToCandidate.length();
+
+                if (candidateDist > maxRange || candidateDist < 1.0E-5) {
+                    continue;
+                }
+
+                // Forward direction check
+                double dot = vecToCandidate.dot(look);
+                if (dot <= 0) {
+                    continue;
+                }
+
+                // Angle cone check
+                double cosTheta = dot / candidateDist;
+                if (cosTheta < minCosTheta) {
+                    continue;
+                }
+
+                // Occlusion by solid block hit
+                if (hitBlock && candidateDist > distance + 0.5) {
+                    continue;
+                }
+
+                // Line of sight check
+                if (request.isRequireLineOfSight() && !hasLineOfSight(level, origin, targetPoint, candidate)) {
+                    continue;
+                }
+
+                // Point on look ray closest to entity center
+                double t = Math.min(dot, maxRange);
+                Vec3 pointOnRay = origin.add(look.scale(t));
+
+                // 3D distance from look ray to entity's bounding box surface
+                double rayDistToBox = distanceToAABB(pointOnRay, candidate.getBoundingBox());
+                if (rayDistToBox > maxSearchRadius) {
+                    continue;
+                }
+
+                // Angular / crosshair offset score (rayDistToBox / t)
+                double score = rayDistToBox / Math.max(t, 0.1);
+
+                if (score < bestScore - 1.0E-5) {
+                    bestScore = score;
+                    bestEntity = candidate;
+                    bestTargetPos = targetPoint;
+                    bestDistance = candidateDist;
+                } else if (Math.abs(score - bestScore) <= 1.0E-5) {
+                    if (candidateDist < bestDistance) {
+                        bestScore = score;
+                        bestEntity = candidate;
+                        bestTargetPos = targetPoint;
+                        bestDistance = candidateDist;
                     }
                 }
             }
 
+            if (bestEntity != null) {
+                targetEntityId = bestEntity.getId();
+                hasEntity = true;
+                targetPosition = bestTargetPos;
+                distance = bestDistance;
+                isAlly = AllyHelper.isAlly(player, bestEntity);
+
+                resolvedTypes.add(TargetType.ENTITY);
+                resolvedTypes.add(TargetType.POSITION);
+            }
         }
 
-        if (!hasEntity && (!resolvedTypes.contains(TargetType.POSITION) || !hitBlock) &&
-                request.isTargetSelfAllowed()) {
+        // Self-targeting fallback ONLY when shift key is held and skill allows self-target
+        boolean isShiftDown = KeyHelper.isShiftDown();
+        if (!hasEntity && request.isTargetSelfAllowed() && isShiftDown && (request.getAllowedTypes().contains(TargetType.ENTITY) || request.getAllowedTypes().contains(TargetType.POSITION))) {
             targetEntityId = player.getId();
             hasEntity = true;
             targetPosition = player.position();
@@ -134,11 +195,27 @@ public class ClientTargetingResolver {
             return TargetingSnapshot.createEmpty();
         }
 
+        boolean isShiftDown = KeyHelper.isShiftDown();
+        boolean disableSmartCast = !SmartCastManager.isSmartCastEnabled();
+
         return resolve(TargetingRequest.builder(localPlayer)
                 .maxRange(maxRange)
                 .allowedTypes(allowedTypes)
                 .relationFilter(relationFilter)
+                .targetPlayerOnly(isShiftDown)
+                .disableSmartCast(disableSmartCast)
                 .build());
+    }
+
+    /**
+     * Calculates the shortest 3D distance from a point to an Axis-Aligned Bounding Box (AABB).
+     * Returns 0.0 if the point is inside the bounding box.
+     */
+    private double distanceToAABB(Vec3 point, AABB box) {
+        double dx = Math.max(0, Math.max(box.minX - point.x, point.x - box.maxX));
+        double dy = Math.max(0, Math.max(box.minY - point.y, point.y - box.maxY));
+        double dz = Math.max(0, Math.max(box.minZ - point.z, point.z - box.maxZ));
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
 
     /* ========================================================= */

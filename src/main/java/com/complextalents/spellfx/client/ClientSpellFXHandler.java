@@ -45,6 +45,10 @@ public class ClientSpellFXHandler {
      * @param colorHex RGB color matching the spell's school.
      */
     public static void triggerFeedback(int manaCost, int colorHex) {
+        triggerFeedback(manaCost, colorHex, 0.50f);
+    }
+
+    public static void triggerFeedback(int manaCost, int colorHex, float maxFlashAlpha) {
         int effectiveMana = Math.max(15, manaCost);
 
         // 1. Screen Shake setup (intensity 0.8 to 3.5, duration 6 to 20 ticks)
@@ -68,9 +72,12 @@ public class ClientSpellFXHandler {
             maxRecoilTicks = recoilTicks;
         }
 
-        // 3. Muzzle Flash Overlay setup (starting alpha ~0.25 to ~0.50)
-        flashColorRGB = colorHex;
-        flashAlpha = (float) Math.min(0.50, 0.25 + (effectiveMana / 150.0) * 0.20);
+        // 3. Muzzle Flash Overlay setup (starting alpha ~0.25-0.50 for spells, custom max for melee)
+        if (colorHex != 0) {
+            flashColorRGB = colorHex;
+            float minAlpha = maxFlashAlpha * 0.5f;
+            flashAlpha = (float) Math.min(maxFlashAlpha, minAlpha + (effectiveMana / 150.0f) * (maxFlashAlpha - minAlpha));
+        }
     }
 
     /**
@@ -232,7 +239,7 @@ public class ClientSpellFXHandler {
         if (event.phase != TickEvent.Phase.END) return;
 
         if (flashAlpha > 0.0f) {
-            flashAlpha = Math.max(0.0f, flashAlpha - 0.08f);
+            flashAlpha = Math.max(0.0f, flashAlpha - 0.10f);
         }
 
         if (recoilTicks > 0) {

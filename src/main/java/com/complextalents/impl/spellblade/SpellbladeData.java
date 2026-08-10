@@ -13,7 +13,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class SpellbladeData {
 
     public static SpellSchool getActiveElement(Player player) {
+        if (player == null) return null;
         return player.getCapability(SpellbladeDataProvider.SPELLBLADE_DATA)
+                .resolve()
                 .map(IPlayerSpellbladeData::getActiveElement)
                 .orElse(null);
     }
@@ -26,7 +28,9 @@ public class SpellbladeData {
     }
 
     public static int getEnhancedAttackTicks(Player player) {
+        if (player == null) return 0;
         return player.getCapability(SpellbladeDataProvider.SPELLBLADE_DATA)
+                .resolve()
                 .map(IPlayerSpellbladeData::getEnhancedAttackTicks)
                 .orElse(0);
     }
@@ -39,7 +43,9 @@ public class SpellbladeData {
     }
 
     public static boolean hasImbueCharge(Player player) {
+        if (player == null) return false;
         return player.getCapability(SpellbladeDataProvider.SPELLBLADE_DATA)
+                .resolve()
                 .map(IPlayerSpellbladeData::hasImbueCharge)
                 .orElse(false);
     }
@@ -52,7 +58,9 @@ public class SpellbladeData {
     }
 
     public static int getOverchargeTicks(Player player) {
+        if (player == null) return 0;
         return player.getCapability(SpellbladeDataProvider.SPELLBLADE_DATA)
+                .resolve()
                 .map(IPlayerSpellbladeData::getOverchargeTicks)
                 .orElse(0);
     }
@@ -64,10 +72,47 @@ public class SpellbladeData {
         }
     }
 
-    public static boolean isOverchargeActive(Player player) {
+    public static boolean isOverchargeStance(Player player) {
+        if (player == null) return false;
         return player.getCapability(SpellbladeDataProvider.SPELLBLADE_DATA)
+                .resolve()
+                .map(IPlayerSpellbladeData::isOverchargeStance)
+                .orElse(false);
+    }
+
+    public static void setOverchargeStance(Player player, boolean active) {
+        player.getCapability(SpellbladeDataProvider.SPELLBLADE_DATA).ifPresent(cap -> cap.setOverchargeStance(active));
+        if (player instanceof ServerPlayer serverPlayer) {
+            syncToClient(serverPlayer);
+        }
+    }
+
+    public static void toggleOverchargeStance(Player player) {
+        boolean current = isOverchargeStance(player);
+        setOverchargeStance(player, !current);
+    }
+
+    public static boolean isOverchargeActive(Player player) {
+        if (player == null) return false;
+        return player.getCapability(SpellbladeDataProvider.SPELLBLADE_DATA)
+                .resolve()
                 .map(IPlayerSpellbladeData::isOverchargeActive)
                 .orElse(false);
+    }
+
+    public static float getVirtualMana(Player player) {
+        if (player == null) return 0.0f;
+        return player.getCapability(SpellbladeDataProvider.SPELLBLADE_DATA)
+                .resolve()
+                .map(IPlayerSpellbladeData::getVirtualMana)
+                .orElse(0.0f);
+    }
+
+    public static void setVirtualMana(Player player, float amount) {
+        player.getCapability(SpellbladeDataProvider.SPELLBLADE_DATA).ifPresent(cap -> cap.setVirtualMana(amount));
+        if (player instanceof ServerPlayer serverPlayer) {
+            syncToClient(serverPlayer);
+        }
     }
 
     public static void syncToClient(ServerPlayer player) {
@@ -76,7 +121,9 @@ public class SpellbladeData {
                     cap.getActiveElement(),
                     cap.getEnhancedAttackTicks(),
                     cap.hasImbueCharge(),
-                    cap.getOverchargeTicks()
+                    cap.getOverchargeTicks(),
+                    cap.isOverchargeStance(),
+                    cap.getVirtualMana()
             ), player);
         });
     }
