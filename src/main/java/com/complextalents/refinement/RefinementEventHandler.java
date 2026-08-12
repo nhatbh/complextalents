@@ -26,6 +26,7 @@ public class RefinementEventHandler {
         if (startingTier <= 0)
             return;
 
+        // Apply Base AD% stat (guaranteed)
         double adBonusMultiplier = WeaponMasteryManager.getADBonusMultiplier(stack);
         if (adBonusMultiplier > 0) {
             double baseDamage = 0.0;
@@ -54,6 +55,63 @@ public class RefinementEventHandler {
                     extraDamage,
                     net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADDITION);
             event.addModifier(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE, modifier);
+        }
+
+        // Apply Substats
+        java.util.Map<WeaponMasteryManager.SubstatType, Double> substats = WeaponMasteryManager.getCachedSubstats(stack);
+        for (java.util.Map.Entry<WeaponMasteryManager.SubstatType, Double> entry : substats.entrySet()) {
+            WeaponMasteryManager.SubstatType type = entry.getKey();
+            double value = entry.getValue();
+            if (value <= 0) continue;
+
+            net.minecraft.world.entity.ai.attributes.Attribute attr = null;
+            try {
+                switch (type) {
+                    case PERCENT_AD:
+                        attr = net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE;
+                        break;
+                    case FLAT_AD:
+                        attr = net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE;
+                        break;
+                    case ARMOR:
+                        attr = net.minecraft.world.entity.ai.attributes.Attributes.ARMOR;
+                        break;
+                    case MAX_HEALTH:
+                        attr = net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH;
+                        break;
+                    case CRIT_CHANCE:
+                        attr = net.minecraftforge.registries.ForgeRegistries.ATTRIBUTES.getValue(
+                                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("attributeslib", "crit_chance"));
+                        break;
+                    case CRIT_DAMAGE:
+                        attr = net.minecraftforge.registries.ForgeRegistries.ATTRIBUTES.getValue(
+                                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("attributeslib", "crit_damage"));
+                        break;
+                    case ARMOR_SHRED:
+                        attr = net.minecraftforge.registries.ForgeRegistries.ATTRIBUTES.getValue(
+                                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("attributeslib", "armor_shred"));
+                        break;
+                    case ARMOR_PIERCE:
+                        attr = net.minecraftforge.registries.ForgeRegistries.ATTRIBUTES.getValue(
+                                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("attributeslib", "armor_pierce"));
+                        break;
+                    case IMPACT:
+                        attr = yesman.epicfight.world.entity.ai.attribute.EpicFightAttributes.IMPACT.get();
+                        break;
+                }
+            } catch (Throwable t) {
+                // Ignore missing mod attributes
+            }
+
+            if (attr != null) {
+                java.util.UUID substatUuid = UUIDHelper.generateAttributeModifierUUID("refinement", "weapon_refinement_substat_" + type.getName().toLowerCase());
+                net.minecraft.world.entity.ai.attributes.AttributeModifier modifier = new net.minecraft.world.entity.ai.attributes.AttributeModifier(
+                        substatUuid,
+                        "Weapon Refinement Substat " + type.getName(),
+                        value,
+                        type.getOperation());
+                event.addModifier(attr, modifier);
+            }
         }
     }
 

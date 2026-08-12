@@ -73,9 +73,8 @@ public class SpellbladeOrigin {
 
     public static void register() {
         OriginBuilder.create("complextalents", "spellblade")
-                .displayName("Ma Kiếm Sĩ")
-                .description(Component.literal(
-                        "Bậc thầy dung hợp ma thuật và kiếm thuật theo phong cách Spell Weaver. Đòn chém giúp hồi 6%-15% Mana tối đa và tích lũy Kho Mana Ảo (tối đa 50% Mana) chỉ dùng cho thi triển phép trong Quá Tải. Phép thuật yểm nguyên tố lên vũ khí trong 6s, hiệu ứng nguyên tố tỉ lệ theo Tốc Độ Đánh của vũ khí (Attack Speed Weight). Khi Quá Tải, phép thi triển ≤ 5s trở thành tức thì (0s) và tăng 1.25x-1.90x hiệu ứng nguyên tố."))
+                .displayName(Component.translatable("origin.complextalents.spellblade"))
+                .description(Component.translatable("origin.complextalents.spellblade.desc"))
                 .maxLevel(5)
                 .baseStat(StatType.AP, 4)
                 .baseStat(StatType.MAX_MANA, 2)
@@ -93,6 +92,13 @@ public class SpellbladeOrigin {
                 .levelToughnessCalc(lvl -> Math.min(30.0, 0.5 + Math.pow(lvl - 1, 1.05) * 0.25))
                 .levelHealthCalc(lvl -> 0.0)
                 .renderer(new SpellbladeRenderer())
+                .gunConfusionMessages(
+                        "origin.complextalents.spellblade.gun_msg.1",
+                        "origin.complextalents.spellblade.gun_msg.2",
+                        "origin.complextalents.spellblade.gun_msg.3",
+                        "origin.complextalents.spellblade.gun_msg.4",
+                        "origin.complextalents.spellblade.gun_msg.5"
+                )
                 .register();
 
         ClassCostMatrix.defineCosts(ID)

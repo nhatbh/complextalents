@@ -4,6 +4,7 @@ import com.complextalents.origin.OriginBuilder;
 import com.complextalents.origin.ResourceType;
 import com.complextalents.stats.ClassCostMatrix;
 import com.complextalents.stats.StatType;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -20,9 +21,8 @@ public class WarriorOrigin {
 
         // Build and register Warrior origin
         OriginBuilder.create(ID)
-                .displayName("Đấu Sĩ")
-                .description(
-                        "Đấu sĩ tuyến đầu tích lũy từ 0 đến 1000 điểm Đấu Khí qua đòn đánh. Giảm 40% đến 60% sát thương nhận vào, tăng đến 12% sát thương và 35% Tốc Độ Đánh theo cấp Đấu Khí. Khi Đấu Khí đạt 950 điểm trở lên sẽ trở nên không thể cản phá, khi nhận sát thương tử thương sẽ tiêu thụ Đấu Khí về 250 điểm để thoát chết.")
+                .displayName(Component.translatable("origin.complextalents.warrior"))
+                .description(Component.translatable("origin.complextalents.warrior.desc"))
                 .resourceType(styleType)
                 .maxLevel(5)
                 .baseStat(StatType.PERCENT_AD, 4)
@@ -50,6 +50,13 @@ public class WarriorOrigin {
                 .levelToughnessCalc(lvl -> lvl <= 1 ? 0.0 : Math.min(40.0, Math.pow(lvl - 1, 1.1) * 0.4))
                 .levelHealthCalc(lvl -> 0.0)
                 .renderer(new com.complextalents.impl.warrior.client.WarriorRenderer())
+                .gunConfusionMessages(
+                        "origin.complextalents.warrior.gun_msg.1",
+                        "origin.complextalents.warrior.gun_msg.2",
+                        "origin.complextalents.warrior.gun_msg.3",
+                        "origin.complextalents.warrior.gun_msg.4",
+                        "origin.complextalents.warrior.gun_msg.5"
+                )
                 .register();
 
         ClassCostMatrix.defineCosts(ID)

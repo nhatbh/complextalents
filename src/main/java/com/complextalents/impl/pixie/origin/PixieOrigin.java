@@ -34,9 +34,8 @@ public class PixieOrigin {
      */
     public static void register() {
         OriginBuilder.create(ID)
-                .displayName("Tiên Linh")
-                .description(Component.literal(
-                        "Tiên linh bất tử đồng hành cùng đồng đội trong phạm vi 6 đến 10 khối. Nhập thể vào đồng minh để gia tăng 10% đến 35% sức mạnh tấn công cùng 5% đến 25% phòng thủ, tạo lá chắn bảo vệ và khắc dấu ấn nổ sát thương phép lên kẻ địch."))
+                .displayName(Component.translatable("origin.complextalents.pixie"))
+                .description(Component.translatable("origin.complextalents.pixie.desc"))
                 .maxLevel(5)
                 .baseStat(StatType.MAX_MANA, 10)
                 .baseStat(StatType.CDR, 5)
@@ -57,6 +56,13 @@ public class PixieOrigin {
                 .levelArmorCalc(lvl -> lvl <= 1 ? 0.0 : Math.round(Math.pow(lvl - 1, 1.15) * 0.4))
                 .levelToughnessCalc(lvl -> lvl <= 1 ? 0.0 : Math.min(15.0, Math.pow(lvl - 1, 1.1) * 0.1))
                 .levelHealthCalc(lvl -> 0.0)
+                .gunConfusionMessages(
+                        "origin.complextalents.pixie.gun_msg.1",
+                        "origin.complextalents.pixie.gun_msg.2",
+                        "origin.complextalents.pixie.gun_msg.3",
+                        "origin.complextalents.pixie.gun_msg.4",
+                        "origin.complextalents.pixie.gun_msg.5"
+                )
                 .register();
 
         ClassCostMatrix.defineCosts(ID)

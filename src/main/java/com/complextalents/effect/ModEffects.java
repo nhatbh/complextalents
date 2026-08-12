@@ -21,8 +21,11 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> BLOOD_BLEED = MOB_EFFECTS.register("blood_bleed", com.complextalents.impl.spellblade.effect.BloodBleedEffect::new);
     public static final RegistryObject<MobEffect> LIGHTNING_HASTE = MOB_EFFECTS.register("lightning_haste", com.complextalents.impl.spellblade.effect.LightningHasteEffect::new);
     public static final RegistryObject<MobEffect> TIDAL_EROSION = MOB_EFFECTS.register("tidal_erosion", com.complextalents.impl.spellblade.effect.TidalErosionEffect::new);
+    public static final RegistryObject<MobEffect> ADRENALINE = MOB_EFFECTS.register("adrenaline", com.complextalents.impl.marksman.effect.AdrenalineEffect::new);
+    public static final RegistryObject<MobEffect> DISMISSED = MOB_EFFECTS.register("dismissed", com.complextalents.impl.marksman.effect.DismissedEffect::new);
 
     public static void register(IEventBus eventBus) {
+
         MOB_EFFECTS.register(eventBus);
     }
 }

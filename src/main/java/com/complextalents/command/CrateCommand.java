@@ -30,6 +30,7 @@ public class CrateCommand {
 
     private static final SuggestionProvider<CommandSourceStack> SUGGEST_WEAPON_PATHS = (ctx, builder) -> {
         List<String> list = new ArrayList<>();
+        list.add("all");
         for (WeaponPath path : WeaponPath.values()) {
             list.add(path.name().toLowerCase(Locale.ROOT));
         }
@@ -39,6 +40,7 @@ public class CrateCommand {
 
     private static final SuggestionProvider<CommandSourceStack> SUGGEST_MAGIC_SCHOOLS = (ctx, builder) -> {
         List<String> list = new ArrayList<>();
+        list.add("all");
         try {
             if (SchoolRegistry.REGISTRY != null && SchoolRegistry.REGISTRY.get() != null) {
                 for (SchoolType school : SchoolRegistry.REGISTRY.get().getValues()) {
@@ -62,8 +64,18 @@ public class CrateCommand {
         return SharedSuggestionProvider.suggest(list, builder);
     };
 
+    private static final SuggestionProvider<CommandSourceStack> SUGGEST_GUN_TYPES = (ctx, builder) -> {
+        List<String> list = new ArrayList<>();
+        list.add("all");
+        for (com.complextalents.tacz.GunType type : com.complextalents.tacz.GunType.values()) {
+            list.add(type.name().toLowerCase(Locale.ROOT));
+        }
+        list.add("random");
+        return SharedSuggestionProvider.suggest(list, builder);
+    };
+
     private static final SuggestionProvider<CommandSourceStack> SUGGEST_CATEGORIES = (ctx, builder) ->
-            SharedSuggestionProvider.suggest(List.of("all", "weapon", "magic"), builder);
+            SharedSuggestionProvider.suggest(List.of("all", "weapon", "magic", "gun"), builder);
 
     private static final SuggestionProvider<CommandSourceStack> SUGGEST_RARITIES = (ctx, builder) -> {
         List<String> list = new ArrayList<>();
@@ -117,6 +129,24 @@ public class CrateCommand {
                         )
                 )
 
+                // /givecrate <targets> gun <type|random> [rarity] [amount]
+                .then(Commands.literal("gun")
+                        .then(Commands.argument("targets", EntityArgument.players())
+                                .then(Commands.argument("type", StringArgumentType.word())
+                                        .suggests(SUGGEST_GUN_TYPES)
+                                        .executes(ctx -> executeGun(ctx, "random", "1"))
+                                        .then(Commands.argument("rarity", StringArgumentType.word())
+                                                .suggests(SUGGEST_RARITIES)
+                                                .executes(ctx -> executeGun(ctx, StringArgumentType.getString(ctx, "rarity"), "1"))
+                                                .then(Commands.argument("amount", StringArgumentType.word())
+                                                        .suggests(SUGGEST_AMOUNTS)
+                                                        .executes(ctx -> executeGun(ctx, StringArgumentType.getString(ctx, "rarity"), StringArgumentType.getString(ctx, "amount")))
+                                                )
+                                        )
+                                )
+                        )
+                )
+
                 // /givecrate <targets> random [category] [rarity] [amount]
                 .then(Commands.literal("random")
                         .then(Commands.argument("targets", EntityArgument.players())
@@ -148,7 +178,7 @@ public class CrateCommand {
             int amount = parseAmount(amountStr, player.getRandom());
             for (int i = 0; i < amount; i++) {
                 WeaponPath path = resolveWeaponPath(pathArg, player.getRandom());
-                CrateRarity rarity = resolveRarity(rarityStr, path, null, player.getRandom());
+                CrateRarity rarity = resolveRarity(rarityStr, path, null, null, player.getRandom());
                 ItemStack stack = MysteriousLootItem.createWeaponCase(path, rarity);
                 giveItemToPlayer(player, stack);
                 totalGiven++;
@@ -168,12 +198,32 @@ public class CrateCommand {
             int amount = parseAmount(amountStr, player.getRandom());
             for (int i = 0; i < amount; i++) {
                 ResourceLocation schoolId = resolveMagicSchool(schoolArg, player.getRandom());
-                CrateRarity rarity = resolveRarity(rarityStr, null, schoolId, player.getRandom());
+                CrateRarity rarity = resolveRarity(rarityStr, null, schoolId, null, player.getRandom());
                 ItemStack stack = MysteriousLootItem.createMagicCase(schoolId, rarity);
                 giveItemToPlayer(player, stack);
                 totalGiven++;
             }
             source.sendSuccess(() -> Component.literal("§aGave §e" + amount + " §amagic crate(s) to §e" + player.getScoreboardName()), true);
+        }
+        return totalGiven;
+    }
+
+    private static int executeGun(CommandContext<CommandSourceStack> ctx, String rarityStr, String amountStr) throws CommandSyntaxException {
+        Collection<ServerPlayer> targets = EntityArgument.getPlayers(ctx, "targets");
+        String typeArg = StringArgumentType.getString(ctx, "type");
+        CommandSourceStack source = ctx.getSource();
+
+        int totalGiven = 0;
+        for (ServerPlayer player : targets) {
+            int amount = parseAmount(amountStr, player.getRandom());
+            for (int i = 0; i < amount; i++) {
+                com.complextalents.tacz.GunType gunType = resolveGunType(typeArg, player.getRandom());
+                CrateRarity rarity = resolveRarity(rarityStr, null, null, gunType, player.getRandom());
+                ItemStack stack = MysteriousLootItem.createGunCase(gunType, rarity);
+                giveItemToPlayer(player, stack);
+                totalGiven++;
+            }
+            source.sendSuccess(() -> Component.literal("§aGave §e" + amount + " §agun crate(s) to §e" + player.getScoreboardName()), true);
         }
         return totalGiven;
     }
@@ -186,24 +236,30 @@ public class CrateCommand {
         for (ServerPlayer player : targets) {
             int amount = parseAmount(amountStr, player.getRandom());
             for (int i = 0; i < amount; i++) {
-                boolean isWeapon;
+                int catChoice; // 0=weapon, 1=magic, 2=gun
                 if ("weapon".equalsIgnoreCase(categoryStr)) {
-                    isWeapon = true;
+                    catChoice = 0;
                 } else if ("magic".equalsIgnoreCase(categoryStr)) {
-                    isWeapon = false;
+                    catChoice = 1;
+                } else if ("gun".equalsIgnoreCase(categoryStr)) {
+                    catChoice = 2;
                 } else {
-                    isWeapon = player.getRandom().nextBoolean();
+                    catChoice = player.getRandom().nextInt(3);
                 }
 
                 ItemStack stack;
-                if (isWeapon) {
+                if (catChoice == 0) {
                     WeaponPath path = resolveWeaponPath("random", player.getRandom());
-                    CrateRarity rarity = resolveRarity(rarityStr, path, null, player.getRandom());
+                    CrateRarity rarity = resolveRarity(rarityStr, path, null, null, player.getRandom());
                     stack = MysteriousLootItem.createWeaponCase(path, rarity);
-                } else {
+                } else if (catChoice == 1) {
                     ResourceLocation schoolId = resolveMagicSchool("random", player.getRandom());
-                    CrateRarity rarity = resolveRarity(rarityStr, null, schoolId, player.getRandom());
+                    CrateRarity rarity = resolveRarity(rarityStr, null, schoolId, null, player.getRandom());
                     stack = MysteriousLootItem.createMagicCase(schoolId, rarity);
+                } else {
+                    com.complextalents.tacz.GunType gunType = resolveGunType("random", player.getRandom());
+                    CrateRarity rarity = resolveRarity(rarityStr, null, null, gunType, player.getRandom());
+                    stack = MysteriousLootItem.createGunCase(gunType, rarity);
                 }
 
                 giveItemToPlayer(player, stack);
@@ -249,6 +305,7 @@ public class CrateCommand {
     }
 
     private static WeaponPath resolveWeaponPath(String input, RandomSource random) {
+        if ("all".equalsIgnoreCase(input)) return null;
         if (!"random".equalsIgnoreCase(input)) {
             WeaponPath parsed = WeaponPath.fromString(input);
             if (parsed != null) return parsed;
@@ -257,7 +314,19 @@ public class CrateCommand {
         return paths[random.nextInt(paths.length)];
     }
 
+    private static com.complextalents.tacz.GunType resolveGunType(String input, RandomSource random) {
+        if ("all".equalsIgnoreCase(input)) return null;
+        if (!"random".equalsIgnoreCase(input)) {
+            try {
+                return com.complextalents.tacz.GunType.valueOf(input.toUpperCase(Locale.ROOT));
+            } catch (Exception ignored) {}
+        }
+        com.complextalents.tacz.GunType[] types = com.complextalents.tacz.GunType.values();
+        return types[random.nextInt(types.length)];
+    }
+
     private static ResourceLocation resolveMagicSchool(String input, RandomSource random) {
+        if ("all".equalsIgnoreCase(input)) return null;
         if (!"random".equalsIgnoreCase(input)) {
             ResourceLocation loc = ResourceLocation.tryParse(input);
             if (loc != null) return loc;
@@ -282,7 +351,7 @@ public class CrateCommand {
         return availableSchools.get(random.nextInt(availableSchools.size()));
     }
 
-    private static CrateRarity resolveRarity(String input, WeaponPath weaponPath, ResourceLocation schoolId, RandomSource random) {
+    private static CrateRarity resolveRarity(String input, WeaponPath weaponPath, ResourceLocation schoolId, com.complextalents.tacz.GunType gunType, RandomSource random) {
         if (input != null && !"random".equalsIgnoreCase(input)) {
             try {
                 return CrateRarity.valueOf(input.toUpperCase(Locale.ROOT));
@@ -294,6 +363,8 @@ public class CrateCommand {
             validRarities = DynamicCasePoolBuilder.getValidRaritiesForWeaponPath(weaponPath);
         } else if (schoolId != null) {
             validRarities = DynamicCasePoolBuilder.getValidRaritiesForSchool(schoolId);
+        } else if (gunType != null) {
+            validRarities = DynamicCasePoolBuilder.getValidRaritiesForGunType(gunType);
         } else {
             validRarities = List.of(CrateRarity.values());
         }

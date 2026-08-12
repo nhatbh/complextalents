@@ -175,10 +175,13 @@ repositories {
         url = "https://api.modrinth.com/maven"
     }
 
-    // CurseMaven for mod dependencies like WorldEdit
+    // CurseMaven for mod dependencies like WorldEdit and TACZ
     maven {
         name = "CurseMaven"
         url = "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
     }
 
     maven {
@@ -220,6 +223,8 @@ dependencies {
     implementation fg.deobf("dev.shadowsoffire:Placebo:${minecraft_version}-${placeboVersion}")
     implementation fg.deobf("dev.shadowsoffire:ApothicAttributes:${minecraft_version}-${attributesLibVersion}")
     implementation fg.deobf("curse.maven:worldedit-225608:4586218")
+    // Timeless and Classics Zero (TACZ)
+    implementation fg.deobf("curse.maven:${tacz_version}")
     // Iron's Spellbooks runtime dependencies - Required for :runClient
     runtimeOnly fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")

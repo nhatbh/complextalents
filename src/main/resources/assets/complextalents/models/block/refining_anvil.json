@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/anvil",
+  "textures": {
+    "body": "complextalents:block/refining_anvil",
+    "top": "complextalents:block/refining_anvil_top"
+  }
+}

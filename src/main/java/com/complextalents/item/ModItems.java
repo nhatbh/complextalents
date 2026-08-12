@@ -59,6 +59,9 @@ public class ModItems {
     public static final RegistryObject<MagicAugmentItem> RECAST_GEM = ITEMS.register("recast_gem",
             () -> new MagicAugmentItem(new Item.Properties().stacksTo(64), MagicAugmentItem.AugmentType.RECAST));
 
+    public static final RegistryObject<Item> REFINING_ANVIL = ITEMS.register("refining_anvil",
+            () -> new net.minecraft.world.item.BlockItem(com.complextalents.block.ModBlocks.REFINING_ANVIL.get(), new Item.Properties()));
+
     public static void register(IEventBus modEventBus) {
         ITEMS.register(modEventBus);
     }

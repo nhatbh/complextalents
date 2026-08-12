@@ -99,9 +99,8 @@ public class HighPriestOrigin {
      */
     public static void register() {
         OriginBuilder.create(ID)
-                .displayName("Đại Tế Tự")
-                .description(Component.literal(
-                        "Sứ giả cuồng tín của Ánh Sáng Thánh Thần. Không thể vung vũ khí cận chiến nhưng mọi thánh thuật giáng xuống gây gấp 2 lần sát thương. Duy trì an toàn trong 30 giây để nhận 20% đến 60% Tốc Độ Thi Pháp và 30% đến 125% Sức Mạnh Hồi Máu. Thi triển thánh thuật tiêu hao mỗi 5 Năng Lượng sẽ dâng nộp 1 điểm Thánh Mệnh để hoàn lại đến 20% Năng Lượng tối đa và triệu hồi Thánh Linh Cầu bảo hộ tín đồ hoặc trừng phạt kẻ dị giáo."))
+                .displayName(Component.translatable("origin.complextalents.high_priest"))
+                .description(Component.translatable("origin.complextalents.high_priest.desc"))
                 .maxLevel(5)
                 .baseStat(StatType.MAX_MANA, 15)
                 .baseStat(StatType.CDR, 5)
@@ -142,6 +141,13 @@ public class HighPriestOrigin {
                 .levelArmorCalc(lvl -> lvl <= 1 ? 0.0 : Math.round(Math.pow(lvl - 1, 1.15) * 0.55))
                 .levelToughnessCalc(lvl -> lvl <= 1 ? 0.0 : Math.min(15.0, Math.pow(lvl - 1, 1.1) * 0.15))
                 .levelHealthCalc(lvl -> 0.0)
+                .gunConfusionMessages(
+                        "origin.complextalents.high_priest.gun_msg.1",
+                        "origin.complextalents.high_priest.gun_msg.2",
+                        "origin.complextalents.high_priest.gun_msg.3",
+                        "origin.complextalents.high_priest.gun_msg.4",
+                        "origin.complextalents.high_priest.gun_msg.5"
+                )
                 .register();
 
         ClassCostMatrix.defineCosts(ID)

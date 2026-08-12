@@ -46,9 +46,8 @@ public class DarkMageOrigin {
 
     public static void register() {
         OriginBuilder.create("complextalents", "dark_mage")
-                .displayName("Hắc Pháp Sư")
-                .description(Component.literal(
-                        "Pháp sư bóng tối tích tụ Hắc Khí từ 0 đến 100 điểm thay vì tiêu hao Năng Lượng. Thi triển phép thuật tích 10 đến 20 Hắc Khí, phép Máu dùng 15% đến 25% Máu hiện tại để xả 20 đến 40 Hắc Khí. Khi Hắc Khí vượt ngưỡng 85% xuống 65%, thi triển Cổ Thuật sẽ giáng 1.5 đến 2.5 lần sát thương bộc phát nhưng nếu nôn nóng thi triển sớm sẽ chịu 5% đến 25% sát thương tự hại và bị câm lặng trong 2 đến 4 giây."))
+                .displayName(Component.translatable("origin.complextalents.dark_mage"))
+                .description(Component.translatable("origin.complextalents.dark_mage.desc"))
                 .maxLevel(5)
                 .baseStat(StatType.AP, 7)
                 .baseStat(StatType.HEAL_AND_SHIELD, -6)
@@ -80,6 +79,13 @@ public class DarkMageOrigin {
                 .levelToughnessCalc(lvl -> lvl <= 1 ? 0.0 : Math.min(25.0, Math.pow(lvl - 1, 1.1) * 0.25))
                 .levelHealthCalc(lvl -> 0.0)
                 .renderer(new DarkMageRenderer())
+                .gunConfusionMessages(
+                        "origin.complextalents.dark_mage.gun_msg.1",
+                        "origin.complextalents.dark_mage.gun_msg.2",
+                        "origin.complextalents.dark_mage.gun_msg.3",
+                        "origin.complextalents.dark_mage.gun_msg.4",
+                        "origin.complextalents.dark_mage.gun_msg.5"
+                )
                 .register();
 
         ClassCostMatrix.defineCosts(ID)

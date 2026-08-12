@@ -1,0 +1,713 @@
+{
+  "total_guns_analyzed": 358,
+  "archetypes": {
+    "MG": {
+      "total_guns": 33,
+      "tiers": {
+        "novice": {
+          "tier_number": 1,
+          "count": 7,
+          "min_score": 56.14,
+          "max_score": 78.06,
+          "avg_score": 68.53,
+          "guns": [
+            "tacz:rpk74",
+            "tacz:rpk74m",
+            "maxstuff:quatro15",
+            "maxstuff:aug_hbar",
+            "tacz:l86a1",
+            "tacz:l110a1",
+            "tacz:m249"
+          ]
+        },
+        "apprentice": {
+          "tier_number": 2,
+          "count": 7,
+          "min_score": 83.15,
+          "max_score": 100.43,
+          "avg_score": 89.95,
+          "guns": [
+            "maxstuff:rpk_74",
+            "maxstuff:rpk_74m",
+            "maxstuff:rpk16",
+            "tacz:mg36",
+            "maxstuff:scar_hamr",
+            "tacz:mk48",
+            "tacz:aughb"
+          ]
+        },
+        "adept": {
+          "tier_number": 3,
+          "count": 6,
+          "min_score": 107.2,
+          "max_score": 150.7,
+          "avg_score": 131.04,
+          "guns": [
+            "maxstuff:m231",
+            "tacz:pkm",
+            "tacz:mg08",
+            "tacz:fn_evolys",
+            "tacz:m1918",
+            "tacz:l7a2"
+          ]
+        },
+        "expert": {
+          "tier_number": 4,
+          "count": 7,
+          "min_score": 155.86,
+          "max_score": 211.45,
+          "avg_score": 189.86,
+          "guns": [
+            "tacz:minigun",
+            "tacz:m60e4",
+            "tacz:m240b",
+            "tacz:m60",
+            "tacz:m1919",
+            "tacz:lewis",
+            "tacz:mg3"
+          ]
+        },
+        "master": {
+          "tier_number": 5,
+          "count": 6,
+          "min_score": 304.74,
+          "max_score": 468.46,
+          "avg_score": 375.81,
+          "guns": [
+            "tacz:mg42",
+            "tacz:dp28",
+            "maxstuff:dp28",
+            "tacz:rpk",
+            "tacz:l4a1",
+            "tacz:bren"
+          ]
+        }
+      }
+    },
+    "PISTOL": {
+      "total_guns": 64,
+      "tiers": {
+        "novice": {
+          "tier_number": 1,
+          "count": 13,
+          "min_score": 8.85,
+          "max_score": 36.7,
+          "avg_score": 28.38,
+          "guns": [
+            "tacz:no3",
+            "tacz:g44",
+            "tacz:mustang",
+            "tacz:cph",
+            "maxstuff:c96",
+            "tacz:m9a4",
+            "tacz:lonetrail",
+            "tacz:m51",
+            "tacz:glock_17",
+            "tacz:g19",
+            "tacz:1889",
+            "maxstuff:m17",
+            "tacz:p38"
+          ]
+        },
+        "apprentice": {
+          "tier_number": 2,
+          "count": 13,
+          "min_score": 37.62,
+          "max_score": 49.39,
+          "avg_score": 44.08,
+          "guns": [
+            "tacz:p08",
+            "tacz:pm",
+            "tacz:p35",
+            "tacz:cz75s",
+            "tacz:m10",
+            "tacz:tt33",
+            "tacz:ppk",
+            "tacz:hk_mk23",
+            "tacz:m9",
+            "tacz:cns",
+            "tacz:mkii",
+            "tacz:g21",
+            "tacz:m1911"
+          ]
+        },
+        "adept": {
+          "tier_number": 3,
+          "count": 13,
+          "min_score": 52.15,
+          "max_score": 77.91,
+          "avg_score": 61.71,
+          "guns": [
+            "tacz:m1917",
+            "tacz:cz75",
+            "maxstuff:af2011",
+            "tacz:m1911a1",
+            "tacz:c96",
+            "maxstuff:glock_bulpup",
+            "tacz:grizzly",
+            "tacz:p320",
+            "maxstuff:mk23",
+            "tacz:g18",
+            "tacz:mac11",
+            "maxstuff:glock_54",
+            "maxstuff:glock_18c"
+          ]
+        },
+        "expert": {
+          "tier_number": 4,
+          "count": 13,
+          "min_score": 79.61,
+          "max_score": 139.51,
+          "avg_score": 114.2,
+          "guns": [
+            "tacz:b93r",
+            "tacz:taurus943",
+            "tacz:rsh12",
+            "tacz:mac10",
+            "tacz:m1895",
+            "tacz:rhino357",
+            "tacz:sw686",
+            "tacz:python",
+            "tacz:pythons",
+            "tacz:stealth",
+            "maxstuff:thunderbird_short",
+            "maxstuff:thunderbird",
+            "tacz:29"
+          ]
+        },
+        "master": {
+          "tier_number": 5,
+          "count": 12,
+          "min_score": 146.94,
+          "max_score": 28781.81,
+          "avg_score": 2668.88,
+          "guns": [
+            "maxstuff:1851_navy",
+            "tacz:500s",
+            "tacz:500",
+            "tacz:deagle_golden",
+            "tacz:27",
+            "tacz:timeless50",
+            "tacz:deagle",
+            "tacz:usp45",
+            "tacz:taurus500",
+            "maxstuff:deagle_50bmg",
+            "maxstuff:deagle_12g",
+            "maxstuff:blicky"
+          ]
+        }
+      }
+    },
+    "RIFLE": {
+      "total_guns": 130,
+      "tiers": {
+        "novice": {
+          "tier_number": 1,
+          "count": 26,
+          "min_score": 1.82,
+          "max_score": 70.31,
+          "avg_score": 57.38,
+          "guns": [
+            "maxstuff:cursed15",
+            "tacz:m1907",
+            "tacz:m4burst",
+            "tacz:m16a4",
+            "tacz:m16a2",
+            "tacz:m1",
+            "tacz:pa15",
+            "tacz:ak74",
+            "maxstuff:ak74m",
+            "maxstuff:ak74",
+            "maxstuff:m1_garand_tac",
+            "maxstuff:aks74u",
+            "maxstuff:aks74ub",
+            "maxstuff:ak19",
+            "maxstuff:ak12",
+            "tacz:1522",
+            "tacz:ak74m",
+            "maxstuff:adar2",
+            "tacz:sw15",
+            "tacz:aug",
+            "maxstuff:aug_a3",
+            "maxstuff:aug_a2",
+            "maxstuff:ak63e",
+            "tacz:m16",
+            "maxstuff:g36",
+            "tacz:l403a1"
+          ]
+        },
+        "apprentice": {
+          "tier_number": 2,
+          "count": 26,
+          "min_score": 70.31,
+          "max_score": 75.9,
+          "avg_score": 71.95,
+          "guns": [
+            "tacz:m4a1",
+            "maxstuff:arp",
+            "maxstuff:colt_933",
+            "maxstuff:mk18_burst",
+            "maxstuff:sr16",
+            "maxstuff:mk18_auto",
+            "maxstuff:sr15",
+            "maxstuff:m1_garand",
+            "tacz:g36k",
+            "tacz:g36c",
+            "maxstuff:mojave223",
+            "maxstuff:xm177",
+            "maxstuff:scar_sbr",
+            "maxstuff:ak_delta",
+            "tacz:arka",
+            "tacz:scar_l",
+            "maxstuff:m16a3",
+            "maxstuff:m16a2",
+            "tacz:l85a1",
+            "tacz:l22a1",
+            "tacz:qbz_95",
+            "maxstuff:mk18",
+            "maxstuff:qbz_97",
+            "tacz:ak101",
+            "tacz:fn_fal",
+            "maxstuff:sks_wooden"
+          ]
+        },
+        "adept": {
+          "tier_number": 3,
+          "count": 26,
+          "min_score": 76.1,
+          "max_score": 85.96,
+          "avg_score": 79.0,
+          "guns": [
+            "tacz:akm",
+            "tacz:gak47",
+            "tacz:ak47",
+            "maxstuff:hk_g33",
+            "tacz:hk33",
+            "tacz:sks_tactical",
+            "maxstuff:ak107",
+            "maxstuff:ak108",
+            "tacz:g3ka4",
+            "tacz:hk_g3",
+            "tacz:g3a3",
+            "tacz:ar18",
+            "tacz:m16a1",
+            "tacz:type_81",
+            "tacz:hk416d",
+            "tacz:m27rwk",
+            "tacz:ak103",
+            "maxstuff:ar18",
+            "maxstuff:scar_pdw",
+            "maxstuff:scar_15p",
+            "maxstuff:z15_a",
+            "maxstuff:z15",
+            "tacz:m2",
+            "tacz:qbz_191",
+            "tacz:l85a3",
+            "maxstuff:honey_badger"
+          ]
+        },
+        "expert": {
+          "tier_number": 4,
+          "count": 26,
+          "min_score": 86.4,
+          "max_score": 119.88,
+          "avg_score": 101.3,
+          "guns": [
+            "tacz:xm177",
+            "maxstuff:ak15",
+            "maxstuff:hk416c",
+            "maxstuff:mk47",
+            "tacz:famas",
+            "maxstuff:potassium_power",
+            "maxstuff:sks_golden",
+            "tacz:spr15hb",
+            "maxstuff:ar762",
+            "tacz:ar15",
+            "tacz:m16a3",
+            "tacz:mk18",
+            "tacz:l1a1",
+            "tacz:stg44",
+            "maxstuff:ak9",
+            "tacz:fal",
+            "tacz:augs",
+            "tacz:brn16a1",
+            "maxstuff:ak109",
+            "maxstuff:ak_alpha",
+            "tacz:ptr91",
+            "tacz:z70",
+            "tacz:psak47",
+            "tacz:smle",
+            "maxstuff:aa50beowulf",
+            "maxstuff:ak308"
+          ]
+        },
+        "master": {
+          "tier_number": 5,
+          "count": 26,
+          "min_score": 122.36,
+          "max_score": 429.22,
+          "avg_score": 217.66,
+          "guns": [
+            "tacz:auga3",
+            "tacz:m1918a2",
+            "maxstuff:hk417",
+            "tacz:sr15",
+            "maxstuff:ak22",
+            "maxstuff:brn10",
+            "maxstuff:ar10",
+            "tacz:avt40",
+            "tacz:asval",
+            "maxstuff:ar10b",
+            "tacz:avs36",
+            "tacz:fg42",
+            "tacz:gew98",
+            "maxstuff:mk11",
+            "maxstuff:aug_a5",
+            "maxstuff:beowulf_ecr",
+            "tacz:nagant1891",
+            "tacz:m1944",
+            "tacz:m1938",
+            "maxstuff:beowulf_tcr",
+            "tacz:mk14",
+            "tacz:scar_h",
+            "tacz:m14",
+            "tacz:bm59",
+            "tacz:mini14",
+            "tacz:ms16"
+          ]
+        }
+      }
+    },
+    "RPG": {
+      "total_guns": 8,
+      "tiers": {
+        "novice": {
+          "tier_number": 1,
+          "count": 2,
+          "min_score": 77.17,
+          "max_score": 77.17,
+          "avg_score": 77.17,
+          "guns": [
+            "tacz:m79",
+            "maxstuff:m320t"
+          ]
+        },
+        "apprentice": {
+          "tier_number": 2,
+          "count": 2,
+          "min_score": 77.17,
+          "max_score": 88.67,
+          "avg_score": 82.92,
+          "guns": [
+            "tacz:m320",
+            "tacz:mgl"
+          ]
+        },
+        "adept": {
+          "tier_number": 3,
+          "count": 1,
+          "min_score": 161.1,
+          "max_score": 161.1,
+          "avg_score": 161.1,
+          "guns": [
+            "maxstuff:can_cannon"
+          ]
+        },
+        "expert": {
+          "tier_number": 4,
+          "count": 2,
+          "min_score": 177.72,
+          "max_score": 197.17,
+          "avg_score": 187.44,
+          "guns": [
+            "tacz:rpg7",
+            "tacz:p60"
+          ]
+        },
+        "master": {
+          "tier_number": 5,
+          "count": 1,
+          "min_score": 383.61,
+          "max_score": 383.61,
+          "avg_score": 383.61,
+          "guns": [
+            "tacz:elephant"
+          ]
+        }
+      }
+    },
+    "SHOTGUN": {
+      "total_guns": 33,
+      "tiers": {
+        "novice": {
+          "tier_number": 1,
+          "count": 7,
+          "min_score": 241.02,
+          "max_score": 930.28,
+          "avg_score": 601.76,
+          "guns": [
+            "maxstuff:db_50",
+            "maxstuff:db_long_d",
+            "tacz:db_long",
+            "maxstuff:db_short_tactical",
+            "tacz:db_short",
+            "maxstuff:db_short_d",
+            "maxstuff:m870t"
+          ]
+        },
+        "apprentice": {
+          "tier_number": 2,
+          "count": 7,
+          "min_score": 930.28,
+          "max_score": 1088.55,
+          "avg_score": 1027.9,
+          "guns": [
+            "tacz:m1897",
+            "tacz:shorty",
+            "tacz:m37",
+            "tacz:sawedoff",
+            "tacz:m870",
+            "tacz:m870l",
+            "tacz:m500a"
+          ]
+        },
+        "adept": {
+          "tier_number": 3,
+          "count": 6,
+          "min_score": 1108.69,
+          "max_score": 1188.8,
+          "avg_score": 1143.81,
+          "guns": [
+            "tacz:m88",
+            "tacz:aa12",
+            "tacz:auto5",
+            "tacz:benm4",
+            "tacz:m1014",
+            "tacz:m1187"
+          ]
+        },
+        "expert": {
+          "tier_number": 4,
+          "count": 7,
+          "min_score": 1346.65,
+          "max_score": 1806.26,
+          "avg_score": 1554.97,
+          "guns": [
+            "maxstuff:genesis12_dragons_breath",
+            "tacz:m1887",
+            "tacz:940",
+            "maxstuff:sap6",
+            "maxstuff:saiga12",
+            "tacz:saiga",
+            "tacz:spas_12"
+          ]
+        },
+        "master": {
+          "tier_number": 5,
+          "count": 6,
+          "min_score": 1815.48,
+          "max_score": 28673.88,
+          "avg_score": 11148.13,
+          "guns": [
+            "tacz:mag10",
+            "maxstuff:genesis12",
+            "maxstuff:genesis12_fl",
+            "tacz:lupara",
+            "tacz:ata",
+            "tacz:frolovka"
+          ]
+        }
+      }
+    },
+    "SMG": {
+      "total_guns": 44,
+      "tiers": {
+        "novice": {
+          "tier_number": 1,
+          "count": 9,
+          "min_score": 20.51,
+          "max_score": 53.64,
+          "avg_score": 44.12,
+          "guns": [
+            "maxstuff:nailgun",
+            "tacz:uzicar",
+            "maxstuff:luty",
+            "tacz:mp18",
+            "tacz:uzi",
+            "tacz:sten",
+            "tacz:m3a1",
+            "tacz:mp5sd",
+            "tacz:mp40"
+          ]
+        },
+        "apprentice": {
+          "tier_number": 2,
+          "count": 9,
+          "min_score": 55.66,
+          "max_score": 64.39,
+          "avg_score": 60.43,
+          "guns": [
+            "maxstuff:hk_mp5k",
+            "tacz:hk5",
+            "maxstuff:colt_mars",
+            "maxstuff:hk_mp5sd",
+            "tacz:hk_mp5a5",
+            "tacz:skorpion",
+            "tacz:aks74u",
+            "tacz:pps",
+            "maxstuff:aug_a3_para"
+          ]
+        },
+        "adept": {
+          "tier_number": 3,
+          "count": 9,
+          "min_score": 64.9,
+          "max_score": 79.13,
+          "avg_score": 72.48,
+          "guns": [
+            "tacz:mp5k",
+            "maxstuff:z80",
+            "maxstuff:ro635",
+            "tacz:sp5",
+            "tacz:p90",
+            "tacz:honey",
+            "tacz:vecar",
+            "tacz:pp19_01",
+            "tacz:hk53"
+          ]
+        },
+        "expert": {
+          "tier_number": 4,
+          "count": 9,
+          "min_score": 79.17,
+          "max_score": 89.14,
+          "avg_score": 83.51,
+          "guns": [
+            "tacz:ump45",
+            "maxstuff:vityas",
+            "maxstuff:saiga9",
+            "tacz:m1a1",
+            "maxstuff:udp9",
+            "maxstuff:vector9",
+            "maxstuff:ump9",
+            "tacz:pp19",
+            "tacz:m1921"
+          ]
+        },
+        "master": {
+          "tier_number": 5,
+          "count": 8,
+          "min_score": 90.8,
+          "max_score": 194.98,
+          "avg_score": 124.56,
+          "guns": [
+            "tacz:vector45",
+            "tacz:ps90",
+            "maxstuff:ar57",
+            "maxstuff:mp7",
+            "tacz:ppsh41",
+            "tacz:9a91",
+            "tacz:sr3m",
+            "tacz:bih"
+          ]
+        }
+      }
+    },
+    "SNIPER": {
+      "total_guns": 46,
+      "tiers": {
+        "novice": {
+          "tier_number": 1,
+          "count": 10,
+          "min_score": 43.66,
+          "max_score": 83.15,
+          "avg_score": 66.17,
+          "guns": [
+            "tacz:springfield1873",
+            "maxstuff:kar98",
+            "maxstuff:mini_fix",
+            "tacz:m40a1",
+            "tacz:svt_40",
+            "tacz:m70",
+            "tacz:m700",
+            "tacz:l42a1",
+            "tacz:m1g",
+            "tacz:kar98"
+          ]
+        },
+        "apprentice": {
+          "tier_number": 2,
+          "count": 9,
+          "min_score": 84.54,
+          "max_score": 96.52,
+          "avg_score": 91.43,
+          "guns": [
+            "tacz:hk_sl8",
+            "maxstuff:ai_awp",
+            "tacz:psg1",
+            "tacz:no4",
+            "tacz:vss",
+            "maxstuff:ar338",
+            "tacz:dragunov",
+            "maxstuff:ai_aws",
+            "tacz:vsk"
+          ]
+        },
+        "adept": {
+          "tier_number": 3,
+          "count": 9,
+          "min_score": 113.15,
+          "max_score": 145.47,
+          "avg_score": 133.61,
+          "guns": [
+            "maxstuff:msr",
+            "maxstuff:mk18_mjolnir",
+            "tacz:tac338",
+            "maxstuff:dragonuv_svd",
+            "maxstuff:dragonuv_svds",
+            "maxstuff:dragonuv_svdm",
+            "tacz:gew96",
+            "tacz:kar98k",
+            "tacz:m1903"
+          ]
+        },
+        "expert": {
+          "tier_number": 4,
+          "count": 9,
+          "min_score": 150.84,
+          "max_score": 189.14,
+          "avg_score": 173.6,
+          "guns": [
+            "tacz:m21",
+            "tacz:mosin",
+            "tacz:sr25",
+            "tacz:m110",
+            "tacz:1873",
+            "maxstuff:scar_ssr",
+            "maxstuff:mrad",
+            "tacz:4570",
+            "tacz:intervention"
+          ]
+        },
+        "master": {
+          "tier_number": 5,
+          "count": 9,
+          "min_score": 205.81,
+          "max_score": 899.75,
+          "avg_score": 552.53,
+          "guns": [
+            "tacz:1881",
+            "maxstuff:gm6_lynx",
+            "tacz:l96a1",
+            "tacz:ai_awp",
+            "maxstuff:m82a2",
+            "tacz:m82a1",
+            "tacz:m95",
+            "maxstuff:excaliber",
+            "tacz:m107"
+          ]
+        }
+      }
+    }
+  }
+}

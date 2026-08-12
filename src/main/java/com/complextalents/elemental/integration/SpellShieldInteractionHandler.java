@@ -11,6 +11,7 @@ import io.redspace.ironsspellbooks.damage.SpellDamageSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
@@ -195,16 +196,13 @@ public class SpellShieldInteractionHandler {
             }
         }
 
-        // 5. Apply Attribute Multipliers
+        // 5. Apply Attribute Multipliers Safely
         boolean isCounter = isElemental && getElementalMultiplier(sourceElement, targetElement) > 1.0f;
-        if (isCounter) {
-            if (entity.getAttributes().hasAttribute(ModAttributes.SPECIAL_STRENGTH_DAMAGE_TAKEN_MULTIPLIER.get())) {
-                poiseDamage *= entity.getAttributeValue(ModAttributes.SPECIAL_STRENGTH_DAMAGE_TAKEN_MULTIPLIER.get());
-            }
-        } else {
-            if (entity.getAttributes().hasAttribute(ModAttributes.STRENGTH_DAMAGE_TAKEN_MULTIPLIER.get())) {
-                poiseDamage *= entity.getAttributeValue(ModAttributes.STRENGTH_DAMAGE_TAKEN_MULTIPLIER.get());
-            }
+        AttributeInstance attr = entity.getAttribute(isCounter 
+                ? ModAttributes.SPECIAL_STRENGTH_DAMAGE_TAKEN_MULTIPLIER.get() 
+                : ModAttributes.STRENGTH_DAMAGE_TAKEN_MULTIPLIER.get());
+        if (attr != null) {
+            poiseDamage *= (float) attr.getValue();
         }
 
         // Notify Actionbar
@@ -218,8 +216,16 @@ public class SpellShieldInteractionHandler {
 
         // 6. Inflict Poise Damage & Calculate Mitigated Damage
         if (!isExhausted) {
-            PoiseAPI.damagePoiseDirect(entity, poiseDamage);
-            damage = PoiseAPI.calculateMitigatedDamage(entity, damage);
+            // Use damagePoise to trigger events, exhaustion, and recovery timers properly
+            PoiseAPI.damagePoise(entity, poiseDamage, caster, damageSource, true);
+
+            // Re-check if this exact hit broke poise
+            if (PoiseAPI.isExhausted(entity)) {
+                // Poise broke on this hit! Target receives unmitigated spell damage
+                damage = originalDamage;
+            } else {
+                damage = PoiseAPI.calculateMitigatedDamage(entity, damage);
+            }
         }
 
         // Prevent vanilla/default hurt listener from double-damaging poise

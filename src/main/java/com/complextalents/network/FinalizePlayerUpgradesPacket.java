@@ -35,6 +35,7 @@ import java.util.function.Supplier;
 public class FinalizePlayerUpgradesPacket {
     private final Map<String, Integer> statsUpgrades;
     private final Map<String, Integer> weaponMasteryUpgrades;
+    private final Map<String, Integer> gunMasteryUpgrades;
     private final List<UpgradeData.MasteryUpgrade> spellMasteryUpgrades;
     private final List<UpgradeData.SpellPurchase> spellPurchases;
     private final int originUpgrades;
@@ -43,16 +44,28 @@ public class FinalizePlayerUpgradesPacket {
     public FinalizePlayerUpgradesPacket(
             Map<String, Integer> statsUpgrades,
             Map<String, Integer> weaponUpgrades,
+            Map<String, Integer> gunUpgrades,
             List<UpgradeData.MasteryUpgrade> spellMasteryUpgrades,
             List<UpgradeData.SpellPurchase> spellPurchases,
             int originUpgrades,
             int originSkillUpgrades) {
         this.statsUpgrades = statsUpgrades == null ? new HashMap<>() : statsUpgrades;
         this.weaponMasteryUpgrades = weaponUpgrades == null ? new HashMap<>() : weaponUpgrades;
+        this.gunMasteryUpgrades = gunUpgrades == null ? new HashMap<>() : gunUpgrades;
         this.spellMasteryUpgrades = spellMasteryUpgrades == null ? new ArrayList<>() : spellMasteryUpgrades;
         this.spellPurchases = spellPurchases == null ? new ArrayList<>() : spellPurchases;
         this.originUpgrades = originUpgrades;
         this.originSkillUpgrades = originSkillUpgrades;
+    }
+
+    public FinalizePlayerUpgradesPacket(
+            Map<String, Integer> statsUpgrades,
+            Map<String, Integer> weaponUpgrades,
+            List<UpgradeData.MasteryUpgrade> spellMasteryUpgrades,
+            List<UpgradeData.SpellPurchase> spellPurchases,
+            int originUpgrades,
+            int originSkillUpgrades) {
+        this(statsUpgrades, weaponUpgrades, new HashMap<>(), spellMasteryUpgrades, spellPurchases, originUpgrades, originSkillUpgrades);
     }
 
     public FinalizePlayerUpgradesPacket(FriendlyByteBuf buf) {
@@ -66,6 +79,12 @@ public class FinalizePlayerUpgradesPacket {
         int weaponCount = buf.readInt();
         for (int i = 0; i < weaponCount; i++) {
             this.weaponMasteryUpgrades.put(buf.readUtf(), buf.readInt());
+        }
+
+        this.gunMasteryUpgrades = new HashMap<>();
+        int gunCount = buf.readInt();
+        for (int i = 0; i < gunCount; i++) {
+            this.gunMasteryUpgrades.put(buf.readUtf(), buf.readInt());
         }
 
         int mSize = buf.readVarInt();
@@ -97,6 +116,12 @@ public class FinalizePlayerUpgradesPacket {
             buf.writeInt(entry.getValue());
         }
 
+        buf.writeInt(gunMasteryUpgrades.size());
+        for (Map.Entry<String, Integer> entry : gunMasteryUpgrades.entrySet()) {
+            buf.writeUtf(entry.getKey());
+            buf.writeInt(entry.getValue());
+        }
+
         buf.writeVarInt(spellMasteryUpgrades.size());
         for (UpgradeData.MasteryUpgrade upgrade : spellMasteryUpgrades) {
             buf.writeResourceLocation(upgrade.schoolId());
@@ -113,6 +138,7 @@ public class FinalizePlayerUpgradesPacket {
         buf.writeInt(originSkillUpgrades);
     }
 
+
     public void handle(Supplier<NetworkEvent.Context> ctxSupplier) {
         NetworkEvent.Context ctx = ctxSupplier.get();
         ctx.enqueueWork(() -> {
@@ -126,6 +152,7 @@ public class FinalizePlayerUpgradesPacket {
             // Variables developed during verification
             Map<StatType, Integer> validatedStats = new HashMap<>();
             Map<IWeaponMasteryData.WeaponPath, Integer> validatedWeaponPaths = new HashMap<>(); // Path -> new level after upgrades
+            Map<com.complextalents.tacz.GunType, Integer> validatedGunPaths = new HashMap<>(); // GunType -> new level after upgrades
             List<UpgradeData.MasteryUpgrade> validatedSpellMasteries = new ArrayList<>();
             List<UpgradeData.SpellPurchase> validatedSpellPurchases = new ArrayList<>();
             int validatedOriginLevel = -1;
@@ -180,6 +207,48 @@ public class FinalizePlayerUpgradesPacket {
                     }
                 }
             });
+
+            // 2.5 Verify Gun Mastery (Atomic check)
+            player.getCapability(com.complextalents.gunmastery.capability.GunMasteryDataProvider.GUN_MASTERY_DATA).ifPresent(gunData -> {
+                for (Map.Entry<String, Integer> entry : gunMasteryUpgrades.entrySet()) {
+                    try {
+                        com.complextalents.tacz.GunType type = com.complextalents.tacz.GunType.valueOf(entry.getKey());
+                        if (type == com.complextalents.tacz.GunType.RPG || type == com.complextalents.tacz.GunType.GLOBAL) continue;
+                        int requestedLevels = entry.getValue();
+                        if (requestedLevels <= 0) continue;
+
+                        if (!com.complextalents.gunmastery.GunMasteryManager.getInstance().canUnlockArchetype(type, gunData)) continue;
+
+                        int currentLevel = gunData.getMasteryLevel(type);
+                        double accumulatedDamage = gunData.getAccumulatedDamage(type);
+
+                        int maxLvl = com.complextalents.gunmastery.GunMasteryManager.getInstance().getMaxLevel(type);
+                        int proposedNewLevel = currentLevel;
+                        boolean valid = true;
+
+                        int playerLevel = levelingData.getLevel(player.getUUID());
+                        for (int i = 0; i < requestedLevels; i++) {
+                            if (proposedNewLevel >= maxLvl) { valid = false; break; }
+                            double requiredDamageForNext = com.complextalents.gunmastery.GunMasteryManager.getInstance().getDamageRequiredForNextLevel(proposedNewLevel);
+                            if (accumulatedDamage < requiredDamageForNext) { valid = false; break; }
+
+                            int requiredPlayerLevel = com.complextalents.gunmastery.GunMasteryManager.getInstance().getRequiredPlayerLevelForTier(proposedNewLevel + 1);
+                            if (playerLevel < requiredPlayerLevel) { valid = false; break; }
+
+                            int spCost = com.complextalents.gunmastery.GunMasteryManager.getInstance().getSPCostForNextLevel(type, proposedNewLevel, gunData, activeOrigin);
+                            if (spCost < 0) { valid = false; break; }
+
+                            totalCost[0] += spCost;
+                            proposedNewLevel++;
+                        }
+
+                        if (valid) {
+                            validatedGunPaths.put(type, proposedNewLevel);
+                        }
+                    } catch (IllegalArgumentException ignored) {}
+                }
+            });
+
 
             // 3. Verify Spell Purchases (with additive tier upgrade credit)
             player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(mastery -> {
@@ -266,6 +335,15 @@ public class FinalizePlayerUpgradesPacket {
                     }
                     masteryData.sync();
                 });
+
+                // Apply Gun Mastery
+                player.getCapability(com.complextalents.gunmastery.capability.GunMasteryDataProvider.GUN_MASTERY_DATA).ifPresent(gunData -> {
+                    for (Map.Entry<com.complextalents.tacz.GunType, Integer> entry : validatedGunPaths.entrySet()) {
+                        gunData.setMasteryLevel(entry.getKey(), entry.getValue());
+                    }
+                    gunData.sync();
+                });
+
 
                 // Apply Spells (Full UI Purchase yields physical scroll item and registers learning for Eldritch system)
                 player.getCapability(SpellMasteryDataProvider.MASTERY_DATA).ifPresent(mastery -> {

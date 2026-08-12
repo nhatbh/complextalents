@@ -62,6 +62,19 @@ public class PacketHandler {
                                 SpawnElementFXPacket::handle);
 
                 INSTANCE.registerMessage(packetId++,
+                                com.complextalents.impl.marksman.network.S2CAdrenalineStatePacket.class,
+                                com.complextalents.impl.marksman.network.S2CAdrenalineStatePacket::encode,
+                                com.complextalents.impl.marksman.network.S2CAdrenalineStatePacket::decode,
+                                com.complextalents.impl.marksman.network.S2CAdrenalineStatePacket::handle);
+
+                INSTANCE.registerMessage(packetId++,
+                                com.complextalents.impl.marksman.network.S2CKillBannerPacket.class,
+                                com.complextalents.impl.marksman.network.S2CKillBannerPacket::encode,
+                                com.complextalents.impl.marksman.network.S2CKillBannerPacket::decode,
+                                com.complextalents.impl.marksman.network.S2CKillBannerPacket::handle);
+
+
+                INSTANCE.registerMessage(packetId++,
                                 SpawnReactionTextPacket.class,
                                 SpawnReactionTextPacket::encode,
                                 SpawnReactionTextPacket::decode,
@@ -326,6 +339,12 @@ public class PacketHandler {
                                 WeaponMasterySyncPacket::handle);
 
                 INSTANCE.registerMessage(packetId++,
+                                com.complextalents.gunmastery.network.GunMasterySyncPacket.class,
+                                com.complextalents.gunmastery.network.GunMasterySyncPacket::toBytes,
+                                com.complextalents.gunmastery.network.GunMasterySyncPacket::new,
+                                com.complextalents.gunmastery.network.GunMasterySyncPacket::handle);
+
+                INSTANCE.registerMessage(packetId++,
                                 S2COpenCaseScreenPacket.class,
                                 S2COpenCaseScreenPacket::encode,
                                 S2COpenCaseScreenPacket::decode,
@@ -360,6 +379,12 @@ public class PacketHandler {
                                 C2SOpenInscriptionTablePacket::encode,
                                 C2SOpenInscriptionTablePacket::decode,
                                 C2SOpenInscriptionTablePacket::handle);
+
+                INSTANCE.registerMessage(packetId++,
+                                ServerboundAutoFillRefinementPacket.class,
+                                ServerboundAutoFillRefinementPacket::encode,
+                                ServerboundAutoFillRefinementPacket::decode,
+                                ServerboundAutoFillRefinementPacket::handle);
 
                 TalentsMod.LOGGER.info("Network packets registered");
         }

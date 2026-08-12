@@ -141,6 +141,37 @@ public class WeaponMasteryEventHandler {
 
             IWeaponMasteryData.WeaponPath path = WeaponMasteryManager.getInstance().getWeaponPath(itemStack);
             if (path != null) {
+                boolean isSmithingOutputPreview = false;
+                net.minecraft.world.item.ItemStack inputStack = net.minecraft.world.item.ItemStack.EMPTY;
+
+                if (event.getEntity() != null) {
+                    if (event.getEntity().containerMenu instanceof net.minecraft.world.inventory.SmithingMenu menu) {
+                        net.minecraft.world.inventory.Slot resultSlot = menu.getSlot(3);
+                        if (resultSlot != null && resultSlot.hasItem()) {
+                            net.minecraft.world.item.ItemStack res = resultSlot.getItem();
+                            if (res == itemStack || net.minecraft.world.item.ItemStack.matches(res, itemStack)
+                                    || (res.hasTag() && itemStack.hasTag() && res.getTag().equals(itemStack.getTag()))) {
+                                isSmithingOutputPreview = true;
+                                if (menu.getSlot(1).hasItem()) {
+                                    inputStack = menu.getSlot(1).getItem();
+                                }
+                            }
+                        }
+                    } else if (event.getEntity().containerMenu instanceof com.complextalents.menu.RefiningAnvilMenu anvilMenu) {
+                        net.minecraft.world.inventory.Slot resultSlot = anvilMenu.getSlot(10);
+                        if (resultSlot != null && resultSlot.hasItem()) {
+                            net.minecraft.world.item.ItemStack res = resultSlot.getItem();
+                            if (res == itemStack || net.minecraft.world.item.ItemStack.matches(res, itemStack)
+                                    || (res.hasTag() && itemStack.hasTag() && res.getTag().equals(itemStack.getTag()))) {
+                                isSmithingOutputPreview = true;
+                                if (anvilMenu.getSlot(0).hasItem()) {
+                                    inputStack = anvilMenu.getSlot(0).getItem();
+                                }
+                            }
+                        }
+                    }
+                }
+
                 int startingTier = WeaponMasteryManager.getInstance().getWeaponTier(itemStack);
                 int safeTier = startingTier > 0 ? startingTier : 1;
                 int totalRefines = com.complextalents.refinement.WeaponRefinementRecipe.getRefineRank(itemStack);
@@ -206,9 +237,24 @@ public class WeaponMasteryEventHandler {
                         : String.format(" \u00A78(%,d / %,d XP)", currentXp, maxXpForTier);
 
                 // Refinement & Tier display using proper Tier Name & Crest Slots
-                net.minecraft.network.chat.Component refineLine = net.minecraft.network.chat.Component
-                        .literal("  \u00A77✦ Refinement: " + tierColor + state.getRefineDisplay() + "  " + tierColor
-                                + filledSlots.toString() + "\u00A78" + emptySlots.toString() + xpText);
+                net.minecraft.network.chat.Component refineLine;
+                if (isSmithingOutputPreview && !inputStack.isEmpty()) {
+                    int inputStartingTier = WeaponMasteryManager.getInstance().getWeaponTier(inputStack);
+                    int inputRefines = com.complextalents.refinement.WeaponRefinementRecipe.getRefineRank(inputStack);
+                    WeaponMasteryManager.RefinementState inputState = WeaponMasteryManager.calculateRefinementState(inputStartingTier, inputRefines);
+                    int lvGain = state.cumulativeLevel - inputState.cumulativeLevel;
+
+                    String inputTierColor = getTierColor(inputState.currentTier);
+                    refineLine = net.minecraft.network.chat.Component.literal(
+                            String.format("  \u00A77✦ Refinement: %s%s \u00A77-> %s%s \u00A7e(+%d Lv)",
+                                    inputTierColor, inputState.getRefineDisplay(),
+                                    tierColor, state.getRefineDisplay(),
+                                    lvGain));
+                } else {
+                    refineLine = net.minecraft.network.chat.Component
+                            .literal("  \u00A77✦ Refinement: " + tierColor + state.getRefineDisplay() + "  " + tierColor
+                                    + filledSlots.toString() + "\u00A78" + emptySlots.toString() + xpText);
+                }
                 event.getToolTip().add(refineLine);
 
                 if (com.complextalents.refinement.WeaponRefinementRecipe.isRecyclableWeapon(itemStack)) {
@@ -219,24 +265,6 @@ public class WeaponMasteryEventHandler {
 
                 boolean isCtrlDown = net.minecraftforge.fml.loading.FMLEnvironment.dist.isClient()
                         && net.minecraft.client.gui.screens.Screen.hasControlDown();
-
-                boolean isSmithingOutputPreview = false;
-                net.minecraft.world.item.ItemStack inputStack = net.minecraft.world.item.ItemStack.EMPTY;
-
-                if (event.getEntity() != null
-                        && event.getEntity().containerMenu instanceof net.minecraft.world.inventory.SmithingMenu menu) {
-                    net.minecraft.world.inventory.Slot resultSlot = menu.getSlot(3);
-                    if (resultSlot != null && resultSlot.hasItem()) {
-                        net.minecraft.world.item.ItemStack res = resultSlot.getItem();
-                        if (res == itemStack || net.minecraft.world.item.ItemStack.matches(res, itemStack)
-                                || (res.hasTag() && itemStack.hasTag() && res.getTag().equals(itemStack.getTag()))) {
-                            isSmithingOutputPreview = true;
-                            if (menu.getSlot(1).hasItem()) {
-                                inputStack = menu.getSlot(1).getItem();
-                            }
-                        }
-                    }
-                }
 
                 int inputRank = 0;
                 if (isSmithingOutputPreview && !inputStack.isEmpty()) {
@@ -265,86 +293,95 @@ public class WeaponMasteryEventHandler {
                             "  \u00A77⚔ Bonus Base Damage: \u00A7a+" + String.format("%.1f", adBonus * 100.0) + "%"));
                 }
 
+                // --- Substats List Display ---
+                event.getToolTip().add(net.minecraft.network.chat.Component.literal("  \u00A7d✦ Substats:"));
+                if (isSmithingOutputPreview) {
+                    java.util.Map<WeaponMasteryManager.SubstatType, Double> inputSubstats = WeaponMasteryManager.getCachedSubstats(inputStack);
+                    if (inputSubstats.isEmpty()) {
+                        event.getToolTip().add(net.minecraft.network.chat.Component.literal("    \u00A78No substats unlocked yet"));
+                    } else {
+                        for (java.util.Map.Entry<WeaponMasteryManager.SubstatType, Double> entry : inputSubstats.entrySet()) {
+                            WeaponMasteryManager.SubstatType type = entry.getKey();
+                            double val = entry.getValue();
+                            String label = type.getDisplayName();
+                            String formatted = type.formatValue(val);
+                            event.getToolTip().add(net.minecraft.network.chat.Component.literal(
+                                    String.format("    \u00A77• %s: \u00A7a%s", label, formatted)));
+                        }
+                    }
+
+                    int newCumLevel = state.cumulativeLevel;
+                    boolean isUnlock = (newCumLevel == 1 || newCumLevel == 3 || newCumLevel == 5 || newCumLevel == 8 || newCumLevel == 12);
+                    if (isUnlock) {
+                        event.getToolTip().add(net.minecraft.network.chat.Component.literal("    \u00a77• \u00a7k???\u00a7r\u00a77: \u00a7a+???"));
+                    } else {
+                        event.getToolTip().add(net.minecraft.network.chat.Component.literal("    \u00a77• \u00a7e[Random Upgrade]\u00a77: \u00a7a+???"));
+                    }
+                } else {
+                    java.util.Map<WeaponMasteryManager.SubstatType, Double> substats = WeaponMasteryManager.getCachedSubstats(itemStack);
+                    if (substats.isEmpty()) {
+                        event.getToolTip().add(net.minecraft.network.chat.Component.literal("    \u00A78No substats unlocked yet"));
+                    } else {
+                        for (java.util.Map.Entry<WeaponMasteryManager.SubstatType, Double> entry : substats.entrySet()) {
+                            WeaponMasteryManager.SubstatType type = entry.getKey();
+                            double val = entry.getValue();
+                            String label = type.getDisplayName();
+                            String formatted = type.formatValue(val);
+                            event.getToolTip().add(net.minecraft.network.chat.Component.literal(
+                                    String.format("    \u00A77• %s: \u00A7a%s", label, formatted)));
+                        }
+                    }
+                }
+
                 // Requirement & Player Wield Status
                 if (playerLevel >= requiredRankLevel) {
                     event.getToolTip().add(net.minecraft.network.chat.Component.literal("  \u00A7a✔ Wield Requirement: "
-                            + rankColor + "L." + requiredRankLevel + " \u00A77(Your Level: L." + playerLevel + ")"));
+                             + rankColor + "L." + requiredRankLevel + " \u00A77(Your Level: L." + playerLevel + ")"));
                 } else {
                     event.getToolTip().add(net.minecraft.network.chat.Component.literal("  \u00A7c✖ Required Mastery: "
-                            + rankColor + "L." + requiredRankLevel + " \u00A77(Your Level: L." + playerLevel + ")"));
+                             + rankColor + "L." + requiredRankLevel + " \u00A77(Your Level: L." + playerLevel + ")"));
                 }
 
-                // --- Unified Level Progression Breakdown (Controlled by CTRL Key) ---
+                // --- Substat Enhancement History (Controlled by CTRL Key) ---
                 if (state.cumulativeLevel > 0) {
                     if (isCtrlDown) {
                         event.getToolTip().add(net.minecraft.network.chat.Component.empty());
                         event.getToolTip().add(net.minecraft.network.chat.Component
-                                .literal("  \u00A7d\u00A7l✦ Level Progression Breakdown:"));
+                                 .literal("  \u00A7d\u00A7l✦ Substat Enhancement History:"));
 
-                        net.minecraft.nbt.ListTag varianceList = (itemStack.hasTag()
-                                && itemStack.getTag().contains("RefineVariances", net.minecraft.nbt.Tag.TAG_LIST))
-                                        ? itemStack.getTag().getList("RefineVariances", net.minecraft.nbt.Tag.TAG_FLOAT)
-                                        : new net.minecraft.nbt.ListTag();
-
-                        int targetCumulativeLevel = state.cumulativeLevel;
-                        int baseCumulativeLevel = WeaponMasteryManager
-                                .getBaseCumulativeLevelForStartingTier(startingTier);
-
-                        for (int level = 1; level <= targetCumulativeLevel; level++) {
-                            double baseBonusCurr = WeaponMasteryManager.getADBonusMultiplier(level);
-                            double baseBonusPrev = WeaponMasteryManager.getADBonusMultiplier(level - 1);
-                            double increment = baseBonusCurr - baseBonusPrev;
-
-                            if (level <= baseCumulativeLevel) {
-                                String line = String.format("    \u00A77• Lv.%d: \u00A7a+%.1f%% \u00A78(Base Tier)",
-                                        level, increment * 100.0);
-                                event.getToolTip().add(net.minecraft.network.chat.Component.literal(line));
-                            } else {
-                                int step = level - baseCumulativeLevel;
-                                if (isSmithingOutputPreview && step > inputRank) {
-                                    event.getToolTip().add(net.minecraft.network.chat.Component
-                                            .literal("    \u00A77• Lv." + level + " (+" + step + "): \u00A78??? [Uncommitted Roll]"));
-                                    continue;
-                                }
-
-                                float v = (step - 1 < varianceList.size()) ? varianceList.getFloat(step - 1) : 0.0f;
-                                v = Math.max(-0.20f, Math.min(0.20f, v));
-
-                                double actualAtk = increment * (1.0 + v);
-
-                                String varianceColor;
-                                if (v >= 0.15f) {
-                                    varianceColor = "\u00A76"; // Pinnacle Gold
-                                } else if (v > 0.001f) {
-                                    varianceColor = "\u00A7a"; // Positive Green
-                                } else if (v < -0.001f) {
-                                    varianceColor = "\u00A7c"; // Negative Red
-                                } else {
-                                    varianceColor = "\u00A77"; // Neutral Gray
-                                }
-
-                                String line = String.format("    \u00A77• Lv.%d (+" + step + "): \u00A7a+%.1f%% \u00A78(%s%+.1f%%\u00A78)",
-                                        level, actualAtk * 100.0, varianceColor, v * 100.0f);
-                                event.getToolTip().add(net.minecraft.network.chat.Component.literal(line));
-                            }
+                        java.util.List<String> history = WeaponMasteryManager.getCachedHistory(itemStack);
+                        
+                        int inputCumulativeLevel = 0;
+                        if (isSmithingOutputPreview && !inputStack.isEmpty()) {
+                            int inputStartingTier = WeaponMasteryManager.getInstance().getWeaponTier(inputStack);
+                            int inputRefines = com.complextalents.refinement.WeaponRefinementRecipe.getRefineRank(inputStack);
+                            WeaponMasteryManager.RefinementState inputState = WeaponMasteryManager.calculateRefinementState(inputStartingTier, inputRefines);
+                            inputCumulativeLevel = inputState.cumulativeLevel;
                         }
 
-                        double baseBonus = WeaponMasteryManager.getADBonusMultiplier(state.cumulativeLevel);
-                        double diff = adBonus - baseBonus;
-                        if (Math.abs(diff) >= 0.0005 && !isSmithingOutputPreview) {
-                            double relativeDiff = baseBonus > 0 ? (diff / baseBonus) : 0.0;
-                            String netColor = diff > 0 ? "\u00A7a" : "\u00A7c";
-                            event.getToolTip()
-                                    .add(net.minecraft.network.chat.Component.literal("  \u00A77✦ Net Refine Variance: "
-                                            + netColor + String.format("%+.1f%%", relativeDiff * 100.0)));
+                        if (history.isEmpty()) {
+                            event.getToolTip().add(net.minecraft.network.chat.Component.literal("    \u00A77• No history recorded."));
+                        } else {
+                            for (int i = 0; i < history.size(); i++) {
+                                String line = history.get(i);
+                                if (isSmithingOutputPreview && i >= inputCumulativeLevel) {
+                                    int previewLvl = i + 1;
+                                    int previewTier = WeaponMasteryManager.getTierForCumulativeLevel(previewLvl);
+                                    String previewCrest = WeaponMasteryManager.getTierColor(previewTier) + WeaponMasteryManager.getTierCrestIcon(previewTier) + "\u00A7r\u00A77";
+                                    line = previewCrest + " +??? ???";
+                                }
+                                event.getToolTip().add(net.minecraft.network.chat.Component.literal("    " + line));
+                            }
                         }
                     } else {
                         event.getToolTip().add(net.minecraft.network.chat.Component
-                                .literal("  \u00A78[Hold CTRL for Refinement Breakdown]"));
+                                 .literal("  \u00A78[Hold CTRL for Enhancement History]"));
                     }
                 }
             }
         }
+
+
 
         private static String getTierColor(int tier) {
             return switch (tier) {

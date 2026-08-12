@@ -165,11 +165,19 @@ public class StatsTabUI {
         int row = 0;
         int col = 0;
 
-        for (StatType type : StatType.values()) {
+        ResourceLocation originId = com.complextalents.origin.client.ClientOriginData.getOriginId();
+        List<StatType> upgradableStats = Origin.DEFAULT_UPGRADABLE_STATS;
+        if (originId != null) {
+            Origin origin = OriginRegistry.getInstance().getOrigin(originId);
+            if (origin != null) {
+                upgradableStats = origin.getUpgradableStats();
+            }
+        }
+
+        for (StatType type : upgradableStats) {
             int realCurrentRank = com.complextalents.stats.client.ClientStatsData.getStatRank(type);
             int pendingPurchases = cart.getAmount(UpgradeType.STAT, type);
 
-            ResourceLocation originId = com.complextalents.origin.client.ClientOriginData.getOriginId();
             int costPerRank = ClassCostMatrix.getCost(originId, type);
 
             StatEntryData entry = new StatEntryData();
@@ -189,6 +197,7 @@ public class StatsTabUI {
             }
         }
     }
+
 
     public void renderBackgrounds(GuiGraphics guiGraphics, int xOffset, int yOffset, int mouseX, int mouseY, float partialTick) {
         // Stat entries on left side — compact card rows
@@ -239,7 +248,7 @@ public class StatsTabUI {
                 int entryY = yOffset + (entry.row * STAT_ENTRY_HEIGHT) + 5;
 
                 // Stat Name
-                String nameText = entry.type.getDisplayName().replace("%", "%%");
+                String nameText = entry.type.getDisplayName();
                 guiGraphics.drawString(font, "§f" + nameText, entryX + 4, entryY + 3, 0xFFFFFF, false);
 
                 // Yield per rank info
@@ -256,15 +265,19 @@ public class StatsTabUI {
                 guiGraphics.drawString(font, "§e" + entry.costPerRank + "SP", entryX + 65, entryY + 14, 0xFFFFAA00, false);
 
                 // Accumulated stat value on the right side
-                double currentValue = entry.realRank * entry.type.getYieldPerRank();
-                double targetValue = (entry.realRank + entry.pendingRank) * entry.type.getYieldPerRank();
+                double currentValue = entry.realRank * yieldPerRank;
+                double pendingDiff = entry.pendingRank * yieldPerRank;
+
+                String currentFormatted = yieldPerRank < 1.0 ? formatPercent(currentValue) : formatNumber(currentValue);
+                String diffFormatted = yieldPerRank < 1.0 ? formatPercent(pendingDiff) : formatNumber(pendingDiff);
 
                 String valueStr;
                 if (entry.pendingRank > 0) {
-                    valueStr = "§a" + formatNumber(currentValue) + " §b+" + formatNumber(targetValue - currentValue);
+                    valueStr = "§a" + currentFormatted + " §b+" + diffFormatted;
                 } else {
-                    valueStr = "§a" + formatNumber(currentValue);
+                    valueStr = "§a" + currentFormatted;
                 }
+
 
                 int valueWidth = font.width(valueStr);
                 guiGraphics.drawString(font, valueStr, entryX + 145 - valueWidth, entryY + 3, 0xFFFFFF, false);

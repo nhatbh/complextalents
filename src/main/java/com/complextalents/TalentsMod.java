@@ -59,9 +59,16 @@ public class TalentsMod {
         // Register common attributes
         ModAttributes.register(modEventBus);
 
+        // Register TACZ Gun Module
+        com.complextalents.tacz.TACZModule.init(modEventBus);
+
         // Register custom entities
         ModEntities.register(modEventBus);
         HighPriestEntities.register(modEventBus);
+
+        // Register blocks & menus
+        com.complextalents.block.ModBlocks.register(modEventBus);
+        com.complextalents.menu.ModMenuTypes.register(modEventBus);
 
         // Register items
         ModItems.register(modEventBus);
@@ -118,6 +125,7 @@ public class TalentsMod {
         ElementalMageOrigin.register();
         com.complextalents.impl.warrior.WarriorRegistrar.register();
         com.complextalents.impl.spellblade.SpellbladeRegistrar.register();
+        com.complextalents.impl.marksman.MarksmanRegistrar.register();
         // com.complextalents.impl.pixie.origin.PixieOrigin.register(); // Temporarily
         // disabled
         LOGGER.info("Example origins registered");
@@ -159,6 +167,13 @@ public class TalentsMod {
         WeaponMasteryCommand.register(event.getServer().getCommands().getDispatcher());
         LOGGER.info("Weapon mastery commands registered");
 
+        // Register gun mastery commands
+        com.complextalents.gunmastery.command.GunMasteryCommand.register(event.getServer().getCommands().getDispatcher());
+        com.complextalents.tacz.TacZGunDumpCommand.register(event.getServer().getCommands().getDispatcher());
+        LOGGER.info("Gun mastery & TACZ dump commands registered");
+
+
+
         // Register leveling commands
         com.complextalents.leveling.command.LevelingCommand.register(event.getServer().getCommands().getDispatcher());
         LOGGER.info("Leveling commands registered");
@@ -180,10 +195,26 @@ public class TalentsMod {
         LOGGER.info("Damage Tracker command registered");
     }
 
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class ModEvents {
+        @SubscribeEvent
+        public static void buildCreativeTabContents(net.minecraftforge.event.BuildCreativeModeTabContentsEvent event) {
+            if (event.getTabKey() == net.minecraft.world.item.CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+                event.accept(ModItems.REFINING_ANVIL.get());
+            }
+        }
+    }
+
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = net.minecraftforge.api.distmarker.Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+            event.enqueueWork(() -> {
+                net.minecraft.client.gui.screens.MenuScreens.register(
+                        com.complextalents.menu.ModMenuTypes.REFINING_ANVIL_MENU.get(),
+                        com.complextalents.client.gui.RefiningAnvilScreen::new
+                );
+            });
             LOGGER.info("Complex Talents client setup complete");
         }
     }

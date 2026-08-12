@@ -22,6 +22,7 @@ public class PlayerPersistentData extends SavedData {
     private final Map<UUID, com.complextalents.skill.capability.PlayerSkillData> skillData = new ConcurrentHashMap<>();
     private final Map<UUID, com.complextalents.passive.capability.PassiveStackData> passiveData = new ConcurrentHashMap<>();
     private final Map<UUID, com.complextalents.weaponmastery.capability.WeaponMasteryData> weaponMasteryData = new ConcurrentHashMap<>();
+    private final Map<UUID, com.complextalents.gunmastery.capability.GunMasteryData> gunMasteryData = new ConcurrentHashMap<>();
     private final Map<UUID, com.complextalents.stats.capability.GeneralStatsData> generalStatsData = new ConcurrentHashMap<>();
     private final Map<UUID, com.complextalents.spellmastery.capability.SpellMasteryData> spellMasteryData = new ConcurrentHashMap<>();
     private final Map<UUID, com.complextalents.impl.elementalmage.PlayerElementalMageData> elementalMageData = new ConcurrentHashMap<>();
@@ -105,6 +106,14 @@ public class PlayerPersistentData extends SavedData {
             data.weaponMasteryData.put(uuid, wmd);
         }
 
+        CompoundTag gunMasteryTag = tag.getCompound("gunMasteryData");
+        for (String uuidStr : gunMasteryTag.getAllKeys()) {
+            UUID uuid = UUID.fromString(uuidStr);
+            var gmd = new com.complextalents.gunmastery.capability.GunMasteryData();
+            gmd.deserializeNBT(gunMasteryTag.getCompound(uuidStr));
+            data.gunMasteryData.put(uuid, gmd);
+        }
+
         CompoundTag generalStatsTag = tag.getCompound("generalStatsData");
         for (String uuidStr : generalStatsTag.getAllKeys()) {
             UUID uuid = UUID.fromString(uuidStr);
@@ -180,6 +189,12 @@ public class PlayerPersistentData extends SavedData {
         }
         tag.put("weaponMasteryData", weaponMasteryTag);
 
+        CompoundTag gunMasteryTag = new CompoundTag();
+        for (var entry : gunMasteryData.entrySet()) {
+            gunMasteryTag.put(entry.getKey().toString(), entry.getValue().serializeNBT());
+        }
+        tag.put("gunMasteryData", gunMasteryTag);
+
         CompoundTag generalStatsTag = new CompoundTag();
         for (var entry : generalStatsData.entrySet()) {
             generalStatsTag.put(entry.getKey().toString(), entry.getValue().serializeNBT());
@@ -223,6 +238,10 @@ public class PlayerPersistentData extends SavedData {
 
     public com.complextalents.weaponmastery.capability.WeaponMasteryData getWeaponMasteryData(UUID playerId) {
         return weaponMasteryData.computeIfAbsent(playerId, k -> new com.complextalents.weaponmastery.capability.WeaponMasteryData());
+    }
+
+    public com.complextalents.gunmastery.capability.GunMasteryData getGunMasteryData(UUID playerId) {
+        return gunMasteryData.computeIfAbsent(playerId, k -> new com.complextalents.gunmastery.capability.GunMasteryData());
     }
 
     public com.complextalents.stats.capability.GeneralStatsData getGeneralStatsData(UUID playerId) {

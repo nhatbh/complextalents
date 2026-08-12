@@ -9,6 +9,7 @@ import com.complextalents.origin.OriginManager;
 import com.complextalents.origin.Origin;
 import com.complextalents.origin.OriginRegistry;
 import com.complextalents.util.UUIDHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import java.util.UUID;
@@ -28,9 +29,8 @@ public class AssassinOrigin {
 
     public static void register() {
         OriginBuilder.create("complextalents", "assassin")
-                .displayName("Sát Thủ")
-                .description(net.minecraft.network.chat.Component.literal(
-                        "Sát thủ tàng hình dồn sát thương. Đánh lén từ phía sau lưng giúp cả đội gây thêm 30% đến 80% sát thương lên mục tiêu trong 8 đến 16 giây. Tấn công từ trạng thái tàng hình giúp tăng 30% đến 100% tốc độ di chuyển trong 1.5 đến 2.5 giây để rút lui."))
+                .displayName(Component.translatable("origin.complextalents.assassin"))
+                .description(Component.translatable("origin.complextalents.assassin.desc"))
                 .maxLevel(5)
                 .baseStat(StatType.FLAT_AD, 4)
                 .baseStat(StatType.LUCK_CRIT, 10)
@@ -54,6 +54,13 @@ public class AssassinOrigin {
                 .levelArmorCalc(lvl -> lvl <= 1 ? 0.0 : Math.round(Math.pow(lvl - 1, 1.15) * 0.6))
                 .levelToughnessCalc(lvl -> lvl <= 1 ? 0.0 : Math.min(20.0, Math.pow(lvl - 1, 1.1) * 0.15))
                 .levelHealthCalc(lvl -> 0.0)
+                .gunConfusionMessages(
+                        "origin.complextalents.assassin.gun_msg.1",
+                        "origin.complextalents.assassin.gun_msg.2",
+                        "origin.complextalents.assassin.gun_msg.3",
+                        "origin.complextalents.assassin.gun_msg.4",
+                        "origin.complextalents.assassin.gun_msg.5"
+                )
                 .register();
 
         ClassCostMatrix.defineCosts(ID)

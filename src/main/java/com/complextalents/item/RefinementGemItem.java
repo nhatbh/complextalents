@@ -1,6 +1,7 @@
 package com.complextalents.item;
 
 import com.complextalents.caseopening.DynamicCasePoolBuilder.CrateRarity;
+import com.complextalents.weaponmastery.WeaponMasteryManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -27,7 +28,31 @@ public class RefinementGemItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
-        tooltipComponents.add(Component.literal("Used in Smithing Table to refine " + tier.getDisplayName() + " weapons.").withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(Component.literal("Combine with an identical sacrificial weapon.").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+        int xp = WeaponMasteryManager.getGemXpValue(tier);
+
+        // Simple usage explanation
+        tooltipComponents.add(Component.literal("Used in the Smithing Table to enhance Weapons & Guns.")
+                .withStyle(ChatFormatting.GRAY));
+
+        // XP granted
+        tooltipComponents.add(Component.literal("Grants ")
+                .withStyle(ChatFormatting.GRAY)
+                .append(Component.literal("+" + String.format("%,d", xp) + " Refinement XP").withStyle(ChatFormatting.YELLOW)));
+
+        // Flavor text
+        String flavor = getFlavorText(tier);
+        if (flavor != null && !flavor.isEmpty()) {
+            tooltipComponents.add(Component.literal(flavor).withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+        }
+    }
+
+    private String getFlavorText(CrateRarity tier) {
+        return switch (tier) {
+            case COMMON -> "Infused with faint energy, suitable for basic armaments.";
+            case UNCOMMON -> "Resonates with refined power, strengthening seasoned gear.";
+            case RARE -> "Pulsing with potent mana, elevating battle-proven weapons.";
+            case EPIC -> "Radiates intense force, forging weapons fit for legends.";
+            case LEGENDARY -> "A pinnacle matrix of ancient craftsmanship.";
+        };
     }
 }

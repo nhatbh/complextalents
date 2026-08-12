@@ -109,6 +109,30 @@ public interface Origin extends PassiveOwner {
     }
 
     /**
+     * Default list of upgradable stats for origins.
+     */
+    java.util.List<StatType> DEFAULT_UPGRADABLE_STATS = java.util.List.of(
+            StatType.FLAT_AD,
+            StatType.PERCENT_AD,
+            StatType.AP,
+            StatType.ARMOR_PEN,
+            StatType.LUCK_CRIT,
+            StatType.MAX_HP,
+            StatType.MAX_MANA,
+            StatType.HEAL_AND_SHIELD,
+            StatType.CDR
+    );
+
+    /**
+     * Get the list of upgradable StatTypes for this origin shown on the Progression Screen.
+     *
+     * @return List of StatType
+     */
+    default java.util.List<StatType> getUpgradableStats() {
+        return DEFAULT_UPGRADABLE_STATS;
+    }
+
+    /**
      * Get the base stats (initial General Stat ranks) provided by this origin.
      *
      * @return Map of StatType to base rank
@@ -116,6 +140,7 @@ public interface Origin extends PassiveOwner {
     default Map<StatType, Integer> getBaseStats() {
         return Map.of();
     }
+
 
     /**
      * Get a scaled stat value for a specific level.
@@ -217,5 +242,35 @@ public interface Origin extends PassiveOwner {
     default double getLevelHealthBonus(int playerLevel) {
         if (playerLevel <= 1) return 0.0;
         return Math.round(Math.pow(playerLevel - 1, 1.15) * 0.2696);
+    }
+
+    /**
+     * Get the list of custom firearm confusion messages for this origin.
+     *
+     * @return List of reaction message strings
+     */
+    default java.util.List<String> getGunConfusionMessages() {
+        return java.util.Collections.emptyList();
+    }
+
+    /**
+     * Get a random firearm confusion message for this origin.
+     *
+     * @param rand RandomSource generator
+     * @return Firearm confusion message
+     */
+    default String getRandomGunConfusionMessage(net.minecraft.util.RandomSource rand) {
+        java.util.List<String> msgs = getGunConfusionMessages();
+        if (msgs == null || msgs.isEmpty()) {
+            return getDefaultGunConfusionMessage(rand);
+        }
+        return msgs.get(rand.nextInt(msgs.size()));
+    }
+
+    /**
+     * Default firearm confusion messages for unassigned/origin-less players.
+     */
+    static String getDefaultGunConfusionMessage(net.minecraft.util.RandomSource rand) {
+        return "origin.complextalents.default.gun_msg." + (rand.nextInt(4) + 1);
     }
 }

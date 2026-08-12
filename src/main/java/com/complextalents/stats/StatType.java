@@ -28,7 +28,18 @@ public enum StatType {
                     .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "max_mana"))),
     HEAL_AND_SHIELD("Heal & Shield", 0.10, () -> com.complextalents.registry.ModAttributes.HEAL_AND_SHIELD_POWER.get()),
     CDR("Ability Haste", 5.0, () -> ForgeRegistries.ATTRIBUTES
-            .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "cooldown_reduction")));
+            .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "cooldown_reduction"))),
+
+    // --- Marksman Gun Stats ---
+    GUN_DAMAGE("% Gun Damage", 0.03, null),
+    RELOAD_SPEED("% Reload Speed", 0.04, null),
+    FORTITUDE("% Fortitude", 0.05, null),
+    HEADSHOT_DAMAGE("% Headshot Damage", 0.05, null),
+    RECOIL_CONTROL("% Recoil Control", 0.04, null),
+    BULLET_PENETRATION("% Bullet Penetration", 0.04, null),
+    FIRE_RATE("% Fire Rate", 0.03, null);
+
+
 
     private final String displayName;
     private final double yieldPerRank;
@@ -51,10 +62,11 @@ public enum StatType {
     }
 
     public Attribute getAttribute() {
-        return attributeSupplier.get();
+        return attributeSupplier != null ? attributeSupplier.get() : null;
     }
 
     public UUID getModifierUuid() {
         return modifierUuid;
     }
 }
+

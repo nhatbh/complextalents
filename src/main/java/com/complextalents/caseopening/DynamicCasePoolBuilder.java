@@ -22,7 +22,8 @@ import java.util.*;
 
 /**
  * Dynamically builds weighted loot pools for Weapon Cases and Magic Cases.
- * Automatically hooks into Weapon Mastery (weapon_data.json) and Elemental/Spell Mastery.
+ * Automatically hooks into Weapon Mastery (weapon_data.json) and
+ * Elemental/Spell Mastery.
  * Implements fallback weight redistribution for missing item tiers.
  */
 public class DynamicCasePoolBuilder {
@@ -30,11 +31,11 @@ public class DynamicCasePoolBuilder {
     private static final Gson GSON = new Gson();
 
     public enum CrateRarity {
-        COMMON("Common", 0xFFAAAAAA, new int[]{850, 90, 40, 15, 5}),
-        UNCOMMON("Uncommon", 0xFF55FF55, new int[]{750, 140, 70, 30, 10}),
-        RARE("Rare", 0xFF5555FF, new int[]{650, 160, 110, 60, 20}),
-        EPIC("Epic", 0xFFAA00AA, new int[]{550, 180, 140, 90, 40}),
-        LEGENDARY("Legendary", 0xFFFFAA00, new int[]{450, 170, 150, 130, 100});
+        COMMON("Common", 0xFFAAAAAA, new int[] { 850, 90, 40, 15, 5 }),
+        UNCOMMON("Uncommon", 0xFF55FF55, new int[] { 750, 140, 70, 30, 10 }),
+        RARE("Rare", 0xFF5555FF, new int[] { 650, 160, 110, 60, 20 }),
+        EPIC("Epic", 0xFFAA00AA, new int[] { 550, 180, 140, 90, 40 }),
+        LEGENDARY("Legendary", 0xFFFFAA00, new int[] { 450, 170, 150, 130, 100 });
 
         private final String displayName;
         private final int colorHex;
@@ -67,38 +68,51 @@ public class DynamicCasePoolBuilder {
     }
 
     /**
-     * Builds a weighted CaseReward pool for a given WeaponPath and CrateRarity with explicit ResourceManager.
+     * Builds a weighted CaseReward pool for a given WeaponPath and CrateRarity with
+     * explicit ResourceManager.
      */
-    public static List<CaseReward> buildWeaponPool(WeaponPath path, CrateRarity crateRarity, ResourceManager resourceManager) {
-        Map<Integer, List<Item>> tierMap = new HashMap<>();
+    public static List<CaseReward> buildWeaponPool(WeaponPath path, CrateRarity crateRarity,
+            ResourceManager resourceManager) {
+        Map<Integer, List<ItemStack>> stackTierMap = new HashMap<>();
+        RandomSource random = RandomSource.create();
+
         for (int t = 1; t <= 5; t++) {
-            List<Item> weapons = new ArrayList<>(com.complextalents.weaponmastery.WeaponMasteryManager.getInstance().getWeaponsForPathAndTier(path, t));
-            tierMap.put(t, weapons);
+            List<Item> weapons = com.complextalents.weaponmastery.WeaponMasteryManager.getInstance()
+                    .getWeaponsForPathAndTier(path, t);
+            List<ItemStack> stacks = new ArrayList<>();
+            for (Item item : weapons) {
+                ItemStack stack = new ItemStack(item);
+                stack = com.complextalents.weaponmastery.WeaponMasteryManager.applyRandomRefinementForLoot(stack, random);
+                stacks.add(stack);
+            }
+            stackTierMap.put(t, stacks);
         }
 
-        // Add Refinement Gems to their respective item tiers in every weapon case
-        tierMap.get(1).add(com.complextalents.item.ModItems.NOVICE_WEAPON_GEM.get());
-        tierMap.get(2).add(com.complextalents.item.ModItems.APPRENTICE_WEAPON_GEM.get());
-        tierMap.get(3).add(com.complextalents.item.ModItems.ADEPT_WEAPON_GEM.get());
-        tierMap.get(4).add(com.complextalents.item.ModItems.EXPERT_WEAPON_GEM.get());
-        tierMap.get(5).add(com.complextalents.item.ModItems.MASTER_WEAPON_GEM.get());
+        injectRefinementGems(stackTierMap, crateRarity);
+        ensureNonEmptyPool(stackTierMap, path != null ? path.name() : "ALL");
 
-        return buildPoolFromTierMap(tierMap, crateRarity, path.name());
+        return buildPoolFromItemStackTierMap(stackTierMap, crateRarity, path != null ? path.name() : "ALL");
     }
 
     /**
-     * Determines which CrateRarity tiers are valid for a given magic school based on the actual spell rarities present.
+     * Determines which CrateRarity tiers are valid for a given magic school based
+     * on the actual spell rarities present.
      * Categories with no low tier items will not have low tier crate rarities.
      */
     public static List<CrateRarity> getValidRaritiesForSchool(ResourceLocation schoolId) {
+        if (schoolId == null) {
+            return List.of(CrateRarity.values());
+        }
         List<CrateRarity> validRarities = new ArrayList<>();
         Set<Integer> presentTiers = new HashSet<>();
 
         try {
-            if (io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY != null 
+            if (io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY != null
                     && io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY.get() != null) {
-                for (io.redspace.ironsspellbooks.api.spells.AbstractSpell spell : io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY.get().getValues()) {
-                    if (spell == null || spell == io.redspace.ironsspellbooks.api.registry.SpellRegistry.none()) continue;
+                for (io.redspace.ironsspellbooks.api.spells.AbstractSpell spell : io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY
+                        .get().getValues()) {
+                    if (spell == null || spell == io.redspace.ironsspellbooks.api.registry.SpellRegistry.none())
+                        continue;
 
                     if (spell.getSchoolType() != null && spell.getSchoolType().getId().equals(schoolId)) {
                         for (int lvl = spell.getMinLevel(); lvl <= spell.getMaxLevel(); lvl++) {
@@ -109,7 +123,8 @@ public class DynamicCasePoolBuilder {
                     }
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         for (CrateRarity rarity : CrateRarity.values()) {
             int tier = rarity.ordinal() + 1; // 1=COMMON, 2=UNCOMMON, 3=RARE, 4=EPIC, 5=LEGENDARY
@@ -126,14 +141,19 @@ public class DynamicCasePoolBuilder {
     }
 
     /**
-     * Determines which CrateRarity tiers are valid for a given WeaponPath based on available weapon tier entries.
+     * Determines which CrateRarity tiers are valid for a given WeaponPath based on
+     * available weapon tier entries.
      */
     public static List<CrateRarity> getValidRaritiesForWeaponPath(WeaponPath path, ResourceManager resourceManager) {
+        if (path == null) {
+            return List.of(CrateRarity.values());
+        }
         List<CrateRarity> validRarities = new ArrayList<>();
 
         for (CrateRarity rarity : CrateRarity.values()) {
             int tier = rarity.ordinal() + 1;
-            List<Item> items = com.complextalents.weaponmastery.WeaponMasteryManager.getInstance().getWeaponsForPathAndTier(path, tier);
+            List<Item> items = com.complextalents.weaponmastery.WeaponMasteryManager.getInstance()
+                    .getWeaponsForPathAndTier(path, tier);
             if (items != null && !items.isEmpty()) {
                 validRarities.add(rarity);
             }
@@ -151,8 +171,10 @@ public class DynamicCasePoolBuilder {
     }
 
     /**
-     * Calculates effective drop probabilities (%) for Tiers 1 through 5 for a given Magic School and CrateRarity.
-     * Returns an array of 5 doubles representing percentages [T1%, T2%, T3%, T4%, T5%].
+     * Calculates effective drop probabilities (%) for Tiers 1 through 5 for a given
+     * Magic School and CrateRarity.
+     * Returns an array of 5 doubles representing percentages [T1%, T2%, T3%, T4%,
+     * T5%].
      */
     public static double[] getMagicTierPercentages(ResourceLocation schoolId, CrateRarity crateRarity) {
         Map<Integer, List<ItemStack>> tierMap = getMagicSpellsForSchool(schoolId);
@@ -160,19 +182,22 @@ public class DynamicCasePoolBuilder {
     }
 
     /**
-     * Calculates effective drop probabilities (%) for Tiers 1 through 5 for a given WeaponPath and CrateRarity.
+     * Calculates effective drop probabilities (%) for Tiers 1 through 5 for a given
+     * WeaponPath and CrateRarity.
      */
-    public static double[] getWeaponTierPercentages(WeaponPath path, CrateRarity crateRarity, ResourceManager resourceManager) {
+    public static double[] getWeaponTierPercentages(WeaponPath path, CrateRarity crateRarity,
+            ResourceManager resourceManager) {
         Map<Integer, List<ItemStack>> tierMap = new HashMap<>();
         for (int t = 1; t <= 5; t++) {
             List<ItemStack> stacks = new ArrayList<>();
-            List<Item> items = com.complextalents.weaponmastery.WeaponMasteryManager.getInstance().getWeaponsForPathAndTier(path, t);
+            List<Item> items = com.complextalents.weaponmastery.WeaponMasteryManager.getInstance()
+                    .getWeaponsForPathAndTier(path, t);
             for (Item item : items) {
                 stacks.add(new ItemStack(item));
             }
             tierMap.put(t, stacks);
         }
-        ensureNonEmptyPool(tierMap, path.name());
+        ensureNonEmptyPool(tierMap, path != null ? path.name() : "ALL");
         return calculateTierPercentages(tierMap, crateRarity);
     }
 
@@ -198,7 +223,8 @@ public class DynamicCasePoolBuilder {
         }
 
         int totalWeight = 0;
-        for (int w : weights) totalWeight += w;
+        for (int w : weights)
+            totalWeight += w;
 
         double[] percentages = new double[5];
         if (totalWeight > 0) {
@@ -209,39 +235,72 @@ public class DynamicCasePoolBuilder {
         return percentages;
     }
 
+    private static void injectRefinementGems(Map<Integer, List<ItemStack>> tierMap, CrateRarity crateRarity) {
+        RandomSource random = RandomSource.create();
+        int crateTier = crateRarity.ordinal() + 1; // 1..5
+        Item[] gemItems = {
+                com.complextalents.item.ModItems.NOVICE_WEAPON_GEM.get(),
+                com.complextalents.item.ModItems.APPRENTICE_WEAPON_GEM.get(),
+                com.complextalents.item.ModItems.ADEPT_WEAPON_GEM.get(),
+                com.complextalents.item.ModItems.EXPERT_WEAPON_GEM.get(),
+                com.complextalents.item.ModItems.MASTER_WEAPON_GEM.get()
+        };
+
+        for (int t = 1; t <= 5; t++) {
+            if (t <= crateTier) {
+                List<ItemStack> list = tierMap.computeIfAbsent(t, k -> new ArrayList<>());
+                Item gemItem = gemItems[t - 1];
+                int delta = crateTier - t;
+
+                int minCount = (int) Math.pow(2, Math.min(delta, 4));
+                int maxCount = (int) Math.pow(2, Math.min(delta + 1, 5));
+                int count = minCount + random.nextInt(maxCount - minCount + 1);
+
+                list.add(new ItemStack(gemItem, count));
+            }
+        }
+    }
+
     /**
      * Builds a weighted CaseReward pool for a given magic schoolId and CrateRarity.
      */
     public static List<CaseReward> buildMagicPool(ResourceLocation schoolId, CrateRarity crateRarity) {
         Map<Integer, List<ItemStack>> tierMap = getMagicSpellsForSchool(schoolId);
-        
-        // Inject Magic Augment Gems into respective tiers
-        injectMagicAugmentGems(tierMap);
 
-        return buildPoolFromItemStackTierMap(tierMap, crateRarity, schoolId.toString());
+        // Inject Magic Augment Gems into respective tiers
+        injectMagicAugmentGems(tierMap, crateRarity);
+
+        return buildPoolFromItemStackTierMap(tierMap, crateRarity, schoolId != null ? schoolId.toString() : "ALL");
     }
 
-    private static void injectMagicAugmentGems(Map<Integer, List<ItemStack>> tierMap) {
+    private static void injectMagicAugmentGems(Map<Integer, List<ItemStack>> tierMap, CrateRarity crateRarity) {
+        RandomSource random = RandomSource.create();
+        int crateTier = crateRarity.ordinal() + 1;
         CrateRarity[] rarities = CrateRarity.values();
         com.complextalents.item.MagicAugmentItem[] gems = {
-            com.complextalents.item.ModItems.POWER_GEM.get(),
-            com.complextalents.item.ModItems.MANA_SAVER_GEM.get(),
-            com.complextalents.item.ModItems.HASTE_GEM.get(),
-            com.complextalents.item.ModItems.SPEED_GEM.get(),
-            com.complextalents.item.ModItems.PRECISION_GEM.get(),
-            com.complextalents.item.ModItems.FATAL_GEM.get(),
-            com.complextalents.item.ModItems.VAMPIRISM_GEM.get(),
-            com.complextalents.item.ModItems.PIERCE_GEM.get(),
-            com.complextalents.item.ModItems.OVERCLOCK_GEM.get(),
-            com.complextalents.item.ModItems.RECAST_GEM.get()
+                com.complextalents.item.ModItems.POWER_GEM.get(),
+                com.complextalents.item.ModItems.MANA_SAVER_GEM.get(),
+                com.complextalents.item.ModItems.HASTE_GEM.get(),
+                com.complextalents.item.ModItems.SPEED_GEM.get(),
+                com.complextalents.item.ModItems.PRECISION_GEM.get(),
+                com.complextalents.item.ModItems.FATAL_GEM.get(),
+                com.complextalents.item.ModItems.VAMPIRISM_GEM.get(),
+                com.complextalents.item.ModItems.PIERCE_GEM.get(),
+                com.complextalents.item.ModItems.OVERCLOCK_GEM.get(),
+                com.complextalents.item.ModItems.RECAST_GEM.get()
         };
 
         for (int t = 1; t <= 5; t++) {
             CrateRarity currentRarity = rarities[t - 1];
             List<ItemStack> list = tierMap.computeIfAbsent(t, k -> new ArrayList<>());
+            int delta = crateTier - t;
+            int minCount = delta > 0 ? (int) Math.pow(2, Math.min(delta, 3)) : 1;
+            int maxCount = delta > 0 ? (int) Math.pow(2, Math.min(delta + 1, 4)) : 2;
+            int count = minCount + random.nextInt(maxCount - minCount + 1);
+
             for (com.complextalents.item.MagicAugmentItem gem : gems) {
                 if (currentRarity.ordinal() >= gem.getAugmentType().getMinRarity().ordinal()) {
-                    list.add(com.complextalents.item.MagicAugmentItem.createStack(gem, currentRarity, 1));
+                    list.add(com.complextalents.item.MagicAugmentItem.createStack(gem, currentRarity, count));
                 }
             }
         }
@@ -250,16 +309,21 @@ public class DynamicCasePoolBuilder {
     /**
      * Dynamic fallback & weight redistribution for item-based tier maps.
      */
-    private static List<CaseReward> buildPoolFromTierMap(Map<Integer, List<Item>> tierMap, CrateRarity crateRarity, String debugTag) {
+    private static List<CaseReward> buildPoolFromTierMap(Map<Integer, List<Item>> tierMap, CrateRarity crateRarity,
+            String debugTag) {
         Map<Integer, List<ItemStack>> stackTierMap = new HashMap<>();
         RandomSource random = RandomSource.create();
         for (int t = 1; t <= 5; t++) {
             List<ItemStack> stacks = new ArrayList<>();
-            List<Item> items = tierMap != null ? tierMap.getOrDefault(t, Collections.emptyList()) : Collections.emptyList();
+            List<Item> items = tierMap != null ? tierMap.getOrDefault(t, Collections.emptyList())
+                    : Collections.emptyList();
             for (Item item : items) {
                 ItemStack stack = new ItemStack(item);
                 if (!(item instanceof com.complextalents.item.RefinementGemItem)) {
-                    stack = com.complextalents.weaponmastery.WeaponMasteryManager.applyRandomRefinementForLoot(stack, random);
+                    stack = com.complextalents.weaponmastery.WeaponMasteryManager.applyRandomRefinementForLoot(stack,
+                            random);
+                    stack = com.complextalents.gunmastery.GunRefinementManager.applyRandomRefinementForLoot(stack,
+                            random);
                 }
                 stacks.add(stack);
             }
@@ -272,10 +336,83 @@ public class DynamicCasePoolBuilder {
         return buildPoolFromItemStackTierMap(stackTierMap, crateRarity, debugTag);
     }
 
+    public static List<CaseReward> buildGunPool(com.complextalents.tacz.GunType gunType, CrateRarity crateRarity) {
+        Map<Integer, List<ItemStack>> stackTierMap = new HashMap<>();
+        RandomSource random = RandomSource.create();
+
+        for (int t = 1; t <= 5; t++) {
+            List<ItemStack> stacks = getGunStacksForTypeAndTier(gunType, t);
+            for (ItemStack stack : stacks) {
+                com.complextalents.gunmastery.GunRefinementManager.applyRandomRefinementForLoot(stack, random);
+            }
+            stackTierMap.put(t, stacks);
+        }
+
+        injectRefinementGems(stackTierMap, crateRarity);
+        ensureNonEmptyPool(stackTierMap, gunType != null ? gunType.name() : "ALL_GUNS");
+
+        String tag = gunType != null ? gunType.name() : "ALL_GUNS";
+        return buildPoolFromItemStackTierMap(stackTierMap, crateRarity, tag);
+    }
+
+    public static List<CrateRarity> getValidRaritiesForGunType(com.complextalents.tacz.GunType gunType) {
+        if (gunType == null) {
+            return List.of(CrateRarity.values());
+        }
+        List<CrateRarity> validRarities = new ArrayList<>();
+        for (CrateRarity rarity : CrateRarity.values()) {
+            int tier = rarity.ordinal() + 1;
+            List<ItemStack> stacks = getGunStacksForTypeAndTier(gunType, tier);
+            if (stacks != null && !stacks.isEmpty()) {
+                validRarities.add(rarity);
+            }
+        }
+        if (validRarities.isEmpty()) {
+            validRarities.add(CrateRarity.COMMON);
+        }
+        return validRarities;
+    }
+
+    public static double[] getGunTierPercentages(com.complextalents.tacz.GunType gunType, CrateRarity crateRarity) {
+        Map<Integer, List<ItemStack>> tierMap = new HashMap<>();
+        for (int t = 1; t <= 5; t++) {
+            List<ItemStack> stacks = getGunStacksForTypeAndTier(gunType, t);
+            tierMap.put(t, stacks);
+        }
+        String tag = gunType != null ? gunType.name() : "ALL_GUNS";
+        ensureNonEmptyPool(tierMap, tag);
+        return calculateTierPercentages(tierMap, crateRarity);
+    }
+
+    public static List<ItemStack> getGunStacksForTypeAndTier(com.complextalents.tacz.GunType gunType, int tier) {
+        List<ItemStack> stacks = new ArrayList<>();
+        Map<String, com.complextalents.gunmastery.classification.GunClassificationManager.GunEntry> entries = com.complextalents.gunmastery.classification.GunClassificationManager
+                .getGunEntries();
+        for (com.complextalents.gunmastery.classification.GunClassificationManager.GunEntry entry : entries.values()) {
+            if (entry.tier == tier) {
+                if (gunType == null || entry.getGunType() == gunType) {
+                    ResourceLocation res = ResourceLocation.tryParse(entry.item_id);
+                    if (res != null) {
+                        try {
+                            ItemStack stack = com.tacz.guns.api.item.builder.GunItemBuilder.create().setId(res).build();
+                            if (stack != null && !stack.isEmpty()) {
+                                stacks.add(stack);
+                            }
+                        } catch (Exception e) {
+                            LOGGER.warn("Failed to build TACZ gun stack for ID: {}", res, e);
+                        }
+                    }
+                }
+            }
+        }
+        return stacks;
+    }
+
     /**
      * Dynamic weight redistribution algorithm across 5 tiers.
      */
-    private static List<CaseReward> buildPoolFromItemStackTierMap(Map<Integer, List<ItemStack>> tierMap, CrateRarity crateRarity, String debugTag) {
+    private static List<CaseReward> buildPoolFromItemStackTierMap(Map<Integer, List<ItemStack>> tierMap,
+            CrateRarity crateRarity, String debugTag) {
         int[] weights = crateRarity.getBaseTierWeights(); // [w1, w2, w3, w4, w5]
 
         // Redistribute weights for empty tiers to adjacent non-empty tiers
@@ -298,7 +435,8 @@ public class DynamicCasePoolBuilder {
         for (int t = 1; t <= 5; t++) {
             List<ItemStack> items = tierMap.getOrDefault(t, Collections.emptyList());
             int totalTierWeight = weights[t - 1];
-            if (items.isEmpty() || totalTierWeight <= 0) continue;
+            if (items.isEmpty() || totalTierWeight <= 0)
+                continue;
 
             int perItemWeight = Math.max(1, totalTierWeight / items.size());
             CaseRarity rarity = mapTierToCaseRarity(t);
@@ -363,17 +501,18 @@ public class DynamicCasePoolBuilder {
 
     private static CaseRarity mapTierToCaseRarity(int tier) {
         return switch (tier) {
-            case 1 -> CaseRarity.MIL_SPEC;    // Common (Blue)
-            case 2 -> CaseRarity.RESTRICTED;  // Uncommon (Purple)
-            case 3 -> CaseRarity.CLASSIFIED;  // Rare (Pink)
-            case 4 -> CaseRarity.COVERT;      // Epic (Red)
-            case 5 -> CaseRarity.SPECIAL;     // Special Master Drop (Gold)
+            case 1 -> CaseRarity.MIL_SPEC; // Common (Blue)
+            case 2 -> CaseRarity.RESTRICTED; // Uncommon (Purple)
+            case 3 -> CaseRarity.CLASSIFIED; // Rare (Pink)
+            case 4 -> CaseRarity.COVERT; // Epic (Red)
+            case 5 -> CaseRarity.SPECIAL; // Special Master Drop (Gold)
             default -> CaseRarity.MIL_SPEC;
         };
     }
 
     /**
-     * Maps Magic School (schoolId) to Spells (Scrolls) across 5 tiers via SpellRegistry.
+     * Maps Magic School (schoolId) to Spells (Scrolls) across 5 tiers via
+     * SpellRegistry.
      */
     private static Map<Integer, List<ItemStack>> getMagicSpellsForSchool(ResourceLocation schoolId) {
         Map<Integer, List<ItemStack>> map = new HashMap<>();
@@ -382,10 +521,12 @@ public class DynamicCasePoolBuilder {
         }
 
         try {
-            if (io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY != null 
+            if (io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY != null
                     && io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY.get() != null) {
-                for (io.redspace.ironsspellbooks.api.spells.AbstractSpell spell : io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY.get().getValues()) {
-                    if (spell == null || spell == io.redspace.ironsspellbooks.api.registry.SpellRegistry.none()) continue;
+                for (io.redspace.ironsspellbooks.api.spells.AbstractSpell spell : io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY
+                        .get().getValues()) {
+                    if (spell == null || spell == io.redspace.ironsspellbooks.api.registry.SpellRegistry.none())
+                        continue;
 
                     if (spell.getSchoolType() != null && spell.getSchoolType().getId().equals(schoolId)) {
                         for (int lvl = spell.getMinLevel(); lvl <= spell.getMaxLevel(); lvl++) {
@@ -401,7 +542,8 @@ public class DynamicCasePoolBuilder {
             LOGGER.error("Error querying SpellRegistry for Magic Case school {}: ", schoolId, e);
         }
 
-        // Safety fallback: if no school-specific spells were found, pull from ALL registered spells
+        // Safety fallback: if no school-specific spells were found, pull from ALL
+        // registered spells
         boolean empty = map.values().stream().allMatch(List::isEmpty);
         if (empty) {
             populateFallbackSpells(map);
@@ -411,7 +553,8 @@ public class DynamicCasePoolBuilder {
     }
 
     private static int mapSpellRarityToTier(io.redspace.ironsspellbooks.api.spells.SpellRarity rarity) {
-        if (rarity == null) return 1;
+        if (rarity == null)
+            return 1;
         return switch (rarity) {
             case COMMON -> 1;
             case UNCOMMON -> 2;
@@ -442,16 +585,19 @@ public class DynamicCasePoolBuilder {
         tag.putString("SpellId", spell.getSpellResource().toString());
         tag.putInt("SpellLevel", level);
 
-        scroll.setHoverName(Component.literal("§bScroll of " + spell.getDisplayName(null).getString() + " (Lvl " + level + ")"));
+        scroll.setHoverName(
+                Component.literal("§bScroll of " + spell.getDisplayName(null).getString() + " (Lvl " + level + ")"));
         return scroll;
     }
 
     private static void populateFallbackSpells(Map<Integer, List<ItemStack>> map) {
         try {
-            if (io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY != null 
+            if (io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY != null
                     && io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY.get() != null) {
-                for (io.redspace.ironsspellbooks.api.spells.AbstractSpell spell : io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY.get().getValues()) {
-                    if (spell == null || spell == io.redspace.ironsspellbooks.api.registry.SpellRegistry.none()) continue;
+                for (io.redspace.ironsspellbooks.api.spells.AbstractSpell spell : io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY
+                        .get().getValues()) {
+                    if (spell == null || spell == io.redspace.ironsspellbooks.api.registry.SpellRegistry.none())
+                        continue;
                     for (int lvl = spell.getMinLevel(); lvl <= spell.getMaxLevel(); lvl++) {
                         io.redspace.ironsspellbooks.api.spells.SpellRarity rarity = spell.getRarity(lvl);
                         int tier = mapSpellRarityToTier(rarity);
@@ -459,12 +605,14 @@ public class DynamicCasePoolBuilder {
                     }
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     public static CaseReward rollFromPool(List<CaseReward> pool, RandomSource random) {
         int totalWeight = pool.stream().mapToInt(CaseReward::getWeight).sum();
-        if (totalWeight <= 0) return pool.get(0);
+        if (totalWeight <= 0)
+            return pool.get(0);
 
         int roll = random.nextInt(totalWeight);
         int curr = 0;

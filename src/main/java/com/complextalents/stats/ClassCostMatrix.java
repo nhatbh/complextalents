@@ -16,6 +16,7 @@ public class ClassCostMatrix {
     private static final Map<ResourceLocation, Double> SPELL_MASTERY_COST_MULTIPLIERS = new HashMap<>();
     private static final Map<ResourceLocation, Map<ResourceLocation, Double>> SCHOOL_SPELL_MASTERY_COST_MULTIPLIERS = new HashMap<>();
     private static final Map<ResourceLocation, Double> WEAPON_MASTERY_COST_MULTIPLIERS = new HashMap<>();
+    private static final Map<ResourceLocation, Double> GUN_MASTERY_COST_MULTIPLIERS = new HashMap<>();
 
 
     static {
@@ -125,6 +126,17 @@ public class ClassCostMatrix {
         return WEAPON_MASTERY_COST_MULTIPLIERS.getOrDefault(originId, 1.0);
     }
 
+    /**
+     * Get the gun mastery cost multiplier for an origin.
+     * Return negative value (< 0) if Gun Mastery is locked/disallowed for this origin.
+     *
+     * @param originId The origin ID
+     * @return The cost multiplier (e.g., 1.0 = normal cost, < 0 = disallowed). Default is -1.0 (disallowed).
+     */
+    public static double getGunMasteryCostMultiplier(ResourceLocation originId) {
+        return GUN_MASTERY_COST_MULTIPLIERS.getOrDefault(originId, -1.0);
+    }
+
     public static class CostBuilder {
         private final ResourceLocation id;
         private final Map<StatType, Integer> costs = new HashMap<>();
@@ -221,5 +233,18 @@ public class ClassCostMatrix {
             WEAPON_MASTERY_COST_MULTIPLIERS.put(id, multiplier);
             return this;
         }
+
+        /**
+         * Set the gun mastery cost multiplier for this origin.
+         * Set to < 0 to disallow gun mastery progression for this origin.
+         *
+         * @param multiplier The cost multiplier (e.g., 1.0 = normal cost, < 0 = disallowed)
+         * @return this builder for chaining
+         */
+        public CostBuilder gunMasteryCostMultiplier(double multiplier) {
+            GUN_MASTERY_COST_MULTIPLIERS.put(id, multiplier);
+            return this;
+        }
     }
 }
+

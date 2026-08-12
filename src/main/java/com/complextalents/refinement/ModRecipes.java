@@ -15,6 +15,9 @@ public class ModRecipes {
     public static final RegistryObject<RecipeSerializer<WeaponRefinementRecipe>> WEAPON_REFINEMENT_SERIALIZER =
             SERIALIZERS.register("weapon_refinement", WeaponRefinementRecipe.Serializer::new);
 
+    public static final RegistryObject<RecipeSerializer<GunRefinementRecipe>> GUN_REFINEMENT_SERIALIZER =
+            SERIALIZERS.register("gun_refinement", GunRefinementRecipe.Serializer::new);
+
     public static final RegistryObject<RecipeSerializer<SpellAugmentRecipe>> SPELL_AUGMENT_SERIALIZER =
             SERIALIZERS.register("spell_augment", SpellAugmentRecipe.Serializer::new);
 

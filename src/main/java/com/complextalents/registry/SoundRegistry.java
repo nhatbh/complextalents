@@ -15,6 +15,12 @@ public class SoundRegistry {
     public static final RegistryObject<SoundEvent> SUPERCELL_AMBIENT = registerSoundEvent("supercell_ambient");
     public static final RegistryObject<SoundEvent> SUPERCELL_THUNDER = registerSoundEvent("supercell_thunder");
 
+    public static final RegistryObject<SoundEvent> MARKSMAN_KILL1 = registerSoundEvent("marksman.kill1");
+    public static final RegistryObject<SoundEvent> MARKSMAN_KILL2 = registerSoundEvent("marksman.kill2");
+    public static final RegistryObject<SoundEvent> MARKSMAN_KILL3 = registerSoundEvent("marksman.kill3");
+    public static final RegistryObject<SoundEvent> MARKSMAN_KILL4 = registerSoundEvent("marksman.kill4");
+    public static final RegistryObject<SoundEvent> MARKSMAN_KILL5 = registerSoundEvent("marksman.kill5");
+
     private static RegistryObject<SoundEvent> registerSoundEvent(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent
                 .createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(TalentsMod.MODID, name)));

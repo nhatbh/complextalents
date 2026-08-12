@@ -51,11 +51,12 @@ public class ChestCaseLootModifier extends LootModifier {
 
     @Override
     protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
-        // 0. Apply Weapon Refinement Algorithm to any compatible weapon present in generated loot
+        // 0. Apply Weapon & Gun Refinement Algorithm to any compatible items present in generated loot
         RandomSource random = context.getRandom();
         for (ItemStack stack : generatedLoot) {
             if (stack != null && !stack.isEmpty()) {
                 com.complextalents.weaponmastery.WeaponMasteryManager.applyRandomRefinementForLoot(stack, random);
+                com.complextalents.gunmastery.GunRefinementManager.applyRandomRefinementForLoot(stack, random);
             }
         }
 
@@ -100,26 +101,29 @@ public class ChestCaseLootModifier extends LootModifier {
         // 5. Calculate Distance-Based CrateRarity
         CrateRarity chosenRarity = sampleRarityForDistance(distanceRatio, random);
 
-        // 6. 50/50 Roll between Weapon Case and Magic Case
-        boolean isWeaponCase = random.nextBoolean();
+        // 6. 3-Way Roll between Weapon Case, Magic Case, and Gun Case
+        int crateCategoryChoice = random.nextInt(3);
 
-        if (isWeaponCase) {
-            WeaponPath[] paths = WeaponPath.values();
-            List<WeaponPath> validPaths = new ArrayList<>();
-            for (WeaponPath p : paths) {
+        if (crateCategoryChoice == 0) {
+            // Weapon Case: All Weapon Case (null) has 2x chance (added twice) and comes in all rarities
+            List<WeaponPath> candidates = new ArrayList<>();
+            candidates.add(null);
+            candidates.add(null);
+
+            for (WeaponPath p : WeaponPath.values()) {
                 List<CrateRarity> valid = DynamicCasePoolBuilder.getValidRaritiesForWeaponPath(p, null);
                 if (valid.contains(chosenRarity)) {
-                    validPaths.add(p);
+                    candidates.add(p);
                 }
             }
-            if (validPaths.isEmpty()) {
-                validPaths.add(paths[random.nextInt(paths.length)]);
-            }
-            WeaponPath selectedPath = validPaths.get(random.nextInt(validPaths.size()));
+            WeaponPath selectedPath = candidates.get(random.nextInt(candidates.size()));
             generatedLoot.add(MysteriousLootItem.createWeaponCase(selectedPath, chosenRarity));
-        } else {
-            // Magic Case
-            List<ResourceLocation> validSchoolIds = new ArrayList<>();
+        } else if (crateCategoryChoice == 1) {
+            // Magic Case: All Magic Case (null) has 2x chance (added twice) and comes in all rarities
+            List<ResourceLocation> candidates = new ArrayList<>();
+            candidates.add(null);
+            candidates.add(null);
+
             try {
                 if (io.redspace.ironsspellbooks.api.registry.SchoolRegistry.REGISTRY != null 
                         && io.redspace.ironsspellbooks.api.registry.SchoolRegistry.REGISTRY.get() != null) {
@@ -127,18 +131,30 @@ public class ChestCaseLootModifier extends LootModifier {
                         if (school != null && school.getId() != null) {
                             List<CrateRarity> valid = DynamicCasePoolBuilder.getValidRaritiesForSchool(school.getId());
                             if (valid.contains(chosenRarity)) {
-                                validSchoolIds.add(school.getId());
+                                candidates.add(school.getId());
                             }
                         }
                     }
                 }
             } catch (Exception ignored) {}
 
-            if (validSchoolIds.isEmpty()) {
-                validSchoolIds.add(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "fire"));
-            }
-            ResourceLocation selectedSchoolId = validSchoolIds.get(random.nextInt(validSchoolIds.size()));
+            ResourceLocation selectedSchoolId = candidates.get(random.nextInt(candidates.size()));
             generatedLoot.add(MysteriousLootItem.createMagicCase(selectedSchoolId, chosenRarity));
+        } else {
+            // Gun Case: All Firearm Case (null) has 2x chance (added twice) and comes in all rarities
+            List<com.complextalents.tacz.GunType> candidates = new ArrayList<>();
+            candidates.add(null);
+            candidates.add(null);
+
+            for (com.complextalents.tacz.GunType gt : com.complextalents.tacz.GunType.values()) {
+                List<CrateRarity> valid = DynamicCasePoolBuilder.getValidRaritiesForGunType(gt);
+                if (valid.contains(chosenRarity)) {
+                    candidates.add(gt);
+                }
+            }
+
+            com.complextalents.tacz.GunType selectedGunType = candidates.get(random.nextInt(candidates.size()));
+            generatedLoot.add(MysteriousLootItem.createGunCase(selectedGunType, chosenRarity));
         }
 
         return generatedLoot;

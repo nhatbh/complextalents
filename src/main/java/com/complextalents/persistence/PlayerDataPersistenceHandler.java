@@ -140,6 +140,8 @@ public class PlayerDataPersistenceHandler {
             }
             cap.sync();
         });
+
+        player.getCapability(com.complextalents.gunmastery.capability.GunMasteryDataProvider.GUN_MASTERY_DATA).ifPresent(com.complextalents.gunmastery.capability.IGunMasteryData::sync);
         
         player.getCapability(GeneralStatsDataProvider.STATS_DATA).ifPresent(cap -> {
             if (cap instanceof com.complextalents.stats.capability.GeneralStatsData gsd) {

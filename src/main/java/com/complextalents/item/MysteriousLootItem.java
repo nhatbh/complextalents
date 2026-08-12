@@ -38,7 +38,11 @@ public class MysteriousLootItem extends Item {
         ItemStack stack = new ItemStack(ModItems.MYSTERIOUS_LOOT.get());
         CompoundTag tag = stack.getOrCreateTag();
         tag.putString("CaseType", "WEAPON");
-        tag.putString("WeaponPath", path.name());
+        if (path != null) {
+            tag.putString("WeaponPath", path.name());
+        } else {
+            tag.putString("WeaponPath", "ALL");
+        }
         tag.putString("CrateRarity", rarity.name());
         return stack;
     }
@@ -47,7 +51,24 @@ public class MysteriousLootItem extends Item {
         ItemStack stack = new ItemStack(ModItems.MYSTERIOUS_LOOT.get());
         CompoundTag tag = stack.getOrCreateTag();
         tag.putString("CaseType", "MAGIC");
-        tag.putString("SchoolId", schoolId.toString());
+        if (schoolId != null) {
+            tag.putString("SchoolId", schoolId.toString());
+        } else {
+            tag.putString("SchoolId", "ALL");
+        }
+        tag.putString("CrateRarity", rarity.name());
+        return stack;
+    }
+
+    public static ItemStack createGunCase(com.complextalents.tacz.GunType gunType, CrateRarity rarity) {
+        ItemStack stack = new ItemStack(ModItems.MYSTERIOUS_LOOT.get());
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putString("CaseType", "GUN");
+        if (gunType != null) {
+            tag.putString("GunType", gunType.name());
+        } else {
+            tag.putString("GunType", "ALL");
+        }
         tag.putString("CrateRarity", rarity.name());
         return stack;
     }
@@ -60,14 +81,28 @@ public class MysteriousLootItem extends Item {
 
             if ("WEAPON".equalsIgnoreCase(type)) {
                 String pathStr = stack.getTag().getString("WeaponPath");
-                WeaponPath path = WeaponPath.fromString(pathStr);
-                String pathName = path != null ? capitalize(path.name()) : capitalize(pathStr);
+                String pathName = "All";
+                if (!"ALL".equalsIgnoreCase(pathStr)) {
+                    WeaponPath path = WeaponPath.fromString(pathStr);
+                    if (path != null) pathName = capitalize(path.name());
+                }
                 return Component.literal("§6" + pathName + " Weapon Case §7(" + rarity.getDisplayName() + "§7)");
             } else if ("MAGIC".equalsIgnoreCase(type)) {
                 String schoolIdStr = stack.getTag().getString("SchoolId");
-                ResourceLocation schoolId = ResourceLocation.tryParse(schoolIdStr);
-                String schoolName = getSchoolDisplayName(schoolId);
+                String schoolName = "All";
+                if (!"ALL".equalsIgnoreCase(schoolIdStr)) {
+                    ResourceLocation schoolId = ResourceLocation.tryParse(schoolIdStr);
+                    if (schoolId != null) schoolName = getSchoolDisplayName(schoolId);
+                }
                 return Component.literal("§b" + schoolName + " Magic Case §7(" + rarity.getDisplayName() + "§7)");
+            } else if ("GUN".equalsIgnoreCase(type)) {
+                String gunTypeStr = stack.getTag().getString("GunType");
+                String displayTypeName = "All";
+                try {
+                    com.complextalents.tacz.GunType gt = com.complextalents.tacz.GunType.valueOf(gunTypeStr.toUpperCase());
+                    displayTypeName = gt.getDisplayName();
+                } catch (Exception ignored) {}
+                return Component.literal("§d" + displayTypeName + " Firearm Case §7(" + rarity.getDisplayName() + "§7)");
             }
         }
         return super.getName(stack);
@@ -90,21 +125,34 @@ public class MysteriousLootItem extends Item {
                 CrateRarity rarity = parseRarity(itemStack);
 
                 if ("WEAPON".equalsIgnoreCase(caseType)) {
-                    WeaponPath path = WeaponPath.fromString(tag.getString("WeaponPath"));
-                    if (path == null) path = WeaponPath.BLADEMASTER;
+                    String pathStr = tag.getString("WeaponPath");
+                    WeaponPath path = "ALL".equalsIgnoreCase(pathStr) ? null : WeaponPath.fromString(pathStr);
                     List<CrateRarity> validRarities = DynamicCasePoolBuilder.getValidRaritiesForWeaponPath(path);
                     if (!validRarities.contains(rarity)) {
                         rarity = validRarities.get(validRarities.size() - 1);
                     }
                     pool = DynamicCasePoolBuilder.buildWeaponPool(path, rarity);
                 } else if ("MAGIC".equalsIgnoreCase(caseType)) {
-                    ResourceLocation schoolId = ResourceLocation.tryParse(tag.getString("SchoolId"));
-                    if (schoolId == null) schoolId = ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "fire");
+                    String schoolIdStr = tag.getString("SchoolId");
+                    ResourceLocation schoolId = "ALL".equalsIgnoreCase(schoolIdStr) ? null : ResourceLocation.tryParse(schoolIdStr);
                     List<CrateRarity> validRarities = DynamicCasePoolBuilder.getValidRaritiesForSchool(schoolId);
                     if (!validRarities.contains(rarity)) {
                         rarity = validRarities.get(validRarities.size() - 1);
                     }
                     pool = DynamicCasePoolBuilder.buildMagicPool(schoolId, rarity);
+                } else if ("GUN".equalsIgnoreCase(caseType)) {
+                    String gunTypeStr = tag.getString("GunType");
+                    com.complextalents.tacz.GunType gunType = null;
+                    if (!"ALL".equalsIgnoreCase(gunTypeStr)) {
+                        try {
+                            gunType = com.complextalents.tacz.GunType.valueOf(gunTypeStr.toUpperCase());
+                        } catch (Exception ignored) {}
+                    }
+                    List<CrateRarity> validRarities = DynamicCasePoolBuilder.getValidRaritiesForGunType(gunType);
+                    if (!validRarities.contains(rarity)) {
+                        rarity = validRarities.get(validRarities.size() - 1);
+                    }
+                    pool = DynamicCasePoolBuilder.buildGunPool(gunType, rarity);
                 } else {
                     pool = createDefaultPool(level);
                 }
@@ -125,8 +173,6 @@ public class MysteriousLootItem extends Item {
                     sequence.add(DynamicCasePoolBuilder.rollFromPool(pool, level.getRandom()));
                 }
             }
-
-
 
             // Send packet to client for unboxing animation
             PacketHandler.sendTo(new S2COpenCaseScreenPacket(sequence, targetWinningIndex, winningReward, pool), serverPlayer);
@@ -201,9 +247,8 @@ public class MysteriousLootItem extends Item {
 
             if ("WEAPON".equalsIgnoreCase(caseType)) {
                 String pathStr = stack.getTag().getString("WeaponPath");
-                WeaponPath path = WeaponPath.fromString(pathStr);
-                if (path == null) path = WeaponPath.BLADEMASTER;
-                String pathName = capitalize(path.name());
+                WeaponPath path = "ALL".equalsIgnoreCase(pathStr) ? null : WeaponPath.fromString(pathStr);
+                String pathName = path != null ? capitalize(path.name()) : "All";
 
                 tooltip.add(Component.literal("§7Weapon Mastery Path: §6" + pathName));
 
@@ -213,9 +258,8 @@ public class MysteriousLootItem extends Item {
                 tooltip.add(Component.literal("§eRight-click to unbox " + pathName + " weapons!"));
             } else if ("MAGIC".equalsIgnoreCase(caseType)) {
                 String schoolIdStr = stack.getTag().getString("SchoolId");
-                ResourceLocation schoolId = ResourceLocation.tryParse(schoolIdStr);
-                if (schoolId == null) schoolId = ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "fire");
-                String schoolName = getSchoolDisplayName(schoolId);
+                ResourceLocation schoolId = "ALL".equalsIgnoreCase(schoolIdStr) ? null : ResourceLocation.tryParse(schoolIdStr);
+                String schoolName = schoolId != null ? getSchoolDisplayName(schoolId) : "All";
 
                 tooltip.add(Component.literal("§7Magic School: §b" + schoolName));
 
@@ -224,6 +268,21 @@ public class MysteriousLootItem extends Item {
 
                 tooltip.add(Component.literal("§a★ Unboxed spells are automatically learned!"));
                 tooltip.add(Component.literal("§eRight-click to unbox " + schoolName + " magic!"));
+            } else if ("GUN".equalsIgnoreCase(caseType)) {
+                String gunTypeStr = stack.getTag().getString("GunType");
+                com.complextalents.tacz.GunType gunType = null;
+                String displayTypeName = "All";
+                try {
+                    gunType = com.complextalents.tacz.GunType.valueOf(gunTypeStr.toUpperCase());
+                    displayTypeName = gunType.getDisplayName();
+                } catch (Exception ignored) {}
+
+                tooltip.add(Component.literal("§7Firearm Archetype: §d" + displayTypeName));
+
+                double[] pcts = DynamicCasePoolBuilder.getGunTierPercentages(gunType, rarity);
+                appendDropRateTooltip(tooltip, pcts);
+
+                tooltip.add(Component.literal("§eRight-click to unbox " + displayTypeName + " firearms!"));
             }
         } else {
             tooltip.add(Component.literal("§7A mysterious container sealed with ancient magic."));

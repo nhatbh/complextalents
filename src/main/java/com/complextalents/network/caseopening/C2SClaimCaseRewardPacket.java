@@ -47,8 +47,9 @@ public class C2SClaimCaseRewardPacket {
         if (player != null && reward != null) {
             ItemStack rewardStack = reward.getStack();
             if (!rewardStack.isEmpty()) {
-                // Ensure weapon loot applies random refinement within tier if unrefined
+                // Ensure weapon and gun loot applies random refinement within tier if unrefined
                 rewardStack = com.complextalents.weaponmastery.WeaponMasteryManager.applyRandomRefinementForLoot(rewardStack, player.getRandom());
+                rewardStack = com.complextalents.gunmastery.GunRefinementManager.applyRandomRefinementForLoot(rewardStack, player.getRandom());
 
                 // Drop item entity directly at player location
                 player.drop(rewardStack.copy(), false);

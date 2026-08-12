@@ -27,10 +27,8 @@ public class ElementalMageOrigin {
      */
     public static void register() {
         OriginBuilder.create("complextalents", "elemental_mage")
-                .displayName("Nguyên Tố Sư")
-                .description(Component.literal(
-                        "Bậc thầy làm chủ các nguyên tố tự nhiên. Kích hoạt chuỗi phản ứng nguyên tố giúp tăng từ 25% đến 130% sát thương phản ứng. Tích tụ đến 3 Dấu Ấn Nguyên Tố từ các phản ứng khác loại để bộc phát trạng thái Hội Tụ gia tăng 1.15 đến 1.5 lần sát thương phép, tăng đến 60% tỷ lệ bạo kích và 100% sát thương bạo kích trong 10 giây."))
-
+                .displayName(Component.translatable("origin.complextalents.elemental_mage"))
+                .description(Component.translatable("origin.complextalents.elemental_mage.desc"))
                 .maxLevel(5)
                 .baseStat(StatType.AP, 3)
                 .baseStat(StatType.MAX_MANA, 6)
@@ -49,6 +47,13 @@ public class ElementalMageOrigin {
                 .levelToughnessCalc(lvl -> lvl <= 1 ? 0.0 : Math.min(25.0, Math.pow(lvl - 1, 1.1) * 0.2))
                 .levelHealthCalc(lvl -> 0.0)
                 .renderer(new com.complextalents.impl.elementalmage.client.ElementalMageRenderer())
+                .gunConfusionMessages(
+                        "origin.complextalents.elemental_mage.gun_msg.1",
+                        "origin.complextalents.elemental_mage.gun_msg.2",
+                        "origin.complextalents.elemental_mage.gun_msg.3",
+                        "origin.complextalents.elemental_mage.gun_msg.4",
+                        "origin.complextalents.elemental_mage.gun_msg.5"
+                )
                 .register();
 
         ClassCostMatrix.defineCosts(ID)

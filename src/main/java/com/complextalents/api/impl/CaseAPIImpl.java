@@ -30,6 +30,11 @@ public class CaseAPIImpl implements ICaseAPI {
     }
 
     @Override
+    public ItemStack createGunCaseItem(com.complextalents.tacz.GunType gunType, CrateRarity rarity) {
+        return MysteriousLootItem.createGunCase(gunType, rarity);
+    }
+
+    @Override
     public void openWeaponCase(ServerPlayer player, WeaponPath path, CrateRarity rarity) {
         if (player == null || path == null || rarity == null) return;
         List<CrateRarity> validRarities = DynamicCasePoolBuilder.getValidRaritiesForWeaponPath(path);
@@ -48,6 +53,17 @@ public class CaseAPIImpl implements ICaseAPI {
             rarity = validRarities.get(validRarities.size() - 1);
         }
         List<CaseReward> pool = DynamicCasePoolBuilder.buildMagicPool(schoolId, rarity);
+        sendOpenCasePacket(player, pool);
+    }
+
+    @Override
+    public void openGunCase(ServerPlayer player, com.complextalents.tacz.GunType gunType, CrateRarity rarity) {
+        if (player == null || rarity == null) return;
+        List<CrateRarity> validRarities = DynamicCasePoolBuilder.getValidRaritiesForGunType(gunType);
+        if (!validRarities.contains(rarity)) {
+            rarity = validRarities.get(validRarities.size() - 1);
+        }
+        List<CaseReward> pool = DynamicCasePoolBuilder.buildGunPool(gunType, rarity);
         sendOpenCasePacket(player, pool);
     }
 
@@ -76,6 +92,11 @@ public class CaseAPIImpl implements ICaseAPI {
     @Override
     public List<CaseReward> buildMagicPool(ResourceLocation schoolId, CrateRarity rarity) {
         return DynamicCasePoolBuilder.buildMagicPool(schoolId, rarity);
+    }
+
+    @Override
+    public List<CaseReward> buildGunPool(com.complextalents.tacz.GunType gunType, CrateRarity rarity) {
+        return DynamicCasePoolBuilder.buildGunPool(gunType, rarity);
     }
 
     @Override

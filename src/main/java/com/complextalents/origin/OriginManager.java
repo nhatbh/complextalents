@@ -70,6 +70,11 @@ public class OriginManager {
                 giveStarterSpellBook(player);
             }
 
+            // Give starter gun & ammo if selecting Marksman origin
+            if (com.complextalents.impl.marksman.origin.MarksmanOrigin.ID.equals(originId) && !originId.equals(oldOriginId)) {
+                giveMarksmanStarterEquipment(player);
+            }
+
             // Set mana to max after setting the origin base stats
             try {
                 MagicData magicData = MagicData.getPlayerMagicData(player);
@@ -449,6 +454,37 @@ public class OriginManager {
             net.minecraft.world.item.ItemStack stack = new net.minecraft.world.item.ItemStack(spellBookItem);
             if (!player.getInventory().add(stack)) {
                 player.drop(stack, false);
+            }
+        }
+    }
+
+    private static void giveMarksmanStarterEquipment(ServerPlayer player) {
+        // 1. Firearm: tacz:modern_kinetic_gun {HasBulletInBarrel: 1, GunFireMode: "BURST", GunId: "maxstuff:mk23", GunCurrentAmmoCount: 5}
+        ResourceLocation gunItemId = ResourceLocation.fromNamespaceAndPath("tacz", "modern_kinetic_gun");
+        net.minecraft.world.item.Item gunItem = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(gunItemId);
+        if (gunItem != null && gunItem != net.minecraft.world.item.Items.AIR) {
+            net.minecraft.world.item.ItemStack gunStack = new net.minecraft.world.item.ItemStack(gunItem, 1);
+            net.minecraft.nbt.CompoundTag tag = gunStack.getOrCreateTag();
+            tag.putByte("HasBulletInBarrel", (byte) 1);
+            tag.putString("GunFireMode", "BURST");
+            tag.putString("GunId", "maxstuff:mk23");
+            tag.putInt("GunCurrentAmmoCount", 5);
+
+            if (!player.getInventory().add(gunStack)) {
+                player.drop(gunStack, false);
+            }
+        }
+
+        // 2. Ammunition: tacz:ammo {AmmoId: "tacz:45acp"} * 60
+        ResourceLocation ammoItemId = ResourceLocation.fromNamespaceAndPath("tacz", "ammo");
+        net.minecraft.world.item.Item ammoItem = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(ammoItemId);
+        if (ammoItem != null && ammoItem != net.minecraft.world.item.Items.AIR) {
+            net.minecraft.world.item.ItemStack ammoStack = new net.minecraft.world.item.ItemStack(ammoItem, 60);
+            net.minecraft.nbt.CompoundTag tag = ammoStack.getOrCreateTag();
+            tag.putString("AmmoId", "tacz:45acp");
+
+            if (!player.getInventory().add(ammoStack)) {
+                player.drop(ammoStack, false);
             }
         }
     }

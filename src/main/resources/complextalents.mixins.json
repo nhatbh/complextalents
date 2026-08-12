@@ -13,7 +13,8 @@
     "ItemStackMixin",
     "MagicManagerMixin",
     "SmithingMenuMixin",
-    "epicfight.GuardSkillMixin"
+    "epicfight.GuardSkillMixin",
+    "tacz.InaccuracyTypeMixin"
   ],
   "server": [],
   "client": [],

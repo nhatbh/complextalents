@@ -47,6 +47,9 @@ public class OriginBuilder {
     private java.util.function.IntToDoubleFunction levelHealthCalc = null;
     private final java.util.List<Origin.OriginSkillDisplay> displaySkills = new java.util.ArrayList<>();
     private ResourceLocation activeSkillId = null;
+    private final java.util.List<String> gunConfusionMessages = new java.util.ArrayList<>();
+    private final java.util.List<StatType> upgradableStats = new java.util.ArrayList<>();
+
 
     /**
      * Create a new origin builder.
@@ -320,6 +323,19 @@ public class OriginBuilder {
     }
 
     /**
+     * Add custom firearm confusion messages for this origin.
+     *
+     * @param messages Varargs of reaction message strings
+     * @return this builder
+     */
+    public OriginBuilder gunConfusionMessages(String... messages) {
+        if (messages != null) {
+            this.gunConfusionMessages.addAll(java.util.Arrays.asList(messages));
+        }
+        return this;
+    }
+
+    /**
      * Build the origin and return a BuiltOrigin instance.
      * Call OriginRegistry.register() with the result to register it.
      */
@@ -415,4 +431,28 @@ public class OriginBuilder {
     java.util.function.IntToDoubleFunction getLevelHealthCalc() {
         return levelHealthCalc;
     }
+
+    public OriginBuilder upgradableStats(StatType... stats) {
+        this.upgradableStats.clear();
+        java.util.Collections.addAll(this.upgradableStats, stats);
+        return this;
+    }
+
+    public OriginBuilder upgradableStats(java.util.List<StatType> stats) {
+        this.upgradableStats.clear();
+        this.upgradableStats.addAll(stats);
+        return this;
+    }
+
+    java.util.List<StatType> getUpgradableStats() {
+        if (upgradableStats.isEmpty()) {
+            return Origin.DEFAULT_UPGRADABLE_STATS;
+        }
+        return new java.util.ArrayList<>(upgradableStats);
+    }
+
+    java.util.List<String> getGunConfusionMessages() {
+        return new java.util.ArrayList<>(gunConfusionMessages);
+    }
 }
+

@@ -33,6 +33,14 @@ public interface ICaseAPI {
     ItemStack createMagicCaseItem(ResourceLocation schoolId, CrateRarity rarity);
 
     /**
+     * Creates a Gun Case ItemStack of a given archetype and rarity.
+     * @param gunType GunType archetype (or null for all)
+     * @param rarity Crate rarity
+     * @return Gun Case ItemStack
+     */
+    ItemStack createGunCaseItem(com.complextalents.tacz.GunType gunType, CrateRarity rarity);
+
+    /**
      * Triggers the unboxing UI screen for a Weapon Case on a server player.
      * @param player Target player
      * @param path Weapon path
@@ -49,6 +57,14 @@ public interface ICaseAPI {
     void openMagicCase(ServerPlayer player, ResourceLocation schoolId, CrateRarity rarity);
 
     /**
+     * Triggers the unboxing UI screen for a Gun Case on a server player.
+     * @param player Target player
+     * @param gunType GunType archetype (or null for all)
+     * @param rarity Crate rarity
+     */
+    void openGunCase(ServerPlayer player, com.complextalents.tacz.GunType gunType, CrateRarity rarity);
+
+    /**
      * Builds the weighted CaseReward loot pool for a Weapon Case.
      * @param path Weapon path
      * @param rarity Crate rarity
@@ -63,6 +79,14 @@ public interface ICaseAPI {
      * @return List of CaseReward entries
      */
     List<CaseReward> buildMagicPool(ResourceLocation schoolId, CrateRarity rarity);
+
+    /**
+     * Builds the weighted CaseReward loot pool for a Gun Case.
+     * @param gunType GunType archetype (or null for all)
+     * @param rarity Crate rarity
+     * @return List of CaseReward entries
+     */
+    List<CaseReward> buildGunPool(com.complextalents.tacz.GunType gunType, CrateRarity rarity);
 
     /**
      * Rolls a random CaseReward from a pool using weighted probability.

@@ -28,7 +28,10 @@ public class SmithingMenuMixin {
             if (gemsUsed > 1) {
                 Slot gemSlot = menu.getSlot(0);
                 if (gemSlot != null && gemSlot.hasItem() && gemSlot.getItem().getItem() instanceof RefinementGemItem) {
-                    gemSlot.getItem().shrink(gemsUsed - 1);
+                    ItemStack gemStack = gemSlot.getItem();
+                    gemStack.shrink(gemsUsed - 1);
+                    gemSlot.set(gemStack);
+                    gemSlot.setChanged();
                 }
             }
         }

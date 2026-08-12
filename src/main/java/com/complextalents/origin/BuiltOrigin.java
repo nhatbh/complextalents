@@ -35,6 +35,8 @@ public class BuiltOrigin implements Origin {
     private final java.util.function.IntToDoubleFunction levelArmorCalc;
     private final java.util.function.IntToDoubleFunction levelToughnessCalc;
     private final java.util.function.IntToDoubleFunction levelHealthCalc;
+    private final java.util.List<String> gunConfusionMessages;
+    private final java.util.List<StatType> upgradableStats;
 
     /**
      * Create a BuiltOrigin from an OriginBuilder.
@@ -56,7 +58,10 @@ public class BuiltOrigin implements Origin {
         this.levelArmorCalc = builder.getLevelArmorCalc();
         this.levelToughnessCalc = builder.getLevelToughnessCalc();
         this.levelHealthCalc = builder.getLevelHealthCalc();
+        this.gunConfusionMessages = builder.getGunConfusionMessages();
+        this.upgradableStats = java.util.List.copyOf(builder.getUpgradableStats());
     }
+
 
     @Override
     public java.util.List<OriginSkillDisplay> getDisplaySkills() {
@@ -173,4 +178,15 @@ public class BuiltOrigin implements Origin {
         }
         return Origin.super.getLevelHealthBonus(playerLevel);
     }
+
+    @Override
+    public java.util.List<String> getGunConfusionMessages() {
+        return gunConfusionMessages;
+    }
+
+    @Override
+    public java.util.List<StatType> getUpgradableStats() {
+        return upgradableStats;
+    }
 }
+

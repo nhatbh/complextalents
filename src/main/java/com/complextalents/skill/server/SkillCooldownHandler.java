@@ -80,8 +80,12 @@ public class SkillCooldownHandler {
 
         // Check active cooldown
         if (skillData.isOnCooldown(skillId)) {
-            double remaining = skillData.getCooldown(skillId);
-            return ValidationResult.failure(String.format("Cooldown: %.1fs", remaining));
+            // Bypass cooldown check for Relentless Pursuit while inside Adrenaline mode to allow Dismiss re-casts
+            if (!(com.complextalents.impl.marksman.skill.RelentlessPursuitSkill.ID.equals(skillId) 
+                  && com.complextalents.impl.marksman.data.MarksmanAdrenalineData.isActive(player))) {
+                double remaining = skillData.getCooldown(skillId);
+                return ValidationResult.failure(String.format("Cooldown: %.1fs", remaining));
+            }
         }
 
         // Check resource cost
@@ -212,10 +216,10 @@ public class SkillCooldownHandler {
             return;
         }
 
-        // For non-toggle skills: apply cooldown scaled by Ability Haste
+        // For non-toggle skills: apply cooldown scaled by Ability Haste (Relentless Pursuit uses static 300s)
         double cooldown = skill.getActiveCooldown(skillLevel);
         if (cooldown > 0) {
-            double hasteMultiplier = getAbilityHasteCooldownMultiplier(player);
+            double hasteMultiplier = com.complextalents.impl.marksman.skill.RelentlessPursuitSkill.ID.equals(skillId) ? 1.0 : getAbilityHasteCooldownMultiplier(player);
             skillData.setCooldown(skillId, cooldown * hasteMultiplier);
         }
 

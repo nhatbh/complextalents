@@ -38,5 +38,50 @@
         "stream": false
       }
     ]
+  },
+  "marksman.kill1": {
+    "subtitle": "sounds.complextalents.marksman.kill1",
+    "sounds": [
+      {
+        "name": "complextalents:marksman/kill1",
+        "stream": false
+      }
+    ]
+  },
+  "marksman.kill2": {
+    "subtitle": "sounds.complextalents.marksman.kill2",
+    "sounds": [
+      {
+        "name": "complextalents:marksman/kill2",
+        "stream": false
+      }
+    ]
+  },
+  "marksman.kill3": {
+    "subtitle": "sounds.complextalents.marksman.kill3",
+    "sounds": [
+      {
+        "name": "complextalents:marksman/kill3",
+        "stream": false
+      }
+    ]
+  },
+  "marksman.kill4": {
+    "subtitle": "sounds.complextalents.marksman.kill4",
+    "sounds": [
+      {
+        "name": "complextalents:marksman/kill4",
+        "stream": false
+      }
+    ]
+  },
+  "marksman.kill5": {
+    "subtitle": "sounds.complextalents.marksman.kill5",
+    "sounds": [
+      {
+        "name": "complextalents:marksman/kill5",
+        "stream": false
+      }
+    ]
   }
 }

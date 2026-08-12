@@ -172,6 +172,10 @@ public class WeaponRefinementRecipe implements SmithingRecipe {
             CompoundTag sacTag = resetSacrifice.getOrCreateTag();
             sacTag.putInt("RefineXP", sacStartingXp);
             sacTag.putInt("RefineRank", 0);
+            sacTag.putUUID("RefineSeed", java.util.UUID.randomUUID()); // Reset the random seed!
+            sacTag.remove("RefineSubstats");
+            sacTag.remove("RefineHistory");
+            sacTag.putInt("SubstatVersion", 1);
 
             if (sacTag.contains("RefineVariances", net.minecraft.nbt.Tag.TAG_LIST)) {
                 sacTag.remove("RefineVariances");
@@ -186,17 +190,9 @@ public class WeaponRefinementRecipe implements SmithingRecipe {
         // Make Unbreakable on refinement
         tag.putBoolean("Unbreakable", true);
 
-        // Preserve existing per-level variances and roll for ALL new manual refine ranks gained!
-        net.minecraft.nbt.ListTag varianceList = tag.contains("RefineVariances", net.minecraft.nbt.Tag.TAG_LIST)
-                ? tag.getList("RefineVariances", net.minecraft.nbt.Tag.TAG_FLOAT).copy()
-                : new net.minecraft.nbt.ListTag();
-
-        while (varianceList.size() < newRefineRank) {
-            int rankToRoll = varianceList.size() + 1;
-            float v = WeaponMasteryManager.rollRefineVarianceForRank(result, rankToRoll);
-            varianceList.add(net.minecraft.nbt.FloatTag.valueOf(v));
-        }
-        tag.put("RefineVariances", varianceList);
+        // Clear legacy variances if present and cache new substats
+        tag.remove("RefineVariances");
+        WeaponMasteryManager.cacheSubstatsInNBT(result);
 
         return result;
     }

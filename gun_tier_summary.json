@@ -1,0 +1,1538 @@
+{
+    "PISTOL": {
+        "total_weapons": 64,
+        "ranks": {
+            "Recruit": [
+                {
+                    "id": "maxstuff:af2011",
+                    "edmg": 13.61
+                },
+                {
+                    "id": "tacz:glock_17",
+                    "edmg": 6.75
+                },
+                {
+                    "id": "tacz:m51",
+                    "edmg": 9.46
+                },
+                {
+                    "id": "tacz:mac11",
+                    "edmg": 6.28
+                },
+                {
+                    "id": "tacz:mac10",
+                    "edmg": 8.57
+                },
+                {
+                    "id": "tacz:grizzly",
+                    "edmg": 18.56
+                },
+                {
+                    "id": "maxstuff:glock_bulpup",
+                    "edmg": 6.75
+                },
+                {
+                    "id": "tacz:pm",
+                    "edmg": 6.75
+                },
+                {
+                    "id": "tacz:cz75s",
+                    "edmg": 8.28
+                },
+                {
+                    "id": "maxstuff:m17",
+                    "edmg": 7.43
+                },
+                {
+                    "id": "tacz:g44",
+                    "edmg": 5.62
+                },
+                {
+                    "id": "tacz:m1911a1",
+                    "edmg": 13.61
+                },
+                {
+                    "id": "tacz:m10",
+                    "edmg": 15.37
+                },
+                {
+                    "id": "tacz:mustang",
+                    "edmg": 6.81
+                },
+                {
+                    "id": "tacz:cz75",
+                    "edmg": 5.91
+                },
+                {
+                    "id": "tacz:cns",
+                    "edmg": 17.74
+                },
+                {
+                    "id": "tacz:m9",
+                    "edmg": 9.46
+                },
+                {
+                    "id": "tacz:mkii",
+                    "edmg": 17.74
+                },
+                {
+                    "id": "maxstuff:glock_54",
+                    "edmg": 14.84
+                },
+                {
+                    "id": "tacz:p320",
+                    "edmg": 13.06
+                },
+                {
+                    "id": "tacz:1889",
+                    "edmg": 13.01
+                },
+                {
+                    "id": "tacz:cph",
+                    "edmg": 7.43
+                },
+                {
+                    "id": "tacz:c96",
+                    "edmg": 13.61
+                },
+                {
+                    "id": "tacz:p38",
+                    "edmg": 9.46
+                },
+                {
+                    "id": "maxstuff:mk23",
+                    "edmg": 14.85
+                },
+                {
+                    "id": "tacz:g19",
+                    "edmg": 6.75
+                },
+                {
+                    "id": "tacz:g18",
+                    "edmg": 6.75
+                },
+                {
+                    "id": "tacz:p35",
+                    "edmg": 10.12
+                },
+                {
+                    "id": "tacz:g21",
+                    "edmg": 12.38
+                },
+                {
+                    "id": "tacz:b93r",
+                    "edmg": 8.77
+                },
+                {
+                    "id": "tacz:tt33",
+                    "edmg": 9.45
+                },
+                {
+                    "id": "maxstuff:c96",
+                    "edmg": 8.66
+                },
+                {
+                    "id": "tacz:m1917",
+                    "edmg": 16.56
+                },
+                {
+                    "id": "tacz:m1911",
+                    "edmg": 13.61
+                },
+                {
+                    "id": "tacz:p08",
+                    "edmg": 10.64
+                },
+                {
+                    "id": "maxstuff:glock_18c",
+                    "edmg": 6.75
+                },
+                {
+                    "id": "tacz:ppk",
+                    "edmg": 11.06
+                },
+                {
+                    "id": "tacz:m9a4",
+                    "edmg": 6.75
+                },
+                {
+                    "id": "tacz:no3",
+                    "edmg": 6.72
+                }
+            ],
+            "Trooper": [
+                {
+                    "id": "maxstuff:thunderbird_short",
+                    "edmg": 24.05
+                },
+                {
+                    "id": "maxstuff:thunderbird",
+                    "edmg": 24.05
+                },
+                {
+                    "id": "tacz:lonetrail",
+                    "edmg": 30.64
+                }
+            ],
+            "Sergeant": [
+                {
+                    "id": "tacz:deagle",
+                    "edmg": 61.45
+                },
+                {
+                    "id": "tacz:taurus943",
+                    "edmg": 45.56
+                },
+                {
+                    "id": "tacz:timeless50",
+                    "edmg": 56.95
+                },
+                {
+                    "id": "tacz:hk_mk23",
+                    "edmg": 54.86
+                },
+                {
+                    "id": "tacz:m1895",
+                    "edmg": 46.51
+                },
+                {
+                    "id": "maxstuff:1851_navy",
+                    "edmg": 42.24
+                },
+                {
+                    "id": "tacz:usp45",
+                    "edmg": 53.56
+                },
+                {
+                    "id": "tacz:deagle_golden",
+                    "edmg": 42.24
+                },
+                {
+                    "id": "tacz:rhino357",
+                    "edmg": 55.31
+                }
+            ],
+            "Captain": [
+                {
+                    "id": "tacz:500s",
+                    "edmg": 93.6
+                },
+                {
+                    "id": "tacz:rsh12",
+                    "edmg": 80.66
+                },
+                {
+                    "id": "tacz:sw686",
+                    "edmg": 73.32
+                },
+                {
+                    "id": "tacz:python",
+                    "edmg": 74.88
+                },
+                {
+                    "id": "tacz:500",
+                    "edmg": 93.6
+                },
+                {
+                    "id": "tacz:stealth",
+                    "edmg": 78.0
+                },
+                {
+                    "id": "tacz:pythons",
+                    "edmg": 74.88
+                },
+                {
+                    "id": "tacz:27",
+                    "edmg": 76.44
+                },
+                {
+                    "id": "tacz:29",
+                    "edmg": 81.12
+                }
+            ],
+            "General": [
+                {
+                    "id": "maxstuff:deagle_12g",
+                    "edmg": 324.75
+                },
+                {
+                    "id": "tacz:taurus500",
+                    "edmg": 142.19
+                },
+                {
+                    "id": "maxstuff:deagle_50bmg",
+                    "edmg": 205.61
+                },
+                {
+                    "id": "maxstuff:blicky",
+                    "edmg": 118.12
+                }
+            ]
+        }
+    },
+    "SHOTGUN": {
+        "total_weapons": 33,
+        "ranks": {
+            "Recruit": [
+                {
+                    "id": "maxstuff:db_50",
+                    "edmg": 205.61
+                },
+                {
+                    "id": "maxstuff:genesis12_dragons_breath",
+                    "edmg": 227.33
+                }
+            ],
+            "Trooper": [
+                {
+                    "id": "maxstuff:db_long_d",
+                    "edmg": 305.81
+                },
+                {
+                    "id": "maxstuff:m870t",
+                    "edmg": 394.57
+                },
+                {
+                    "id": "maxstuff:saiga12",
+                    "edmg": 324.75
+                },
+                {
+                    "id": "tacz:m1897",
+                    "edmg": 394.57
+                },
+                {
+                    "id": "tacz:db_long",
+                    "edmg": 366.98
+                },
+                {
+                    "id": "tacz:aa12",
+                    "edmg": 324.75
+                },
+                {
+                    "id": "maxstuff:genesis12",
+                    "edmg": 324.75
+                },
+                {
+                    "id": "maxstuff:sap6",
+                    "edmg": 324.75
+                }
+            ],
+            "Sergeant": [
+                {
+                    "id": "tacz:benm4",
+                    "edmg": 440.85
+                },
+                {
+                    "id": "tacz:m500a",
+                    "edmg": 455.46
+                },
+                {
+                    "id": "tacz:m1887",
+                    "edmg": 428.67
+                },
+                {
+                    "id": "maxstuff:db_short_tactical",
+                    "edmg": 475.32
+                },
+                {
+                    "id": "tacz:m870",
+                    "edmg": 455.46
+                },
+                {
+                    "id": "tacz:shorty",
+                    "edmg": 455.46
+                },
+                {
+                    "id": "tacz:m870l",
+                    "edmg": 455.46
+                },
+                {
+                    "id": "maxstuff:genesis12_fl",
+                    "edmg": 529.99
+                },
+                {
+                    "id": "tacz:m37",
+                    "edmg": 455.46
+                },
+                {
+                    "id": "tacz:db_short",
+                    "edmg": 475.32
+                },
+                {
+                    "id": "tacz:m1187",
+                    "edmg": 455.46
+                },
+                {
+                    "id": "tacz:auto5",
+                    "edmg": 455.46
+                },
+                {
+                    "id": "maxstuff:db_short_d",
+                    "edmg": 475.32
+                },
+                {
+                    "id": "tacz:m88",
+                    "edmg": 455.46
+                },
+                {
+                    "id": "tacz:940",
+                    "edmg": 455.46
+                },
+                {
+                    "id": "tacz:sawedoff",
+                    "edmg": 455.46
+                },
+                {
+                    "id": "tacz:saiga",
+                    "edmg": 590.09
+                },
+                {
+                    "id": "tacz:m1014",
+                    "edmg": 440.85
+                }
+            ],
+            "Captain": [
+                {
+                    "id": "tacz:mag10",
+                    "edmg": 974.25
+                },
+                {
+                    "id": "tacz:spas_12",
+                    "edmg": 701.46
+                }
+            ],
+            "General": [
+                {
+                    "id": "tacz:lupara",
+                    "edmg": 7339.5
+                },
+                {
+                    "id": "tacz:frolovka",
+                    "edmg": 12234.38
+                },
+                {
+                    "id": "tacz:ata",
+                    "edmg": 7350.0
+                }
+            ]
+        }
+    },
+    "RPG": {
+        "total_weapons": 8,
+        "ranks": {
+            "Recruit": [
+                {
+                    "id": "maxstuff:can_cannon",
+                    "edmg": 28.12
+                }
+            ],
+            "Trooper": [
+                {
+                    "id": "tacz:m79",
+                    "edmg": 60.0
+                },
+                {
+                    "id": "tacz:mgl",
+                    "edmg": 60.0
+                },
+                {
+                    "id": "maxstuff:m320t",
+                    "edmg": 60.0
+                },
+                {
+                    "id": "tacz:m320",
+                    "edmg": 60.0
+                }
+            ],
+            "Sergeant": [
+                {
+                    "id": "tacz:rpg7",
+                    "edmg": 140.0
+                },
+                {
+                    "id": "tacz:p60",
+                    "edmg": 140.0
+                }
+            ],
+            "Captain": [
+                {
+                    "id": "tacz:elephant",
+                    "edmg": 177.37
+                }
+            ],
+            "General": []
+        }
+    },
+    "RIFLE": {
+        "total_weapons": 130,
+        "ranks": {
+            "Recruit": [
+                {
+                    "id": "maxstuff:aks74u",
+                    "edmg": 8.23
+                },
+                {
+                    "id": "maxstuff:cursed15",
+                    "edmg": 8.04
+                },
+                {
+                    "id": "maxstuff:aks74ub",
+                    "edmg": 8.23
+                },
+                {
+                    "id": "maxstuff:ak74m",
+                    "edmg": 8.23
+                },
+                {
+                    "id": "tacz:hk416d",
+                    "edmg": 8.04
+                },
+                {
+                    "id": "tacz:l403a1",
+                    "edmg": 8.04
+                },
+                {
+                    "id": "maxstuff:mojave223",
+                    "edmg": 7.43
+                },
+                {
+                    "id": "maxstuff:ak19",
+                    "edmg": 8.23
+                },
+                {
+                    "id": "tacz:m4a1",
+                    "edmg": 8.04
+                },
+                {
+                    "id": "maxstuff:ak12",
+                    "edmg": 8.23
+                },
+                {
+                    "id": "tacz:1522",
+                    "edmg": 7.59
+                },
+                {
+                    "id": "maxstuff:ak74",
+                    "edmg": 8.23
+                },
+                {
+                    "id": "tacz:aug",
+                    "edmg": 8.86
+                },
+                {
+                    "id": "maxstuff:mk18",
+                    "edmg": 8.04
+                },
+                {
+                    "id": "maxstuff:arp",
+                    "edmg": 8.04
+                },
+                {
+                    "id": "maxstuff:colt_933",
+                    "edmg": 8.04
+                },
+                {
+                    "id": "tacz:m27rwk",
+                    "edmg": 8.04
+                },
+                {
+                    "id": "maxstuff:aug_a3",
+                    "edmg": 8.86
+                },
+                {
+                    "id": "maxstuff:adar2",
+                    "edmg": 8.86
+                },
+                {
+                    "id": "maxstuff:aug_a2",
+                    "edmg": 8.86
+                },
+                {
+                    "id": "tacz:ak74m",
+                    "edmg": 8.86
+                },
+                {
+                    "id": "maxstuff:ak107",
+                    "edmg": 8.23
+                },
+                {
+                    "id": "maxstuff:ak108",
+                    "edmg": 8.23
+                },
+                {
+                    "id": "tacz:g36k",
+                    "edmg": 8.66
+                },
+                {
+                    "id": "maxstuff:g36",
+                    "edmg": 8.66
+                },
+                {
+                    "id": "tacz:g36c",
+                    "edmg": 8.66
+                },
+                {
+                    "id": "maxstuff:mk18_burst",
+                    "edmg": 8.04
+                },
+                {
+                    "id": "maxstuff:sr16",
+                    "edmg": 8.04
+                },
+                {
+                    "id": "maxstuff:mk18_auto",
+                    "edmg": 8.04
+                },
+                {
+                    "id": "tacz:ak74",
+                    "edmg": 7.59
+                },
+                {
+                    "id": "maxstuff:sr15",
+                    "edmg": 8.04
+                }
+            ],
+            "Trooper": [
+                {
+                    "id": "maxstuff:ak63e",
+                    "edmg": 11.39
+                },
+                {
+                    "id": "maxstuff:honey_badger",
+                    "edmg": 10.12
+                },
+                {
+                    "id": "tacz:m4burst",
+                    "edmg": 9.79
+                },
+                {
+                    "id": "tacz:ar18",
+                    "edmg": 10.12
+                },
+                {
+                    "id": "tacz:ar15",
+                    "edmg": 11.39
+                },
+                {
+                    "id": "maxstuff:scar_pdw",
+                    "edmg": 10.02
+                },
+                {
+                    "id": "tacz:m1907",
+                    "edmg": 10.12
+                },
+                {
+                    "id": "tacz:l85a1",
+                    "edmg": 10.12
+                },
+                {
+                    "id": "tacz:l85a3",
+                    "edmg": 10.12
+                },
+                {
+                    "id": "tacz:qbz_95",
+                    "edmg": 10.12
+                },
+                {
+                    "id": "maxstuff:z15_a",
+                    "edmg": 9.28
+                },
+                {
+                    "id": "tacz:ak101",
+                    "edmg": 11.24
+                },
+                {
+                    "id": "tacz:ak103",
+                    "edmg": 11.9
+                },
+                {
+                    "id": "tacz:arka",
+                    "edmg": 10.02
+                },
+                {
+                    "id": "tacz:m16",
+                    "edmg": 10.12
+                },
+                {
+                    "id": "maxstuff:ak_delta",
+                    "edmg": 11.39
+                },
+                {
+                    "id": "tacz:akm",
+                    "edmg": 11.39
+                },
+                {
+                    "id": "tacz:m1",
+                    "edmg": 10.08
+                },
+                {
+                    "id": "tacz:m2",
+                    "edmg": 10.08
+                },
+                {
+                    "id": "maxstuff:ak15",
+                    "edmg": 11.39
+                },
+                {
+                    "id": "tacz:m16a4",
+                    "edmg": 9.79
+                },
+                {
+                    "id": "tacz:m16a3",
+                    "edmg": 11.39
+                },
+                {
+                    "id": "maxstuff:potassium_power",
+                    "edmg": 11.39
+                },
+                {
+                    "id": "maxstuff:qbz_97",
+                    "edmg": 10.35
+                },
+                {
+                    "id": "maxstuff:hk416c",
+                    "edmg": 9.28
+                },
+                {
+                    "id": "maxstuff:z15",
+                    "edmg": 9.28
+                },
+                {
+                    "id": "tacz:m16a2",
+                    "edmg": 9.79
+                },
+                {
+                    "id": "tacz:m16a1",
+                    "edmg": 10.12
+                },
+                {
+                    "id": "maxstuff:ak109",
+                    "edmg": 11.39
+                },
+                {
+                    "id": "tacz:type_81",
+                    "edmg": 11.14
+                },
+                {
+                    "id": "maxstuff:scar_sbr",
+                    "edmg": 10.02
+                },
+                {
+                    "id": "tacz:qbz_191",
+                    "edmg": 10.12
+                },
+                {
+                    "id": "tacz:scar_l",
+                    "edmg": 10.02
+                },
+                {
+                    "id": "maxstuff:ar18",
+                    "edmg": 10.12
+                },
+                {
+                    "id": "maxstuff:hk_g33",
+                    "edmg": 9.28
+                },
+                {
+                    "id": "maxstuff:ar762",
+                    "edmg": 11.39
+                },
+                {
+                    "id": "maxstuff:ak_alpha",
+                    "edmg": 11.39
+                },
+                {
+                    "id": "tacz:gak47",
+                    "edmg": 11.39
+                },
+                {
+                    "id": "maxstuff:scar_15p",
+                    "edmg": 10.02
+                },
+                {
+                    "id": "maxstuff:xm177",
+                    "edmg": 9.28
+                },
+                {
+                    "id": "tacz:ak47",
+                    "edmg": 11.39
+                },
+                {
+                    "id": "tacz:hk33",
+                    "edmg": 9.28
+                },
+                {
+                    "id": "tacz:xm177",
+                    "edmg": 10.12
+                },
+                {
+                    "id": "tacz:l22a1",
+                    "edmg": 10.12
+                },
+                {
+                    "id": "tacz:mk18",
+                    "edmg": 11.39
+                },
+                {
+                    "id": "maxstuff:m16a3",
+                    "edmg": 9.49
+                },
+                {
+                    "id": "tacz:famas",
+                    "edmg": 9.65
+                },
+                {
+                    "id": "maxstuff:mk47",
+                    "edmg": 11.39
+                },
+                {
+                    "id": "maxstuff:m16a2",
+                    "edmg": 9.49
+                }
+            ],
+            "Sergeant": [
+                {
+                    "id": "maxstuff:ak9",
+                    "edmg": 13.4
+                },
+                {
+                    "id": "tacz:l1a1",
+                    "edmg": 24.48
+                },
+                {
+                    "id": "maxstuff:m1_garand",
+                    "edmg": 27.6
+                },
+                {
+                    "id": "tacz:g3ka4",
+                    "edmg": 19.41
+                },
+                {
+                    "id": "maxstuff:beowulf_tcr",
+                    "edmg": 27.31
+                },
+                {
+                    "id": "tacz:hk_g3",
+                    "edmg": 19.41
+                },
+                {
+                    "id": "maxstuff:m1_garand_tac",
+                    "edmg": 24.15
+                },
+                {
+                    "id": "tacz:augs",
+                    "edmg": 13.92
+                },
+                {
+                    "id": "maxstuff:hk417",
+                    "edmg": 19.69
+                },
+                {
+                    "id": "maxstuff:beowulf_ecr",
+                    "edmg": 25.88
+                },
+                {
+                    "id": "tacz:avt40",
+                    "edmg": 26.56
+                },
+                {
+                    "id": "maxstuff:sks_wooden",
+                    "edmg": 15.47
+                },
+                {
+                    "id": "tacz:pa15",
+                    "edmg": 13.92
+                },
+                {
+                    "id": "maxstuff:brn10",
+                    "edmg": 22.5
+                },
+                {
+                    "id": "maxstuff:ar10b",
+                    "edmg": 22.5
+                },
+                {
+                    "id": "tacz:avs36",
+                    "edmg": 26.56
+                },
+                {
+                    "id": "tacz:asval",
+                    "edmg": 18.6
+                },
+                {
+                    "id": "tacz:sw15",
+                    "edmg": 13.92
+                },
+                {
+                    "id": "maxstuff:ak22",
+                    "edmg": 17.46
+                },
+                {
+                    "id": "tacz:g3a3",
+                    "edmg": 19.41
+                },
+                {
+                    "id": "tacz:auga3",
+                    "edmg": 13.92
+                },
+                {
+                    "id": "maxstuff:aa50beowulf",
+                    "edmg": 28.75
+                },
+                {
+                    "id": "maxstuff:sks_golden",
+                    "edmg": 15.47
+                },
+                {
+                    "id": "tacz:sks_tactical",
+                    "edmg": 15.47
+                },
+                {
+                    "id": "tacz:stg44",
+                    "edmg": 15.19
+                },
+                {
+                    "id": "tacz:fg42",
+                    "edmg": 23.44
+                },
+                {
+                    "id": "tacz:fn_fal",
+                    "edmg": 18.72
+                },
+                {
+                    "id": "tacz:z70",
+                    "edmg": 16.45
+                },
+                {
+                    "id": "maxstuff:mk11",
+                    "edmg": 21.8
+                },
+                {
+                    "id": "tacz:spr15hb",
+                    "edmg": 13.66
+                },
+                {
+                    "id": "tacz:sr15",
+                    "edmg": 15.19
+                },
+                {
+                    "id": "maxstuff:ar10",
+                    "edmg": 18.28
+                },
+                {
+                    "id": "tacz:m1918a2",
+                    "edmg": 23.44
+                },
+                {
+                    "id": "tacz:fal",
+                    "edmg": 25.92
+                },
+                {
+                    "id": "tacz:ptr91",
+                    "edmg": 27.49
+                },
+                {
+                    "id": "maxstuff:aug_a5",
+                    "edmg": 31.05
+                },
+                {
+                    "id": "tacz:brn16a1",
+                    "edmg": 13.92
+                },
+                {
+                    "id": "tacz:psak47",
+                    "edmg": 17.18
+                },
+                {
+                    "id": "maxstuff:ak308",
+                    "edmg": 21.52
+                }
+            ],
+            "Captain": [
+                {
+                    "id": "tacz:smle",
+                    "edmg": 42.19
+                },
+                {
+                    "id": "tacz:mini14",
+                    "edmg": 64.26
+                },
+                {
+                    "id": "tacz:scar_h",
+                    "edmg": 63.07
+                }
+            ],
+            "General": [
+                {
+                    "id": "tacz:nagant1891",
+                    "edmg": 85.64
+                },
+                {
+                    "id": "tacz:m14",
+                    "edmg": 79.48
+                },
+                {
+                    "id": "tacz:gew98",
+                    "edmg": 75.4
+                },
+                {
+                    "id": "tacz:bm59",
+                    "edmg": 79.48
+                },
+                {
+                    "id": "tacz:m1944",
+                    "edmg": 85.64
+                },
+                {
+                    "id": "tacz:mk14",
+                    "edmg": 84.91
+                },
+                {
+                    "id": "tacz:ms16",
+                    "edmg": 89.09
+                },
+                {
+                    "id": "tacz:m1938",
+                    "edmg": 85.64
+                }
+            ]
+        }
+    },
+    "SMG": {
+        "total_weapons": 44,
+        "ranks": {
+            "Recruit": [
+                {
+                    "id": "tacz:uzicar",
+                    "edmg": 5.71
+                },
+                {
+                    "id": "maxstuff:nailgun",
+                    "edmg": 1.49
+                },
+                {
+                    "id": "maxstuff:colt_mars",
+                    "edmg": 5.57
+                }
+            ],
+            "Trooper": [
+                {
+                    "id": "maxstuff:vityas",
+                    "edmg": 8.23
+                },
+                {
+                    "id": "maxstuff:ro635",
+                    "edmg": 7.59
+                },
+                {
+                    "id": "maxstuff:vector9",
+                    "edmg": 8.0
+                },
+                {
+                    "id": "maxstuff:saiga9",
+                    "edmg": 8.23
+                },
+                {
+                    "id": "tacz:mp5k",
+                    "edmg": 6.85
+                },
+                {
+                    "id": "tacz:honey",
+                    "edmg": 8.04
+                },
+                {
+                    "id": "tacz:sp5",
+                    "edmg": 8.0
+                },
+                {
+                    "id": "maxstuff:luty",
+                    "edmg": 7.42
+                },
+                {
+                    "id": "tacz:p90",
+                    "edmg": 7.89
+                },
+                {
+                    "id": "tacz:mp40",
+                    "edmg": 8.27
+                },
+                {
+                    "id": "tacz:hk5",
+                    "edmg": 8.0
+                },
+                {
+                    "id": "tacz:mp18",
+                    "edmg": 8.0
+                },
+                {
+                    "id": "maxstuff:aug_a3_para",
+                    "edmg": 8.23
+                },
+                {
+                    "id": "maxstuff:hk_mp5sd",
+                    "edmg": 6.85
+                },
+                {
+                    "id": "tacz:vector45",
+                    "edmg": 8.18
+                },
+                {
+                    "id": "tacz:mp5sd",
+                    "edmg": 6.85
+                },
+                {
+                    "id": "tacz:sten",
+                    "edmg": 8.27
+                },
+                {
+                    "id": "tacz:hk_mp5a5",
+                    "edmg": 6.85
+                },
+                {
+                    "id": "maxstuff:hk_mp5k",
+                    "edmg": 6.85
+                },
+                {
+                    "id": "tacz:aks74u",
+                    "edmg": 7.59
+                },
+                {
+                    "id": "tacz:uzi",
+                    "edmg": 7.42
+                },
+                {
+                    "id": "maxstuff:z80",
+                    "edmg": 7.35
+                },
+                {
+                    "id": "tacz:pps",
+                    "edmg": 8.26
+                },
+                {
+                    "id": "maxstuff:udp9",
+                    "edmg": 7.59
+                },
+                {
+                    "id": "tacz:skorpion",
+                    "edmg": 7.59
+                }
+            ],
+            "Sergeant": [
+                {
+                    "id": "tacz:ppsh41",
+                    "edmg": 10.61
+                },
+                {
+                    "id": "tacz:m3a1",
+                    "edmg": 9.57
+                },
+                {
+                    "id": "tacz:ump45",
+                    "edmg": 11.14
+                },
+                {
+                    "id": "maxstuff:ump9",
+                    "edmg": 11.14
+                },
+                {
+                    "id": "tacz:pp19_01",
+                    "edmg": 9.47
+                },
+                {
+                    "id": "tacz:hk53",
+                    "edmg": 9.28
+                },
+                {
+                    "id": "tacz:m1921",
+                    "edmg": 10.08
+                },
+                {
+                    "id": "tacz:pp19",
+                    "edmg": 9.98
+                },
+                {
+                    "id": "maxstuff:mp7",
+                    "edmg": 9.32
+                },
+                {
+                    "id": "maxstuff:ar57",
+                    "edmg": 9.32
+                },
+                {
+                    "id": "tacz:m1a1",
+                    "edmg": 10.08
+                },
+                {
+                    "id": "tacz:ps90",
+                    "edmg": 10.04
+                }
+            ],
+            "Captain": [
+                {
+                    "id": "tacz:vecar",
+                    "edmg": 12.86
+                },
+                {
+                    "id": "tacz:sr3m",
+                    "edmg": 17.23
+                },
+                {
+                    "id": "tacz:9a91",
+                    "edmg": 18.6
+                }
+            ],
+            "General": [
+                {
+                    "id": "tacz:bih",
+                    "edmg": 24.48
+                }
+            ]
+        }
+    },
+    "SNIPER": {
+        "total_weapons": 46,
+        "ranks": {
+            "Recruit": [
+                {
+                    "id": "maxstuff:mini_fix",
+                    "edmg": 17.88
+                },
+                {
+                    "id": "tacz:hk_sl8",
+                    "edmg": 16.64
+                },
+                {
+                    "id": "tacz:vss",
+                    "edmg": 18.6
+                },
+                {
+                    "id": "tacz:vsk",
+                    "edmg": 18.6
+                }
+            ],
+            "Trooper": [
+                {
+                    "id": "tacz:psg1",
+                    "edmg": 30.73
+                },
+                {
+                    "id": "tacz:dragunov",
+                    "edmg": 38.25
+                },
+                {
+                    "id": "tacz:springfield1873",
+                    "edmg": 44.3
+                },
+                {
+                    "id": "maxstuff:dragonuv_svd",
+                    "edmg": 41.23
+                },
+                {
+                    "id": "tacz:svt_40",
+                    "edmg": 26.56
+                },
+                {
+                    "id": "tacz:m70",
+                    "edmg": 39.38
+                },
+                {
+                    "id": "tacz:kar98",
+                    "edmg": 43.5
+                },
+                {
+                    "id": "tacz:m40a1",
+                    "edmg": 35.16
+                },
+                {
+                    "id": "maxstuff:kar98",
+                    "edmg": 36.22
+                },
+                {
+                    "id": "tacz:l42a1",
+                    "edmg": 48.52
+                },
+                {
+                    "id": "tacz:m1g",
+                    "edmg": 28.12
+                },
+                {
+                    "id": "tacz:m700",
+                    "edmg": 43.12
+                },
+                {
+                    "id": "maxstuff:scar_ssr",
+                    "edmg": 39.38
+                },
+                {
+                    "id": "maxstuff:ar338",
+                    "edmg": 26.4
+                },
+                {
+                    "id": "tacz:sr25",
+                    "edmg": 49.48
+                },
+                {
+                    "id": "tacz:m110",
+                    "edmg": 49.48
+                },
+                {
+                    "id": "maxstuff:dragonuv_svds",
+                    "edmg": 41.23
+                },
+                {
+                    "id": "maxstuff:dragonuv_svdm",
+                    "edmg": 41.23
+                },
+                {
+                    "id": "tacz:no4",
+                    "edmg": 42.19
+                }
+            ],
+            "Sergeant": [
+                {
+                    "id": "tacz:mosin",
+                    "edmg": 85.64
+                },
+                {
+                    "id": "tacz:kar98k",
+                    "edmg": 75.4
+                },
+                {
+                    "id": "maxstuff:msr",
+                    "edmg": 69.6
+                },
+                {
+                    "id": "tacz:intervention",
+                    "edmg": 107.81
+                },
+                {
+                    "id": "tacz:m1903",
+                    "edmg": 75.4
+                },
+                {
+                    "id": "tacz:1881",
+                    "edmg": 96.94
+                },
+                {
+                    "id": "tacz:1873",
+                    "edmg": 64.62
+                },
+                {
+                    "id": "tacz:m21",
+                    "edmg": 83.85
+                },
+                {
+                    "id": "maxstuff:ai_awp",
+                    "edmg": 50.02
+                },
+                {
+                    "id": "maxstuff:ai_aws",
+                    "edmg": 56.55
+                },
+                {
+                    "id": "maxstuff:mrad",
+                    "edmg": 113.1
+                },
+                {
+                    "id": "tacz:tac338",
+                    "edmg": 80.86
+                },
+                {
+                    "id": "tacz:4570",
+                    "edmg": 96.94
+                },
+                {
+                    "id": "tacz:gew96",
+                    "edmg": 70.69
+                },
+                {
+                    "id": "maxstuff:mk18_mjolnir",
+                    "edmg": 59.4
+                }
+            ],
+            "Captain": [
+                {
+                    "id": "maxstuff:gm6_lynx",
+                    "edmg": 158.44
+                },
+                {
+                    "id": "maxstuff:m82a2",
+                    "edmg": 169.97
+                },
+                {
+                    "id": "tacz:ai_awp",
+                    "edmg": 240.34
+                },
+                {
+                    "id": "tacz:l96a1",
+                    "edmg": 223.84
+                }
+            ],
+            "General": [
+                {
+                    "id": "maxstuff:excaliber",
+                    "edmg": 307.04
+                },
+                {
+                    "id": "tacz:m107",
+                    "edmg": 316.05
+                },
+                {
+                    "id": "tacz:m82a1",
+                    "edmg": 316.05
+                },
+                {
+                    "id": "tacz:m95",
+                    "edmg": 589.4
+                }
+            ]
+        }
+    },
+    "MG": {
+        "total_weapons": 33,
+        "ranks": {
+            "Recruit": [
+                {
+                    "id": "maxstuff:quatro15",
+                    "edmg": 8.66
+                },
+                {
+                    "id": "tacz:l110a1",
+                    "edmg": 9.7
+                },
+                {
+                    "id": "tacz:mg36",
+                    "edmg": 8.66
+                },
+                {
+                    "id": "maxstuff:m231",
+                    "edmg": 8.86
+                },
+                {
+                    "id": "tacz:m249",
+                    "edmg": 9.7
+                },
+                {
+                    "id": "maxstuff:aug_hbar",
+                    "edmg": 8.86
+                },
+                {
+                    "id": "tacz:rpk74",
+                    "edmg": 7.59
+                },
+                {
+                    "id": "tacz:rpk74m",
+                    "edmg": 7.59
+                }
+            ],
+            "Trooper": [
+                {
+                    "id": "tacz:l86a1",
+                    "edmg": 10.12
+                },
+                {
+                    "id": "maxstuff:rpk_74",
+                    "edmg": 11.64
+                },
+                {
+                    "id": "tacz:minigun",
+                    "edmg": 12.94
+                },
+                {
+                    "id": "maxstuff:scar_hamr",
+                    "edmg": 11.36
+                },
+                {
+                    "id": "maxstuff:rpk_74m",
+                    "edmg": 11.64
+                },
+                {
+                    "id": "maxstuff:rpk16",
+                    "edmg": 11.64
+                },
+                {
+                    "id": "tacz:mk48",
+                    "edmg": 12.94
+                },
+                {
+                    "id": "tacz:aughb",
+                    "edmg": 13.92
+                }
+            ],
+            "Sergeant": [
+                {
+                    "id": "tacz:m240b",
+                    "edmg": 22.64
+                },
+                {
+                    "id": "tacz:mg3",
+                    "edmg": 17.72
+                },
+                {
+                    "id": "tacz:pkm",
+                    "edmg": 18.0
+                },
+                {
+                    "id": "tacz:m60",
+                    "edmg": 26.52
+                },
+                {
+                    "id": "tacz:mg42",
+                    "edmg": 20.08
+                },
+                {
+                    "id": "tacz:fn_evolys",
+                    "edmg": 16.56
+                },
+                {
+                    "id": "tacz:mg08",
+                    "edmg": 22.64
+                },
+                {
+                    "id": "tacz:l7a2",
+                    "edmg": 16.82
+                },
+                {
+                    "id": "tacz:m1919",
+                    "edmg": 26.52
+                },
+                {
+                    "id": "tacz:m1918",
+                    "edmg": 23.44
+                },
+                {
+                    "id": "tacz:m60e4",
+                    "edmg": 26.52
+                }
+            ],
+            "Captain": [
+                {
+                    "id": "tacz:lewis",
+                    "edmg": 32.99
+                },
+                {
+                    "id": "tacz:rpk",
+                    "edmg": 47.61
+                }
+            ],
+            "General": [
+                {
+                    "id": "tacz:dp28",
+                    "edmg": 56.55
+                },
+                {
+                    "id": "maxstuff:dp28",
+                    "edmg": 56.55
+                },
+                {
+                    "id": "tacz:l4a1",
+                    "edmg": 87.46
+                },
+                {
+                    "id": "tacz:bren",
+                    "edmg": 87.46
+                }
+            ]
+        }
+    }
+}
