@@ -30,6 +30,9 @@ public class GunMasterySyncPacket {
                 player.getCapability(GunMasteryDataProvider.GUN_MASTERY_DATA).ifPresent(data -> {
                     data.deserializeNBT(nbt);
                 });
+                if (net.minecraft.client.Minecraft.getInstance().screen instanceof com.complextalents.client.screen.PlayerProgressionScreen screen) {
+                    screen.refresh();
+                }
             }
         });
         context.setPacketHandled(true);

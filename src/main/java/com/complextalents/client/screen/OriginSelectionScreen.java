@@ -16,17 +16,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OriginSelectionScreen extends Screen {
-    private static final int SCREEN_WIDTH = 360;
+    private static final int SCREEN_WIDTH = 520;
     private static final int SCREEN_HEIGHT = 320;
 
-    private int currentIndex = 0;
-    private List<Origin> origins = new ArrayList<>();
+    private int selectedIndex = 0;
+    private final List<Origin> origins = new ArrayList<>();
 
     private int screenX;
     private int screenY;
 
-    private Button prevButton;
-    private Button nextButton;
     private Button selectButton;
 
     public OriginSelectionScreen() {
@@ -41,26 +39,15 @@ public class OriginSelectionScreen extends Screen {
         this.screenX = (this.width - SCREEN_WIDTH) / 2;
         this.screenY = (this.height - SCREEN_HEIGHT) / 2;
 
-        int buttonY = screenY + SCREEN_HEIGHT - 28;
+        // Sort origins alphabetically by name to make the grid layout stable
+        this.origins.clear();
+        this.origins.addAll(OriginRegistry.getInstance().getAllOrigins());
+        this.origins.sort(java.util.Comparator.comparing(o -> o.getDisplayName().getString()));
 
-        // Previous button
-        this.prevButton = this.addRenderableWidget(Button.builder(Component.literal("◀"),
-                (btn) -> previousOrigin())
-                .pos(screenX + 10, buttonY)
-                .size(32, 20)
-                .build());
-
-        // Next button
-        this.nextButton = this.addRenderableWidget(Button.builder(Component.literal("▶"),
-                (btn) -> nextOrigin())
-                .pos(screenX + SCREEN_WIDTH - 42, buttonY)
-                .size(32, 20)
-                .build());
-
-        // Select button — centred
-        this.selectButton = this.addRenderableWidget(Button.builder(Component.literal("✔ Select Origin"),
+        // Add Lock In button at the bottom right
+        this.selectButton = this.addRenderableWidget(Button.builder(Component.literal("✔ Lock In"),
                 (btn) -> selectCurrentOrigin())
-                .pos(screenX + (SCREEN_WIDTH / 2) - 55, buttonY)
+                .pos(screenX + SCREEN_WIDTH - 110 - 12, screenY + SCREEN_HEIGHT - 32)
                 .size(110, 20)
                 .build());
 
@@ -68,30 +55,42 @@ public class OriginSelectionScreen extends Screen {
     }
 
     private void updateButtonStates() {
-        prevButton.active = currentIndex > 0;
-        nextButton.active = currentIndex < origins.size() - 1;
-    }
-
-    private void previousOrigin() {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateButtonStates();
-        }
-    }
-
-    private void nextOrigin() {
-        if (currentIndex < origins.size() - 1) {
-            currentIndex++;
-            updateButtonStates();
+        if (selectButton != null) {
+            selectButton.active = selectedIndex >= 0 && selectedIndex < origins.size();
         }
     }
 
     private void selectCurrentOrigin() {
-        if (currentIndex >= 0 && currentIndex < origins.size()) {
-            Origin selected = origins.get(currentIndex);
+        if (selectedIndex >= 0 && selectedIndex < origins.size()) {
+            Origin selected = origins.get(selectedIndex);
             PacketHandler.sendToServer(new SelectOriginPacket(selected.getId()));
             this.onClose();
         }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        int startX = screenX + 22;
+        int startY = screenY + 67;
+
+        for (int i = 0; i < origins.size(); i++) {
+            int col = i % 3;
+            int row = i / 3;
+            int slotX = startX + col * 58;
+            int slotY = startY + row * 52;
+
+            if (mouseX >= slotX && mouseX <= slotX + 40 && mouseY >= slotY && mouseY <= slotY + 40) {
+                this.selectedIndex = i;
+                this.updateButtonStates();
+                // Play click sound
+                if (minecraft != null) {
+                    minecraft.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
+                            net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                }
+                return true;
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
@@ -114,94 +113,138 @@ public class OriginSelectionScreen extends Screen {
         int titleW = this.font.width(title);
         g.drawString(this.font, "§6§l" + title, screenX + (SCREEN_WIDTH - titleW) / 2, screenY + 9, 0xFFFFD700, false);
 
-        // Page indicator (top right badge)
-        if (!origins.isEmpty()) {
-            String pageInfo = (currentIndex + 1) + " / " + origins.size();
-            int pw = this.font.width(pageInfo);
-            g.fill(screenX + SCREEN_WIDTH - pw - 18, screenY + 5, screenX + SCREEN_WIDTH - 6, screenY + 23, 0xFF3D321A);
-            g.drawString(this.font, "§e" + pageInfo, screenX + SCREEN_WIDTH - pw - 12, screenY + 9, 0xFFFFFF, false);
-        }
-
         // Header separator line
         g.fill(screenX, screenY + 28, screenX + SCREEN_WIDTH, screenY + 29, 0xFF5D4A18);
 
-        // Origin card
-        if (currentIndex >= 0 && currentIndex < origins.size()) {
-            renderOriginCard(g, mouseX, mouseY);
-        }
+        // Left Panel Content: Grid Header
+        String gridTitle = "ORIGINS";
+        g.drawString(this.font, "§e§l" + gridTitle, screenX + 16, screenY + 44, 0xFFFFAA00, false);
 
-        // Footer separator line
-        g.fill(screenX + 6, screenY + SCREEN_HEIGHT - 35, screenX + SCREEN_WIDTH - 6, screenY + SCREEN_HEIGHT - 34,
-                0xFF3D4258);
+        // Draw left container frame
+        int gridFrameX = screenX + 10;
+        int gridFrameY = screenY + 58;
+        int gridFrameW = 180;
+        int gridFrameH = 214;
+        g.fill(gridFrameX - 1, gridFrameY - 1, gridFrameX + gridFrameW + 1, gridFrameY + gridFrameH + 1, 0xFF2A2E44);
+        g.fill(gridFrameX, gridFrameY, gridFrameX + gridFrameW, gridFrameY + gridFrameH, 0xFF0E101A);
 
-        super.render(g, mouseX, mouseY, partialTick);
-    }
+        // Draw grid slots
+        int startX = screenX + 22;
+        int startY = screenY + 67;
+        int slotHoveredIndex = -1;
 
-    private void renderOriginCard(GuiGraphics g, int mouseX, int mouseY) {
-        Origin origin = origins.get(currentIndex);
+        for (int i = 0; i < origins.size(); i++) {
+            int col = i % 3;
+            int row = i / 3;
+            int slotX = startX + col * 58;
+            int slotY = startY + row * 52;
 
-        int cardX = screenX + 10;
-        int cardY = screenY + 36;
-        int cardWidth = SCREEN_WIDTH - 20;
-        int cardHeight = SCREEN_HEIGHT - 78;
+            boolean isSelected = (i == selectedIndex);
+            boolean isHovered = (mouseX >= slotX && mouseX <= slotX + 40 && mouseY >= slotY && mouseY <= slotY + 40);
+            if (isHovered) {
+                slotHoveredIndex = i;
+            }
 
-        // Card outer border & body background
-        g.fill(cardX - 1, cardY - 1, cardX + cardWidth + 1, cardY + cardHeight + 1, 0xFF2A2E44);
-        g.fill(cardX, cardY, cardX + cardWidth, cardY + cardHeight, 0xFF181B29);
+            // Draw slot border & background
+            int borderColor = isSelected ? 0xFFFFD700 : (isHovered ? 0xFFAAAAAA : 0xFF3D4258);
+            g.fill(slotX - 1, slotY - 1, slotX + 41, slotY + 41, borderColor);
+            g.fill(slotX, slotY, slotX + 40, slotY + 40, 0xFF141724);
 
-        int cx = cardX + 12;
-        int cy = cardY + 12;
+            // Draw origin icon or letter fallback
+            Origin origin = origins.get(i);
+            ResourceLocation activeSkillId = origin.getActiveSkillId();
+            boolean hasIcon = false;
+            if (activeSkillId != null) {
+                Skill skill = SkillRegistry.getInstance().getSkill(activeSkillId);
+                if (skill != null && skill.getIcon() != null) {
+                    g.blit(skill.getIcon(), slotX + 4, slotY + 4, 0, 0, 32, 32, 32, 32);
+                    hasIcon = true;
+                }
+            }
 
-        // Icon + Name Row
-        boolean hasIcon = false;
-        ResourceLocation activeSkillId = origin.getActiveSkillId();
-        if (activeSkillId != null) {
-            Skill skill = SkillRegistry.getInstance().getSkill(activeSkillId);
-            if (skill != null && skill.getIcon() != null) {
-                // Icon box frame
-                g.fill(cx - 2, cy - 2, cx + 38, cy + 38, 0xFFFFD700);
-                g.fill(cx - 1, cy - 1, cx + 37, cy + 37, 0xFF141724);
-                g.blit(skill.getIcon(), cx + 2, cy + 2, 0, 0, 32, 32, 32, 32);
-                hasIcon = true;
+            if (!hasIcon) {
+                String displayName = origin.getDisplayName().getString();
+                String firstChar = displayName.isEmpty() ? "?" : displayName.substring(0, 1).toUpperCase();
+                int charW = this.font.width(firstChar);
+                g.drawString(this.font, "§6" + firstChar, slotX + (40 - charW) / 2, slotY + (40 - 9) / 2, 0xFFFFD700, false);
             }
         }
 
-        int nameX = hasIcon ? cx + 46 : cx;
-        int nameY = cy + 2;
-        String displayName = origin.getDisplayName().getString();
-        g.drawString(this.font, "§6§l" + displayName.toUpperCase(), nameX, nameY, 0xFFFFAA00, false);
+        // Right Panel Content: Details of selected origin
+        if (selectedIndex >= 0 && selectedIndex < origins.size()) {
+            renderOriginDetails(g, mouseX, mouseY);
+        }
 
-        // Origin class badge
+        // Render standard widgets (Lock In button)
+        super.render(g, mouseX, mouseY, partialTick);
+
+        // Render hover tooltip over grid slots
+        if (slotHoveredIndex >= 0 && slotHoveredIndex < origins.size()) {
+            Origin hoveredOrigin = origins.get(slotHoveredIndex);
+            g.renderTooltip(this.font, hoveredOrigin.getDisplayName(), mouseX, mouseY);
+        }
+    }
+
+    private void renderOriginDetails(GuiGraphics g, int mouseX, int mouseY) {
+        Origin origin = origins.get(selectedIndex);
+
+        int panelX = screenX + 200;
+        int panelY = screenY + 36;
+        int panelWidth = 310;
+        int panelHeight = 236;
+
+        // Card outer border & body background
+        g.fill(panelX - 1, panelY - 1, panelX + panelWidth + 1, panelY + panelHeight + 1, 0xFF2A2E44);
+        g.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0xFF181B29);
+
+        int cx = panelX + 14;
+        int cy = panelY + 12;
+
+        // Name
+        String displayName = origin.getDisplayName().getString();
+        g.drawString(this.font, "§6§l" + displayName.toUpperCase(), cx, cy, 0xFFFFAA00, false);
+
+        // Class badge
         String badge = "CLASS: " + origin.getId().getPath().replace("_", " ").toUpperCase();
-        g.drawString(this.font, "§7[ §e" + badge + " §7]", nameX, nameY + 14, 0xFFFFFF, false);
+        g.drawString(this.font, "§7[ §e" + badge + " §7]", cx, cy + 14, 0xFFFFFF, false);
 
         // Divider
-        int divY = cy + 44;
-        g.fill(cardX + 8, divY, cardX + cardWidth - 8, divY + 1, 0xFF2A2E44);
+        int divY = cy + 28;
+        g.fill(panelX + 8, divY, panelX + panelWidth - 8, divY + 1, 0xFF2A2E44);
 
-        // Description
+        // Description (wrapped)
         int descY = divY + 8;
         Component description = origin.getDescription();
         if (description != null) {
-            g.drawWordWrap(this.font, description, cx, descY, cardWidth - 24, 0xBBCCDDEE);
+            g.pose().pushPose();
+            g.pose().translate((float) cx, (float) descY, 0.0f);
+            g.pose().scale(0.85f, 0.85f, 1.0f);
+            g.drawWordWrap(this.font, description, 0, 0, (int) ((panelWidth - 28) / 0.85f), 0xBBCCDDEE);
+            g.pose().popPose();
         }
 
-        // Signature Ability Card Container
+        // Signature Ability Box
+        ResourceLocation activeSkillId = origin.getActiveSkillId();
         if (activeSkillId != null) {
             Skill skill = SkillRegistry.getInstance().getSkill(activeSkillId);
             if (skill != null) {
-                int skillBoxY = descY + 68;
-                int boxWidth = cardWidth - 24;
+                int skillBoxY = panelY + 120;
+                int boxWidth = panelWidth - 28;
+
+                // Frame for skill details
+                g.fill(cx - 4, skillBoxY, cx + boxWidth + 4, skillBoxY + 1, 0xFF2D3247);
 
                 // Skill header label
-                g.drawString(this.font, "§d✦ SIGNATURE ABILITY ✦", cx + 8, skillBoxY + 6, 0xFFE040FB, false);
-                g.drawString(this.font, "§b§l" + skill.getDisplayName().getString(), cx + 8, skillBoxY + 18, 0xFF00E5FF,
-                        false);
+                g.drawString(this.font, "§d✦ SIGNATURE ABILITY ✦", cx, skillBoxY + 8, 0xFFE040FB, false);
+                g.drawString(this.font, "§b§l" + skill.getDisplayName().getString(), cx, skillBoxY + 20, 0xFF00E5FF, false);
 
-                // Skill description
+                // Skill description (wrapped)
                 String scalingText = skill.getDescription().getString();
-                g.drawWordWrap(this.font, Component.literal(scalingText), cx + 8, skillBoxY + 32, boxWidth - 16,
-                        0xAABBBCCC);
+                g.pose().pushPose();
+                g.pose().translate((float) cx, (float) (skillBoxY + 34), 0.0f);
+                g.pose().scale(0.85f, 0.85f, 1.0f);
+                g.drawWordWrap(this.font, Component.literal(scalingText), 0, 0, (int) (boxWidth / 0.85f), 0xAABBBCCC);
+                g.pose().popPose();
             }
         }
     }
@@ -209,7 +252,9 @@ public class OriginSelectionScreen extends Screen {
     @Override
     public void onClose() {
         super.onClose();
-        this.minecraft.setScreen(null);
+        if (minecraft != null) {
+            this.minecraft.setScreen(null);
+        }
     }
 
     @Override
@@ -217,3 +262,4 @@ public class OriginSelectionScreen extends Screen {
         return false;
     }
 }
+

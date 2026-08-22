@@ -37,11 +37,31 @@ public class GunTabUI {
     public List<Button> buildWidgets(Screen screen, int xOffset, int yOffset) {
         List<Button> buttons = new ArrayList<>();
 
+        // Build Ammo Table button (opens TACZ ammo assembly table)
+        ResourceLocation ammoTableBlockId = ResourceLocation.fromNamespaceAndPath("tacz", "ammo_workbench");
+        Button ammoTableBtn = Button.builder(Component.empty(),
+                (btn) -> com.complextalents.network.PacketHandler.sendToServer(new com.complextalents.network.C2SOpenGunTablePacket(ammoTableBlockId)))
+                .pos(xOffset + 438, yOffset + 5)
+                .size(20, 20)
+                .tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal("Open Ammo Assembly Table")))
+                .build();
+        buttons.add(ammoTableBtn);
+
+        // Build Gun Table button (opens TACZ gun smith table)
+        ResourceLocation gunTableBlockId = ResourceLocation.fromNamespaceAndPath("tacz", "gun_smith_table");
+        Button gunTableBtn = Button.builder(Component.empty(),
+                (btn) -> com.complextalents.network.PacketHandler.sendToServer(new com.complextalents.network.C2SOpenGunTablePacket(gunTableBlockId)))
+                .pos(xOffset + 464, yOffset + 5)
+                .size(20, 20)
+                .tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal("Open Gun Table")))
+                .build();
+        buttons.add(gunTableBtn);
+
         ResourceLocation originId = ClientOriginData.getOriginId();
         boolean originAllowed = ClassCostMatrix.getGunMasteryCostMultiplier(originId) >= 0;
 
         int xPos = xOffset + 10;
-        int yPos = yOffset + 10;
+        int yPos = yOffset + 35;
         int col = 0;
         int row = 0;
 
@@ -51,11 +71,11 @@ public class GunTabUI {
 
             int realCurrentLevel = getRealLevel(type);
             int pendingPurchases = getPending(type);
-            int currentLevel = realCurrentLevel + pendingPurchases;
+            int currentLevel = getEffectiveLevel(type, realCurrentLevel, pendingPurchases);
             int maxLevel = GunMasteryManager.getInstance().getMaxLevel(type);
 
             double accumulated = getAccumulatedDamage(type);
-            double requiredDamage = currentLevel < maxLevel ? GunMasteryManager.getInstance().getDamageRequiredForNextLevel(currentLevel) : 0;
+            double requiredDamage = currentLevel < maxLevel ? GunMasteryManager.getInstance().getDamageRequiredForNextLevel(type, currentLevel) : 0;
             boolean isDamageUnlocked = currentLevel < maxLevel && accumulated >= requiredDamage;
 
             boolean archetypeUnlocked = isArchetypeUnlocked(type);
@@ -83,11 +103,12 @@ public class GunTabUI {
                         .build();
                 upgradeBtn.active = false;
             } else {
+                int nextTargetLevel = GunMasteryManager.getInstance().getNextLevel(type, currentLevel);
                 int nextCost = getAdjustedGunCost(type, currentLevel);
                 boolean canAfford = cart.canAfford(nextCost);
 
                 int playerLevel = com.complextalents.leveling.client.ClientLevelingData.getLevel();
-                int requiredPlayerLevel = GunMasteryManager.getInstance().getRequiredPlayerLevelForTier(currentLevel + 1);
+                int requiredPlayerLevel = GunMasteryManager.getInstance().getRequiredPlayerLevelForTier(nextTargetLevel);
                 boolean isLevelUnlocked = playerLevel >= requiredPlayerLevel;
 
                 Component tooltipComponent;
@@ -101,7 +122,7 @@ public class GunTabUI {
                 } else if (!canAfford) {
                     tooltipComponent = Component.literal("\u00A7cRequires " + nextCost + " SP");
                 } else {
-                    tooltipComponent = Component.literal("\u00A7aUpgrade to Level " + (currentLevel + 1) + " (" + nextCost + " SP)");
+                    tooltipComponent = Component.literal("\u00A7aUpgrade to Level " + nextTargetLevel + " (" + nextCost + " SP)");
                 }
 
                 if (originAllowed && archetypeUnlocked && isDamageUnlocked && canAfford && isLevelUnlocked) {
@@ -136,8 +157,12 @@ public class GunTabUI {
     }
 
     public void renderBackgrounds(GuiGraphics guiGraphics, int xOffset, int yOffset, int mouseX, int mouseY, float partialTick) {
+        // Header background for workbench table access buttons
+        guiGraphics.fill(xOffset + 10, yOffset - 5, xOffset + 490, yOffset + 28, 0xFF282C3D);
+        guiGraphics.fill(xOffset + 11, yOffset - 4, xOffset + 489, yOffset + 27, 0xFF141724);
+
         int xPos = xOffset + 10;
-        int yPos = yOffset + 10;
+        int yPos = yOffset + 35;
         int col = 0;
         int row = 0;
 
@@ -145,7 +170,9 @@ public class GunTabUI {
             int cardX = xPos + (col * 240);
             int cardY = yPos + (row * 58);
 
-            int level = getRealLevel(type) + getPending(type);
+            int realCurrentLevel = getRealLevel(type);
+            int pendingPurchases = getPending(type);
+            int level = getEffectiveLevel(type, realCurrentLevel, pendingPurchases);
             int accentColor = getTierAccentColor(type, level);
 
             // Left 3px accent strip
@@ -162,8 +189,25 @@ public class GunTabUI {
     }
 
     public void renderLabels(GuiGraphics guiGraphics, net.minecraft.client.gui.Font font, int xOffset, int yOffset, int mouseX, int mouseY) {
+        // Header title
+        guiGraphics.drawString(font, "\u00A76\u00A7lGun Mastery & Equipment Tables", xOffset + 18, yOffset + 8, 0xFFFFAA00, false);
+
+        // Render item icons for Ammo Table and Gun Table buttons
+        net.minecraft.world.item.Item ammoItem = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(ResourceLocation.fromNamespaceAndPath("tacz", "workbench_a"));
+        if (ammoItem != null && ammoItem != net.minecraft.world.item.Items.AIR) {
+            net.minecraft.world.item.ItemStack ammoStack = new net.minecraft.world.item.ItemStack(ammoItem);
+            ammoStack.getOrCreateTag().putString("BlockId", "tacz:ammo_workbench");
+            guiGraphics.renderItem(ammoStack, xOffset + 440, yOffset + 7);
+        }
+
+        ResourceLocation gunBlockId = ResourceLocation.fromNamespaceAndPath("tacz", "gun_smith_table");
+        net.minecraft.world.item.Item gunItem = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(gunBlockId);
+        if (gunItem != null && gunItem != net.minecraft.world.item.Items.AIR) {
+            guiGraphics.renderItem(new net.minecraft.world.item.ItemStack(gunItem), xOffset + 466, yOffset + 7);
+        }
+
         int xPos = xOffset + 10;
-        int yPos = yOffset + 10;
+        int yPos = yOffset + 35;
 
         int col = 0;
         int row = 0;
@@ -174,11 +218,11 @@ public class GunTabUI {
 
             int realCurrentLevel = getRealLevel(type);
             int pendingPurchases = getPending(type);
-            int currentLevel = realCurrentLevel + pendingPurchases;
+            int currentLevel = getEffectiveLevel(type, realCurrentLevel, pendingPurchases);
             int maxLevel = GunMasteryManager.getInstance().getMaxLevel(type);
 
             double accumulated = getAccumulatedDamage(type);
-            double requiredDamage = currentLevel < maxLevel ? GunMasteryManager.getInstance().getDamageRequiredForNextLevel(currentLevel) : 0;
+            double requiredDamage = currentLevel < maxLevel ? GunMasteryManager.getInstance().getDamageRequiredForNextLevel(type, currentLevel) : 0;
             int nextCost = currentLevel < maxLevel ? getAdjustedGunCost(type, currentLevel) : 0;
 
             boolean archetypeUnlocked = isArchetypeUnlocked(type);
@@ -197,7 +241,7 @@ public class GunTabUI {
             }
 
             String lvlText = "\u00A77L." + realCurrentLevel + "/" + maxLevel;
-            if (pendingPurchases > 0) lvlText += " \u00A7a(+" + pendingPurchases + ")";
+            if (pendingPurchases > 0) lvlText += " \u00A7a(+" + (currentLevel - realCurrentLevel) + ")";
             guiGraphics.drawString(font, lvlText, cardX + 155, cardY + 3, 0xFF888888, false);
 
             // Top-Right Corner Progression Icon Symbol
@@ -275,46 +319,61 @@ public class GunTabUI {
         return cart.getAmount(UpgradeType.GUN, type);
     }
 
+    private int getEffectiveLevel(GunType type, int realLevel, int pendingPurchases) {
+        if (pendingPurchases <= 0) return realLevel;
+        if (type != GunType.PISTOL && realLevel == 0) {
+            return 4 + pendingPurchases;
+        }
+        return realLevel + pendingPurchases;
+    }
+
+    private java.util.Map<GunType, Integer> getEffectiveMasteryLevelsMap() {
+        java.util.Map<GunType, Integer> map = new java.util.HashMap<>();
+        player.getCapability(GunMasteryDataProvider.GUN_MASTERY_DATA).ifPresent(data -> {
+            map.putAll(data.getAllMasteryLevels());
+        });
+        for (GunType t : ARCHETYPES) {
+            int realLvl = map.getOrDefault(t, 0);
+            int pending = getPending(t);
+            map.put(t, getEffectiveLevel(t, realLvl, pending));
+        }
+        return map;
+    }
+
     private void adjust(GunType type, int delta) {
         int realLevel = getRealLevel(type);
-        int current = getPending(type);
+        int currentPending = getPending(type);
         int maxLevel = GunMasteryManager.getInstance().getMaxLevel(type);
 
+        int currentEffectiveLevel = getEffectiveLevel(type, realLevel, currentPending);
+
         if (delta > 0) {
-            int nextLevel = realLevel + current;
-            if (nextLevel < maxLevel) {
-                int cost = getAdjustedGunCost(type, nextLevel);
+            if (currentEffectiveLevel < maxLevel) {
+                int cost = getAdjustedGunCost(type, currentEffectiveLevel);
                 if (cart.canAfford(cost)) {
                     cart.modifyItem(UpgradeType.GUN, type, 1, cost);
                 }
             }
-        } else if (delta < 0 && current > 0) {
-            int removedLevelCost = getAdjustedGunCost(type, realLevel + current - 1);
+        } else if (delta < 0 && currentPending > 0) {
+            int levelBeforeThisStep = getEffectiveLevel(type, realLevel, currentPending - 1);
+            int removedLevelCost = getAdjustedGunCost(type, levelBeforeThisStep);
             cart.modifyItem(UpgradeType.GUN, type, -1, -removedLevelCost);
         }
     }
 
     private int getAdjustedGunCost(GunType type, int currentLevel) {
         ResourceLocation originId = ClientOriginData.getOriginId();
-        AtomicInteger cost = new AtomicInteger(0);
-        player.getCapability(GunMasteryDataProvider.GUN_MASTERY_DATA).ifPresent(data -> {
-            cost.set(GunMasteryManager.getInstance().getSPCostForNextLevel(type, currentLevel, data, originId));
-        });
-        return cost.get();
+        java.util.Map<GunType, Integer> effectiveMap = getEffectiveMasteryLevelsMap();
+        return GunMasteryManager.getInstance().getSPCostForNextLevel(type, currentLevel, effectiveMap, originId);
     }
 
     private String getTierSymbol(GunType type, int level) {
-        if (type == GunType.PISTOL) {
-            if (level < 5) return "✧";
-            if (level < 9) return "✦";
-            if (level < 13) return "❖";
-            return "❂";
-        } else {
-            if (level < 6) return "✦";
-            if (level < 11) return "❖";
-            if (level < 16) return "❂";
-            return "⚜";
-        }
+        if (level <= 0) return "✧";
+        if (level <= 4) return "✧";
+        if (level <= 8) return "✦";
+        if (level <= 12) return "❖";
+        if (level <= 16) return "❂";
+        return "⚜";
     }
 
     private String getTierSymbolFormatted(GunType type, int level) {
@@ -326,45 +385,30 @@ public class GunTabUI {
     }
 
     private String getTierName(GunType type, int level) {
-        if (type == GunType.PISTOL) {
-            if (level < 5) return "Recruit";
-            if (level < 9) return "Trooper";
-            if (level < 13) return "Sergeant";
-            return "Captain";
-        } else {
-            if (level < 6) return "Trooper";
-            if (level < 11) return "Sergeant";
-            if (level < 16) return "Captain";
-            return "General";
-        }
+        if (level <= 0) return "Unlearned";
+        if (level <= 4) return "Recruit";
+        if (level <= 8) return "Trooper";
+        if (level <= 12) return "Sergeant";
+        if (level <= 16) return "Captain";
+        return "General";
     }
 
     private String getTierColor(GunType type, int level) {
-        if (type == GunType.PISTOL) {
-            if (level < 5) return "\u00A77";
-            if (level < 9) return "\u00A7a";
-            if (level < 13) return "\u00A79";
-            return "\u00A7d";
-        } else {
-            if (level < 6) return "\u00A7a";
-            if (level < 11) return "\u00A79";
-            if (level < 16) return "\u00A7d";
-            return "\u00A76";
-        }
+        if (level <= 0) return "\u00A78"; // Dark Gray
+        if (level <= 4) return "\u00A7f"; // White
+        if (level <= 8) return "\u00A7a"; // Green
+        if (level <= 12) return "\u00A79"; // Blue
+        if (level <= 16) return "\u00A75"; // Purple
+        return "\u00A76";                 // Gold
     }
 
     private int getTierAccentColor(GunType type, int level) {
-        if (type == GunType.PISTOL) {
-            if (level < 5) return 0xFF888888;
-            if (level < 9) return 0xFF55FF55;
-            if (level < 13) return 0xFF5555FF;
-            return 0xFFFF55FF;
-        } else {
-            if (level < 6) return 0xFF55FF55;
-            if (level < 11) return 0xFF5555FF;
-            if (level < 16) return 0xFFFF55FF;
-            return 0xFFFFAA00;
-        }
+        if (level <= 0) return 0xFF4B5563;
+        if (level <= 4) return 0xFF3B82F6; // Blue
+        if (level <= 8) return 0xFF10B981; // Green
+        if (level <= 12) return 0xFF6366F1; // Indigo
+        if (level <= 16) return 0xFFA855F7; // Purple
+        return 0xFFF59E0B;                 // Amber Gold
     }
 
     private String formatStatGainSummary(GunType type, int level) {
@@ -411,9 +455,19 @@ public class GunTabUI {
         int priPct = (int) Math.round(primaryBonus * 100);
         int secPct = (int) Math.round(secondaryBonus * 100);
 
+        String dmgName = switch (type) {
+            case PISTOL -> "Pistol Dmg";
+            case RIFLE -> "Rifle Dmg";
+            case SNIPER -> "Sniper Dmg";
+            case SHOTGUN -> "Shotgun Dmg";
+            case SMG -> "SMG Dmg";
+            case MG -> "MG Dmg";
+            default -> "Gun Dmg";
+        };
+
         StringBuilder sb = new StringBuilder();
         if (dmgPct > 0) {
-            sb.append("\u00A7a+").append(dmgPct).append("% Dmg ");
+            sb.append("\u00A7a+").append(dmgPct).append("% ").append(dmgName).append(" ");
         }
         if (priPct > 0) {
             if (sb.length() > 0) sb.append("\u00A77| ");

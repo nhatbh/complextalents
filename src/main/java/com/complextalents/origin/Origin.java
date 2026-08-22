@@ -115,12 +115,11 @@ public interface Origin extends PassiveOwner {
             StatType.FLAT_AD,
             StatType.PERCENT_AD,
             StatType.AP,
-            StatType.ARMOR_PEN,
             StatType.LUCK_CRIT,
             StatType.MAX_HP,
             StatType.MAX_MANA,
-            StatType.HEAL_AND_SHIELD,
-            StatType.CDR
+            StatType.CDR,
+            StatType.SUMMONING_POWER
     );
 
     /**
@@ -218,6 +217,10 @@ public interface Origin extends PassiveOwner {
     default double getLevelArmorBonus(int playerLevel) {
         if (playerLevel <= 1) return 0.0;
         return Math.round((playerLevel - 1) * 1.2);
+    }
+
+    default double getLevelArmorBonus(int playerLevel, @org.jetbrains.annotations.Nullable net.minecraft.server.level.ServerPlayer player) {
+        return getLevelArmorBonus(playerLevel);
     }
 
     /**

@@ -100,16 +100,16 @@ public class SpellbladeData {
                 .orElse(false);
     }
 
-    public static float getVirtualMana(Player player) {
-        if (player == null) return 0.0f;
+    public static boolean hasFreeCast(Player player) {
+        if (player == null) return false;
         return player.getCapability(SpellbladeDataProvider.SPELLBLADE_DATA)
                 .resolve()
-                .map(IPlayerSpellbladeData::getVirtualMana)
-                .orElse(0.0f);
+                .map(IPlayerSpellbladeData::hasFreeCast)
+                .orElse(false);
     }
 
-    public static void setVirtualMana(Player player, float amount) {
-        player.getCapability(SpellbladeDataProvider.SPELLBLADE_DATA).ifPresent(cap -> cap.setVirtualMana(amount));
+    public static void setFreeCast(Player player, boolean freeCast) {
+        player.getCapability(SpellbladeDataProvider.SPELLBLADE_DATA).ifPresent(cap -> cap.setFreeCast(freeCast));
         if (player instanceof ServerPlayer serverPlayer) {
             syncToClient(serverPlayer);
         }
@@ -123,7 +123,7 @@ public class SpellbladeData {
                     cap.hasImbueCharge(),
                     cap.getOverchargeTicks(),
                     cap.isOverchargeStance(),
-                    cap.getVirtualMana()
+                    cap.hasFreeCast()
             ), player);
         });
     }

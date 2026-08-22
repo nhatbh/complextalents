@@ -36,18 +36,6 @@ public class ModCreativeTabs {
                         output.accept(ModItems.EXPERT_WEAPON_GEM.get());
                         output.accept(ModItems.MASTER_WEAPON_GEM.get());
 
-                        // Magic Augment Gems
-                        output.accept(ModItems.POWER_GEM.get());
-                        output.accept(ModItems.MANA_SAVER_GEM.get());
-                        output.accept(ModItems.HASTE_GEM.get());
-                        output.accept(ModItems.SPEED_GEM.get());
-                        output.accept(ModItems.PRECISION_GEM.get());
-                        output.accept(ModItems.FATAL_GEM.get());
-                        output.accept(ModItems.VAMPIRISM_GEM.get());
-                        output.accept(ModItems.PIERCE_GEM.get());
-                        output.accept(ModItems.OVERCLOCK_GEM.get());
-                        output.accept(ModItems.RECAST_GEM.get());
-
                         // Populate Weapon Case NBT variants (All weapons case for all rarities, then specific path cases)
                         for (DynamicCasePoolBuilder.CrateRarity rarity : DynamicCasePoolBuilder.CrateRarity.values()) {
                             output.accept(MysteriousLootItem.createWeaponCase(null, rarity));

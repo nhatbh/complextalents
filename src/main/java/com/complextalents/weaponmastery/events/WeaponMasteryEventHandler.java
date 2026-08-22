@@ -13,6 +13,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -40,7 +42,7 @@ public class WeaponMasteryEventHandler {
 
     /**
      * Cleanly intercepts PoiseDamageEvent to apply:
-     * 1. REAPER: -60% Poise Damage penalty (40% remaining), suppressed for Assassin
+     * 1. REAPER: -40% Poise Damage penalty (60% remaining), suppressed for Assassin
      * origin stealth backstabs.
      * 2. COLOSSUS: +100% to +750% Poise Damage burst during active Overwhelming
      * Force sprint attack.
@@ -61,10 +63,55 @@ public class WeaponMasteryEventHandler {
 
                     if (!suppressPenalty) {
                         float original = event.getAmount();
-                        event.setAmount(original * 0.40f);
+                        event.setAmount(original * 0.60f);
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Blocks all health damage dealt by REAPER weapons when the target has an active
+     * poise shield. Reaper is a glass-cannon archetype that excels against unshielded
+     * targets — it cannot brute-force through poise by dealing overwhelming damage.
+     * The Assassin Ambush backstab is exempt: a true backstab ignores poise entirely.
+     */
+    @SubscribeEvent
+    public static void onLivingHurt(LivingHurtEvent event) {
+        if (!(event.getSource().getEntity() instanceof ServerPlayer attacker)) return;
+        LivingEntity victim = event.getEntity();
+        if (victim.level().isClientSide) return;
+
+        ItemStack mainHand = attacker.getMainHandItem();
+        if (mainHand.isEmpty()) return;
+
+        IWeaponMasteryData.WeaponPath path = WeaponMasteryManager.getInstance().getWeaponPath(mainHand);
+        if (path != IWeaponMasteryData.WeaponPath.REAPER) return;
+
+        // Assassin Ambush backstab bypasses poise entirely
+        if (com.complextalents.impl.assassin.origin.AssassinOrigin.isAssassin(attacker)) {
+            if (attacker.hasEffect(com.complextalents.impl.assassin.effect.AssassinEffects.AMBUSH.get())) {
+                return;
+            }
+        }
+
+        // If the target has an active, non-exhausted poise shield, block all health damage
+        if (com.nhatbh.basedefensev2.api.PoiseAPI.hasPoise(victim)
+                && !com.nhatbh.basedefensev2.api.PoiseAPI.isExhausted(victim)) {
+            // Assassins run the full backstab pipeline on poise-negated hits:
+            // Expose Weakness, Disengage speed burst, and backstab FX still fire
+            // even though 0 HP damage was dealt.
+            if (com.complextalents.impl.assassin.origin.AssassinOrigin.isAssassin(attacker)
+                    && com.complextalents.impl.assassin.util.AssassinUtils.isBackstab(attacker, victim)) {
+                com.complextalents.impl.assassin.events.AssassinOriginHandler.handleOriginBackstab(attacker, victim);
+                // Break stealth: poise absorbed the hit so no damage event fires,
+                // but the assassin must still be revealed and consume their gauge.
+                if (attacker.hasEffect(com.complextalents.impl.assassin.effect.AssassinEffects.SHADOW_WALK.get())) {
+                    com.complextalents.impl.assassin.events.ShadowWalkEventHandler.breakStealthOnAttack(attacker, victim, true);
+                }
+            }
+            event.setAmount(0.0f);
+            event.setCanceled(true);
         }
     }
 

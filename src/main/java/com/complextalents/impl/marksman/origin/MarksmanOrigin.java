@@ -43,7 +43,7 @@ public class MarksmanOrigin {
                         StatType.LUCK_CRIT
                 )
                 .passiveSkill("Hỏa Lực Hiện Đại",
-                        "Bậc thầy duy nhất có khả năng hiểu và vận hành các loại súng hỏa lực modern (TACZ).")
+                        "Bậc thầy duy nhất có khả năng hiểu và vận hành các loại súng hỏa lực modern (TACZ). Giảm 50% tổng Máu Tối Đa nhận được từ mọi nguồn.")
                 .activeSkill("Truy Cùng Diệt Tận",
                         "Lướt giải khống chế, ổn định nhịp tim 60 BPM và vào trạng thái Adrenaline hỗ trợ định vị Reticle đỏ.",
                         ResourceLocation.fromNamespaceAndPath("complextalents", "textures/skill/marksman/relentless_pursuit.png"))

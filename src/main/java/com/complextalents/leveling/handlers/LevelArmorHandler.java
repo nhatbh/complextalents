@@ -34,6 +34,7 @@ public class LevelArmorHandler {
     private static final UUID LEVEL_ARMOR_UUID = UUIDHelper.generateAttributeModifierUUID("leveling", "player_level_armor");
     private static final UUID LEVEL_TOUGHNESS_UUID = UUIDHelper.generateAttributeModifierUUID("leveling", "player_level_toughness");
     private static final UUID LEVEL_HEALTH_UUID = UUIDHelper.generateAttributeModifierUUID("leveling", "player_level_health");
+    private static final UUID MARKSMAN_HEALTH_PENALTY_UUID = UUIDHelper.generateAttributeModifierUUID("origin", "marksman_health_penalty");
 
     private static final double ARMOR_PER_LEVEL = 1.2;
     private static final double TOUGHNESS_PER_LEVEL = 0.3;
@@ -100,13 +101,24 @@ public class LevelArmorHandler {
         net.minecraft.resources.ResourceLocation originId = com.complextalents.origin.OriginManager.getOriginId(player);
         com.complextalents.origin.Origin origin = originId != null ? com.complextalents.origin.OriginRegistry.getInstance().getOrigin(originId) : null;
 
-        double armorAmount = Math.round(origin != null ? origin.getLevelArmorBonus(level) : (level <= 1 ? 0.0 : Math.pow(level - 1, 1.15) * 1.0));
+        double armorAmount = Math.round(origin != null ? origin.getLevelArmorBonus(level, player) : (level <= 1 ? 0.0 : Math.pow(level - 1, 1.15) * 1.0));
         double toughnessAmount = origin != null ? origin.getLevelToughnessBonus(level) : (level <= 1 ? 0.0 : Math.min(35.0, Math.pow(level - 1, 1.1) * 0.25));
         double healthAmount = Math.round(origin != null ? origin.getLevelHealthBonus(level) : (level <= 1 ? 0.0 : Math.pow(level - 1, 1.15) * 0.2696));
 
         applyOrUpdateModifier(player, Attributes.ARMOR, LEVEL_ARMOR_UUID, "Level Armor Bonus", armorAmount);
         applyOrUpdateModifier(player, Attributes.ARMOR_TOUGHNESS, LEVEL_TOUGHNESS_UUID, "Level Toughness Bonus", toughnessAmount);
         applyOrUpdateModifier(player, Attributes.MAX_HEALTH, LEVEL_HEALTH_UUID, "Level Max Health Bonus", healthAmount);
+
+        // Apply 50% Max HP total reduction for Marksman origin
+        if (com.complextalents.impl.marksman.origin.MarksmanOrigin.ID.equals(originId)) {
+            applyOrUpdateModifier(player, Attributes.MAX_HEALTH, MARKSMAN_HEALTH_PENALTY_UUID, "Marksman Health Penalty", -0.50, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        } else {
+            removeAttributeModifier(player, Attributes.MAX_HEALTH, MARKSMAN_HEALTH_PENALTY_UUID);
+        }
+
+        if (player.getHealth() > player.getMaxHealth()) {
+            player.setHealth(player.getMaxHealth());
+        }
     }
 
     /**
@@ -117,16 +129,21 @@ public class LevelArmorHandler {
         removeAttributeModifier(player, Attributes.ARMOR, LEVEL_ARMOR_UUID);
         removeAttributeModifier(player, Attributes.ARMOR_TOUGHNESS, LEVEL_TOUGHNESS_UUID);
         removeAttributeModifier(player, Attributes.MAX_HEALTH, LEVEL_HEALTH_UUID);
+        removeAttributeModifier(player, Attributes.MAX_HEALTH, MARKSMAN_HEALTH_PENALTY_UUID);
     }
 
     private static void applyOrUpdateModifier(Player player, Attribute attribute, UUID uuid, String name, double amount) {
+        applyOrUpdateModifier(player, attribute, uuid, name, amount, AttributeModifier.Operation.ADDITION);
+    }
+
+    private static void applyOrUpdateModifier(Player player, Attribute attribute, UUID uuid, String name, double amount, AttributeModifier.Operation operation) {
         if (attribute == null) return;
         AttributeInstance instance = player.getAttribute(attribute);
         if (instance == null) return;
 
         instance.removeModifier(uuid);
-        if (amount > 0) {
-            instance.addTransientModifier(new AttributeModifier(uuid, name, amount, AttributeModifier.Operation.ADDITION));
+        if (amount != 0) {
+            instance.addTransientModifier(new AttributeModifier(uuid, name, amount, operation));
         }
     }
 

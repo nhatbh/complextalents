@@ -6,6 +6,8 @@ import com.complextalents.gunmastery.GunRefinementManager;
 import com.complextalents.gunmastery.classification.GunClassificationManager;
 import com.complextalents.item.RefinementGemItem;
 import com.complextalents.refinement.GunRefinementRecipe;
+import com.complextalents.refinement.MagicRefinementManager;
+import com.complextalents.refinement.MagicRefinementRecipe;
 import com.complextalents.refinement.WeaponRefinementRecipe;
 import com.complextalents.weaponmastery.WeaponMasteryManager;
 import net.minecraft.nbt.CompoundTag;
@@ -55,12 +57,13 @@ public class RefiningAnvilMenu extends AbstractContainerMenu {
         super(ModMenuTypes.REFINING_ANVIL_MENU.get(), containerId);
         this.access = access;
 
-        // Slot 0: Base Weapon / Gun (18, 36)
+        // Slot 0: Base Weapon / Gun / Magic Item (18, 36)
         this.addSlot(new Slot(this.inputContainer, BASE_SLOT, 18, 36) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return WeaponMasteryManager.getInstance().getWeaponTier(stack) > 0 ||
-                       GunClassificationManager.getGunTier(stack) > 0;
+                       GunClassificationManager.getGunTier(stack) > 0 ||
+                       MagicRefinementManager.getMagicItemTier(stack) > 0;
             }
         });
 
@@ -73,7 +76,8 @@ public class RefiningAnvilMenu extends AbstractContainerMenu {
                     public boolean mayPlace(ItemStack stack) {
                         return stack.getItem() instanceof RefinementGemItem ||
                                WeaponRefinementRecipe.isRecyclableWeapon(stack) ||
-                               GunRefinementRecipe.isRecyclableGun(stack);
+                               GunRefinementRecipe.isRecyclableGun(stack) ||
+                               MagicRefinementRecipe.isRecyclableMagicItem(stack);
                     }
                 });
             }
@@ -146,11 +150,14 @@ public class RefiningAnvilMenu extends AbstractContainerMenu {
 
         int weaponTier = WeaponMasteryManager.getInstance().getWeaponTier(baseStack);
         int gunTier = GunClassificationManager.getGunTier(baseStack);
+        int magicTier = MagicRefinementManager.getMagicItemTier(baseStack);
 
         if (weaponTier > 0) {
             createWeaponResult(baseStack, weaponTier);
         } else if (gunTier > 0) {
             createGunResult(baseStack, gunTier);
+        } else if (magicTier > 0) {
+            createMagicResult(baseStack, magicTier);
         } else {
             this.resultContainer.setItem(0, ItemStack.EMPTY);
         }
@@ -298,12 +305,81 @@ public class RefiningAnvilMenu extends AbstractContainerMenu {
         this.resultContainer.setItem(0, result);
     }
 
+    private void createMagicResult(ItemStack baseStack, int startingTier) {
+        int maxCumRank = 20;
+        int maxXp = MagicRefinementManager.getXpForRank(maxCumRank);
+        int currentXp = MagicRefinementManager.getRefineXp(baseStack);
+        int baseRank = MagicRefinementManager.getBaseCumulativeLevelForStartingTier(startingTier);
+
+        this.maxXp = maxXp;
+        this.currentBaseXp = currentXp;
+        this.currentLevel = MagicRefinementManager.getRankFromXp(currentXp, maxCumRank);
+
+        if (currentXp >= maxXp) {
+            this.resultContainer.setItem(0, ItemStack.EMPTY);
+            return;
+        }
+
+        int xpNeeded = maxXp - currentXp;
+        int totalXpGained = 0;
+
+        boolean isScrollTarget = MagicRefinementManager.isScroll(baseStack);
+
+        for (int i = 0; i < MATERIAL_SLOT_COUNT; i++) {
+            if (xpNeeded <= 0) break;
+
+            ItemStack matStack = this.inputContainer.getItem(MATERIAL_SLOT_START + i);
+            if (matStack.isEmpty()) continue;
+
+            if (matStack.getItem() instanceof RefinementGemItem gemItem) {
+                int gemsAvailable = matStack.getCount();
+                int xpPerGem = MagicRefinementManager.getGemXpValue(gemItem.getTier());
+
+                int gemsNeeded = (int) Math.ceil((double) xpNeeded / xpPerGem);
+                int take = Math.max(1, Math.min(gemsAvailable, gemsNeeded));
+
+                int xpFromThisSlot = take * xpPerGem;
+                this.consumedPerSlot[i] = take;
+                totalXpGained += xpFromThisSlot;
+                xpNeeded -= xpFromThisSlot;
+            } else if (MagicRefinementRecipe.isRecyclableMagicItem(matStack) && matStack != baseStack) {
+                boolean sameType = MagicRefinementManager.isScroll(matStack) == isScrollTarget;
+                if (sameType) {
+                    int recyclableXp = MagicRefinementRecipe.getRecyclableXp(matStack);
+                    if (recyclableXp > 0) {
+                        this.consumedPerSlot[i] = 1;
+                        totalXpGained += recyclableXp;
+                        xpNeeded -= recyclableXp;
+                    }
+                }
+            }
+        }
+
+        if (totalXpGained <= 0) {
+            this.resultContainer.setItem(0, ItemStack.EMPTY);
+            return;
+        }
+
+        this.calculatedTotalXpGained = totalXpGained;
+        int newXp = Math.min(maxXp, currentXp + totalXpGained);
+        int newCumRank = MagicRefinementManager.getRankFromXp(newXp, maxCumRank);
+        this.calculatedTargetLevel = newCumRank;
+
+        ItemStack result = baseStack.copy();
+        result.setCount(1);
+        MagicRefinementManager.applyRefinementDataToStack(result, newXp);
+
+        this.resultContainer.setItem(0, result);
+    }
+
     private void onTakeResult(Player player, ItemStack resultStack) {
         if (!resultStack.isEmpty()) {
             if (WeaponMasteryManager.getInstance().getWeaponTier(resultStack) > 0) {
                 WeaponMasteryManager.cacheSubstatsInNBT(resultStack);
             } else if (GunClassificationManager.getGunTier(resultStack) > 0) {
                 GunRefinementManager.calculateSubstats(resultStack);
+            } else if (MagicRefinementManager.getMagicItemTier(resultStack) > 0) {
+                MagicRefinementManager.calculateSubstats(resultStack);
             }
         }
 
@@ -359,6 +435,25 @@ public class RefiningAnvilMenu extends AbstractContainerMenu {
                     if (!player.getInventory().add(resetSacrifice)) {
                         player.drop(resetSacrifice, false);
                     }
+                } else if (MagicRefinementRecipe.isRecyclableMagicItem(matStack)) {
+                    ItemStack resetSacrifice = matStack.copy();
+                    resetSacrifice.setCount(1);
+                    int sacStartingTier = MagicRefinementManager.getMagicItemTier(resetSacrifice);
+                    int sacBaseRank = MagicRefinementManager.getBaseCumulativeLevelForStartingTier(sacStartingTier);
+                    int sacStartingXp = MagicRefinementManager.getXpForRank(sacBaseRank);
+
+                    CompoundTag sacTag = resetSacrifice.getOrCreateTag();
+                    sacTag.putInt("RefineXP", sacStartingXp);
+                    sacTag.putInt("RefineRank", 0);
+                    sacTag.putLong("RefineSeed", new Random().nextLong());
+                    sacTag.remove("RefineSubstats");
+                    sacTag.remove("RefineHistory");
+                    sacTag.remove("RefinedSpells");
+
+                    matStack.shrink(1);
+                    if (!player.getInventory().add(resetSacrifice)) {
+                        player.drop(resetSacrifice, false);
+                    }
                 }
             }
         }
@@ -382,12 +477,15 @@ public class RefiningAnvilMenu extends AbstractContainerMenu {
 
         int weaponTier = WeaponMasteryManager.getInstance().getWeaponTier(baseStack);
         int gunTier = GunClassificationManager.getGunTier(baseStack);
+        int magicTier = MagicRefinementManager.getMagicItemTier(baseStack);
 
-        if (weaponTier <= 0 && gunTier <= 0) return;
+        if (weaponTier <= 0 && gunTier <= 0 && magicTier <= 0) return;
 
         int maxCumRank = weaponTier > 0 ? WeaponMasteryManager.getMaxCumulativeRankForStartingTier(weaponTier) : 20;
-        int currentXp = weaponTier > 0 ? WeaponMasteryManager.getRefineXp(baseStack) : GunRefinementManager.getRefineXp(baseStack);
-        int currentRank = weaponTier > 0 ? WeaponMasteryManager.getRankFromXp(currentXp, maxCumRank) : GunRefinementManager.getRankFromXp(currentXp, maxCumRank);
+        int currentXp = weaponTier > 0 ? WeaponMasteryManager.getRefineXp(baseStack) :
+                        (gunTier > 0 ? GunRefinementManager.getRefineXp(baseStack) : MagicRefinementManager.getRefineXp(baseStack));
+        int currentRank = weaponTier > 0 ? WeaponMasteryManager.getRankFromXp(currentXp, maxCumRank) :
+                          (gunTier > 0 ? GunRefinementManager.getRankFromXp(currentXp, maxCumRank) : MagicRefinementManager.getRankFromXp(currentXp, maxCumRank));
 
         int targetRank = requestedTargetLevel;
         if (targetRank <= 0) {
@@ -396,7 +494,8 @@ public class RefiningAnvilMenu extends AbstractContainerMenu {
             targetRank = Math.min(maxCumRank, Math.max(currentRank, targetRank));
         }
 
-        int targetXp = weaponTier > 0 ? WeaponMasteryManager.getXpForRank(targetRank) : GunRefinementManager.getXpForRank(targetRank);
+        int targetXp = weaponTier > 0 ? WeaponMasteryManager.getXpForRank(targetRank) :
+                       (gunTier > 0 ? GunRefinementManager.getXpForRank(targetRank) : MagicRefinementManager.getXpForRank(targetRank));
         int xpNeeded = targetXp - currentXp;
 
         // Clear existing material slots back to inventory first
@@ -428,9 +527,8 @@ public class RefiningAnvilMenu extends AbstractContainerMenu {
 
                 ItemStack invStack = inv.getItem(invSlot);
                 if (invStack.getItem() instanceof RefinementGemItem gemItem) {
-                    int xpPerGem = weaponTier > 0 ?
-                            WeaponMasteryManager.getGemXpValue(gemItem.getTier()) :
-                            GunRefinementManager.getGemXpValue(gemItem.getTier());
+                    int xpPerGem = weaponTier > 0 ? WeaponMasteryManager.getGemXpValue(gemItem.getTier()) :
+                                   (gunTier > 0 ? GunRefinementManager.getGemXpValue(gemItem.getTier()) : MagicRefinementManager.getGemXpValue(gemItem.getTier()));
 
                     int gemsAvailable = invStack.getCount();
                     int gemsNeeded = (int) Math.ceil((double) xpNeeded / xpPerGem);
@@ -493,13 +591,15 @@ public class RefiningAnvilMenu extends AbstractContainerMenu {
                 slot.onQuickCraft(itemstack1, itemstack);
             } else if (index >= 11 && index < 47) { // From Inventory
                 if (WeaponMasteryManager.getInstance().getWeaponTier(itemstack1) > 0 ||
-                    GunClassificationManager.getGunTier(itemstack1) > 0) {
+                    GunClassificationManager.getGunTier(itemstack1) > 0 ||
+                    MagicRefinementManager.getMagicItemTier(itemstack1) > 0) {
                     if (!this.moveItemStackTo(itemstack1, BASE_SLOT, BASE_SLOT + 1, false)) {
                         return ItemStack.EMPTY;
                     }
                 } else if (itemstack1.getItem() instanceof RefinementGemItem ||
                            WeaponRefinementRecipe.isRecyclableWeapon(itemstack1) ||
-                           GunRefinementRecipe.isRecyclableGun(itemstack1)) {
+                           GunRefinementRecipe.isRecyclableGun(itemstack1) ||
+                           MagicRefinementRecipe.isRecyclableMagicItem(itemstack1)) {
                     if (!this.moveItemStackTo(itemstack1, MATERIAL_SLOT_START, MATERIAL_SLOT_START + MATERIAL_SLOT_COUNT, false)) {
                         return ItemStack.EMPTY;
                     }

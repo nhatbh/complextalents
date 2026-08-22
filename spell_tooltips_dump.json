@@ -1,0 +1,1857 @@
+[
+  {
+    "spell_id": "traveloptics:vortex_of_the_deep",
+    "display_name": "Vortex Of The Deep",
+    "description": "Conjures a massive water vortex that pulls entities toward its center, slowing them and applying Wet effect. The vortex periodically discharges Boltstrikes to devastate those within it\u0027s radius.",
+    "school": "traveloptics:aqua",
+    "max_level": 6
+  },
+  {
+    "spell_id": "traveloptics:bubble_spray",
+    "display_name": "Bubble Spray",
+    "description": "Sprays a stream of bubbles that deals damage, slows affected entities, and applies the Wet effect.",
+    "school": "traveloptics:aqua",
+    "max_level": 10
+  },
+  {
+    "spell_id": "traveloptics:hydroshot",
+    "display_name": "Hydroshot",
+    "description": "Fires a small water bolt that deals damage, slows enemies, and applies the wet effect.",
+    "school": "traveloptics:aqua",
+    "max_level": 10
+  },
+  {
+    "spell_id": "traveloptics:aqua_missiles",
+    "display_name": "Aqua Missiles",
+    "description": "Fires a rapid succession of water bolts that deal damage and home in on nearby entities.",
+    "school": "traveloptics:aqua",
+    "max_level": 5
+  },
+  {
+    "spell_id": "traveloptics:jet_steam",
+    "display_name": "Jet Steam",
+    "description": "Generates a powerful surge that propels the caster at high speed while using elytra or swimming underwater, granting temporary water breathing.",
+    "school": "traveloptics:aqua",
+    "max_level": 1
+  },
+  {
+    "spell_id": "traveloptics:echo_of_the_abyss",
+    "display_name": "Echo Of The Abyss",
+    "description": "Summons a Hullbreaker to fight and protect the caster. Can be used as an underwater mount, granting water breathing while ridden. Can only be obtained from defeating Hullbreaker.",
+    "school": "traveloptics:aqua",
+    "max_level": 2
+  },
+  {
+    "spell_id": "traveloptics:rainfall",
+    "display_name": "Rainfall",
+    "description": "Calls down a rainstorm that grants immunity to negative effects for the caster and applies the Wet effect to everyone within.",
+    "school": "traveloptics:aqua",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:flood_slash",
+    "display_name": "Flood Slash",
+    "description": "Unleashes a aqua-infused slash projectile that deals damage and converts damage dealt into Mana for the caster. Hitting multiple entities increases the caster\u0027s Mana regeneration temporarily.",
+    "school": "traveloptics:aqua",
+    "max_level": 5
+  },
+  {
+    "spell_id": "traveloptics:coral_barrage",
+    "display_name": "Coral Barrage",
+    "description": "Cast to mark targets, unleashing a barrage of coral bolts at the end of recasting. Bolts damage, pierce, and shatter into shrapnel, dealing AoE damage within a 2-block radius.",
+    "school": "traveloptics:aqua",
+    "max_level": 5
+  },
+  {
+    "spell_id": "traveloptics:tidal_grasp",
+    "display_name": "Tidal Grasp",
+    "description": "Pulls a targeted entity toward the caster, striking them with force to deal damage while applying a Stun and the Wet effect.",
+    "school": "traveloptics:aqua",
+    "max_level": 6
+  },
+  {
+    "spell_id": "traveloptics:floodgate",
+    "display_name": "Floodgate",
+    "description": "Imposes a damage cap on the caster, ensuring that any incoming damage exceeding the threshold is reduced to the cap. When damage surpasses the threshold, waves surge outward in all directions, dealing damage.",
+    "school": "traveloptics:aqua",
+    "max_level": 8
+  },
+  {
+    "spell_id": "traveloptics:tsunami",
+    "display_name": "Tsunami",
+    "description": "Call forth an unstoppable tide that surges forward, slamming into enemies, dealing damage, sweeping them away, and applying wet effect.",
+    "school": "traveloptics:aqua",
+    "max_level": 4
+  },
+  {
+    "spell_id": "traveloptics:skypiercer",
+    "display_name": "Skypiercer",
+    "description": "Calls down a phantom Trident Of Eternal Maelstrom from the sky, dealing impact damage in an area. The trident remains, pulsing for 50% of the impact damage at intervals and inflicting Tidal Torment, causing thrown Trident Of Eternal Maelstrom to explode in an area and slowing affected enemies. Requires Trident Of The Eternal Maelstrom to cast this spell.",
+    "school": "traveloptics:aqua",
+    "max_level": 1
+  },
+  {
+    "spell_id": "traveloptics:serpentide",
+    "display_name": "Serpentide",
+    "description": "Summons a cascade of Storm Serpents that strike down in a straight line one after another, dealing damage and applying Wet effect. Damage ignores i-frames. Can only be obtained by defeating Scylla.",
+    "school": "traveloptics:aqua",
+    "max_level": 4
+  },
+  {
+    "spell_id": "traveloptics:the_howling_tempest",
+    "display_name": "The Howling Tempest",
+    "description": "After a 3s charge, conjures a raging tempest that rains down water spears, dealing damage and applying Wet effect. Each hit has a 50% chance to either increase the Wet amplifier (up to 10x) or extend its duration by 2s. Can only be obtained by defeating Scylla.",
+    "school": "traveloptics:aqua",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:herald_of_acropolis",
+    "display_name": "Herald Of Acropolis",
+    "description": "Conjures a loyal Clawdian to fight and protect you. Can only be obtained by defeating a Clawdian.",
+    "school": "traveloptics:aqua",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:overflow",
+    "display_name": "Overflow",
+    "description": "Causes water to erupt from the ground that spreads into a wide pool. The pool continuously applies Aqua Spell Power scaling Wet effect to anything inside it. The Wet effect grows stronger over the spell’s duration, reaching its maximum intensity as the spell ends.",
+    "school": "traveloptics:aqua",
+    "max_level": 4
+  },
+  {
+    "spell_id": "traveloptics:vigor_siphon",
+    "display_name": "Vigor Siphon",
+    "description": "Cast to connect with your nearest summon. Damage dealt by the summon heals you, and your damage heals the summon in return. If you die while tethered, the linked summon is sacrificed to restore you with 8hp",
+    "school": "irons_spellbooks:blood",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:blood_howl",
+    "display_name": "Blood Howl",
+    "description": "Cast to shoot wither howitzer projectiles at your target. This spell has recasts.",
+    "school": "irons_spellbooks:blood",
+    "max_level": 5
+  },
+  {
+    "spell_id": "traveloptics:eek",
+    "display_name": "Eek",
+    "description": "Eek yourself and eek targeted entity.",
+    "school": "irons_spellbooks:blood",
+    "max_level": 1
+  },
+  {
+    "spell_id": "traveloptics:nocturnal_swarm",
+    "display_name": "Nocturnal Swarm",
+    "description": "Cast to summon deadly swarm of Vesper.",
+    "school": "irons_spellbooks:blood",
+    "max_level": 8
+  },
+  {
+    "spell_id": "traveloptics:call_forth_the_dead_king",
+    "display_name": "Call Forth The Dead King",
+    "description": "Summons an Enraged Dead King boss to challenge you. Defeating it grants a higher chance of obtaining high-quality loot, including the exclusive spell Blackout. The Enraged Dead King can cast additional powerful spells. The high mana cost is intentional to make it only cast-able from scrolls. Can only be found in Catacombs Chests.",
+    "school": "irons_spellbooks:blood",
+    "max_level": 1
+  },
+  {
+    "spell_id": "traveloptics:abyssal_blast",
+    "display_name": "Abyssal Blast",
+    "description": "Cast to fire a devastating beam of abyssal energy in a straight line. While active, caster cannot move or look around. Can only be found by defeating The Leviathan.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:shadowed_miasma",
+    "display_name": "Shadowed Miasma",
+    "description": "Inflicts nearby enemies with the abyssal curse effect and infuses your weapon with the same curse. Dealing damage to an enemy during the effect has a chance to spread the effect to nearby enemies.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:spectral_blink",
+    "display_name": "Spectral Blink",
+    "description": "After activation, the caster has 3 seconds. During this time, they can teleport to any entity they are looking at, even through walls. Any entities within the teleportation range will be revealed to the caster.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:reversal",
+    "display_name": "Reversal",
+    "description": "Reverses any incoming damage with increased power. Additionally, it can copy incoming projectiles.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:the_forgotten_beast",
+    "display_name": "The Forgotten Beast",
+    "description": "Summon Forsaken, a powerful, rideable creature that fight alongside you. However, beware: its will is not fully tameable, and its ferocity may prove unpredictable. Can only be obtained by defeating Forsaken.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 2
+  },
+  {
+    "spell_id": "traveloptics:blackout",
+    "display_name": "Blackout",
+    "description": "Creates a lingering anti-magic field that suppresses abilities within its radius. Players caught in the zone are unable to cast spells and use items. Moving within the field inflicts small damage. Can only be obtained by defeating the Enraged Dead King.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:psychic_bolt",
+    "display_name": "Psychic Bolt",
+    "description": "Select multiple targets on cast. On recast end, fires small projectiles that confuse targets on hit, making them prioritize attacking nearby non-player entities.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:apex_harvest",
+    "display_name": "Apex Harvest",
+    "description": "Cast to consume up to 5 nearby Soul Apex and recharges the Cursed Wraithblade, instantly switching it into its Apex-Shot mode. Requires Cursed Wraithblade to cast this spell.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 1
+  },
+  {
+    "spell_id": "traveloptics:void_eruption",
+    "display_name": "Void Eruption",
+    "description": "Shoots Void Howitzer Projectiles that explode and summon void runes in a radius. This spell can be recast.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:cursed_minefield",
+    "display_name": "Cursed Minefield",
+    "description": "On cast, summons Leviathan’s abyssal mines in a radius around the player. The mine placement is random, but they cannot go below the caster’s Y level.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 8
+  },
+  {
+    "spell_id": "traveloptics:orbital_void",
+    "display_name": "Orbital Void",
+    "description": "Shoots Abyssal Orbs in a circular pattern around the caster. These orbs home in on the nearest enemy, relentlessly tracking and damaging them. Crouch cast to spread orbs across multiple random targets.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 5
+  },
+  {
+    "spell_id": "traveloptics:vortex_punch",
+    "display_name": "Vortex Uppercut",
+    "description": "Create a Void Vortex, pulling enemies in. Teleport into it and unleash a crushing uppercut, dealing damage and sending foes flying upward.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:eternal_sentinel",
+    "display_name": "Eternal Sentinel",
+    "description": "Conjure a friendly Ender Golem to protect and fight by your side. Can only be obtained by defeating Ender Golem.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:astral_sense",
+    "display_name": "Astral Sense",
+    "description": "Reveals the pathfinder of nearby entities in a radius. Normal casting alerts the caster about nearby threats, while crouch casting helps sense loot, traps, and valuables like Arcane Debris.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:conjure_void_tomes",
+    "display_name": "Conjure Void Tomes",
+    "description": "Summon magical Void Tomes to fight by your side and unleash spell attacks upon your enemies. Can be found in Void Cathedral.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 5
+  },
+  {
+    "spell_id": "traveloptics:blink",
+    "display_name": "Blink",
+    "description": "Low-cost, short-ranged teleport in the direction you\u0027re moving. Works omni-directionally.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:supernova",
+    "display_name": "Supernova",
+    "description": "Summon a collapsing star that builds in intensity over time. After a short delay, it erupts in a massive explosion, dealing heavy damage and gives birth to a supermassive black hole. The black hole pulls in nearby entities and continues to deal damage within its radius. Requires Wand of Final Light to cast this spell.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 1
+  },
+  {
+    "spell_id": "traveloptics:shear_of_the_stars",
+    "display_name": "Shear Of The Stars",
+    "description": "Summons a Dragon Spirit that flies forward, passing through blocks and damaging enemies it hits. It leaves behind a Stellar Trail that deals damage over time to nearby enemies. Dragon damage ignores I-Frames. Requires Stellothorn to cast this spell.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 1
+  },
+  {
+    "spell_id": "traveloptics:lingering_strain",
+    "display_name": "Lingering Strain",
+    "description": "Grants a effect; During that any burst damage you get will be split into 4 different smaller damage and will be dealt over time giving the caster time to recover.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:ashen_breath",
+    "display_name": "Ashen Breath",
+    "description": "Exhale a cloud of darkening ash, damaging and blinding creatures in its reach.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 10
+  },
+  {
+    "spell_id": "traveloptics:annihilation",
+    "display_name": "Annihilation",
+    "description": "Targets enemies and nukes them with a devastating spell that deals massive damage. Survivors are inflicted with a radiation effect, preventing incoming healing. Can only be  found from Toxic Caves ruins and by slaying Nucleepers.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:lava_bomb",
+    "display_name": "Lava Bomb",
+    "description": "Launches projectiles at a 45° angle in front of the caster, that explodes upon impact, creating lava pools. When cast, the spell absorbs nearby lava.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:burning_judgment",
+    "display_name": "Burning Judgment",
+    "description": "Creates Ignis flame strikes on the ground in a straight line for a duration. If the caster\u0027s health falls below 50%, the strikes transform into soul-fired flame strikes. Can only be obtained by defeating Ignis.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 6
+  },
+  {
+    "spell_id": "traveloptics:meteor_storm",
+    "display_name": "Meteor Storm",
+    "description": "Summons Ignis fireballs to rain down from the sky. If the caster\u0027s health falls below 50%, the fireballs transform into soul-fired projectiles.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 6
+  },
+  {
+    "spell_id": "traveloptics:ignited_onslaught",
+    "display_name": "Ignited Onslaught",
+    "description": "Cast to summon a Ignited Revenant \u0026 Berserker to protect you and fight for you. Can only be obtained by defeating Ignited Revenant and Ignited Berserker.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 5
+  },
+  {
+    "spell_id": "traveloptics:extinction",
+    "display_name": "Extinction",
+    "description": "Calls down a massive asteroid, smashing into the ground with incredible force. The impact devastates a large area, leaving a crater that erupts with searing heat, turning all within to ash. Only cast-able from Gauntlet Of Extinction.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 1
+  },
+  {
+    "spell_id": "traveloptics:gyro_slash",
+    "display_name": "Gyro Slash",
+    "description": "Transform the Infernal Devastator into Blade Mode, slashing entities in front of you. Using an Infernal Devastator Evo 2 or higher creates a slash projectile that pulls in nearby entities with a fiery vacuum effect before bursting into flame jets. Only cast-able from Infernal Devastator.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 1
+  },
+  {
+    "spell_id": "traveloptics:flames_reborn",
+    "display_name": "Flames Reborn",
+    "description": "Ignite a wave of fire, marking your place in time. If you fall, the flames will resurrect you at your marked spot, restoring you to the health you had when it was cast.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:nullflare",
+    "display_name": "Nullflare",
+    "description": "Cast to inflict Nullflare Ice on enemies, or Crouch Cast to inflict Nullflare Fire; when Ice meets Fire, or vice versa, it triggers a Nullflare Blast, dealing damage. Additional effect stacks increase the Blast damage.",
+    "school": "irons_spellbooks:holy",
+    "max_level": 5
+  },
+  {
+    "spell_id": "traveloptics:sword_of_the_ancients",
+    "display_name": "Sword Of The Ancients\u0027",
+    "description": "Summon kobolediator to fight by your side and unleash devastating melee attacks upon your enemies. Can only be obtained by defeating Kobolediator.",
+    "school": "irons_spellbooks:holy",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:summon_desert_dwellers",
+    "display_name": "Desert Dwellers",
+    "description": "Summon Koboletons and Wadjet to fight by your side. Can only be obtained by defeating Koboletons and Wadjet.",
+    "school": "irons_spellbooks:holy",
+    "max_level": 5
+  },
+  {
+    "spell_id": "traveloptics:halberd_horizon",
+    "display_name": "Halberd Horizon",
+    "description": "Summons Phantom Halberds in the battlefield around the caster, damaging entities caught in it. Can only be obtained by defeating Maledictus.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 6
+  },
+  {
+    "spell_id": "traveloptics:despair",
+    "display_name": "Despair",
+    "description": "Launches a magical Axe Blade forward on the look direction piercing through entities in its path. Deals damage to all caught in its trajectory.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 10
+  },
+  {
+    "spell_id": "traveloptics:sticky_steed_summon",
+    "display_name": "Sticky Steed Summon",
+    "description": "Conjure a Gum Worm that will follow you around, let you ride. Also protect, and fight for you. Can only be obtained by defeating Gum Worm.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:cursed_revenants",
+    "display_name": "Cursed Revenants",
+    "description": "Cast to summon random Draugr variants that\u0027ll protect you and fight for you.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 5
+  },
+  {
+    "spell_id": "traveloptics:axe_of_the_doomed",
+    "display_name": "Axe Of The Doomed",
+    "description": "Summon a Aptrgangr to fight by your side and unleash devastating melee attacks upon your enemies. Can only be obtained by defeating Aptrgangr.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:em_pulse",
+    "display_name": "EM-Pulse",
+    "description": "Cast to stun nearby entities for a short duration. Stunned enemies has a visual indicator.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 5
+  },
+  {
+    "spell_id": "traveloptics:rapid_laser",
+    "display_name": "Rapid Laser",
+    "description": "Continuously shoots Harbinger\u0027s pew-pew laser to targeted entities.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 10
+  },
+  {
+    "spell_id": "traveloptics:death_laser",
+    "display_name": "Death Laser",
+    "description": "Cast to shoot The Harbinger Laser beam in a straight line. While active, caster cannot move or look around.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 3
+  },
+  {
+    "spell_id": "traveloptics:magnetron_deployment",
+    "display_name": "Magnetron Deployment",
+    "description": "Cast to deploy a Magnetron that will follow, protect, and fight for you. Can only be obtained by defeating Magnetron.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 1
+  },
+  {
+    "spell_id": "traveloptics:mechanized_predator",
+    "display_name": "Mechanized Predators",
+    "description": "Cast to deploy Watchers and The Prowler that will follow, protect, and fight for you. Can only be obtained by defeating The Watcher and The Prowler.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 5
+  },
+  {
+    "spell_id": "traveloptics:galena_shatter",
+    "display_name": "Galena Shatter",
+    "description": "Slams the ground with Galena energy, releasing a magnetic shockwave that damages enemies and converts any Scarlet or Azure Charges into corresponding Marks. Marked targets take continuous damage over 1.5s, ignoring i-frames. When the effect ends, a final magnetic burst triggers, pulling opposite-marked entities and pushing away those with the same mark. Requires Galenic Polarizer to cast this spell.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 1
+  },
+  {
+    "spell_id": "traveloptics:stele_cascade",
+    "display_name": "Stele Cascade",
+    "description": "Summons Ancient Desert Stele in a radius, crashing down and dealing damage.",
+    "school": "irons_spellbooks:nature",
+    "max_level": 6
+  },
+  {
+    "spell_id": "traveloptics:aerial_collapse",
+    "display_name": "Aerial Collapse",
+    "description": "Inflict an effect that lifts enemies into the air for 2.5 seconds before crushing them down to the floor, dealing percentage-based damage to their health. The damage dealt ignores any kind of damage cap.",
+    "school": "irons_spellbooks:nature",
+    "max_level": 5
+  },
+  {
+    "spell_id": "traveloptics:primal_pack",
+    "display_name": "Primal Pack",
+    "description": "Summon Vallumraptors and Tremorsaurus to fight by your side. Can only be obtained by defeating Vallumraptors and Tremorsaurus.",
+    "school": "irons_spellbooks:nature",
+    "max_level": 5
+  },
+  {
+    "spell_id": "traveloptics:primordial_steed",
+    "display_name": "Primordial Steed",
+    "description": "Summon a Atlatitan that will follow you around, let you ride. Also protect, and fight for you. Can only be obtained by defeating Luxtructosaurus.",
+    "school": "irons_spellbooks:nature",
+    "max_level": 3
+  },
+  {
+    "spell_id": "irons_spellbooks:acupuncture",
+    "display_name": "Acupuncture",
+    "description": "Around a targeted creature, create a field of blood needles in every direction, shooting down and healing you for 25% of damage done",
+    "school": "irons_spellbooks:blood",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:blood_needles",
+    "display_name": "Blood Needles",
+    "description": "Create a ring of needles made from blood and fire them forward, skewering targets and healing you for 25% of damage done",
+    "school": "irons_spellbooks:blood",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:blood_slash",
+    "display_name": "Blood Slash",
+    "description": "Slash forward to send out a concentrated blade of blood, slicing through creatures and healing for 15% of damage done.",
+    "school": "irons_spellbooks:blood",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:blood_step",
+    "display_name": "Blood Step",
+    "description": "Instantaneously teleport to where you are looking, or directly behind any targeted creature. Gain a short duration of true invisibility upon reaching your destination.",
+    "school": "irons_spellbooks:blood",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:devour",
+    "display_name": "Devour",
+    "description": "Pull in a nearby creature and attack them with a bite, leeching 15% of damage done as health. If the creature is killed, you temporarily gain additional max HP. Created by the Ancient Magician known as Yorhavich.",
+    "school": "irons_spellbooks:blood",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:heartstop",
+    "display_name": "Heartstop",
+    "description": "Cast to inflict yourself with Heartstop, an effect that makes you temporarily invulnerable. However, once it wears off, you take 50% of all damage accumulated while under its effects.",
+    "school": "irons_spellbooks:blood",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:raise_dead",
+    "display_name": "Raise Dead",
+    "description": "Cast to summon undead minions from the earth beneath you. The higher the power, the better equipment they will have.",
+    "school": "irons_spellbooks:blood",
+    "max_level": 6
+  },
+  {
+    "spell_id": "irons_spellbooks:ray_of_siphoning",
+    "display_name": "Ray of Siphoning",
+    "description": "Hold to cast a ray of necrotic energy that siphons health from creatures it hits, damaging them and healing you for 100% of damage done.",
+    "school": "irons_spellbooks:blood",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:wither_skull",
+    "display_name": "Wither Skull",
+    "description": "Launch a wither skull forward that explodes in a small radius around the impact. The higher the level, the faster the projectile.",
+    "school": "irons_spellbooks:blood",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:sacrifice",
+    "display_name": "Sacrifice",
+    "description": "Target one of your magic summons to cause them to explode, killing them instantly, and dealing large damage in the area around them. The summon\u0027s remaining health boosts the damage dealt and radius of explosion.",
+    "school": "irons_spellbooks:blood",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:counterspell",
+    "display_name": "Counterspell",
+    "description": "Cast to interrupt any targeted magical process, such as a casting creature or a magical projectile.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 1
+  },
+  {
+    "spell_id": "irons_spellbooks:dragon_breath",
+    "display_name": "Dragon\u0027s Breath",
+    "description": "Hold to spew a cone of dragon breath forwards. Each time a creature is hit, there is a chance to create a pool of dragon breath at their feet.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:evasion",
+    "display_name": "Evasion",
+    "description": "Cast to imbue yourself with ender energy. Upon being attacked while under its effects, you will immediately teleport within a short radius and avoid taking any damage. Only a finite amount of hits can be dodged before the effect immediately wears off.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:magic_arrow",
+    "display_name": "Magic Arrow",
+    "description": "Hold to charge a piercing arrow made of arcane energy. This arrow has no gravity and can travel through blocks.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:magic_missile",
+    "display_name": "Magic Missile",
+    "description": "Shoot a bolt of concentrated arcane magic. Also a trademark of every wizard.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:starfall",
+    "display_name": "Starfall",
+    "description": "Target a single area and continuously rain down arcane comets from above for the duration of the spell",
+    "school": "irons_spellbooks:ender",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:teleport",
+    "display_name": "Teleport",
+    "description": "Instantaneously teleport to where you are looking, leaving nothing but a cloud of ender energy behind.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:summon_ender_chest",
+    "display_name": "Summon Ender Chest",
+    "description": "Apparate your Ender Chest inventory upon casting.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 1
+  },
+  {
+    "spell_id": "irons_spellbooks:recall",
+    "display_name": "Recall",
+    "description": "Warps you back to your spawn location, or world spawn if there is none.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 1
+  },
+  {
+    "spell_id": "irons_spellbooks:portal",
+    "display_name": "Portal",
+    "description": "Creates two portals that allows players to travel back and forth between them.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 3
+  },
+  {
+    "spell_id": "irons_spellbooks:echoing_strikes",
+    "display_name": "Echoing Strikes",
+    "description": "Non-magical attacks will create an echo, producing a spectral sword to slam down in an area, or a piercing magical arrow to shoot the same target. Echoes do a percent of the original attack\u0027s damage.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:black_hole",
+    "display_name": "Black Hole",
+    "description": "Around a targeted location, create a fissure into the void, manifesting a black hole that will suck in nearby creatures and slowly crush them to death",
+    "school": "irons_spellbooks:ender",
+    "max_level": 6
+  },
+  {
+    "spell_id": "irons_spellbooks:summon_swords",
+    "display_name": "Summon Swords",
+    "description": "Conjure a trio of spectral armaments to aid in battle: a brawling shortsword, a quick rapier, and a tanking claymore. Created by the Ancient Magician known as Hazentouvel.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:shadow_slash",
+    "display_name": "Shadow Slash",
+    "description": "Dash forward with a arcing slash of arcane energy, striking creatures in an area. Projectiles hit are deflected. Scales off held weapon\u0027s melee damage and enchantments.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:arcane_shackle",
+    "display_name": "Arcane Shackle",
+    "description": "Hurl a bundle of arcane chains. Upon hitting a creature, cause three chains to bind it to the ground, each applying a tethering force. On miss, three chains lash out to unique nearby creatures. Chains can be damaged or dispelled.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 8
+  },
+  {
+    "spell_id": "irons_spellbooks:gravity_fissure",
+    "display_name": "Gravity Fissure",
+    "description": "Split from the air a miniature Black Hole that moves forward in a line, pulling nearby creatures into its gravity well, but dealing no damage.",
+    "school": "irons_spellbooks:ender",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:chain_creeper",
+    "display_name": "Chain Creeper",
+    "description": "Around a targeted creature or block, conjure a ring of creeper heads that falls to the ground and explodes. Any creature killed by this blast will conjure another, smaller, ring of creeper heads. This can chain multiple times.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 6
+  },
+  {
+    "spell_id": "irons_spellbooks:fang_strike",
+    "display_name": "Fang Strike",
+    "description": "Conjure a line of evoker fangs in front of you, in classic illager fashion.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:fang_ward",
+    "display_name": "Fang Ward",
+    "description": "Conjure protective rings of evoker fangs around you, in classic illager fashion.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 8
+  },
+  {
+    "spell_id": "irons_spellbooks:firecracker",
+    "display_name": "Firecracker",
+    "description": "Instantaneously conjure a firework where you look that explodes in a small radius around it.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:gust",
+    "display_name": "Gust",
+    "description": "Conjure a strong gust of wind, knocking back creatures in a conical shape, causing damage if they impact a wall",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:invisibility",
+    "display_name": "Invisibility",
+    "description": "Cast to briefly grant yourself true invisibility, which hides armor and held items, but immediately wears off upon dealing damage. Mobs also lose aggro.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 6
+  },
+  {
+    "spell_id": "irons_spellbooks:lob_creeper",
+    "display_name": "Lob Creeper",
+    "description": "Lob the head of a creeper forward that explodes in a medium radius around the impact. The higher the level, the faster the projectile.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:shield",
+    "display_name": "Shield",
+    "description": "Conjure a stationary shield of arcane energy where you look that will block projectiles and prevent creatures from passing.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:spectral_hammer",
+    "display_name": "Spectral Hammer",
+    "description": "Conjure a spectral hammer out from where you look that will mine all connected stone-type blocks in a cube where it hits, leaving only ores and rubble behind.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:summon_horse",
+    "display_name": "Summon Horse",
+    "description": "Conjure a spectral steed that will follow you around and only let you ride. The horse\u0027s speed, health, and jump height scales with spell power.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:summon_vex",
+    "display_name": "Summon Vex",
+    "description": "Cast to conjure vexes that will follow, protect, and fight for you.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:slow",
+    "display_name": "Slow",
+    "description": "Apply the Slowed effect to a targeted creature, decreasing its movement speed, attack speed, mining speed, and cast time reduction for a duration.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 4
+  },
+  {
+    "spell_id": "irons_spellbooks:arrow_volley",
+    "display_name": "Arrow Volley",
+    "description": "Around a targeted creature or block, summon a rolling wave of magical arrows from the sky.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 6
+  },
+  {
+    "spell_id": "irons_spellbooks:wololo",
+    "display_name": "Wololo",
+    "description": "Wololo!",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 1
+  },
+  {
+    "spell_id": "irons_spellbooks:throw",
+    "display_name": "Throw",
+    "description": "Cast to throw your held item, dealing a base damage plus damage normally inflicted by the item.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:fang_swirl",
+    "display_name": "Fang Swirl",
+    "description": "Target a creature or block to conjure a spiraling zone of evoker fangs in a radius.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 8
+  },
+  {
+    "spell_id": "irons_spellbooks:scapegoat",
+    "display_name": "Scapegoat",
+    "description": "Conjure a magical decoy in the form of a goat, which takes aggro from nearby hostile mobs and runs off into the distance, taunting them for a duration.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 3
+  },
+  {
+    "spell_id": "irons_spellbooks:blaze_storm",
+    "display_name": "Blaze Storm",
+    "description": "Hold to unleash a barrage of blaze fireballs, shooting rapidly but wildly in front of you and igniting any creatures or blocks hit.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:burning_dash",
+    "display_name": "Burning Dash",
+    "description": "Quickly launch yourself forward in a haze of fire, searing creatures you pass through while in a blaze.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:fireball",
+    "display_name": "Fireball",
+    "description": "Manifest and throw a ball of fire, exploding and dealing massive damage on impact.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:firebolt",
+    "display_name": "Firebolt",
+    "description": "Shoot a small projectile of fire, igniting whatever it hits.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:fire_breath",
+    "display_name": "Fire Breath",
+    "description": "Hold to spew a cone of fire outwards, igniting creatures and blocks in its path.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:magma_bomb",
+    "display_name": "Magma Bomb",
+    "description": "Launch a bomb made from magma, exploding on impact and leaving a field of fire where it lands",
+    "school": "irons_spellbooks:fire",
+    "max_level": 8
+  },
+  {
+    "spell_id": "irons_spellbooks:wall_of_fire",
+    "display_name": "Wall of Fire",
+    "description": "Recast to place anchor points, which erupts into a wall of fire when the cast finishes, or when the maximum length is reached. This wall blocks projectiles and ignites creatures that pass through it.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:heat_surge",
+    "display_name": "Heat Surge",
+    "description": "Emanate a surge of fiery magic, igniting and rending creatures in a radius around you. Rended creatures have reduced armor.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 6
+  },
+  {
+    "spell_id": "irons_spellbooks:flaming_strike",
+    "display_name": "Flaming Strike",
+    "description": "Unleash a sweeping melee attack in the form of a wreath of flames. This spell is uninterruptible. The damage scales off of your held weapon\u0027s melee damage and enchantments.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:scorch",
+    "display_name": "Scorch",
+    "description": "In a targeted area, erupt a scorch of fiery magic, damaging creatures in the zone and leaving a field of fire.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:flaming_barrage",
+    "display_name": "Flaming Barrage",
+    "description": "Repeatedly cast to shoot individual small fireballs, which home towards your cursor, or the creature your cursor is targeting.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:fire_arrow",
+    "display_name": "Fire Arrow",
+    "description": "Aim an arrow made of fiery magic that will deal direct damage on impact and explode for half damage in a small radius around it. It flies straight for a duration before gravity affects it.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:raise_hell",
+    "display_name": "Raise Hell",
+    "description": "Slam down your weapon to wreath a fiery shockwave in a large radius around you. Damage scales based on the held weapon.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:angel_wing",
+    "display_name": "Angel Wings",
+    "description": "Cast to gain wings made of holy energy, acting as an elytra, for a brief period of time.",
+    "school": "irons_spellbooks:holy",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:blessing_of_life",
+    "display_name": "Blessing of Life",
+    "description": "Cast to target any creature, showing a glowing outline. Completing the cast will heal this creature.",
+    "school": "irons_spellbooks:holy",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:cloud_of_regeneration",
+    "display_name": "Cloud of Regeneration",
+    "description": "Hold to slowly heal friendly creatures within a radius around you.",
+    "school": "irons_spellbooks:holy",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:fortify",
+    "display_name": "Fortify",
+    "description": "Upon casting, fortify every friendly creature within a radius around you, giving them temporary HP.",
+    "school": "irons_spellbooks:holy",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:greater_heal",
+    "display_name": "Greater Heal",
+    "description": "A more powerful but much slower version of heal, this spell will completely heal yourself upon being casted.",
+    "school": "irons_spellbooks:holy",
+    "max_level": 1
+  },
+  {
+    "spell_id": "irons_spellbooks:guiding_bolt",
+    "display_name": "Guiding Bolt",
+    "description": "Fire a slow bolt of holy energy. Creatures hit will gain the Guided effect, homing nearby projectiles in towards them",
+    "school": "irons_spellbooks:holy",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:healing_circle",
+    "display_name": "Healing Circle",
+    "description": "Around a targeted creature or block, place a stationary circle of holy magic that heals allies within",
+    "school": "irons_spellbooks:holy",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:heal",
+    "display_name": "Heal",
+    "description": "Cast to infuse yourself with holy energy and immediately regain health.",
+    "school": "irons_spellbooks:holy",
+    "max_level": 8
+  },
+  {
+    "spell_id": "irons_spellbooks:sunbeam",
+    "display_name": "Sunbeam",
+    "description": "Funnel the power of the heavens into a beam of holy energy from above, smiting targets in an area.",
+    "school": "irons_spellbooks:holy",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:wisp",
+    "display_name": "Wisp",
+    "description": "Conjure a projectile of holy energy that will float towards nearby targets and deal damage upon impact.",
+    "school": "irons_spellbooks:holy",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:divine_smite",
+    "display_name": "Divine Smite",
+    "description": "With a fervor of holy energy, swing forth your weapon, doing a melee area attack. This spell is uninterruptible. The damage scales off of your held weapon\u0027s melee damage and enchantments.",
+    "school": "irons_spellbooks:holy",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:haste",
+    "display_name": "Haste",
+    "description": "To a targeted creature, or yourself if no creature is targeted, apply the Hastened effect, increasing movement speed, attack speed, mining speed, and cast time reduction for a duration.",
+    "school": "irons_spellbooks:holy",
+    "max_level": 4
+  },
+  {
+    "spell_id": "irons_spellbooks:cleanse",
+    "display_name": "Cleanse",
+    "description": "Pray to a divine magic to cleanse yourself and nearby allies of harmful status effects.",
+    "school": "irons_spellbooks:holy",
+    "max_level": 1
+  },
+  {
+    "spell_id": "irons_spellbooks:cone_of_cold",
+    "display_name": "Cone of Cold",
+    "description": "Hold to cast out a cone of cold energy, freezing creatures in its path.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:frost_step",
+    "display_name": "Frost Step",
+    "description": "Teleport to where you are looking, leaving behind a shadow of ice. This shadow will take nearby aggro, and shatter into icicles after 5 seconds or upon taking any damage.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 8
+  },
+  {
+    "spell_id": "irons_spellbooks:ice_block",
+    "display_name": "Ice Block",
+    "description": "Conjure a giant chunk of ice above a targeted creature or block. After a short delay, it will fall down and explode for area frost damage, doing additional damage to any creatures hit on the way down.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 6
+  },
+  {
+    "spell_id": "irons_spellbooks:icicle",
+    "display_name": "Icicle",
+    "description": "Fire a piercing bolt of cold energy in the form of an icicle, freezing those it touches.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:summon_polar_bear",
+    "display_name": "Summon Polar Bear",
+    "description": "Cast to summon a polar bear who will follow, protect, and fight for you, as well as providing a mount.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:ray_of_frost",
+    "display_name": "Ray of Frost",
+    "description": "Fire a beam of cold energy, dealing low damage but immediately applying freeze to the creature hit.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:frostwave",
+    "display_name": "Frostwave",
+    "description": "Cascade a wave of frost magic in a radius around you, afflicting creatures with chilled. Chilled creatures become entombed in ice when fully frozen.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 8
+  },
+  {
+    "spell_id": "irons_spellbooks:ice_spikes",
+    "display_name": "Ice Spikes",
+    "description": "Unleash a cascading line of ice magic, creating ice crystals that emerge from the ground. The final spike does full damage, and will emerge early if a creature within range is targeted.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:ice_tomb",
+    "display_name": "Ice Tomb",
+    "description": "Encase yourself in a protective tomb of ice, providing healing while within, absorbing one hit or counterspell before breaking. Dismount to leave the tomb.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 8
+  },
+  {
+    "spell_id": "irons_spellbooks:snowball",
+    "display_name": "Snowball",
+    "description": "Conjure a giant snowball and throw it forward, bursting into a frosty field and Chilling creatures in a surrounding radius on impact. Chilled creatures become entombed in ice when fully frozen.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:frostbite",
+    "display_name": "Frostbite",
+    "description": "Imbue yourself with a magical Frostbiting power, making any fully-frozen creature you kill turn into an Ice Shadow. Ice Shadows shatter into icicles after 5 seconds or upon taking any damage.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:blizzard",
+    "display_name": "Blizzard",
+    "description": "Channel a slow-moving, swirling blizzard at a targeted location, causing freezing wind and snow to pull creatures into the center of the vortex.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 8
+  },
+  {
+    "spell_id": "irons_spellbooks:ascension",
+    "display_name": "Ascension",
+    "description": "Cast to strike lightning at your feet and ascend quickly into the air, and gain reduced gravity for a short duration. The lightning bolt deals damage and knocks back creatures struck.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:chain_lightning",
+    "display_name": "Chain Lightning",
+    "description": "Start a chain of lightning from a targeted creature, causing waves of zapping magic to cascade to nearby creatures",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:charge",
+    "display_name": "Charge",
+    "description": "Imbue yourself with the power of lightning, increasing your speed and combat abilities.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 3
+  },
+  {
+    "spell_id": "irons_spellbooks:electrocute",
+    "display_name": "Electrocute",
+    "description": "Hold to manifest a cone of electrical energy, damaging creatures in its path.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:lightning_bolt",
+    "display_name": "Lightning Bolt",
+    "description": "Down from the heavens, summon a bolt of lightning.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:lightning_lance",
+    "display_name": "Lightning Lance",
+    "description": "Hold to charge a spear made of lightning. Release to throw it like a javelin, dealing high damage to the creature it hits.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:shockwave",
+    "display_name": "Shockwave",
+    "description": "Coalesce a surge of electrical power, and unleash it in a devastating shockwave, blasting exposed creatures.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 8
+  },
+  {
+    "spell_id": "irons_spellbooks:thunderstorm",
+    "display_name": "Thunderstorm",
+    "description": "Cast to conjure a thunderstorm centered around yourself, which strikes nearby creatures within sight with a small bolt of lightning every 2 seconds for the spell\u0027s duration.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 8
+  },
+  {
+    "spell_id": "irons_spellbooks:ball_lightning",
+    "display_name": "Ball Lightning",
+    "description": "Conjure an orb of lightning that slowly moves forward, damaging creatures it phases through and bouncing off blocks.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:volt_strike",
+    "display_name": "Volt Strike",
+    "description": "Leap forward in a spinning voltaic attack, striking the first creature or surface you hit, and dealing a residual blast in a small area around around the impact.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:acid_orb",
+    "display_name": "Acid Spit",
+    "description": "Spit an orb of acid, splashing in a radius upon impact and rending creatures hit, melting away and reducing their armor",
+    "school": "irons_spellbooks:nature",
+    "max_level": 8
+  },
+  {
+    "spell_id": "irons_spellbooks:blight",
+    "display_name": "Blight",
+    "description": "Target a creature to blight them, reducing their incoming healing and outgoing damage",
+    "school": "irons_spellbooks:nature",
+    "max_level": 8
+  },
+  {
+    "spell_id": "irons_spellbooks:poison_arrow",
+    "display_name": "Poison Arrow",
+    "description": "Charge a powerful arrow, imbued with poison magic, that will release a poisonous cloud upon impact",
+    "school": "irons_spellbooks:nature",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:poison_breath",
+    "display_name": "Poison Spray",
+    "description": "Spew forth a cone of poison, damaging and poisoning creatures in its reach",
+    "school": "irons_spellbooks:nature",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:poison_splash",
+    "display_name": "Poison Splash",
+    "description": "Around a targeted creature or block, conjure a wave of poisonous magic that splashes down, damaging creatures hit and leaving behind a poisonous cloud",
+    "school": "irons_spellbooks:nature",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:root",
+    "display_name": "Root",
+    "description": "Around a targeted creature, sprout magical roots than entangle them and completely prevent non-magical movement",
+    "school": "irons_spellbooks:nature",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:spider_aspect",
+    "display_name": "Aspect of the Spider",
+    "description": "Instill yourself with poisonous magic, dealing additional melee, ranged, or spell damage creatures that are poisoned",
+    "school": "irons_spellbooks:nature",
+    "max_level": 8
+  },
+  {
+    "spell_id": "irons_spellbooks:firefly_swarm",
+    "display_name": "Firefly Swarm",
+    "description": "Emanate a swarm of violent fireflies, following a targeted creature and dealing aoe damage. If the initial target dies, the last harmed creature will be targeted.",
+    "school": "irons_spellbooks:nature",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:oakskin",
+    "display_name": "Oakskin",
+    "description": "The great power of oak infuses itself into your skin, granting damage reduction of any incoming damage for a duration.",
+    "school": "irons_spellbooks:nature",
+    "max_level": 8
+  },
+  {
+    "spell_id": "irons_spellbooks:earthquake",
+    "display_name": "Earthquake",
+    "description": "Conjure an earthquake around a targeted creature or location, causing tremors to ripple through the ground, damaging and slowing creatures in the area.",
+    "school": "irons_spellbooks:nature",
+    "max_level": 10
+  },
+  {
+    "spell_id": "irons_spellbooks:stomp",
+    "display_name": "Stomp",
+    "description": "With a magic force, stomp the ground in front of you and send a short tremor forward through the ground, damaging creatures in its path.",
+    "school": "irons_spellbooks:nature",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:gluttony",
+    "display_name": "Gluttony",
+    "description": "Turn your stomach into an arcane furnace, turning eaten food into mana for a duration.",
+    "school": "irons_spellbooks:nature",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:touch_dig",
+    "display_name": "Touch Dig",
+    "description": "Use magic to break a block. Held items affect drops.",
+    "school": "irons_spellbooks:nature",
+    "max_level": 3
+  },
+  {
+    "spell_id": "irons_spellbooks:abyssal_shroud",
+    "display_name": "Abyssal Shroud",
+    "description": "Cloak yourself with the shadows of the abyss, granting the ability to evade any attack for a short duration of time.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 3
+  },
+  {
+    "spell_id": "irons_spellbooks:sculk_tentacles",
+    "display_name": "Sculk Tentacles",
+    "description": "From where you look, erupt a mass of sculk energy in the form of wailing tentacles, damaging and blinding creatures caught in the chaos.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 4
+  },
+  {
+    "spell_id": "irons_spellbooks:sonic_boom",
+    "display_name": "Sonic Boom",
+    "description": "Blast forth a sonic boom of immense power, passing through solid material and harming all creatures in its path.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 3
+  },
+  {
+    "spell_id": "irons_spellbooks:planar_sight",
+    "display_name": "Planar Sight",
+    "description": "Shift your vision in between planes, gaining the ability to see creatures through solid material.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 3
+  },
+  {
+    "spell_id": "irons_spellbooks:telekinesis",
+    "display_name": "Telekinesis",
+    "description": "Reach out with a spectral force and grip a creature, forcing them towards your gaze. Creatures are susceptible to kinetic damage.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:eldritch_blast",
+    "display_name": "Eldritch Blast",
+    "description": "Fire rays of pure, devastating energy.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 5
+  },
+  {
+    "spell_id": "irons_spellbooks:pocket_dimension",
+    "display_name": "Pocket Dimension",
+    "description": "Cast to transport yourself into a personal pocket dimension only you can access, giving a small free range area.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 1
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:void_beam",
+    "display_name": "Abyssal Beam",
+    "description": "Cast an abyssal beam at your chosen target",
+    "school": "cataclysm_spellbooks:abyssal",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:abyssal_blast",
+    "display_name": "Abyssal Blast",
+    "description": "Unleash a devastating blast that damages blocks and inflicts abyssal burn",
+    "school": "cataclysm_spellbooks:abyssal",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:dimensional_rift",
+    "display_name": "Dimensional Rift",
+    "description": "Cast a dimensional rift",
+    "school": "cataclysm_spellbooks:abyssal",
+    "max_level": 6
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:depth_charge",
+    "display_name": "Depth Charge",
+    "description": "Summon various depth charge mines in a radius around you",
+    "school": "cataclysm_spellbooks:abyssal",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:abyssal_predator",
+    "display_name": "Abyssal Predator",
+    "description": "Cast a spell that increases your swim speed, attack damage, and attack speed. You gain more damage while underwater",
+    "school": "cataclysm_spellbooks:abyssal",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:abyssal_slash",
+    "display_name": "Tidal Tear",
+    "description": "Slash your at your target dealing melee damage",
+    "school": "cataclysm_spellbooks:abyssal",
+    "max_level": 8
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:tidal_grab",
+    "display_name": "Tentacle Laceration",
+    "description": "Cast a tentacle from your grasp to damage targets",
+    "school": "cataclysm_spellbooks:abyssal",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:conjure_coral_golem",
+    "display_name": "Conjure: Coral Golems",
+    "description": "Conjure a group of coral golems to fight by your side",
+    "school": "cataclysm_spellbooks:abyssal",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:conjure_coralssus",
+    "display_name": "Conjure: Coralssus",
+    "description": "Conjure a Coralssus to ride and fight by your side",
+    "school": "cataclysm_spellbooks:abyssal",
+    "max_level": 1
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:conjure_clawdian",
+    "display_name": "Conjure: Clawdian",
+    "description": "Conjure a Clawdian to fight by your side",
+    "school": "cataclysm_spellbooks:abyssal",
+    "max_level": 1
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:hemorrhaging_impact",
+    "display_name": "Hemorrhaging Impact",
+    "description": "Charge up your weapon, unleashing a powerful blood spear and several blood needles. The blood spear inflicts Hemophilia on hit, and you gain 75% of damage dealt as healing",
+    "school": "irons_spellbooks:blood",
+    "max_level": 1
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:quick_strike",
+    "display_name": "Burst Strike",
+    "description": "Slash at your target multiple times, inflicting Disabled and Severed on hit, and heals you for 35% of the damage dealt",
+    "school": "irons_spellbooks:blood",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:final_rend",
+    "display_name": "Final Rend",
+    "description": "Charge up a powerful slash obliterating nearby entities caught within. Inflicts Disabled and Severed on hit, and healing you for all damage dealt.",
+    "school": "irons_spellbooks:blood",
+    "max_level": 1
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:void_rune",
+    "display_name": "Conjure: Void Rune",
+    "description": "Cast void rune at your chosen target",
+    "school": "irons_spellbooks:ender",
+    "max_level": 10
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:void_bulwark",
+    "display_name": "Void Bulwark",
+    "description": "Conjure void runes around yourself to injure attackers in your radius",
+    "school": "irons_spellbooks:ender",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:gravity_storm",
+    "display_name": "Gravity Storm",
+    "description": "Conjure a void vortex where you are looking to devastate targets",
+    "school": "irons_spellbooks:ender",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:gravitation_pull",
+    "display_name": "Gravitational Pull",
+    "description": "Reel in entities towards yourself by manipulating gravity around yourself",
+    "school": "irons_spellbooks:ender",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:pilfer",
+    "display_name": "Pilfer",
+    "description": "Cast a spell that rips away the item held in the target\u0027s hand",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:conjure_koboldiator",
+    "display_name": "Conjure: Koboldiator",
+    "description": "Conjure the powerful Koboldiator to your aid",
+    "school": "irons_spellbooks:holy",
+    "max_level": 1
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:summon_koboleton",
+    "display_name": "Conjure: Koboleton",
+    "description": "Conjure a group of Koboletons to fight by your side",
+    "school": "irons_spellbooks:holy",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:thoths_witness",
+    "display_name": "Thoth\u0027s Witness",
+    "description": "With the blessing of Thoth, call forth the spirit of The Ancient Remnant to fight by your side briefly",
+    "school": "irons_spellbooks:holy",
+    "max_level": 1
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:incineration",
+    "display_name": "Incineration",
+    "description": "Summon flame strikes in a straight line in front of the caster",
+    "school": "irons_spellbooks:fire",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:infernal_strike",
+    "display_name": "Infernal Strike",
+    "description": "Shoot out a minature Incinerator to damage your targets and inflict Blazing Brand on them",
+    "school": "irons_spellbooks:fire",
+    "max_level": 8
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:conjure_ignited_reinforcement",
+    "display_name": "Ignited Reinforcements",
+    "description": "Conjure Ignited Revenants and Berserkers to your aid",
+    "school": "irons_spellbooks:fire",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:hellish_blade",
+    "display_name": "Hellish Blade",
+    "description": "Summon a replicate of the Incinerator above your opponent, striking them and applying stun and Blazing Brand on hit",
+    "school": "irons_spellbooks:fire",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:bone_storm",
+    "display_name": "Bone Storm",
+    "description": "Launch a swirling bone storm from yourself. The higher the speed, the farther the spread",
+    "school": "irons_spellbooks:fire",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:piercing_bone",
+    "display_name": "Piercing Bone",
+    "description": "Launch a blazing bone at your opponent, and afterwards a small burts of 3 bones spread from you",
+    "school": "irons_spellbooks:fire",
+    "max_level": 8
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:ashen_breath",
+    "display_name": "Ashen Breath",
+    "description": "Spew ashen breath on your opponents",
+    "school": "irons_spellbooks:fire",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:abyss_fireball",
+    "display_name": "Unfolding Coruscation",
+    "description": "Summon a torrent of bouncing fireballs that change depending on your health, dealing Blazing Brand on hit",
+    "school": "irons_spellbooks:fire",
+    "max_level": 8
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:tectonic_tremble",
+    "display_name": "Tectonic Tremble",
+    "description": "Shake the earth, igniting nearby entites and knocking them back",
+    "school": "irons_spellbooks:fire",
+    "max_level": 1
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:meteor_spew",
+    "display_name": "Meteor Spew",
+    "description": "Eject clumps of molten rock and lava in the direction you are looking in, spawning lava on impact",
+    "school": "irons_spellbooks:fire",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:comet_shower",
+    "display_name": "Comet Shower",
+    "description": "Shower flare bombs from yourself, creating flare jets wherever they land",
+    "school": "irons_spellbooks:fire",
+    "max_level": 8
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:scorched_earth",
+    "display_name": "Scorched Earth",
+    "description": "Charge up your weapon, unleashing a barrage of molten bullets. Each bullet leaves an AoE which deals intense fire damage to entities caught within",
+    "school": "irons_spellbooks:fire",
+    "max_level": 1
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:malevolent_battlefield",
+    "display_name": "Malevolent Battlefield",
+    "description": "Conjure several phantom halberds around yourself, dealing massive amounts of damage to entities caught nearby",
+    "school": "irons_spellbooks:ice",
+    "max_level": 10
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:forgone_rage",
+    "display_name": "Forgone Rage",
+    "description": "Fill yourself with a chilling rage that increases your damage as you attack entities. You are weakened afterwards once your wrath ends",
+    "school": "irons_spellbooks:ice",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:conjure_thralls",
+    "display_name": "Conjure: Undead Thralls",
+    "description": "Conjure a group of undead draugur to fight by your side",
+    "school": "irons_spellbooks:ice",
+    "max_level": 10
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:cursed_rush",
+    "display_name": "Cursed Rush",
+    "description": "Rush in the direction you\u0027re looking in, summoning phantom halberds at both your original and new destination. Any entity caught in your path will be damaged",
+    "school": "irons_spellbooks:ice",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:phantasmal_blade",
+    "display_name": "Phantasmal Blade",
+    "description": "Slam your weapon in the ground, shooting out phantom axe blades around you",
+    "school": "irons_spellbooks:ice",
+    "max_level": 10
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:cryopiercer",
+    "display_name": "Cryopiercer",
+    "description": "Charge up your weapon, unleashing a barrage of frozen bullets. On bullet impact with an entity, it encases them in ice",
+    "school": "irons_spellbooks:ice",
+    "max_level": 1
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:sandstorm",
+    "display_name": "Sandstorm",
+    "description": "Summon sandstorms that surround you",
+    "school": "irons_spellbooks:nature",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:desert_winds",
+    "display_name": "Desert Winds",
+    "description": "Summon a smaller sandstorm that damages mobs in front of you",
+    "school": "irons_spellbooks:nature",
+    "max_level": 10
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:monolith_crash",
+    "display_name": "Monolith Crash",
+    "description": "Conjure several monoliths above you that crash around you and your foes",
+    "school": "irons_spellbooks:nature",
+    "max_level": 8
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:amethyst_puncture",
+    "display_name": "Amethyst Puncture",
+    "description": "Launch an amethyst cluster at your opponent",
+    "school": "irons_spellbooks:nature",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:conjure_amethyst_crab",
+    "display_name": "Conjure: Amethyst Crab",
+    "description": "Conjure the mythical Amethyst Crab to fight by your side",
+    "school": "irons_spellbooks:nature",
+    "max_level": 1
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:pharaohs_wrath",
+    "display_name": "Pharaoh\u0027s Wrath",
+    "description": "Fill yourself with a heated rage that increases your damage and spell power as you take hits. You are weakened afterwards once your wrath ends",
+    "school": "irons_spellbooks:nature",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:emp_blast",
+    "display_name": "EMP",
+    "description": "Emit an EMP pulse from yourself, stunning nearby mobs",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:lock_on",
+    "display_name": "Lock-On",
+    "description": "Target an entity, displaying a target above their head and stunning them for a short period of time",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:laserbolt",
+    "display_name": "Laserbolt",
+    "description": "Target an entity and shoot out a small laser bolt in their direction",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 10
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:atomic_laser",
+    "display_name": "Atomic Laser",
+    "description": "Fire a devastating laser in the direction you are looking it, incapacitating you",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:dos_swarm",
+    "display_name": "DoS Swarm",
+    "description": "Summon a group of Watchers which attack any nearby mobs on sight, dispelling any magic properties from the target and exploding on impact",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:missile_launch",
+    "display_name": "Missile Barrage",
+    "description": "Target an entity and launch a barrage Homing Wither Missiles at them",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 8
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:construct_watchers",
+    "display_name": "Construct: Watchers",
+    "description": "Construct a group of Watchers to aid you in combat",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:construct_prowler",
+    "display_name": "Construct: Prowler",
+    "description": "Construct a Prowler to aid you in combat",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 1
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:ddos",
+    "display_name": "Distributed Denial of Service",
+    "description": "Disrupt services around you, dispelling summons and removing magic effects from nearby entities",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 8
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:shutdown",
+    "display_name": "Shutdown",
+    "description": "Shutdown the target\u0027s processes, preventing them from attacking or using items",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:rewire",
+    "display_name": "Rewire",
+    "description": "Rewire your summons\u0027 capabilities, increasing their speed and damage, but inversely decreasing their armor and toughness",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 8
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:hardware_update",
+    "display_name": "Hardware Update",
+    "description": "Update your internals with new hardware, increasing your armor and attack damage. Does not stack with Charge, Haste, or Software Update",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:software_update",
+    "display_name": "Software Update",
+    "description": "Update your internals with new software, increasing your speed and reducing your spell cooldown. Does not stack with Charge, Haste, or Hardware Update",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:flash_bang",
+    "display_name": "Flash Bang",
+    "description": "Throw a non-lethal flash bang, blinding nearby entities",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 8
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:aerial_assault",
+    "display_name": "Aerial Assault",
+    "description": "Launch an aerial assault of Wither Missiles around you",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 10
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:intrusion_prevention_system",
+    "display_name": "Intrusion Prevention System",
+    "description": "Enforce yourself and your nearby summon with IPS, preventing projectile damage and preventing your summons from being counterspelled",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 1
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:overcharged",
+    "display_name": "Overcharged",
+    "description": "Overcharge your systems, boosting your capabilities beyond normal limits. Has unique interactions with certain items",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 3
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:parting_shot",
+    "display_name": "Parting Shot",
+    "description": "Charge up your weapon, unleashing two powerful lasers that inflict Wither on hit",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 1
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:disabling_swipe",
+    "display_name": "Disabling Swipe",
+    "description": "Swipe at your target\u0027s hardware, briefly preventing any incoming healing on hit",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 5
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:gear_shift",
+    "display_name": "Gear Shift",
+    "description": "While standing, briefly dash forwards. While crouching, dash upwards",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 8
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:reboot",
+    "display_name": "Reboot",
+    "description": "Reboot your systems, healing yourself and nearby allies",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 8
+  },
+  {
+    "spell_id": "cataclysm_spellbooks:surveillance_drone",
+    "display_name": "Construct: Surveillance Drone",
+    "description": "Construct a surveillance drone on top of your summons, healing you and nearby summons",
+    "school": "cataclysm_spellbooks:technomancy",
+    "max_level": 8
+  },
+  {
+    "spell_id": "refined_mod:frost_strike",
+    "display_name": "Frost Strike",
+    "description": "Imbue your weapon with Ice and Frost in a sweeping strike. This spell is uninterruptible. The damage scales off of your held weapon\u0027s melee damage and Chilled creatures become entombed in ice when fully frozen.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 5
+  },
+  {
+    "spell_id": "refined_mod:thunder_strike",
+    "display_name": "Thunder Strike",
+    "description": "Call down a bolt of Lightning with your armament. This spell is uninterruptible. The damage scales off of your held weapon\u0027s melee damage and enchantments.",
+    "school": "irons_spellbooks:lightning",
+    "max_level": 5
+  },
+  {
+    "spell_id": "refined_mod:glintstar_pebble",
+    "display_name": "Glintstone Pebble",
+    "description": "Channel the power of the stars, launching a projectile that can track targets.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 10
+  },
+  {
+    "spell_id": "refined_mod:moon_slash",
+    "display_name": "Moon Slash",
+    "description": "Summon a sweeping wave of moonlight that emits from the players armament. The damage scales off of your held weapon\u0027s melee damage.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 4
+  },
+  {
+    "spell_id": "refined_mod:summon_wolves",
+    "display_name": "Summon Wolves",
+    "description": "Cast to summon a pack of loyal wolves that will follow and protect you.",
+    "school": "irons_spellbooks:nature",
+    "max_level": 10
+  },
+  {
+    "spell_id": "refined_mod:hunters_mark",
+    "display_name": "Hunters Mark",
+    "description": "Cast to buff self with Hunters Mark. Deal Non-Magical damage to inflict a target with the effect, marking the target and dealing bonus damage.",
+    "school": "irons_spellbooks:nature",
+    "max_level": 5
+  },
+  {
+    "spell_id": "refined_mod:storm_blade",
+    "display_name": "Storm Blade",
+    "description": "Emit a thunderous storm from your blade. The damage scales off of your held weapon\u0027s melee damage.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 7
+  },
+  {
+    "spell_id": "refined_mod:create_bonfire",
+    "display_name": "Create Bonfire",
+    "description": "Summon a Magic Bonfire that grants Regeneration and Absorption while the bonfire is active.",
+    "school": "irons_spellbooks:fire",
+    "max_level": 3
+  },
+  {
+    "spell_id": "refined_mod:tidal_wave",
+    "display_name": "Tidal Wave",
+    "description": "Conjure a Tidal Wave to crash down on an area, knocking back and damaging anything in its path.",
+    "school": "irons_spellbooks:ice",
+    "max_level": 7
+  },
+  {
+    "spell_id": "bielgg_spells:laser_ex3",
+    "display_name": "LASER.EX3",
+    "description": "Charge and fire a corrupted beam. Higher levels increase its damage, range, width of destruction and duration.",
+    "school": "bielgg_spells:unstable",
+    "max_level": 3
+  },
+  {
+    "spell_id": "bielgg_spells:glitch_projectiles",
+    "display_name": "Glitch Projectiles",
+    "description": "Launch a swarm of corrupting projectiles. Every level adds projectiles, speed and accuracy.",
+    "school": "bielgg_spells:unstable",
+    "max_level": 5
+  },
+  {
+    "spell_id": "bielgg_spells:file_collection",
+    "display_name": "File Collection",
+    "description": "Dash in the aimed direction without requiring a target. Every enemy crossed is captured, repeatedly damaged and thrown away. Each successful damage tick heals the caster. This version never creates clones.",
+    "school": "bielgg_spells:unstable",
+    "max_level": 3
+  },
+  {
+    "spell_id": "bielgg_spells:earth_corruption",
+    "display_name": "Earth Corruption",
+    "description": "Copy nearby blocks into a rotating barrage. The real terrain is never removed and impacts never destroy blocks.",
+    "school": "bielgg_spells:unstable",
+    "max_level": 4
+  },
+  {
+    "spell_id": "bielgg_spells:unstable_blink",
+    "display_name": "Unstable Blink",
+    "description": "Channel continuous teleports every 5 ticks, prioritizing the target aimed at when casting began. Every teleport leaves an unstable bomb and consumes 20 mana.",
+    "school": "bielgg_spells:unstable",
+    "max_level": 4
+  },
+  {
+    "spell_id": "bielgg_spells:unstable_bombardment",
+    "display_name": "Unstable Bombardment",
+    "description": "Throw a focused volley of unstable bombs. Higher levels add bombs and launch speed.",
+    "school": "bielgg_spells:unstable",
+    "max_level": 3
+  },
+  {
+    "spell_id": "bielgg_spells:multi_task",
+    "display_name": "Multi-Task",
+    "description": "Cast several equipped spells in parallel. Each spell preserves its own casting time and automatically aims at the nearest entity.",
+    "school": "bielgg_spells:unstable",
+    "max_level": 10
+  },
+  {
+    "spell_id": "bielgg_spells:the_final_breath",
+    "display_name": "The Final Breath",
+    "description": "Transports the target to their final breath, until death.",
+    "school": "irons_spellbooks:eldritch",
+    "max_level": 3
+  },
+  {
+    "spell_id": "bielgg_spells:death_sorrows",
+    "display_name": "Death Sorrows",
+    "description": "A standalone Death\u0027s Sorrows. Aim at a target within 30 blocks to drown a 20x20 area in falling blood crystals, lasers, and devouring jaws for 10 seconds.",
+    "school": "irons_spellbooks:blood",
+    "max_level": 3
+  },
+  {
+    "spell_id": "bielgg_spells:mirroring",
+    "display_name": "Mirroring",
+    "description": "Creates mirror clones that copy your equipment and spells.",
+    "school": "irons_spellbooks:evocation",
+    "max_level": 1
+  }
+]

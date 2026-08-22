@@ -29,21 +29,22 @@ public class SelectOriginPacket {
         ctx.enqueueWork(() -> {
             ServerPlayer player = ctx.getSender();
             if (player != null) {
-                // Determine if the player is selecting their origin for the first time
-                boolean isFirstSelection = !OriginManager.hasOrigin(player);
+                // Reject origin selection if the player already has an active origin
+                if (OriginManager.hasOrigin(player)) {
+                    player.sendSystemMessage(net.minecraft.network.chat.Component.literal("§cYou already have an active origin and cannot change it!").withStyle(net.minecraft.ChatFormatting.RED));
+                    return;
+                }
 
                 OriginManager.setOrigin(player, this.originId);
 
-                // Award 10 SP if it's their first time selecting an origin
-                if (isFirstSelection) {
-                    com.complextalents.leveling.data.PlayerLevelingData levelingData = com.complextalents.leveling.data.PlayerLevelingData.get(player.getServer());
-                    levelingData.addSkillPoints(player.getUUID(), 10);
-                    
-                    player.sendSystemMessage(net.minecraft.network.chat.Component.literal("§aYou have been awarded 10 Skill Points!").withStyle(net.minecraft.ChatFormatting.GREEN));
-                    
-                    // Sync the new SP to the client immediately
-                    LevelingSyncHandler.syncPlayerLevelData(player);
-                }
+                // Award 10 SP because it's their first time selecting an origin
+                com.complextalents.leveling.data.PlayerLevelingData levelingData = com.complextalents.leveling.data.PlayerLevelingData.get(player.getServer());
+                levelingData.addSkillPoints(player.getUUID(), 10);
+                
+                player.sendSystemMessage(net.minecraft.network.chat.Component.literal("§aYou have been awarded 10 Skill Points!").withStyle(net.minecraft.ChatFormatting.GREEN));
+                
+                // Sync the new SP to the client immediately
+                LevelingSyncHandler.syncPlayerLevelData(player);
             }
         });
         return true;

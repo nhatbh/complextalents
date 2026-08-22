@@ -274,7 +274,7 @@ public class ShadowWalkEventHandler {
 
         // Handle Assassin Attack Effects
         if (event.getSource().getEntity() instanceof ServerPlayer attacker && AssassinOrigin.isAssassin(attacker)) {
-            // Apply Ambush Damage Scaling (Multiplicative)
+            // Apply Ambush Damage Scaling (Multiplicative) — only meaningful when damage actually lands
             if (attacker.hasEffect(AssassinEffects.AMBUSH.get())) {
                 double apBuff = SkillManager.getSkillStat(attacker, ShadowWalkSkill.ID, "stealthBackstabBuff");
                 float ambushDamage = (float) (event.getAmount() * (1.0 + apBuff));
@@ -293,82 +293,92 @@ public class ShadowWalkEventHandler {
                 LevelingService.getInstance().awardXP(attacker, ambushXP, XPSource.ASSASSIN_AMBUSH, context);
             }
             if (attacker.hasEffect(AssassinEffects.SHADOW_WALK.get())) {
-                attacker.removeEffect(AssassinEffects.SHADOW_WALK.get());
-                removeUntargetableEffect(attacker);
-                attacker.setInvisible(false);
+                boolean isBackstab = com.complextalents.impl.assassin.util.AssassinUtils.isBackstab(attacker, event.getEntity());
+                breakStealthOnAttack(attacker, event.getEntity(), isBackstab);
 
-                // Consume stealth gauge based on attack type
-                double maxGauge = AssassinData.getMaxGauge(attacker);
-                double currentGauge = AssassinData.getStealthGauge(attacker);
-                double gaugeConsumption;
-
-                if (com.complextalents.impl.assassin.util.AssassinUtils.isBackstab(attacker, event.getEntity())) {
-                    // Backstab: consume 25% of max gauge
-                    gaugeConsumption = maxGauge * 0.25;
-                } else {
-                    // Normal strike: consume 50% of max gauge
-                    gaugeConsumption = maxGauge * 0.50;
-                }
-
-                AssassinData.setStealthGauge(attacker, currentGauge - gaugeConsumption);
-
-                if (com.complextalents.impl.assassin.util.AssassinUtils.isBackstab(attacker, event.getEntity())) {
+                // Scale the initial backstab hit — only applies when damage is actually dealt
+                if (isBackstab) {
                     double apBuff = SkillManager.getSkillStat(attacker, ShadowWalkSkill.ID, "stealthBackstabBuff");
-                    double buffDuration = SkillManager.getSkillStat(attacker, ShadowWalkSkill.ID, "stealthBuffDuration");
-                    int durationTicks = (int) (buffDuration * 20);
-
-                    // Apply custom Ambush effect for correct multiplicative damage scaling
-                    attacker.addEffect(new MobEffectInstance(AssassinEffects.AMBUSH.get(), durationTicks, 0));
-
-                    // 1. Apply True Hit Immunity (efn:sin_stun_immunity)
-                    var stunImmunityEffect = ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation.fromNamespaceAndPath("efn", "sin_stun_immunity"));
-                    if (stunImmunityEffect != null) {
-                        attacker.addEffect(new MobEffectInstance(stunImmunityEffect, durationTicks, 0, false, false, true));
-                    }
-
-                    // 2. Apply Shield (100% Max HP Absorption for durationTicks)
-                    float shieldAmount = (float) (attacker.getMaxHealth() * 1.00);
-                    int amp = Math.max(0, (int) (shieldAmount / 4.0f) - 1);
-                    attacker.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.ABSORPTION, durationTicks, amp, false, true, true));
-                    attacker.setAbsorptionAmount(Math.max(attacker.getAbsorptionAmount(), shieldAmount));
-
-                    // Apply scaling to the initial backstab hit immediately
                     float finalBackstabDamage = (float) (event.getAmount() * (1.0 + apBuff));
                     event.setAmount(finalBackstabDamage);
-
-                    // Award Ghost XP
-                    double ghostXP = XPFormula.calculateAssassinGhostXP(finalBackstabDamage, currentGauge, maxGauge);
-                    ChunkPos chunkPos = new ChunkPos(attacker.blockPosition());
-                    double gaugeEfficiency = maxGauge > 0 ? currentGauge / maxGauge : 0;
-                    XPContext ghostContext = XPContext.builder()
-                        .source(XPSource.ASSASSIN_GHOST)
-                        .chunkPos(chunkPos)
-                        .rawAmount(ghostXP)
-                        .metadata("backstabDamage", finalBackstabDamage)
-                        .metadata("currentGauge", currentGauge)
-                        .metadata("maxGauge", maxGauge)
-                        .metadata("gaugeEfficiency", gaugeEfficiency)
-                        .build();
-                    LevelingService.getInstance().awardXP(attacker, ghostXP, XPSource.ASSASSIN_GHOST, ghostContext);
-                    
-                    // Backstab FX (Blood Splatter + Fine Mist)
-                    ServerLevel serverLevel = attacker.serverLevel();
-                    double x = event.getEntity().getX();
-                    double y = event.getEntity().getY() + event.getEntity().getBbHeight() / 2.0;
-                    double z = event.getEntity().getZ();
-
-                    // Sound
-                    serverLevel.playSound(null, x, y, z, SoundEvents.PLAYER_ATTACK_CRIT, SoundSource.PLAYERS, 1.0f, 0.8f);
-
-                    // OPTION 1: Chunky Splatter (Redstone Block)
-                    BlockParticleOption bloodSplatter = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.REDSTONE_BLOCK.defaultBlockState());
-                    serverLevel.sendParticles(bloodSplatter, x, y, z, 15, 0.2, 0.3, 0.2, 0.15);
-
-                    // OPTION 2: Fine Mist (Red Dust)
-                    DustParticleOptions bloodMist = new DustParticleOptions(new Vector3f(0.6f, 0.0f, 0.0f), 1.2f);
-                    serverLevel.sendParticles(bloodMist, x, y, z, 10, 0.3, 0.3, 0.3, 0.05);
                 }
             }
+        }
+    }
+
+    /**
+     * Breaks the assassin's stealth when they land an attack, consuming gauge and
+     * applying all associated buffs. Factored out so it can be triggered by the
+     * poise-negation path where the {@code LivingHurtEvent} is canceled and never
+     * reaches this handler.
+     * <p>
+     * Note: damage scaling via {@code event.setAmount} is intentionally excluded —
+     * it is handled inline in the event handler and is irrelevant when poise
+     * absorbs the hit to 0 HP damage.
+     *
+     * @param attacker   the assassin player breaking stealth
+     * @param target     the entity being struck
+     * @param isBackstab whether the hit qualifies as a backstab
+     */
+    public static void breakStealthOnAttack(ServerPlayer attacker, net.minecraft.world.entity.LivingEntity target, boolean isBackstab) {
+        attacker.removeEffect(AssassinEffects.SHADOW_WALK.get());
+        removeUntargetableEffect(attacker);
+        attacker.setInvisible(false);
+
+        // Consume stealth gauge based on attack type
+        double maxGauge = AssassinData.getMaxGauge(attacker);
+        double currentGauge = AssassinData.getStealthGauge(attacker);
+        double gaugeConsumption = isBackstab ? maxGauge * 0.25 : maxGauge * 0.50;
+        AssassinData.setStealthGauge(attacker, currentGauge - gaugeConsumption);
+
+        if (isBackstab) {
+            double apBuff = SkillManager.getSkillStat(attacker, ShadowWalkSkill.ID, "stealthBackstabBuff");
+            double buffDuration = SkillManager.getSkillStat(attacker, ShadowWalkSkill.ID, "stealthBuffDuration");
+            int durationTicks = (int) (buffDuration * 20);
+
+            // Apply custom Ambush effect for correct multiplicative damage scaling
+            attacker.addEffect(new MobEffectInstance(AssassinEffects.AMBUSH.get(), durationTicks, 0));
+
+            // Apply True Hit Immunity (efn:sin_stun_immunity)
+            var stunImmunityEffect = ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation.fromNamespaceAndPath("efn", "sin_stun_immunity"));
+            if (stunImmunityEffect != null) {
+                attacker.addEffect(new MobEffectInstance(stunImmunityEffect, durationTicks, 0, false, false, true));
+            }
+
+            // Apply Shield (100% Max HP Absorption for durationTicks)
+            float shieldAmount = (float) (attacker.getMaxHealth() * 1.00);
+            int amp = Math.max(0, (int) (shieldAmount / 4.0f) - 1);
+            attacker.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.ABSORPTION, durationTicks, amp, false, true, true));
+            attacker.setAbsorptionAmount(Math.max(attacker.getAbsorptionAmount(), shieldAmount));
+
+            // Award Ghost XP
+            double ghostXP = XPFormula.calculateAssassinGhostXP(0f, currentGauge, maxGauge);
+            ChunkPos chunkPos = new ChunkPos(attacker.blockPosition());
+            double gaugeEfficiency = maxGauge > 0 ? currentGauge / maxGauge : 0;
+            XPContext ghostContext = XPContext.builder()
+                .source(XPSource.ASSASSIN_GHOST)
+                .chunkPos(chunkPos)
+                .rawAmount(ghostXP)
+                .metadata("backstabDamage", 0.0)
+                .metadata("currentGauge", currentGauge)
+                .metadata("maxGauge", maxGauge)
+                .metadata("gaugeEfficiency", gaugeEfficiency)
+                .build();
+            LevelingService.getInstance().awardXP(attacker, ghostXP, XPSource.ASSASSIN_GHOST, ghostContext);
+
+            // Backstab FX (Blood Splatter + Fine Mist)
+            ServerLevel serverLevel = attacker.serverLevel();
+            double x = target.getX();
+            double y = target.getY() + target.getBbHeight() / 2.0;
+            double z = target.getZ();
+
+            serverLevel.playSound(null, x, y, z, SoundEvents.PLAYER_ATTACK_CRIT, SoundSource.PLAYERS, 1.0f, 0.8f);
+
+            BlockParticleOption bloodSplatter = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.REDSTONE_BLOCK.defaultBlockState());
+            serverLevel.sendParticles(bloodSplatter, x, y, z, 15, 0.2, 0.3, 0.2, 0.15);
+
+            DustParticleOptions bloodMist = new DustParticleOptions(new Vector3f(0.6f, 0.0f, 0.0f), 1.2f);
+            serverLevel.sendParticles(bloodMist, x, y, z, 10, 0.3, 0.3, 0.3, 0.05);
         }
     }
 

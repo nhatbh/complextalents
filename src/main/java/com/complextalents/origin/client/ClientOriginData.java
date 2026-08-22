@@ -21,6 +21,7 @@ public class ClientOriginData {
     private static ResourceLocation resourceTypeId = null;
     private static double shieldValue = 0;
     private static double shieldMax = 0;
+    private static boolean hasReceivedSync = false;
 
     /**
      * Sync origin data from the server.
@@ -41,6 +42,7 @@ public class ClientOriginData {
         resourceTypeId = resTypeId;
         shieldValue = sVal;
         shieldMax = sMax;
+        hasReceivedSync = true;
     }
 
 
@@ -122,6 +124,13 @@ public class ClientOriginData {
     }
 
     /**
+     * Check if initial sync has been received from the server.
+     */
+    public static boolean hasReceivedSync() {
+        return hasReceivedSync;
+    }
+
+    /**
      * Clear all origin data.
      */
     public static void clear() {
@@ -130,5 +139,6 @@ public class ClientOriginData {
         resourceValue = 0;
         resourceMax = 0;
         resourceTypeId = null;
+        hasReceivedSync = false;
     }
 }

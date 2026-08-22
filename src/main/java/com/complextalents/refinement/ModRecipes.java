@@ -18,8 +18,8 @@ public class ModRecipes {
     public static final RegistryObject<RecipeSerializer<GunRefinementRecipe>> GUN_REFINEMENT_SERIALIZER =
             SERIALIZERS.register("gun_refinement", GunRefinementRecipe.Serializer::new);
 
-    public static final RegistryObject<RecipeSerializer<SpellAugmentRecipe>> SPELL_AUGMENT_SERIALIZER =
-            SERIALIZERS.register("spell_augment", SpellAugmentRecipe.Serializer::new);
+    public static final RegistryObject<RecipeSerializer<MagicRefinementRecipe>> MAGIC_REFINEMENT_SERIALIZER =
+            SERIALIZERS.register("magic_refinement", MagicRefinementRecipe.Serializer::new);
 
     public static void register(IEventBus modEventBus) {
         SERIALIZERS.register(modEventBus);

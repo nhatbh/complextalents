@@ -63,16 +63,23 @@ public class SpellShieldInteractionHandler {
             return;
         }
 
-        float poiseDamage = damage;
+        // 1. Calculate Pre-mitigated Base Damage (Apotheosis Armor Formula)
+        float effectiveArmor = (float) entity.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR);
+        float preMitigatedDamage = originalDamage * (50.0f / (50.0f + Math.max(0.0f, effectiveArmor)));
+
+        float poiseDamage = preMitigatedDamage;
+        float vitalityDamage = preMitigatedDamage;
         String reactionMsg = null;
 
         // 3. Elemental Counter / Resistance Matrix
         if (isElemental) {
             float multiplier = getElementalMultiplier(sourceElement, targetElement);
-            poiseDamage = damage * multiplier;
+            poiseDamage = preMitigatedDamage * multiplier;
             if (multiplier > 1.0f) {
+                vitalityDamage = preMitigatedDamage * 1.50f; // Counter deals 1.5x Vitality damage to exposed targets
                 reactionMsg = "§aCounter (2.0x): -%.0f Poise";
             } else if (multiplier < 1.0f) {
+                vitalityDamage = preMitigatedDamage * 0.50f;
                 reactionMsg = "§cResisted (0.5x): -%.0f Poise";
             }
         }
@@ -82,7 +89,8 @@ public class SpellShieldInteractionHandler {
                 case HOLY -> {
                     if (maxPoise > 0) {
                         float scaleFactor = 1.0f + (currentPoise / maxPoise);
-                        poiseDamage = damage * scaleFactor;
+                        poiseDamage = preMitigatedDamage * scaleFactor;
+                        vitalityDamage = preMitigatedDamage;
                         reactionMsg = String.format("§eSmite (%.1fx): -%%.0f Poise", scaleFactor);
                     }
                 }
@@ -90,7 +98,8 @@ public class SpellShieldInteractionHandler {
                     if (maxPoise > 0) {
                         float missingPoise = maxPoise - currentPoise;
                         float scaleFactor = 1.0f + (missingPoise / maxPoise);
-                        poiseDamage = damage * scaleFactor;
+                        poiseDamage = preMitigatedDamage * scaleFactor;
+                        vitalityDamage = preMitigatedDamage;
 
                         // Dark Mage Evocation Synergy: Bonus Shield & Poise Damage
                         if (caster instanceof ServerPlayer player
@@ -105,29 +114,20 @@ public class SpellShieldInteractionHandler {
                     }
                 }
                 case ENDER -> {
-                    boolean darkMageBonus = false;
+                    float voidVitMult = 2.0f;
                     if (caster instanceof ServerPlayer player
                             && com.complextalents.impl.darkmage.origin.DarkMageOrigin.isDarkMage(player)) {
                         int originLevel = Math.min(4,
                                 Math.max(0, com.complextalents.origin.OriginManager.getOriginLevel(player) - 1));
                         boolean isDowned = isExhausted || entity.getHealth() <= entity.getMaxHealth() * 0.3f;
                         if (isDowned) {
-                            damage = originalDamage
-                                    * (float) com.complextalents.impl.darkmage.origin.DarkMageOrigin.ENDER_FLANK_DOWNED_MULT[originLevel];
-                            darkMageBonus = true;
+                            voidVitMult = (float) com.complextalents.impl.darkmage.origin.DarkMageOrigin.ENDER_FLANK_DOWNED_MULT[originLevel];
                         }
                     }
 
-                    if (isExhausted) {
-                        if (!darkMageBonus)
-                            damage = originalDamage * 2.0f;
-                        poiseDamage = 0;
-                        reactionMsg = String.format("§5Execution (%.1fx): %.0f Damage", damage / originalDamage,
-                                damage);
-                    } else {
-                        poiseDamage = damage * 0.5f;
-                        reactionMsg = "§8Ender (0.5x): -%.0f Poise";
-                    }
+                    poiseDamage = preMitigatedDamage * 0.5f;
+                    vitalityDamage = preMitigatedDamage * voidVitMult;
+                    reactionMsg = String.format("§5Execution (%.1fx): %.0f Damage", voidVitMult, vitalityDamage);
                 }
                 case ELDRITCH -> {
                     if (caster instanceof ServerPlayer player
@@ -142,36 +142,35 @@ public class SpellShieldInteractionHandler {
                             player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                                     com.complextalents.effect.ModEffects.POSSESSED.get(), 300, 0));
                             float nukeMult = (float) com.complextalents.impl.darkmage.origin.DarkMageOrigin.ELDRITCH_MAX_NUKE_MULT[originLevel];
-                            damage *= nukeMult;
-                            poiseDamage = damage * 0.5f;
+                            vitalityDamage = preMitigatedDamage * nukeMult;
+                            poiseDamage = preMitigatedDamage * 0.5f;
                             reactionMsg = String.format("§dCosmic Redline (%.1fx): %.0f Damage [POSSESSED]", nukeMult,
-                                    damage);
+                                    vitalityDamage);
                         } else {
                             float backfireHp = (float) (player.getMaxHealth()
-                                    * com.complextalents.impl.darkmage.origin.DarkMageOrigin.ELDRITCH_BACKFIRE_SELF_DMG[originLevel]);
+                                     * com.complextalents.impl.darkmage.origin.DarkMageOrigin.ELDRITCH_BACKFIRE_SELF_DMG[originLevel]);
                             player.hurt(player.damageSources().magic(), backfireHp);
                             int silenceTicks = (int) (com.complextalents.impl.darkmage.origin.DarkMageOrigin.ELDRITCH_BACKFIRE_SILENCE_SEC[originLevel]
-                                    * 20);
+                                     * 20);
                             player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                                     com.complextalents.effect.ModEffects.SILENCED.get(), silenceTicks, 0));
                             poiseDamage = 0;
+                            vitalityDamage = 0;
                             reactionMsg = "§cEldritch Backfire!";
                         }
                     } else {
-                        poiseDamage = damage * 0.5f;
-                        reactionMsg = String.format("§4Decay: %.0f Damage", damage);
+                        poiseDamage = preMitigatedDamage * 0.5f;
+                        vitalityDamage = preMitigatedDamage;
+                        reactionMsg = String.format("§4Decay: %.0f Damage", vitalityDamage);
                     }
                 }
                 case BLOOD -> {
                     float lifestealPct = 0.25f;
                     if (caster instanceof ServerPlayer player) {
-                        // Decrease lifesteal for consecutive casts (Blood Exhaustion effect)
                         net.minecraft.world.effect.MobEffectInstance exhaustion = player
                                 .getEffect(com.complextalents.effect.ModEffects.BLOOD_EXHAUSTION.get());
                         if (exhaustion != null) {
                             int stacks = Math.min(3, exhaustion.getAmplifier() + 1);
-                            // Reduces lifesteal by 33.3% per stack (1 stack = 0.66x, 2 stacks = 0.33x, 3
-                            // stacks = 0.0x)
                             float lifestealReduction = Math.max(0.0f, 1.0f - (stacks / 3.0f));
                             lifestealPct *= lifestealReduction;
                         }
@@ -185,7 +184,11 @@ public class SpellShieldInteractionHandler {
                             }
                         }
                     }
-                    float lifestealAmount = damage * lifestealPct;
+
+                    poiseDamage = preMitigatedDamage * 0.5f;
+                    vitalityDamage = preMitigatedDamage;
+
+                    float lifestealAmount = vitalityDamage * lifestealPct;
                     if (caster != null && lifestealAmount > 0) {
                         caster.heal(lifestealAmount);
                         reactionMsg = String.format("§cLifesteal: +%.1f HP", lifestealAmount);
@@ -214,23 +217,12 @@ public class SpellShieldInteractionHandler {
             }
         }
 
-        // 6. Inflict Poise Damage & Calculate Mitigated Damage
-        if (!isExhausted) {
-            // Use damagePoise to trigger events, exhaustion, and recovery timers properly
-            PoiseAPI.damagePoise(entity, poiseDamage, caster, damageSource, true);
-
-            // Re-check if this exact hit broke poise
-            if (PoiseAPI.isExhausted(entity)) {
-                // Poise broke on this hit! Target receives unmitigated spell damage
-                damage = originalDamage;
-            } else {
-                damage = PoiseAPI.calculateMitigatedDamage(entity, damage);
-            }
-        }
+        // 6. Inflict Poise & Vitality Damage via Single Entry Point API with "IronsSpells" sourceMod identifier
+        PoiseAPI.damagePoise(entity, poiseDamage, vitalityDamage, caster, damageSource, true, "IronsSpells");
 
         // Prevent vanilla/default hurt listener from double-damaging poise
         entity.getPersistentData().putBoolean("SkipStrengthDamage", true);
-        event.setAmount(damage);
+        event.setAmount(0.0001f);
     }
 
     private static void notifyCaster(LivingEntity caster, Component message) {

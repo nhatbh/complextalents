@@ -31,7 +31,7 @@ public class RefinementGemItem extends Item {
         int xp = WeaponMasteryManager.getGemXpValue(tier);
 
         // Simple usage explanation
-        tooltipComponents.add(Component.literal("Used in the Smithing Table to enhance Weapons & Guns.")
+        tooltipComponents.add(Component.literal("Used in the Refining Anvil to refine weapons, guns, and spells.")
                 .withStyle(ChatFormatting.GRAY));
 
         // XP granted
@@ -48,11 +48,11 @@ public class RefinementGemItem extends Item {
 
     private String getFlavorText(CrateRarity tier) {
         return switch (tier) {
-            case COMMON -> "Infused with faint energy, suitable for basic armaments.";
-            case UNCOMMON -> "Resonates with refined power, strengthening seasoned gear.";
-            case RARE -> "Pulsing with potent mana, elevating battle-proven weapons.";
-            case EPIC -> "Radiates intense force, forging weapons fit for legends.";
-            case LEGENDARY -> "A pinnacle matrix of ancient craftsmanship.";
+            case COMMON -> "A gray, gemlike stone containing a faint residue of ancient energy.";
+            case UNCOMMON -> "A rough, stone-colored crystal formation shot through with orange veins.";
+            case RARE -> "A brilliant blue gem pulsing with a steady current of pure energy.";
+            case EPIC -> "A deep purple gem radiating intense, mystical forces.";
+            case LEGENDARY -> "A gold gem representing the pinnacle of ancient power.";
         };
     }
 }

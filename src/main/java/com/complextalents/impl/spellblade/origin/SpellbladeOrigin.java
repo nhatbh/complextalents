@@ -10,6 +10,7 @@ import com.complextalents.stats.StatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = TalentsMod.MODID)
@@ -20,6 +21,7 @@ public class SpellbladeOrigin {
     // Passive & Active Parameters
     // Passive & Active Parameters
     public static final double[] BASE_MANA_PER_HIT = { 0.06, 0.08, 0.10, 0.12, 0.15 };
+    public static final double[] AP_TO_AD_RATIO = { 0.10, 0.15, 0.20, 0.25, 0.30 };
     public static final double[] ACTIVE_COOLDOWN = { 5.0, 5.0, 5.0, 5.0, 5.0 };
     public static final double[] INITIAL_STANCE_DURATION = { 6.0, 6.0, 6.0, 6.0, 6.0 };
     public static final double[] DURATION_ADDED_PER_CAST = { 2.0, 3.0, 4.0, 5.0, 6.0 };
@@ -81,8 +83,9 @@ public class SpellbladeOrigin {
                 .baseStat(StatType.FLAT_AD, 2)
                 .baseStat(StatType.HEAL_AND_SHIELD, -6)
                 .scaledStat("base_mana_per_hit", "Hồi Mana/Hit (%)", BASE_MANA_PER_HIT)
+                .scaledStat("ap_to_ad_ratio", "Thưởng AD theo AP (%)", AP_TO_AD_RATIO)
                 .passiveSkill("Dệt Năng Lượng",
-                        "Đòn chém cận chiến hồi 6%-15% Mana tối đa. Khi Quá Tải, tích lũy Kho Mana Ảo (tối đa 50% Mana) thi triển phép. Phép thuật yểm nguyên tố lên vũ khí trong 6s (tỉ lệ theo Tốc Đánh & AP).")
+                        "Đòn chém cận chiến hồi 6%-15% Mana tối đa. Tăng Tỷ Lệ Sát Thương Vật Lý (% AD) bằng 10%-30% Sát Thương Phép (AP). Phép thuật yểm nguyên tố lên vũ khí trong 6s. Khi Quá Tải, yểm nguyên tố hết hạn hoặc đổi nguyên tố khi duration >50% giúp phép tiếp theo thi triển miễn phí.")
                 .activeSkill("Quá Tải",
                         "Trạng Thái Quá Tải (hồi chiêu 5s): Phép thuật thi triển ≤ 5s trở thành tức thì (0s). Tăng 1.25x đến 1.90x hiệu ứng nguyên tố yểm trên vũ khí.",
                         ResourceLocation.fromNamespaceAndPath("complextalents",
@@ -99,17 +102,27 @@ public class SpellbladeOrigin {
                         "origin.complextalents.spellblade.gun_msg.4",
                         "origin.complextalents.spellblade.gun_msg.5"
                 )
+                .upgradableStats(
+                        StatType.FLAT_AD,
+                        StatType.PERCENT_AD,
+                        StatType.AP,
+                        StatType.MAGIC_EFFECTIVENESS,
+                        StatType.LUCK_CRIT,
+                        StatType.MAX_HP,
+                        StatType.MAX_MANA,
+                        StatType.CDR,
+                        StatType.SUMMONING_POWER
+                )
                 .register();
 
         ClassCostMatrix.defineCosts(ID)
                 .cost(StatType.FLAT_AD, 2)
                 .cost(StatType.PERCENT_AD, 2)
                 .cost(StatType.AP, 1)
-                .cost(StatType.ARMOR_PEN, 2)
+                .cost(StatType.MAGIC_EFFECTIVENESS, 2)
                 .cost(StatType.LUCK_CRIT, 2)
                 .cost(StatType.MAX_HP, 4)
                 .cost(StatType.MAX_MANA, 2)
-                .cost(StatType.HEAL_AND_SHIELD, 4)
                 .cost(StatType.CDR, 1)
                 .spellMasteryCostMultiplier(1.0)
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.FIRE, 1.0)
@@ -129,7 +142,14 @@ public class SpellbladeOrigin {
         TalentsMod.LOGGER.info("Spellblade origin registered");
     }
 
-    public static boolean isSpellblade(ServerPlayer player) {
-        return ID.equals(OriginManager.getOriginId(player));
+    public static boolean isSpellblade(Player player) {
+        if (player == null) return false;
+        if (player.level().isClientSide()) {
+            return ID.equals(com.complextalents.origin.client.ClientOriginData.getOriginId());
+        }
+        if (player instanceof ServerPlayer serverPlayer) {
+            return ID.equals(OriginManager.getOriginId(serverPlayer));
+        }
+        return false;
     }
 }

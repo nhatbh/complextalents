@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -19,7 +20,7 @@ public class SummonTargetHandler {
      * Primary Handler: Prevents summoned entities from selecting players as attack
      * targets.
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onLivingChangeTarget(LivingChangeTargetEvent event) {
         LivingEntity newTarget = event.getNewTarget();
 
@@ -38,7 +39,7 @@ public class SummonTargetHandler {
     /**
      * Prevents players from manually left-clicking player-summoned entities.
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onAttackEntity(AttackEntityEvent event) {
         if (event.getTarget() instanceof LivingEntity livingTarget && isSummonedEntity(livingTarget)) {
             event.setCanceled(true); // Cancels player left-click melee attack
@@ -48,7 +49,7 @@ public class SummonTargetHandler {
     /**
      * Safety Net Handler: Cancels damage between players and player-summoned entities in both directions.
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onLivingAttack(LivingAttackEvent event) {
         LivingEntity victim = event.getEntity();
         Entity attacker = event.getSource().getEntity();
@@ -64,6 +65,29 @@ public class SummonTargetHandler {
         if (isSummonedEntity(victim)) {
             if (attacker instanceof Player || (attacker instanceof LivingEntity livingAttacker && isSummonedEntity(livingAttacker))) {
                 event.setCanceled(true); // Block player/summon -> summon damage
+            }
+        }
+    }
+
+    /**
+     * Intercepts PoiseDamageEvent at HIGHEST priority to cancel poise damage between players and player-summoned entities.
+     */
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onPoiseDamage(com.nhatbh.basedefensev2.api.event.PoiseDamageEvent event) {
+        LivingEntity victim = event.getEntity();
+        Entity attacker = event.getAttacker();
+
+        if (victim instanceof Player) {
+            if (attacker instanceof LivingEntity livingAttacker && isSummonedEntity(livingAttacker)) {
+                event.setCanceled(true);
+                event.setAmount(0.0f);
+            }
+        }
+
+        if (isSummonedEntity(victim)) {
+            if (attacker instanceof Player || (attacker instanceof LivingEntity livingAttacker && isSummonedEntity(livingAttacker))) {
+                event.setCanceled(true);
+                event.setAmount(0.0f);
             }
         }
     }

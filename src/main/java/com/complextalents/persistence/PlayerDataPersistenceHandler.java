@@ -87,6 +87,15 @@ public class PlayerDataPersistenceHandler {
     }
 
     @SubscribeEvent
+    public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (event.getEntity().level().isClientSide) return;
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        syncAllData(player);
+        LOGGER.info("[PERSISTENCE] Player {} changed dimension, all data synced", player.getUUID());
+    }
+
+    @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.side.isClient() || event.phase != TickEvent.Phase.END) return;
         if (!(event.player instanceof ServerPlayer player)) return;

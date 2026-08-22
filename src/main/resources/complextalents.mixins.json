@@ -13,8 +13,14 @@
     "ItemStackMixin",
     "MagicManagerMixin",
     "SmithingMenuMixin",
+    "InscriptionTableMenuMixin",
+    "SlotMixin",
     "epicfight.GuardSkillMixin",
-    "tacz.InaccuracyTypeMixin"
+    "tacz.InaccuracyTypeMixin",
+    "summoning.EntitySummonMixin",
+    "summoning.LivingEntitySummonMixin",
+    "summoning.TargetingConditionsSummonMixin",
+    "summoning.ProjectileSummonMixin"
   ],
   "server": [],
   "client": [],

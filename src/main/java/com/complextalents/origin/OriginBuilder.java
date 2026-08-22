@@ -43,6 +43,7 @@ public class OriginBuilder {
     private double[] scaledMaxResource = null;
     private BiFunction<Integer, ServerPlayer, Double> dynamicMaxResourceCalc = null;
     private java.util.function.IntToDoubleFunction levelArmorCalc = null;
+    private BiFunction<Integer, ServerPlayer, Double> levelArmorCalcWithPlayer = null;
     private java.util.function.IntToDoubleFunction levelToughnessCalc = null;
     private java.util.function.IntToDoubleFunction levelHealthCalc = null;
     private final java.util.List<Origin.OriginSkillDisplay> displaySkills = new java.util.ArrayList<>();
@@ -306,6 +307,11 @@ public class OriginBuilder {
         return this;
     }
 
+    public OriginBuilder levelArmorCalc(BiFunction<Integer, ServerPlayer, Double> calc) {
+        this.levelArmorCalcWithPlayer = calc;
+        return this;
+    }
+
     /**
      * Provide a formula to calculate level armor toughness bonus based on player level.
      *
@@ -422,6 +428,10 @@ public class OriginBuilder {
 
     java.util.function.IntToDoubleFunction getLevelArmorCalc() {
         return levelArmorCalc;
+    }
+
+    BiFunction<Integer, ServerPlayer, Double> getLevelArmorCalcWithPlayer() {
+        return levelArmorCalcWithPlayer;
     }
 
     java.util.function.IntToDoubleFunction getLevelToughnessCalc() {

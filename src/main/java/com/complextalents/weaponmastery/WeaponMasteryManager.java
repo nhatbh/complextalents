@@ -1159,13 +1159,14 @@ public class WeaponMasteryManager implements ResourceManagerReloadListener {
         if (path == null)
             path = WeaponPath.BLADEMASTER;
 
-        return switch (path) {
-            case BLADEMASTER -> BLADEMASTER_TITLES[level];
-            case COLOSSUS -> COLOSSUS_TITLES[level];
-            case VANGUARD -> VANGUARD_TITLES[level];
-            case REAPER -> REAPER_TITLES[level];
-            case JUGGERNAUT -> JUGGERNAUT_TITLES[level];
-            case BRAWLER -> BRAWLER_TITLES[level];
+        return switch (path.name()) {
+            case "BLADEMASTER" -> BLADEMASTER_TITLES[level];
+            case "COLOSSUS" -> COLOSSUS_TITLES[level];
+            case "VANGUARD" -> VANGUARD_TITLES[level];
+            case "REAPER" -> REAPER_TITLES[level];
+            case "JUGGERNAUT" -> JUGGERNAUT_TITLES[level];
+            case "BRAWLER" -> BRAWLER_TITLES[level];
+            default -> BLADEMASTER_TITLES[level];
         };
     }
 }

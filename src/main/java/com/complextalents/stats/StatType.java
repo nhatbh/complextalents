@@ -18,9 +18,8 @@ public enum StatType {
     AP("Ability Power (AP)", 0.05,
             () -> ForgeRegistries.ATTRIBUTES
                     .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "spell_power"))),
-    ARMOR_PEN("Armor Penetration", 0.5,
-            () -> ForgeRegistries.ATTRIBUTES
-                    .getValue(ResourceLocation.fromNamespaceAndPath("attributeslib", "armor_pierce"))),
+    MAGIC_EFFECTIVENESS("Magic Effectiveness", 0.05,
+            () -> com.complextalents.registry.ModAttributes.MAGIC_EFFECTIVENESS.get()),
     LUCK_CRIT("Luck & Crit", 1.0, () -> Attributes.LUCK), // Multi-attribute: handled specifically
     MAX_HP("Max HP", 2.0, () -> Attributes.MAX_HEALTH),
     MAX_MANA("Max Mana", 50.0,
@@ -29,17 +28,16 @@ public enum StatType {
     HEAL_AND_SHIELD("Heal & Shield", 0.10, () -> com.complextalents.registry.ModAttributes.HEAL_AND_SHIELD_POWER.get()),
     CDR("Ability Haste", 5.0, () -> ForgeRegistries.ATTRIBUTES
             .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "cooldown_reduction"))),
+    SUMMONING_POWER("% Summoning Power", 0.06, () -> com.complextalents.registry.ModAttributes.SUMMONING_POWER.get()),
 
     // --- Marksman Gun Stats ---
-    GUN_DAMAGE("% Gun Damage", 0.03, null),
-    RELOAD_SPEED("% Reload Speed", 0.04, null),
-    FORTITUDE("% Fortitude", 0.05, null),
-    HEADSHOT_DAMAGE("% Headshot Damage", 0.05, null),
-    RECOIL_CONTROL("% Recoil Control", 0.04, null),
-    BULLET_PENETRATION("% Bullet Penetration", 0.04, null),
-    FIRE_RATE("% Fire Rate", 0.03, null);
-
-
+    GUN_DAMAGE("% Gun Damage", 0.012, null),
+    RELOAD_SPEED("% Reload Speed", 0.02, null),
+    FORTITUDE("% Fortitude", 0.025, null),
+    HEADSHOT_DAMAGE("% Headshot Damage", 0.02, null),
+    RECOIL_CONTROL("% Recoil Control", 0.02, null),
+    BULLET_PENETRATION("% Bullet Penetration", 0.02, null),
+    FIRE_RATE("% Fire Rate", 0.015, null);
 
     private final String displayName;
     private final double yieldPerRank;
@@ -69,4 +67,3 @@ public enum StatType {
         return modifierUuid;
     }
 }
-

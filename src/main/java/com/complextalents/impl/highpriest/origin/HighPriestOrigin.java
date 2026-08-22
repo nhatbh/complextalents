@@ -148,18 +148,31 @@ public class HighPriestOrigin {
                         "origin.complextalents.high_priest.gun_msg.4",
                         "origin.complextalents.high_priest.gun_msg.5"
                 )
+                .upgradableStats(
+                        StatType.FLAT_AD,
+                        StatType.PERCENT_AD,
+                        StatType.AP,
+                        StatType.MAGIC_EFFECTIVENESS,
+                        StatType.LUCK_CRIT,
+                        StatType.MAX_HP,
+                        StatType.MAX_MANA,
+                        StatType.HEAL_AND_SHIELD,
+                        StatType.CDR,
+                        StatType.SUMMONING_POWER
+                )
                 .register();
 
         ClassCostMatrix.defineCosts(ID)
                 .cost(StatType.FLAT_AD, 2)
                 .cost(StatType.PERCENT_AD, 3)
                 .cost(StatType.AP, 1)
-                .cost(StatType.ARMOR_PEN, 3)
+                .cost(StatType.MAGIC_EFFECTIVENESS, 2)
                 .cost(StatType.LUCK_CRIT, 4)
                 .cost(StatType.MAX_HP, 2)
                 .cost(StatType.MAX_MANA, 1)
                 .cost(StatType.HEAL_AND_SHIELD, 1)
                 .cost(StatType.CDR, 2)
+                .cost(StatType.SUMMONING_POWER, 1)
                 .spellMasteryCostMultiplier(1.0) // High Priest normal with spells, 100% cost
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ELDRITCH, -1.0)
                 .weaponMasteryCostMultiplier(100.0); // High Priest should NOT use weapons, 10000% cost

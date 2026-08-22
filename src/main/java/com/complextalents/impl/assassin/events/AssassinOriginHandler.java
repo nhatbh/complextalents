@@ -33,30 +33,27 @@ public class AssassinOriginHandler {
     public static void onLivingHurt(LivingHurtEvent event) {
         if (event.getSource().getEntity() instanceof ServerPlayer attacker && AssassinOrigin.isAssassin(attacker)) {
             if (AssassinUtils.isBackstab(attacker, event.getEntity())) {
-                handleOriginBackstab(attacker, event);
+                handleOriginBackstab(attacker, event.getEntity());
             }
         }
     }
 
-    private static void handleOriginBackstab(ServerPlayer attacker, LivingHurtEvent event) {
-        int level = OriginManager.getOriginLevel(attacker);
-        long gameTime = attacker.level().getGameTime();
-
+    /**
+     * Runs the full Assassin origin backstab pipeline against a target.
+     * Called both by the normal hit path and by the poise-negation path so that
+     * poise-absorbed hits still trigger the complete set of passive effects:
+     * <ol>
+     *   <li>Expose Weakness (weakpoint effect)</li>
+     *   <li>The Disengage (attacker speed burst)</li>
+     *   <li>Backstab FX (sound + particles)</li>
+     * </ol>
+     *
+     * @param attacker the attacking Assassin player
+     * @param target   the entity being struck (may have taken 0 HP damage)
+     */
+    public static void handleOriginBackstab(ServerPlayer attacker, net.minecraft.world.entity.LivingEntity target) {
         // 1. Passive: Expose Weakness
-        if (!AssassinUtils.isEntityOnCooldown(event.getEntity(), gameTime)) {
-            double duration = OriginManager.getOriginStat(attacker, "exposeDuration");
-            event.getEntity().addEffect(
-                    new MobEffectInstance(AssassinEffects.EXPOSE_WEAKNESS.get(), (int) (duration * 20), level - 1));
-
-            double cooldown = OriginManager.getOriginStat(attacker, "exposeCooldown");
-            long expiration = gameTime + (long) (cooldown * 20);
-            AssassinUtils.setEntityCooldown(event.getEntity(), gameTime, expiration);
-
-            if (attacker.level() instanceof net.minecraft.server.level.ServerLevel levelServer) {
-                PacketHandler.sendToNearby(new AssassinEntitySyncPacket(event.getEntity().getId(), gameTime, expiration),
-                        levelServer, event.getEntity().position());
-            }
-        }
+        tryApplyExposeWeakness(attacker, target);
 
         // 2. Passive: The Disengage
         double speedBonus = OriginManager.getOriginStat(attacker, "disengageMoveSpeed");
@@ -64,22 +61,51 @@ public class AssassinOriginHandler {
         attacker.addEffect(
                 new MobEffectInstance(MobEffects.MOVEMENT_SPEED, (int) (burstDuration * 20), (int) (speedBonus * 10)));
 
-        // Backstab FX (Consistency with Shadow Walk)
+        // 3. Backstab FX (Consistency with Shadow Walk)
         if (attacker.level() instanceof ServerLevel serverLevel) {
-            double x = event.getEntity().getX();
-            double y = event.getEntity().getY() + event.getEntity().getBbHeight() / 2.0;
-            double z = event.getEntity().getZ();
+            double x = target.getX();
+            double y = target.getY() + target.getBbHeight() / 2.0;
+            double z = target.getZ();
 
             // Sound
             serverLevel.playSound(null, x, y, z, SoundEvents.PLAYER_ATTACK_CRIT, SoundSource.PLAYERS, 1.0f, 0.8f);
 
-            // OPTION 1: Chunky Splatter (Redstone Block)
+            // Chunky Splatter (Redstone Block)
             BlockParticleOption bloodSplatter = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.REDSTONE_BLOCK.defaultBlockState());
             serverLevel.sendParticles(bloodSplatter, x, y, z, 15, 0.2, 0.3, 0.2, 0.15);
 
-            // OPTION 2: Fine Mist (Red Dust)
+            // Fine Mist (Red Dust)
             DustParticleOptions bloodMist = new DustParticleOptions(new Vector3f(0.6f, 0.0f, 0.0f), 1.2f);
             serverLevel.sendParticles(bloodMist, x, y, z, 10, 0.3, 0.3, 0.3, 0.05);
+        }
+    }
+
+    /**
+     * Applies the Expose Weakness (weakpoint) effect to a target when an Assassin
+     * lands a valid backstab. This is factored out so it can also be called when
+     * a hit is fully negated by poise — the weakpoint should still register even
+     * though no health damage was dealt.
+     *
+     * @param attacker the attacking Assassin player
+     * @param target   the entity being struck
+     */
+    public static void tryApplyExposeWeakness(ServerPlayer attacker, net.minecraft.world.entity.LivingEntity target) {
+        int level = OriginManager.getOriginLevel(attacker);
+        long gameTime = attacker.level().getGameTime();
+
+        if (!AssassinUtils.isEntityOnCooldown(target, gameTime)) {
+            double duration = OriginManager.getOriginStat(attacker, "exposeDuration");
+            target.addEffect(
+                    new MobEffectInstance(AssassinEffects.EXPOSE_WEAKNESS.get(), (int) (duration * 20), level - 1));
+
+            double cooldown = OriginManager.getOriginStat(attacker, "exposeCooldown");
+            long expiration = gameTime + (long) (cooldown * 20);
+            AssassinUtils.setEntityCooldown(target, gameTime, expiration);
+
+            if (attacker.level() instanceof net.minecraft.server.level.ServerLevel levelServer) {
+                PacketHandler.sendToNearby(new AssassinEntitySyncPacket(target.getId(), gameTime, expiration),
+                        levelServer, target.position());
+            }
         }
     }
 

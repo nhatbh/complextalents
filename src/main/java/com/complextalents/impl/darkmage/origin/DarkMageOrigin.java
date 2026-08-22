@@ -86,18 +86,29 @@ public class DarkMageOrigin {
                         "origin.complextalents.dark_mage.gun_msg.4",
                         "origin.complextalents.dark_mage.gun_msg.5"
                 )
+                .upgradableStats(
+                        StatType.FLAT_AD,
+                        StatType.PERCENT_AD,
+                        StatType.AP,
+                        StatType.MAGIC_EFFECTIVENESS,
+                        StatType.LUCK_CRIT,
+                        StatType.MAX_HP,
+                        StatType.MAX_MANA,
+                        StatType.CDR,
+                        StatType.SUMMONING_POWER
+                )
                 .register();
 
         ClassCostMatrix.defineCosts(ID)
                 .cost(StatType.FLAT_AD, 3)
                 .cost(StatType.PERCENT_AD, 3)
                 .cost(StatType.AP, 1)
-                .cost(StatType.ARMOR_PEN, 2)
+                .cost(StatType.MAGIC_EFFECTIVENESS, 2)
                 .cost(StatType.LUCK_CRIT, 2)
                 .cost(StatType.MAX_HP, 3)
                 .cost(StatType.MAX_MANA, 2)
-                .cost(StatType.HEAL_AND_SHIELD, 4)
                 .cost(StatType.CDR, 1)
+                .cost(StatType.SUMMONING_POWER, 1)
                 .spellMasteryCostMultiplier(1.0)
                 // Arcane Elements (1x cost)
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.EVOCATION, 1.0)

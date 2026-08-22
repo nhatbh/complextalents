@@ -23,7 +23,7 @@ public class SpellbladeOverchargeSkill {
                 .nature(SkillNature.ACTIVE)
                 .displayName("Quá Tải")
                 .description(
-                        "Trạng Thái Quá Tải (hồi chiêu 5s): Phép thi triển ≤ 5s trở thành tức thì (0s). Mỗi đòn chém gây thêm sát thương phép theo AP & AD gain và cường hóa hiệu ứng nguyên tố 1.25x-1.90x, nhưng tiêu hao Mana per hit.")
+                        "Trạng Thái Quá Tải (hồi chiêu 5s): Phép thi triển ≤ 5s trở thành tức thì (0s). Mỗi đòn chém tiêu hao Mana gây thêm sát thương phép theo AP & AD gain và cường hóa hiệu ứng nguyên tố 1.25x-1.90x. Khi yểm nguyên tố hết hạn hoặc đổi nguyên tố khi duration >50%, phép tiếp theo thi triển miễn phí (0 Mana).")
                 .targeting(TargetType.NONE)
                 .icon(ResourceLocation.fromNamespaceAndPath("complextalents",
                         "textures/skill/spellblade/spellblade.png"))

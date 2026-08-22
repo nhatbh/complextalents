@@ -51,6 +51,26 @@ public class ModAttributes {
             ).setSyncable(true)
     );
 
+    public static final RegistryObject<Attribute> SUMMONING_POWER = ATTRIBUTES.register(
+            "summoning_power",
+            () -> new RangedAttribute(
+                    "attribute.complextalents.summoning_power",
+                    1.0,
+                    0.0,
+                    100.0
+            ).setSyncable(true)
+    );
+
+    public static final RegistryObject<Attribute> MAGIC_EFFECTIVENESS = ATTRIBUTES.register(
+            "magic_effectiveness",
+            () -> new RangedAttribute(
+                    "attribute.complextalents.magic_effectiveness",
+                    0.0,
+                    0.0,
+                    100.0
+            ).setSyncable(true)
+    );
+
     public static void register(IEventBus modEventBus) {
         ATTRIBUTES.register(modEventBus);
     }
@@ -60,5 +80,7 @@ public class ModAttributes {
         event.add(EntityType.PLAYER, SPELL_CRIT_CHANCE.get());
         event.add(EntityType.PLAYER, SPELL_CRIT_DAMAGE.get());
         event.add(EntityType.PLAYER, HEAL_AND_SHIELD_POWER.get());
+        event.add(EntityType.PLAYER, SUMMONING_POWER.get());
+        event.add(EntityType.PLAYER, MAGIC_EFFECTIVENESS.get());
     }
 }

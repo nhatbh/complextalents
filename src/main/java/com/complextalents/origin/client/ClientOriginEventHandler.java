@@ -28,9 +28,9 @@ public class ClientOriginEventHandler {
 
         Minecraft mc = Minecraft.getInstance();
 
-        // Check only once per login
-        if (!hasCheckedOriginOnLogin && mc.player != null && mc.level != null) {
-            // Player has just entered the world
+        // Check only once per login, but only after initial server data has synced to avoid race conditions.
+        if (!hasCheckedOriginOnLogin && mc.player != null && mc.level != null && ClientOriginData.hasReceivedSync()) {
+            // Player has just entered the world and synced data is available
             if (!ClientOriginData.hasOrigin()) {
                 // Player has no origin - open selection screen
                 mc.setScreen(new OriginSelectionScreen());

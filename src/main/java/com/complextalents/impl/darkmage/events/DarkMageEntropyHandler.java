@@ -121,7 +121,7 @@ public class DarkMageEntropyHandler {
                 // Escalating HP Cost: base ratio matches entropy ratio (35% of max HP per 100% mana cost), escalating per stack
                 float costMultiplier = 1.0f + (stacks * 0.2f);
                 float hpCost = (float) (serverPlayer.getMaxHealth() * (manaRatio * 0.35f) * costMultiplier);
-                serverPlayer.setHealth(Math.max(1.0f, serverPlayer.getHealth() - hpCost));
+                serverPlayer.setHealth(Math.max(6.0f, serverPlayer.getHealth() - hpCost));
 
                 // Apply/Stack Blood Exhaustion effect for 10s (200 ticks), up to max 7 stacks (amplifier 6)
                 int nextAmp = Math.min(6, stacks); // amplifier 0..6 = 1..7 stacks

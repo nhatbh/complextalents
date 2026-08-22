@@ -320,8 +320,8 @@ public class WeaponTabUI {
         int baseRanks = WeaponMasteryData.getRanksCompleted(baseLevel);
         int targetRanks = WeaponMasteryData.getRanksCompleted(targetLevel);
 
-        return switch (path) {
-            case BLADEMASTER -> {
+        return switch (path.name()) {
+            case "BLADEMASTER" -> {
                 double baseAd = (baseLevel * 1.5) + (baseLevel >= 15 ? 5.0 : 0);
                 double targetAd = (targetLevel * 1.5) + (targetLevel >= 15 ? 5.0 : 0);
                 double baseAs = (baseRanks * 4.0) + (baseLevel >= 15 ? 15.0 : 0);
@@ -332,7 +332,7 @@ public class WeaponTabUI {
                         fmtStat("AS", baseAs, targetAs, true) + " " +
                         fmtStat("MS", baseMs, targetMs, true);
             }
-            case COLOSSUS -> {
+            case "COLOSSUS" -> {
                 double baseAd = (baseLevel * 6.0) + (baseLevel >= 15 ? 25.0 : 0);
                 double targetAd = (targetLevel * 6.0) + (targetLevel >= 15 ? 25.0 : 0);
                 double baseHp = (baseRanks * 4.0) + (baseLevel >= 15 ? 10.0 : 0);
@@ -343,7 +343,7 @@ public class WeaponTabUI {
                         fmtStat("HP", baseHp, targetHp, false) + " " +
                         fmtStat("Sweep", baseSw, targetSw, true);
             }
-            case VANGUARD -> {
+            case "VANGUARD" -> {
                 double baseAd = (baseLevel * 4.0) + (baseLevel >= 15 ? 20.0 : 0);
                 double targetAd = (targetLevel * 4.0) + (targetLevel >= 15 ? 20.0 : 0);
                 double baseMs = (baseLevel * 2.5) + (baseLevel >= 15 ? 10.0 : 0);
@@ -354,7 +354,7 @@ public class WeaponTabUI {
                         fmtStat("MS", baseMs, targetMs, true) + " " +
                         fmtStat("HP", baseHp, targetHp, false);
             }
-            case REAPER -> {
+            case "REAPER" -> {
                 double baseCrit = (baseLevel * 3.0) + (baseLevel >= 15 ? 15.0 : 0);
                 double targetCrit = (targetLevel * 3.0) + (targetLevel >= 15 ? 15.0 : 0);
                 double baseCd = (baseRanks * 12.0) + (baseLevel >= 15 ? 35.0 : 0);
@@ -365,7 +365,7 @@ public class WeaponTabUI {
                         fmtStat("CritD", baseCd, targetCd, true) + " " +
                         fmtStat("AD", baseAd, targetAd, false);
             }
-            case JUGGERNAUT -> {
+            case "JUGGERNAUT" -> {
                 double baseAp = (baseLevel * 3.0) + (baseLevel >= 15 ? 20.0 : 0);
                 double targetAp = (targetLevel * 3.0) + (targetLevel >= 15 ? 20.0 : 0);
                 double baseAd = (baseRanks * 6.0);
@@ -376,7 +376,7 @@ public class WeaponTabUI {
                         fmtStat("AD", baseAd, targetAd, true) + " " +
                         fmtStat("KB", baseKb, targetKb, true);
             }
-            case BRAWLER -> {
+            case "BRAWLER" -> {
                 double baseAd = (baseLevel * 1.0) + (baseLevel >= 15 ? 6.0 : 0);
                 double targetAd = (targetLevel * 1.0) + (targetLevel >= 15 ? 6.0 : 0);
                 double baseAs = (baseRanks * 4.0) + (baseLevel >= 15 ? 20.0 : 0);
@@ -387,6 +387,7 @@ public class WeaponTabUI {
                         fmtStat("AS", baseAs, targetAs, true) + " " +
                         fmtStat("MS", baseMs, targetMs, true);
             }
+            default -> "";
         };
     }
 

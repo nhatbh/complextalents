@@ -18,6 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,17 +33,116 @@ public abstract class AbstractSpellMixin {
     @Shadow protected int baseSpellPower;
     @Shadow protected int spellPowerPerLevel;
 
+    @Inject(method = "onCast", at = @At("HEAD"))
+    private void complextalents$onCastHead(net.minecraft.world.level.Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData, org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci) {
+        if (entity instanceof Player player) {
+            AbstractSpell spell = (AbstractSpell) (Object) this;
+            ItemStack castingStack = com.complextalents.refinement.MagicRefinementEventHandler.getCastingItemStack(player, spell);
+            com.complextalents.refinement.RefinementContext.setCurrentContextStack(castingStack);
+            com.complextalents.refinement.RefinementContext.setCurrentContextSpell(spell);
+        }
+    }
+
+    @Inject(method = "onCast", at = @At("RETURN"))
+    private void complextalents$onCastReturn(net.minecraft.world.level.Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData, org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci) {
+        com.complextalents.refinement.RefinementContext.clearCurrentContextStack();
+        com.complextalents.refinement.RefinementContext.clearCurrentContextSpell();
+    }
+
+    @Inject(method = "getManaCost", at = @At("RETURN"), cancellable = true)
+    private void complextalents$getPenalizedManaCost(int spellLevel, CallbackInfoReturnable<Integer> cir) {
+        AbstractSpell spell = (AbstractSpell) (Object) this;
+        int originalCost = cir.getReturnValue();
+        if (originalCost <= 0) return;
+
+        LivingEntity entity = SpellPowerPenaltyHandler.getCasterContext();
+        if (entity == null && net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT) {
+            entity = net.minecraft.client.Minecraft.getInstance().player;
+        }
+        if (entity instanceof Player player && com.complextalents.impl.spellblade.origin.SpellbladeOrigin.isSpellblade(player)) {
+            if (com.complextalents.impl.spellblade.SpellbladeData.hasFreeCast(player)) {
+                cir.setReturnValue(0);
+                return;
+            }
+        }
+        if (entity == null) return;
+
+        // Apply Refinement Mana Reduction
+        double manaReduction = 0.0;
+        if (com.complextalents.classification.SpellClassificationManager.getOrAutoClassify(spell) == com.complextalents.classification.SpellClassificationManager.SpellType.DAMAGE) {
+            ItemStack contextStack = com.complextalents.refinement.RefinementContext.getCurrentContextStack();
+            if (contextStack.isEmpty() && entity instanceof Player player) {
+                contextStack = com.complextalents.refinement.MagicRefinementEventHandler.getCastingItemStack(player, spell);
+            }
+
+            if (!contextStack.isEmpty()) {
+                if (com.complextalents.refinement.MagicRefinementManager.isScroll(contextStack)) {
+                    int currentXp = com.complextalents.refinement.MagicRefinementManager.getRefineXp(contextStack);
+                    int cumRank = com.complextalents.refinement.MagicRefinementManager.getRankFromXp(currentXp, 20);
+                    manaReduction = com.complextalents.refinement.MagicRefinementManager.getScrollManaCostReduction(cumRank);
+                } else {
+                    net.minecraft.nbt.CompoundTag tag = contextStack.getTag();
+                    if (tag != null && tag.contains("RefinedSpells")) {
+                        net.minecraft.nbt.CompoundTag refinedSpells = tag.getCompound("RefinedSpells");
+                        String spellId = spell.getSpellId();
+                        if (refinedSpells.contains(spellId)) {
+                            net.minecraft.nbt.CompoundTag spellRefineData = refinedSpells.getCompound(spellId);
+                            int currentXp = spellRefineData.getInt("RefineXP");
+                            int cumRank = com.complextalents.refinement.MagicRefinementManager.getRankFromXp(currentXp, 20);
+                            manaReduction = com.complextalents.refinement.MagicRefinementManager.getScrollManaCostReduction(cumRank);
+                        }
+                    }
+                }
+            }
+        }
+
+        int costBeforePenalty = originalCost;
+        if (manaReduction > 0.0) {
+            costBeforePenalty = (int) Math.ceil(originalCost * (1.0 - manaReduction));
+        }
+
+        double weight = spell.getEffectiveCastTime(spellLevel, entity) <= 0
+                ? SpellPowerPenaltyHandler.instantSpellPenaltyWeight
+                : SpellPowerPenaltyHandler.spellPenaltyWeight;
+
+        double penaltyMultiplier = SpellPowerPenaltyHandler.calculatePenaltyMultiplier(spell, entity, weight);
+
+        int finalCost = costBeforePenalty;
+        if (penaltyMultiplier > 1.0) {
+            finalCost = (int) Math.ceil(costBeforePenalty * penaltyMultiplier);
+        }
+
+        cir.setReturnValue(finalCost);
+    }
+
     @Inject(method = "getEffectiveCastTime", at = @At("RETURN"), cancellable = true)
     private void complextalents$dynamicallyIncreaseCastTime(int spellLevel, LivingEntity entity, CallbackInfoReturnable<Integer> cir) {
-        if (entity == null) return;
+        LivingEntity caster = entity != null ? entity : SpellPowerPenaltyHandler.getCasterContext();
+        if (caster == null) return;
+
         AbstractSpell spell = (AbstractSpell) (Object) this;
         int originalCastTime = cir.getReturnValue();
 
         // Don't apply cast time penalties to instant spells (0 ticks)
         if (originalCastTime <= 0) return;
 
+        // Apply refinement cast time reduction substat
+        ItemStack contextStack = com.complextalents.refinement.RefinementContext.getCurrentContextStack();
+        if (contextStack.isEmpty() && caster instanceof Player player) {
+            contextStack = com.complextalents.refinement.MagicRefinementEventHandler.getCastingItemStack(player, spell);
+        }
+        if (!contextStack.isEmpty()) {
+            double substatCastReduction = com.complextalents.refinement.MagicRefinementManager.getSpellSubstatValue(
+                    contextStack, spell, com.complextalents.refinement.MagicRefinementManager.MagicSubstatType.CAST_TIME_REDUCTION
+            );
+            if (substatCastReduction > 0.0) {
+                originalCastTime = Math.round(originalCastTime * (1.0f - (float) substatCastReduction));
+                cir.setReturnValue(originalCastTime);
+            }
+        }
+
         // Spellblade Overcharge Stance: Spells with cast duration <= 5.0 seconds (100 ticks) become instant cast
-        if (entity instanceof Player player && com.complextalents.impl.spellblade.SpellbladeData.isOverchargeStance(player)) {
+        if (caster instanceof Player player && com.complextalents.impl.spellblade.SpellbladeData.isOverchargeStance(player)) {
             if (originalCastTime <= 100) {
                 cir.setReturnValue(0);
                 return;
@@ -50,7 +150,7 @@ public abstract class AbstractSpellMixin {
         }
 
         double penaltyMultiplier = SpellPowerPenaltyHandler.calculatePenaltyMultiplier(
-                spell, entity, SpellPowerPenaltyHandler.spellPenaltyWeight
+                spell, caster, SpellPowerPenaltyHandler.spellPenaltyWeight
         );
 
         if (penaltyMultiplier > 1.0) {
@@ -70,39 +170,51 @@ public abstract class AbstractSpellMixin {
         if (player == null) return;
 
         AbstractSpell spell = (AbstractSpell) (Object) this;
-        int originalCost = spell.getManaCost(spellLevel);
+        ItemStack castingStack = com.complextalents.refinement.MagicRefinementEventHandler.getCastingItemStack(player, spell);
+        com.complextalents.refinement.RefinementContext.setCurrentContextStack(castingStack);
+        com.complextalents.refinement.RefinementContext.setCurrentContextSpell(spell);
 
-        double weight = spell.getEffectiveCastTime(spellLevel, player) <= 0
-                ? SpellPowerPenaltyHandler.instantSpellPenaltyWeight
-                : SpellPowerPenaltyHandler.spellPenaltyWeight;
+        try {
+            SpellPowerPenaltyHandler.setCasterContext(player);
 
-        double penaltyMultiplier = SpellPowerPenaltyHandler.calculatePenaltyMultiplier(spell, player, weight);
+            double weight = spell.getEffectiveCastTime(spellLevel, player) <= 0
+                    ? SpellPowerPenaltyHandler.instantSpellPenaltyWeight
+                    : SpellPowerPenaltyHandler.spellPenaltyWeight;
 
-        if (penaltyMultiplier > 1.0 && castSource.consumesMana()) {
-            int penalizedCost = (int) Math.ceil(originalCost * penaltyMultiplier);
-            boolean hasEnoughMana = playerMagicData.getMana() - penalizedCost >= 0;
-            boolean hasRecastForSpell = playerMagicData.getPlayerRecasts().hasRecastForSpell(spell.getSpellId());
+            double penaltyMultiplier = SpellPowerPenaltyHandler.calculatePenaltyMultiplier(spell, player, weight);
 
-            if (!hasRecastForSpell && !hasEnoughMana) {
-                if (player instanceof ServerPlayer serverPlayer) {
-                    int extraMana = penalizedCost - originalCost;
-                    serverPlayer.sendSystemMessage(Component.literal(
-                            String.format("§cYour immense power demands more mana! (Cost: %d + %d)", originalCost, extraMana)
+            if (penaltyMultiplier > 1.0 && castSource.consumesMana()) {
+                int penalizedCost = spell.getManaCost(spellLevel);
+                int unpenalizedCost = (int) Math.ceil(penalizedCost / penaltyMultiplier);
+
+                boolean hasEnoughMana = playerMagicData.getMana() - penalizedCost >= 0;
+                boolean hasRecastForSpell = playerMagicData.getPlayerRecasts().hasRecastForSpell(spell.getSpellId());
+
+                if (!hasRecastForSpell && !hasEnoughMana) {
+                    if (player instanceof ServerPlayer serverPlayer) {
+                        int extraMana = penalizedCost - unpenalizedCost;
+                        serverPlayer.sendSystemMessage(Component.literal(
+                                String.format("§cYour immense power demands more mana! (Cost: %d + %d)", unpenalizedCost, extraMana)
+                        ));
+                    }
+                    cir.setReturnValue(new CastResult(
+                            CastResult.Type.FAILURE,
+                            Component.translatable("ui.irons_spellbooks.cast_error_mana", spell.getDisplayName(player)).withStyle(ChatFormatting.RED)
                     ));
                 }
-                cir.setReturnValue(new CastResult(
-                        CastResult.Type.FAILURE,
-                        Component.translatable("ui.irons_spellbooks.cast_error_mana", spell.getDisplayName(player)).withStyle(ChatFormatting.RED)
-                ));
             }
+        } finally {
+            com.complextalents.refinement.RefinementContext.clearCurrentContextStack();
+            com.complextalents.refinement.RefinementContext.clearCurrentContextSpell();
+            SpellPowerPenaltyHandler.clearCasterContext();
         }
     }
 
     @Inject(method = "getSpellPower", at = @At("HEAD"), cancellable = true)
     private void complextalents$modifySpellPower(int spellLevel, Entity sourceEntity, CallbackInfoReturnable<Float> cir) {
         AbstractSpell spell = (AbstractSpell) (Object) this;
-        if (complextalents$isFortifyOrHealingSpell(spell)) {
-            float configPowerModifier = SpellConfigManager.getSpellConfigValue(spell, SpellConfigParameter.POWER_MULTIPLIER).floatValue();
+        if (com.complextalents.refinement.MagicRefinementManager.isHealingSpell(spell)) {
+            boolean isShield = complextalents$isShieldSpell(spell);
             double healAndShieldModifier = 1.0;
             if (sourceEntity instanceof LivingEntity livingEntity) {
                 var attr = livingEntity.getAttribute(ModAttributes.HEAL_AND_SHIELD_POWER.get());
@@ -110,43 +222,31 @@ public abstract class AbstractSpellMixin {
                     healAndShieldModifier = attr.getValue();
                 }
             }
-            float power = (float) ((this.baseSpellPower + this.spellPowerPerLevel * (spellLevel - 1)) * healAndShieldModifier * configPowerModifier);
-            cir.setReturnValue(power);
-        } else if (complextalents$isShieldSpell(spell)) {
-            double entitySpellPowerModifier = 1.0;
-            double entitySchoolPowerModifier = 1.0;
-            double healAndShieldModifier = 1.0;
-            float configPowerModifier = SpellConfigManager.getSpellConfigValue(spell, SpellConfigParameter.POWER_MULTIPLIER).floatValue();
-
-            if (sourceEntity instanceof LivingEntity livingEntity) {
-                entitySpellPowerModifier = livingEntity.getAttributeValue(AttributeRegistry.SPELL_POWER.get());
-                entitySchoolPowerModifier = spell.getSchoolType().getPowerFor(livingEntity);
-                var attr = livingEntity.getAttribute(ModAttributes.HEAL_AND_SHIELD_POWER.get());
-                if (attr != null) {
-                    healAndShieldModifier = attr.getValue();
-                }
+            ItemStack contextStack = com.complextalents.refinement.RefinementContext.getCurrentContextStack();
+            if (contextStack.isEmpty() && sourceEntity instanceof Player player) {
+                contextStack = com.complextalents.refinement.MagicRefinementEventHandler.getCastingItemStack(player, spell);
             }
-            float power = (float) ((this.baseSpellPower + this.spellPowerPerLevel * (spellLevel - 1)) * entitySpellPowerModifier * entitySchoolPowerModifier * healAndShieldModifier * configPowerModifier);
-            cir.setReturnValue(power);
+            if (!contextStack.isEmpty()) {
+                healAndShieldModifier += com.complextalents.refinement.MagicRefinementManager.getSpellRefinementMainstatBonus(contextStack, spell);
+                healAndShieldModifier += com.complextalents.refinement.MagicRefinementManager.getSpellSubstatValue(
+                        contextStack, spell, com.complextalents.refinement.MagicRefinementManager.MagicSubstatType.HEAL_AND_SHIELD_POWER
+                );
+            }
+            float configPowerModifier = SpellConfigManager.getSpellConfigValue(spell, SpellConfigParameter.POWER_MULTIPLIER).floatValue();
+            if (isShield) {
+                double entitySpellPowerModifier = 1.0;
+                double entitySchoolPowerModifier = 1.0;
+                if (sourceEntity instanceof LivingEntity livingEntity) {
+                    entitySpellPowerModifier = livingEntity.getAttributeValue(AttributeRegistry.SPELL_POWER.get());
+                    entitySchoolPowerModifier = spell.getSchoolType().getPowerFor(livingEntity);
+                }
+                float power = (float) ((this.baseSpellPower + this.spellPowerPerLevel * (spellLevel - 1)) * entitySpellPowerModifier * entitySchoolPowerModifier * healAndShieldModifier * configPowerModifier);
+                cir.setReturnValue(power);
+            } else {
+                float power = (float) ((this.baseSpellPower + this.spellPowerPerLevel * (spellLevel - 1)) * healAndShieldModifier * configPowerModifier);
+                cir.setReturnValue(power);
+            }
         }
-    }
-
-    private static boolean complextalents$isFortifyOrHealingSpell(AbstractSpell spell) {
-        if (spell instanceof FortifySpell
-                || spell instanceof HealSpell
-                || spell instanceof GreaterHealSpell
-                || spell instanceof BlessingOfLifeSpell
-                || spell instanceof CloudOfRegenerationSpell
-                || spell instanceof HealingCircleSpell) {
-            return true;
-        }
-        String id = spell.getSpellId();
-        return id.endsWith("fortify")
-                || id.endsWith("heal")
-                || id.endsWith("greater_heal")
-                || id.endsWith("blessing_of_life")
-                || id.endsWith("cloud_of_regeneration")
-                || id.endsWith("healing_circle");
     }
 
     private static boolean complextalents$isShieldSpell(AbstractSpell spell) {

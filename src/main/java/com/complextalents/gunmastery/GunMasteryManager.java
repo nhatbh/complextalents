@@ -44,11 +44,23 @@ public class GunMasteryManager {
     };
 
     /**
+     * Get target level for upgrading from current level.
+     * Pistol starting level is 1 (Recruit). Non-pistol archetypes start at level 5 (Trooper).
+     */
+    public int getNextLevel(GunType type, int currentLevel) {
+        if (currentLevel <= 0) {
+            return type == GunType.PISTOL ? 1 : 5;
+        }
+        return currentLevel + 1;
+    }
+
+    /**
      * Get damage required to purchase next level.
      * @param currentLevel Current level (0 to 19).
-     * @return Damage required to unlock (currentLevel + 1).
+     * @return Damage required to unlock next level. Level 0 requires 0.0 damage.
      */
-    public double getDamageRequiredForNextLevel(int currentLevel) {
+    public double getDamageRequiredForNextLevel(GunType type, int currentLevel) {
+        if (currentLevel <= 0) return 0.0;
         int nextLevel = currentLevel + 1;
         if (nextLevel < 1 || nextLevel >= REQUIRED_DAMAGE_PER_LEVEL.length) {
             return Double.MAX_VALUE;
@@ -56,8 +68,12 @@ public class GunMasteryManager {
         return REQUIRED_DAMAGE_PER_LEVEL[nextLevel];
     }
 
+    public double getDamageRequiredForNextLevel(int currentLevel) {
+        return getDamageRequiredForNextLevel(GunType.PISTOL, currentLevel);
+    }
+
     /**
-     * Get player level required to unlock next mastery level.
+     * Get player level required to unlock target mastery level.
      */
     public int getRequiredPlayerLevelForTier(int targetLevel) {
         if (targetLevel <= 4) return 1;    // Recruit
@@ -88,10 +104,9 @@ public class GunMasteryManager {
     }
 
     /**
-     * Calculate base SP cost for upgrading to next level (0-indexed current level).
+     * Calculate base SP cost for upgrading to a target level.
      */
-    public int getBaseSPCost(int currentLevel) {
-        int targetLevel = currentLevel + 1;
+    public int getBaseSPCost(int targetLevel) {
         if (targetLevel <= 4) return 1;    // Recruit: 1 SP
         if (targetLevel <= 8) return 2;    // Trooper: 2 SP
         if (targetLevel <= 12) return 3;   // Sergeant: 3 SP
@@ -101,32 +116,39 @@ public class GunMasteryManager {
 
     /**
      * Get SP cost for upgrading a specific gun archetype to its next level, accounting for
-     * origin multiplier and exponential escalation ($2^k$) for secondary non-pistol investments.
+     * origin multiplier and specialization multiplier (x1, x2, x3, x4, x5, x6) for non-pistol investments.
      */
-    public int getSPCostForNextLevel(GunType type, int currentLevel, IGunMasteryData data, ResourceLocation originId) {
+    public int getSPCostForNextLevel(GunType type, int currentLevel, Map<GunType, Integer> masteryLevels, ResourceLocation originId) {
         double originMult = ClassCostMatrix.getGunMasteryCostMultiplier(originId);
         if (originMult < 0) return -1; // Disallowed for this origin
 
+        int nextLevel = getNextLevel(type, currentLevel);
+        int baseCost = getBaseSPCost(nextLevel);
+
         if (type == GunType.PISTOL) {
-            return (int) Math.round(getBaseSPCost(currentLevel) * originMult);
+            return (int) Math.round(baseCost * originMult);
         }
 
         // Count k = number of other non-pistol archetypes invested in (level >= 5)
         int k = 0;
-        if (data != null) {
-            for (Map.Entry<GunType, Integer> entry : data.getAllMasteryLevels().entrySet()) {
+        if (masteryLevels != null) {
+            for (Map.Entry<GunType, Integer> entry : masteryLevels.entrySet()) {
                 GunType otherType = entry.getKey();
                 if (otherType != GunType.PISTOL && otherType != GunType.RPG && otherType != GunType.GLOBAL && otherType != type) {
-                    if (entry.getValue() >= 5) {
+                    if (entry.getValue() != null && entry.getValue() >= 5) {
                         k++;
                     }
                 }
             }
         }
 
-        int baseCost = getBaseSPCost(currentLevel);
-        double multiplier = Math.pow(2, k) * originMult;
+        double multiplier = (1 + k) * originMult;
         return (int) Math.round(baseCost * multiplier);
+    }
+
+    public int getSPCostForNextLevel(GunType type, int currentLevel, IGunMasteryData data, ResourceLocation originId) {
+        Map<GunType, Integer> map = data != null ? data.getAllMasteryLevels() : null;
+        return getSPCostForNextLevel(type, currentLevel, map, originId);
     }
 
     /**

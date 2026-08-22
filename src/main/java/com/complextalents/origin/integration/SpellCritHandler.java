@@ -42,11 +42,7 @@ public class SpellCritHandler {
         }
     }
 
-    /**
-     * Intercept SpellDamageEvent to apply spell crit multiplier.
-     * Runs at HIGH priority so the critted amount feeds into subsequent handlers.
-     */
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void onSpellDamage(io.redspace.ironsspellbooks.api.events.SpellDamageEvent event) {
         if (!OriginModIntegrationHandler.isIronSpellbooksLoaded())
             return;
@@ -66,33 +62,6 @@ public class SpellCritHandler {
                 return;
 
             double critChance = critChanceInst.getValue();
-
-            // Read casting item stack for Precision & Fatal augments
-            io.redspace.ironsspellbooks.api.spells.AbstractSpell spell = event.getSpellDamageSource().spell();
-            net.minecraft.world.item.ItemStack castingStack = com.complextalents.refinement.SpellAugmentEventHandler
-                    .getCastingItemStack(caster, spell);
-            if (!castingStack.isEmpty()) {
-                java.util.List<net.minecraft.nbt.CompoundTag> augments = com.complextalents.refinement.SpellAugmentEventHandler
-                        .getAugmentsForSpell(castingStack, spell);
-                for (net.minecraft.nbt.CompoundTag aug : augments) {
-                    try {
-                        com.complextalents.item.MagicAugmentItem.AugmentType type = com.complextalents.item.MagicAugmentItem.AugmentType
-                                .valueOf(aug.getString("Type"));
-                        com.complextalents.caseopening.DynamicCasePoolBuilder.CrateRarity rarity = com.complextalents.caseopening.DynamicCasePoolBuilder.CrateRarity
-                                .values()[Math.min(4, Math.max(0, aug.getInt("Tier")))];
-                        int tLvl = rarity.ordinal() + 1;
-                        if (type == com.complextalents.item.MagicAugmentItem.AugmentType.PRECISION) {
-                            critChance += switch (tLvl) {
-                                case 2 -> 0.06;
-                                case 3 -> 0.10;
-                                case 4 -> 0.15;
-                                default -> 0.20;
-                            };
-                        }
-                    } catch (Exception ignored) {
-                    }
-                }
-            }
 
             // Inject Harmonic Convergence Buffs
             double bonusCritDamage = 0.0;
@@ -117,6 +86,20 @@ public class SpellCritHandler {
                 bonusCritDamage += com.complextalents.impl.darkmage.skill.VoidReversalSkill.POSSESSED_CRIT_DAMAGE[idx];
             }
 
+            // Inject refinement spell-specific crit chance and crit damage substats
+            io.redspace.ironsspellbooks.api.spells.AbstractSpell spell = source.spell();
+            if (spell != null) {
+                net.minecraft.world.item.ItemStack castingStack = com.complextalents.refinement.MagicRefinementEventHandler.getCastingItemStack(caster, spell);
+                if (!castingStack.isEmpty()) {
+                    critChance += com.complextalents.refinement.MagicRefinementManager.getSpellSubstatValue(
+                            castingStack, spell, com.complextalents.refinement.MagicRefinementManager.MagicSubstatType.SPELL_CRIT_CHANCE
+                    );
+                    bonusCritDamage += com.complextalents.refinement.MagicRefinementManager.getSpellSubstatValue(
+                            castingStack, spell, com.complextalents.refinement.MagicRefinementManager.MagicSubstatType.SPELL_CRIT_DAMAGE
+                    );
+                }
+            }
+
             if (critChance <= 0.0)
                 return;
 
@@ -129,29 +112,6 @@ public class SpellCritHandler {
             AttributeInstance critDamageInst = caster.getAttribute(SpellCritAttributes.SPELL_CRIT_DAMAGE.get());
             double critDamage = (critDamageInst != null) ? critDamageInst.getValue() : 1.5;
             critDamage += bonusCritDamage;
-
-            if (!castingStack.isEmpty()) {
-                java.util.List<net.minecraft.nbt.CompoundTag> augments = com.complextalents.refinement.SpellAugmentRecipe
-                        .getAugments(castingStack);
-                for (net.minecraft.nbt.CompoundTag aug : augments) {
-                    try {
-                        com.complextalents.item.MagicAugmentItem.AugmentType type = com.complextalents.item.MagicAugmentItem.AugmentType
-                                .valueOf(aug.getString("Type"));
-                        com.complextalents.caseopening.DynamicCasePoolBuilder.CrateRarity rarity = com.complextalents.caseopening.DynamicCasePoolBuilder.CrateRarity
-                                .values()[Math.min(4, Math.max(0, aug.getInt("Tier")))];
-                        int tLvl = rarity.ordinal() + 1;
-                        if (type == com.complextalents.item.MagicAugmentItem.AugmentType.FATAL) {
-                            critDamage += switch (tLvl) {
-                                case 2 -> 0.20;
-                                case 3 -> 0.32;
-                                case 4 -> 0.45;
-                                default -> 0.60;
-                            };
-                        }
-                    } catch (Exception ignored) {
-                    }
-                }
-            }
 
             float originalDamage = event.getAmount();
             float newDamage = (float) (originalDamage * critDamage);

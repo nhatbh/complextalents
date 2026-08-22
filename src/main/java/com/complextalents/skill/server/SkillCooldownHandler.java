@@ -204,8 +204,7 @@ public class SkillCooldownHandler {
             skillData.setToggleActive(skillId, true);
             double cooldown = skill.getActiveCooldown(skillLevel);
             if (cooldown > 0) {
-                double hasteMultiplier = getAbilityHasteCooldownMultiplier(player);
-                skillData.setCooldown(skillId, cooldown * hasteMultiplier);
+                skillData.setCooldown(skillId, cooldown);
             }
             player.sendSystemMessage(Component.literal("\u00A7aToggle skill activated"));
             // Consume initial resource cost for toggle-on
@@ -216,11 +215,10 @@ public class SkillCooldownHandler {
             return;
         }
 
-        // For non-toggle skills: apply cooldown scaled by Ability Haste (Relentless Pursuit uses static 300s)
+        // For non-toggle skills: apply raw cooldown (unaffected by Ability Haste)
         double cooldown = skill.getActiveCooldown(skillLevel);
         if (cooldown > 0) {
-            double hasteMultiplier = com.complextalents.impl.marksman.skill.RelentlessPursuitSkill.ID.equals(skillId) ? 1.0 : getAbilityHasteCooldownMultiplier(player);
-            skillData.setCooldown(skillId, cooldown * hasteMultiplier);
+            skillData.setCooldown(skillId, cooldown);
         }
 
         // Consume resources
@@ -344,16 +342,4 @@ public class SkillCooldownHandler {
                 });
     }
 
-    /**
-     * Get active skill cooldown multiplier based on player's Ability Haste / CDR attribute.
-     */
-    private static double getAbilityHasteCooldownMultiplier(ServerPlayer player) {
-        net.minecraft.world.entity.ai.attributes.Attribute attr = net.minecraftforge.registries.ForgeRegistries.ATTRIBUTES
-                .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "cooldown_reduction"));
-        if (attr != null && player.getAttributes().hasAttribute(attr)) {
-            double cdrVal = player.getAttributeValue(attr);
-            return Math.max(0.2, 1.0 - cdrVal);
-        }
-        return 1.0;
-    }
 }

@@ -50,8 +50,8 @@ public class StatModifierApplier {
                 updateModAttribute(player, "irons_spellbooks", "spell_power", totalValue,
                         AttributeModifier.Operation.ADDITION, uuid);
                 break;
-            case ARMOR_PEN:
-                updateModAttribute(player, "attributeslib", "armor_pierce", totalValue,
+            case MAGIC_EFFECTIVENESS:
+                updateModifier(player, com.complextalents.registry.ModAttributes.MAGIC_EFFECTIVENESS.get(), totalValue,
                         AttributeModifier.Operation.ADDITION, uuid);
                 break;
             case LUCK_CRIT:
@@ -97,6 +97,10 @@ public class StatModifierApplier {
                 updateModAttribute(player, "irons_spellbooks", "cooldown_reduction", hasteFraction,
                         AttributeModifier.Operation.ADDITION, uuid);
                 updateModAttribute(player, "irons_spellbooks", "cast_time_reduction", hasteFraction,
+                        AttributeModifier.Operation.ADDITION, uuid);
+                break;
+            case SUMMONING_POWER:
+                updateModifier(player, ModAttributes.SUMMONING_POWER.get(), totalValue,
                         AttributeModifier.Operation.ADDITION, uuid);
                 break;
         }

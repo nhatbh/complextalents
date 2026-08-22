@@ -23,7 +23,7 @@ import org.joml.Matrix4f;
 public class SpellbladeRenderer implements OriginRenderer {
 
     private float smoothImbueProgress = 0.0f;
-    private float smoothVirtualManaProgress = 0.0f;
+    private float smoothSubBarFade = 0.0f;
 
     @Override
     public void renderHUD(GuiGraphics graphics, int screenWidth, int screenHeight) {
@@ -40,8 +40,9 @@ public class SpellbladeRenderer implements OriginRenderer {
         boolean hasCharge = cap.hasImbueCharge();
 
         boolean isOvercharge = cap.isOverchargeStance();
+        boolean hasFreeCast = cap.hasFreeCast();
 
-        // Calculate Target Progress Values (6-second imbue duration countdown, finite regardless of stance)
+        // Calculate Target Progress Values (6-second imbue duration countdown)
         float targetImbue = 0.0f;
         if (enhancedTicks > 0) {
             targetImbue = Math.min(1.0f, Math.max(0.0f, enhancedTicks / 120.0f));
@@ -49,27 +50,20 @@ public class SpellbladeRenderer implements OriginRenderer {
             targetImbue = 1.0f;
         }
 
-        // Calculate Virtual Mana ratio (up to 50% max mana cap)
-        float virtualMana = cap.getVirtualMana();
-        double maxMana = player.getAttributeValue(io.redspace.ironsspellbooks.api.registry.AttributeRegistry.MAX_MANA.get());
-        if (maxMana <= 0) maxMana = 100.0;
-        float maxVirtualMana = (float) (maxMana * 0.5);
-
-        float targetVirtualMana = (maxVirtualMana > 0) ? Math.min(1.0f, Math.max(0.0f, virtualMana / maxVirtualMana)) : 0.0f;
-
-        // Smooth Lerp Animations for fluid UI response
+        // Smooth Lerp Animations
         smoothImbueProgress = Mth.lerp(0.15f, smoothImbueProgress, targetImbue);
         if (Math.abs(smoothImbueProgress - targetImbue) < 0.001f) {
             smoothImbueProgress = targetImbue;
         }
 
-        smoothVirtualManaProgress = Mth.lerp(0.15f, smoothVirtualManaProgress, targetVirtualMana);
-        if (Math.abs(smoothVirtualManaProgress - targetVirtualMana) < 0.001f) {
-            smoothVirtualManaProgress = targetVirtualMana;
+        float targetSubBarFade = isOvercharge ? 1.0f : 0.0f;
+        smoothSubBarFade = Mth.lerp(0.15f, smoothSubBarFade, targetSubBarFade);
+        if (Math.abs(smoothSubBarFade - targetSubBarFade) < 0.001f) {
+            smoothSubBarFade = targetSubBarFade;
         }
 
-        // Only return if stance is off and both HUD bars have fully faded out
-        if (!isOvercharge && smoothImbueProgress <= 0.001f && smoothVirtualManaProgress <= 0.001f) {
+        // Only return if stance is off and both HUD elements have fully faded out
+        if (!isOvercharge && smoothImbueProgress <= 0.001f && smoothSubBarFade <= 0.001f) {
             return;
         }
 
@@ -99,43 +93,62 @@ public class SpellbladeRenderer implements OriginRenderer {
 
         // 2. Main Imbue Progress Arc (Tracks Imbue Charge & 6s Enhanced Time Left)
         if (smoothImbueProgress > 0.001f) {
-            float pulse = 0.85f + 0.15f * (float) Math.sin(gameTime * 0.25);
+            boolean isAboveHalf = isOvercharge && enhancedTicks > 60;
+            float pulseRate = isAboveHalf ? 0.35f : 0.25f;
+            float pulseMin = isAboveHalf ? 0.88f : 0.85f;
+            float pulseMax = isAboveHalf ? 1.00f : 0.95f;
+
+            float pulse = pulseMin + (pulseMax - pulseMin) * (float) Math.sin(gameTime * pulseRate);
             int alpha = (int) (0xEE * pulse);
             int filledColor = (alpha << 24) | (elementColor & 0x00FFFFFF);
 
             float fillSweep = totalSweep * smoothImbueProgress;
             drawArcSegment(tesselator, bufferBuilder, matrix, centerX, centerY, radiusInner, radiusOuter, startAngle, fillSweep, filledColor);
+
+            // Draw 50% threshold marker during Overcharge
+            if (isOvercharge) {
+                float halfSweep = totalSweep * 0.5f;
+                int markerColor = isAboveHalf ? 0xFFFFFFFF : 0xAAFFFFFF;
+                drawArcSegment(tesselator, bufferBuilder, matrix, centerX, centerY, radiusInner - 0.5f, radiusOuter + 0.5f, startAngle + halfSweep - 1.0f, 2.0f, markerColor);
+            }
         }
 
-        // 3. Thin Inner Sub-Bar (Tracks Virtual Mana Pool up to 50% max mana, ONLY in Overcharge Stance)
-        if (isOvercharge) {
-            // Background track for inner arc
-            drawArcSegment(tesselator, bufferBuilder, matrix, centerX, centerY, radiusInner - 3.0f, radiusInner - 2.0f, startAngle, totalSweep, 0x3310121A);
+        // 3. Thin Inner Sub-Bar (Replaces Temp Mana: Glows Gold when Free Cast ready, Glows Blue in Overcharge)
+        if (smoothSubBarFade > 0.001f) {
+            int alphaBase = (int) (0xDD * smoothSubBarFade);
+            int subBarBg = (int) (0x33 * smoothSubBarFade) << 24 | 0x10121A;
+            drawArcSegment(tesselator, bufferBuilder, matrix, centerX, centerY, radiusInner - 3.5f, radiusInner - 1.5f, startAngle, totalSweep, subBarBg);
 
-            if (smoothVirtualManaProgress > 0.001f) {
-                float virtualSweep = totalSweep * smoothVirtualManaProgress;
-                int goldColor = 0xFFFFA500; // Bright Warm Gold during Overcharge stance
-                drawArcSegment(tesselator, bufferBuilder, matrix, centerX, centerY, radiusInner - 3.0f, radiusInner - 2.0f, startAngle, virtualSweep, goldColor);
+            int subBarColor;
+            if (hasFreeCast) {
+                // Gold light up when Free Cast is ready
+                float pulse = 0.80f + 0.20f * (float) Math.sin(gameTime * 0.3);
+                int alpha = (int) (alphaBase * pulse);
+                subBarColor = (alpha << 24) | 0xFFD700; // Bright Warm Gold (#FFD700)
+            } else {
+                // Electric Cyan-Blue in Overcharge
+                int alpha = (int) (alphaBase * 0.9f);
+                subBarColor = (alpha << 24) | 0x00BFFF; // Electric Deep Sky Blue (#00BFFF)
             }
+            drawArcSegment(tesselator, bufferBuilder, matrix, centerX, centerY, radiusInner - 3.5f, radiusInner - 1.5f, startAngle, totalSweep, subBarColor);
         }
 
         RenderSystem.disableBlend();
 
-        // 4. Small Gold Text for Virtual Mana Amount (Displayed ONLY when Overcharge Stance is active, flush at bottom of mana bar)
-        if (isOvercharge) {
-            String manaText = String.format("%.0f", virtualMana);
-            int textColor = 0xFFFFA500;
+        // 4. "FREE CAST" Gold Label (Displayed when Free Cast is active during Overcharge Stance)
+        if (isOvercharge && hasFreeCast) {
+            String labelText = "FREE CAST";
+            int textColor = 0xFFFFD700; // Gold
 
-            float scale = 0.60f;
-            float textWidth = minecraft.font.width(manaText) * scale;
+            float scale = 0.55f;
+            float textWidth = minecraft.font.width(labelText) * scale;
 
-            // Positioned right at the bottom of the mana bar tip, flush with its curved bottom
             float textX = centerX + 12.55f - (textWidth * 0.5f);
-            float textY = centerY + 9.5f;
+            float textY = centerY + 10.0f;
 
             graphics.pose().pushPose();
             graphics.pose().scale(scale, scale, scale);
-            graphics.drawString(minecraft.font, manaText, (int) (textX / scale), (int) (textY / scale), textColor, true);
+            graphics.drawString(minecraft.font, labelText, (int) (textX / scale), (int) (textY / scale), textColor, true);
             graphics.pose().popPose();
         }
     }

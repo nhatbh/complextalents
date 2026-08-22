@@ -29,6 +29,9 @@ public class SpellMasterySyncPacket {
         NetworkEvent.Context context = supplier.get();
         context.enqueueWork(() -> {
             ClientSpellMasteryData.updateData(msg.data);
+            if (net.minecraft.client.Minecraft.getInstance().screen instanceof com.complextalents.client.screen.PlayerProgressionScreen screen) {
+                screen.refresh();
+            }
         });
         context.setPacketHandled(true);
     }

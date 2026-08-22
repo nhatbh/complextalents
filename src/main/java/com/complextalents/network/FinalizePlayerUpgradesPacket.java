@@ -210,6 +210,7 @@ public class FinalizePlayerUpgradesPacket {
 
             // 2.5 Verify Gun Mastery (Atomic check)
             player.getCapability(com.complextalents.gunmastery.capability.GunMasteryDataProvider.GUN_MASTERY_DATA).ifPresent(gunData -> {
+                Map<com.complextalents.tacz.GunType, Integer> effectiveMasteryLevels = new HashMap<>(gunData.getAllMasteryLevels());
                 for (Map.Entry<String, Integer> entry : gunMasteryUpgrades.entrySet()) {
                     try {
                         com.complextalents.tacz.GunType type = com.complextalents.tacz.GunType.valueOf(entry.getKey());
@@ -229,21 +230,23 @@ public class FinalizePlayerUpgradesPacket {
                         int playerLevel = levelingData.getLevel(player.getUUID());
                         for (int i = 0; i < requestedLevels; i++) {
                             if (proposedNewLevel >= maxLvl) { valid = false; break; }
-                            double requiredDamageForNext = com.complextalents.gunmastery.GunMasteryManager.getInstance().getDamageRequiredForNextLevel(proposedNewLevel);
+                            int nextTargetLevel = com.complextalents.gunmastery.GunMasteryManager.getInstance().getNextLevel(type, proposedNewLevel);
+                            double requiredDamageForNext = com.complextalents.gunmastery.GunMasteryManager.getInstance().getDamageRequiredForNextLevel(type, proposedNewLevel);
                             if (accumulatedDamage < requiredDamageForNext) { valid = false; break; }
 
-                            int requiredPlayerLevel = com.complextalents.gunmastery.GunMasteryManager.getInstance().getRequiredPlayerLevelForTier(proposedNewLevel + 1);
+                            int requiredPlayerLevel = com.complextalents.gunmastery.GunMasteryManager.getInstance().getRequiredPlayerLevelForTier(nextTargetLevel);
                             if (playerLevel < requiredPlayerLevel) { valid = false; break; }
 
-                            int spCost = com.complextalents.gunmastery.GunMasteryManager.getInstance().getSPCostForNextLevel(type, proposedNewLevel, gunData, activeOrigin);
+                            int spCost = com.complextalents.gunmastery.GunMasteryManager.getInstance().getSPCostForNextLevel(type, proposedNewLevel, effectiveMasteryLevels, activeOrigin);
                             if (spCost < 0) { valid = false; break; }
 
                             totalCost[0] += spCost;
-                            proposedNewLevel++;
+                            proposedNewLevel = nextTargetLevel;
                         }
 
                         if (valid) {
                             validatedGunPaths.put(type, proposedNewLevel);
+                            effectiveMasteryLevels.put(type, proposedNewLevel);
                         }
                     } catch (IllegalArgumentException ignored) {}
                 }

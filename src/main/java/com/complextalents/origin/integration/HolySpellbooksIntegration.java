@@ -49,11 +49,7 @@ public class HolySpellbooksIntegration {
             io.redspace.ironsspellbooks.api.spells.SchoolType schoolType = spell.getSchoolType();
             if (schoolType == null) return;
 
-            // Check if this is a holy spell
             String schoolPath = schoolType.getId().getPath();
-            if (!"holy".equals(schoolPath)) {
-                return;
-            }
 
             LivingEntity target = event.getEntity();
             if (target == null) return;
@@ -70,15 +66,21 @@ public class HolySpellbooksIntegration {
 
             if (caster == null) return;
 
-            // High Priest 2x Holy Spell Damage bonus
+            // High Priest damage scaling: 2x Holy, 0.5x all other schools
             if (caster instanceof net.minecraft.server.level.ServerPlayer player && com.complextalents.impl.highpriest.origin.HighPriestOrigin.isHighPriest(player)) {
-                event.setAmount(event.getAmount() * 2.0f);
+                if ("holy".equals(schoolPath)) {
+                    event.setAmount(event.getAmount() * 2.0f);
+                } else {
+                    event.setAmount(event.getAmount() * 0.5f);
+                }
             }
 
-            // Fire holy spell damage event
-            float damage = event.getAmount();
-            HolySpellDamageEvent holyEvent = new HolySpellDamageEvent(target, caster, damage, spell);
-            MinecraftForge.EVENT_BUS.post(holyEvent);
+            // Check if this is a holy spell to fire the HolySpellDamageEvent
+            if ("holy".equals(schoolPath)) {
+                float damage = event.getAmount();
+                HolySpellDamageEvent holyEvent = new HolySpellDamageEvent(target, caster, damage, spell);
+                MinecraftForge.EVENT_BUS.post(holyEvent);
+            }
 
         } catch (Exception e) {
             TalentsMod.LOGGER.debug("Error processing holy SpellDamageEvent: {}", e.getMessage());

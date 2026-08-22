@@ -15,15 +15,15 @@ public class SpellbladeDataSyncPacket {
     private final boolean imbueCharge;
     private final int overchargeTicks;
     private final boolean overchargeStance;
-    private final float virtualMana;
+    private final boolean freeCast;
 
-    public SpellbladeDataSyncPacket(SpellSchool activeElement, int enhancedAttackTicks, boolean imbueCharge, int overchargeTicks, boolean overchargeStance, float virtualMana) {
+    public SpellbladeDataSyncPacket(SpellSchool activeElement, int enhancedAttackTicks, boolean imbueCharge, int overchargeTicks, boolean overchargeStance, boolean freeCast) {
         this.activeElement = activeElement;
         this.enhancedAttackTicks = enhancedAttackTicks;
         this.imbueCharge = imbueCharge;
         this.overchargeTicks = overchargeTicks;
         this.overchargeStance = overchargeStance;
-        this.virtualMana = virtualMana;
+        this.freeCast = freeCast;
     }
 
     public static void encode(SpellbladeDataSyncPacket msg, FriendlyByteBuf buf) {
@@ -35,7 +35,7 @@ public class SpellbladeDataSyncPacket {
         buf.writeBoolean(msg.imbueCharge);
         buf.writeInt(msg.overchargeTicks);
         buf.writeBoolean(msg.overchargeStance);
-        buf.writeFloat(msg.virtualMana);
+        buf.writeBoolean(msg.freeCast);
     }
 
     public static SpellbladeDataSyncPacket decode(FriendlyByteBuf buf) {
@@ -45,9 +45,9 @@ public class SpellbladeDataSyncPacket {
         boolean imbueCharge = buf.readBoolean();
         int overchargeTicks = buf.readInt();
         boolean overchargeStance = buf.readBoolean();
-        float virtualMana = buf.readFloat();
+        boolean freeCast = buf.readBoolean();
 
-        return new SpellbladeDataSyncPacket(element, enhancedAttackTicks, imbueCharge, overchargeTicks, overchargeStance, virtualMana);
+        return new SpellbladeDataSyncPacket(element, enhancedAttackTicks, imbueCharge, overchargeTicks, overchargeStance, freeCast);
     }
 
     public static void handle(SpellbladeDataSyncPacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -62,7 +62,7 @@ public class SpellbladeDataSyncPacket {
                 cap.setHasImbueCharge(msg.imbueCharge);
                 cap.setOverchargeTicks(msg.overchargeTicks);
                 cap.setOverchargeStance(msg.overchargeStance);
-                cap.setVirtualMana(msg.virtualMana);
+                cap.setFreeCast(msg.freeCast);
             });
         });
         ctx.get().setPacketHandled(true);

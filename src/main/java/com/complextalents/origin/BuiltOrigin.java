@@ -33,6 +33,7 @@ public class BuiltOrigin implements Origin {
     private final java.util.List<OriginSkillDisplay> displaySkills;
     private final ResourceLocation activeSkillId;
     private final java.util.function.IntToDoubleFunction levelArmorCalc;
+    private final BiFunction<Integer, ServerPlayer, Double> levelArmorCalcWithPlayer;
     private final java.util.function.IntToDoubleFunction levelToughnessCalc;
     private final java.util.function.IntToDoubleFunction levelHealthCalc;
     private final java.util.List<String> gunConfusionMessages;
@@ -56,6 +57,7 @@ public class BuiltOrigin implements Origin {
         this.displaySkills = builder.getDisplaySkills();
         this.activeSkillId = builder.getActiveSkillId();
         this.levelArmorCalc = builder.getLevelArmorCalc();
+        this.levelArmorCalcWithPlayer = builder.getLevelArmorCalcWithPlayer();
         this.levelToughnessCalc = builder.getLevelToughnessCalc();
         this.levelHealthCalc = builder.getLevelHealthCalc();
         this.gunConfusionMessages = builder.getGunConfusionMessages();
@@ -66,6 +68,16 @@ public class BuiltOrigin implements Origin {
     @Override
     public java.util.List<OriginSkillDisplay> getDisplaySkills() {
         return displaySkills;
+    }
+
+    @Override
+    public ResourceLocation getOwnerId() {
+        return getId();
+    }
+
+    @Override
+    public String getOwnerType() {
+        return "origin";
     }
 
     @Override
@@ -161,6 +173,14 @@ public class BuiltOrigin implements Origin {
             return this.levelArmorCalc.applyAsDouble(playerLevel);
         }
         return Origin.super.getLevelArmorBonus(playerLevel);
+    }
+
+    @Override
+    public double getLevelArmorBonus(int playerLevel, @Nullable ServerPlayer player) {
+        if (this.levelArmorCalcWithPlayer != null && player != null) {
+            return this.levelArmorCalcWithPlayer.apply(playerLevel, player);
+        }
+        return getLevelArmorBonus(playerLevel);
     }
 
     @Override

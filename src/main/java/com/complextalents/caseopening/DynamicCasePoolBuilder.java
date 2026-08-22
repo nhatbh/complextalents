@@ -267,43 +267,9 @@ public class DynamicCasePoolBuilder {
     public static List<CaseReward> buildMagicPool(ResourceLocation schoolId, CrateRarity crateRarity) {
         Map<Integer, List<ItemStack>> tierMap = getMagicSpellsForSchool(schoolId);
 
-        // Inject Magic Augment Gems into respective tiers
-        injectMagicAugmentGems(tierMap, crateRarity);
+        injectRefinementGems(tierMap, crateRarity);
 
         return buildPoolFromItemStackTierMap(tierMap, crateRarity, schoolId != null ? schoolId.toString() : "ALL");
-    }
-
-    private static void injectMagicAugmentGems(Map<Integer, List<ItemStack>> tierMap, CrateRarity crateRarity) {
-        RandomSource random = RandomSource.create();
-        int crateTier = crateRarity.ordinal() + 1;
-        CrateRarity[] rarities = CrateRarity.values();
-        com.complextalents.item.MagicAugmentItem[] gems = {
-                com.complextalents.item.ModItems.POWER_GEM.get(),
-                com.complextalents.item.ModItems.MANA_SAVER_GEM.get(),
-                com.complextalents.item.ModItems.HASTE_GEM.get(),
-                com.complextalents.item.ModItems.SPEED_GEM.get(),
-                com.complextalents.item.ModItems.PRECISION_GEM.get(),
-                com.complextalents.item.ModItems.FATAL_GEM.get(),
-                com.complextalents.item.ModItems.VAMPIRISM_GEM.get(),
-                com.complextalents.item.ModItems.PIERCE_GEM.get(),
-                com.complextalents.item.ModItems.OVERCLOCK_GEM.get(),
-                com.complextalents.item.ModItems.RECAST_GEM.get()
-        };
-
-        for (int t = 1; t <= 5; t++) {
-            CrateRarity currentRarity = rarities[t - 1];
-            List<ItemStack> list = tierMap.computeIfAbsent(t, k -> new ArrayList<>());
-            int delta = crateTier - t;
-            int minCount = delta > 0 ? (int) Math.pow(2, Math.min(delta, 3)) : 1;
-            int maxCount = delta > 0 ? (int) Math.pow(2, Math.min(delta + 1, 4)) : 2;
-            int count = minCount + random.nextInt(maxCount - minCount + 1);
-
-            for (com.complextalents.item.MagicAugmentItem gem : gems) {
-                if (currentRarity.ordinal() >= gem.getAugmentType().getMinRarity().ordinal()) {
-                    list.add(com.complextalents.item.MagicAugmentItem.createStack(gem, currentRarity, count));
-                }
-            }
-        }
     }
 
     /**
@@ -356,21 +322,7 @@ public class DynamicCasePoolBuilder {
     }
 
     public static List<CrateRarity> getValidRaritiesForGunType(com.complextalents.tacz.GunType gunType) {
-        if (gunType == null) {
-            return List.of(CrateRarity.values());
-        }
-        List<CrateRarity> validRarities = new ArrayList<>();
-        for (CrateRarity rarity : CrateRarity.values()) {
-            int tier = rarity.ordinal() + 1;
-            List<ItemStack> stacks = getGunStacksForTypeAndTier(gunType, tier);
-            if (stacks != null && !stacks.isEmpty()) {
-                validRarities.add(rarity);
-            }
-        }
-        if (validRarities.isEmpty()) {
-            validRarities.add(CrateRarity.COMMON);
-        }
-        return validRarities;
+        return List.of(CrateRarity.values());
     }
 
     public static double[] getGunTierPercentages(com.complextalents.tacz.GunType gunType, CrateRarity crateRarity) {
@@ -448,9 +400,6 @@ public class DynamicCasePoolBuilder {
                     customName = Component.literal("§6★ " + stack.getHoverName().getString());
                 }
                 int weight = perItemWeight;
-                if (stack.getItem() instanceof com.complextalents.item.RefinementGemItem) {
-                    weight = perItemWeight * 3;
-                }
                 pool.add(new CaseReward(stack.copy(), rarity, weight, customName));
             }
         }

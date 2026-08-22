@@ -38,9 +38,10 @@ public class PlayerProgressionScreen extends Screen {
     private final WeaponTabUI weaponTab;
     private final GunTabUI gunTab;
     private final StageTabUI stageTab;
+    private final com.complextalents.client.GuideTabUI guideTab;
 
-    private int currentTab = 0; // 0=Stats, 1=Spells, 2=Weapons, 3=Guns, 4=Stages
-    private Button[] tabButtons = new Button[5];
+    private int currentTab = 0; // 0=Stats, 1=Spells, 2=Weapons, 3=Guns, 4=Stages, 5=Guide
+    private Button[] tabButtons = new Button[6];
     private List<Button> contentButtons = new ArrayList<>();
     private Button finalizeButton;
 
@@ -58,6 +59,14 @@ public class PlayerProgressionScreen extends Screen {
         this.weaponTab = new WeaponTabUI(cart);
         this.gunTab = new GunTabUI(cart);
         this.stageTab = new StageTabUI(cart);
+        this.guideTab = new com.complextalents.client.GuideTabUI(cart);
+
+        // Request sync from server when progression screen is opened
+        PacketHandler.sendToServer(new com.complextalents.network.C2SRequestMasterySyncPacket());
+    }
+
+    public void refresh() {
+        rebuildContent();
     }
 
     @Override
@@ -73,13 +82,20 @@ public class PlayerProgressionScreen extends Screen {
         this.contentButtons.clear();
 
         // Create tab buttons
-        String[] tabNames = {"Stats", "Spells", "Weapons", "Guns", "Stages"};
-        for (int i = 0; i < 5; i++) {
+        Component[] tabNames = {
+            Component.translatable("gui.complextalents.tab.stats"),
+            Component.translatable("gui.complextalents.tab.spells"),
+            Component.translatable("gui.complextalents.tab.weapons"),
+            Component.translatable("gui.complextalents.tab.guns"),
+            Component.translatable("gui.complextalents.tab.stages"),
+            Component.translatable("gui.complextalents.tab.guide")
+        };
+        for (int i = 0; i < 6; i++) {
             final int tabIndex = i;
-            this.tabButtons[i] = this.addRenderableWidget(Button.builder(Component.literal(tabNames[i]),
+            this.tabButtons[i] = this.addRenderableWidget(Button.builder(tabNames[i],
                     (btn) -> selectTab(tabIndex))
-                    .pos(screenX + 10 + (i * 78), screenY + 35)
-                    .size(74, 20)
+                    .pos(screenX + 10 + (i * 82), screenY + 35)
+                    .size(78, 20)
                     .build());
             updateTabButtonStyle(i);
         }
@@ -100,7 +116,7 @@ public class PlayerProgressionScreen extends Screen {
         if (currentTab != tabIndex) {
             currentTab = tabIndex;
             rebuildContent();
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 6; i++) {
                 updateTabButtonStyle(i);
             }
         }
@@ -130,6 +146,9 @@ public class PlayerProgressionScreen extends Screen {
             case 4:
                 contentButtons.addAll(stageTab.buildWidgets(this, screenX + 10, screenY + 65));
                 break;
+            case 5:
+                contentButtons.addAll(guideTab.buildWidgets(this, screenX + 10, screenY + 65));
+                break;
         }
 
         // Add all content buttons to renderable widgets
@@ -146,6 +165,7 @@ public class PlayerProgressionScreen extends Screen {
             case 2 -> weaponTab.update();
             case 3 -> gunTab.update();
             case 4 -> stageTab.updateData();
+            case 5 -> guideTab.update();
         }
         rebuildContent();
         updateFinalizeButtonStyle();
@@ -184,6 +204,8 @@ public class PlayerProgressionScreen extends Screen {
 
         if (currentTab == 4) {
             stageTab.render(guiGraphics, this.font, screenX + 10, screenY + 65, mouseX, mouseY, partialTick);
+        } else if (currentTab == 5) {
+            guideTab.render(guiGraphics, this.font, screenX + 10, screenY + 65, mouseX, mouseY, partialTick);
         } else {
             // Render current tab content (backgrounds)
             switch (currentTab) {
@@ -299,6 +321,15 @@ public class PlayerProgressionScreen extends Screen {
         ));
 
         this.onClose();
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        if (currentTab == 5) {
+            guideTab.mouseScrolled(delta);
+            return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, delta);
     }
 
     @Override

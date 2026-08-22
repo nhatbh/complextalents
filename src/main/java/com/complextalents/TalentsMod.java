@@ -62,6 +62,9 @@ public class TalentsMod {
         // Register TACZ Gun Module
         com.complextalents.tacz.TACZModule.init(modEventBus);
 
+        // Register Summoning Module
+        com.complextalents.summoning.SummoningModule.init(modEventBus);
+
         // Register custom entities
         ModEntities.register(modEventBus);
         HighPriestEntities.register(modEventBus);
@@ -116,6 +119,10 @@ public class TalentsMod {
         // Initialize weapon mastery manager
         WeaponMasteryManager.getInstance().initialize();
         LOGGER.info("Weapon Mastery Manager initialized");
+
+        // Initialize spell classifications
+        com.complextalents.classification.SpellClassificationManager.load();
+        LOGGER.info("Spell classifications loaded");
 
         // Register example origins
         HighPriestOrigin.register();
@@ -193,6 +200,13 @@ public class TalentsMod {
         // Register Live Damage Tracker command
         com.complextalents.command.DamageTrackerCommand.register(event.getServer().getCommands().getDispatcher());
         LOGGER.info("Damage Tracker command registered");
+
+        // Register Entity NBT Dump command
+        com.complextalents.command.DumpEntityNBTCommand.register(event.getServer().getCommands().getDispatcher());
+        LOGGER.info("Entity NBT Dump command registered");
+
+        // Register Summoning commands
+        com.complextalents.summoning.SummoningModule.registerCommands(event.getServer().getCommands().getDispatcher());
     }
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -224,6 +238,10 @@ public class TalentsMod {
         @SubscribeEvent
         public static void onRegisterCommands(net.minecraftforge.event.RegisterCommandsEvent event) {
             com.complextalents.command.WeaponClassifyCommand.register(event.getDispatcher());
+            com.complextalents.command.SpellClassifyCommand.register(event.getDispatcher());
+            com.complextalents.command.SpellDumpCommand.register(event.getDispatcher());
+            com.complextalents.command.DumpEntityNBTCommand.register(event.getDispatcher());
+            com.complextalents.summoning.SummoningModule.registerCommands(event.getDispatcher());
         }
 
         @SubscribeEvent

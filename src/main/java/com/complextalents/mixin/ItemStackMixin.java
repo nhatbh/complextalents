@@ -65,4 +65,22 @@ public abstract class ItemStackMixin {
             ci.cancel();
         }
     }
+
+    @Inject(
+        method = "getTooltipLines(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/TooltipFlag;)Ljava/util/List;",
+        at = @At("HEAD"),
+        remap = true
+    )
+    private void complextalents$setTooltipContext(net.minecraft.world.entity.player.Player player, net.minecraft.world.item.TooltipFlag flag, org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<java.util.List<net.minecraft.network.chat.Component>> cir) {
+        com.complextalents.refinement.RefinementContext.setCurrentContextStack((ItemStack) (Object) this);
+    }
+
+    @Inject(
+        method = "getTooltipLines(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/TooltipFlag;)Ljava/util/List;",
+        at = @At("RETURN"),
+        remap = true
+    )
+    private void complextalents$clearTooltipContext(net.minecraft.world.entity.player.Player player, net.minecraft.world.item.TooltipFlag flag, org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<java.util.List<net.minecraft.network.chat.Component>> cir) {
+        com.complextalents.refinement.RefinementContext.clearCurrentContextStack();
+    }
 }

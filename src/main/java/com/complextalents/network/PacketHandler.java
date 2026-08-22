@@ -321,10 +321,10 @@ public class PacketHandler {
                                 SpellMasterySyncPacket::handle);
 
                 INSTANCE.registerMessage(packetId++,
-                                SpellMasterySyncPacket.class,
-                                SpellMasterySyncPacket::encode,
-                                SpellMasterySyncPacket::decode,
-                                SpellMasterySyncPacket::handle);
+                                C2SRequestMasterySyncPacket.class,
+                                C2SRequestMasterySyncPacket::encode,
+                                C2SRequestMasterySyncPacket::new,
+                                C2SRequestMasterySyncPacket::handle);
 
                 INSTANCE.registerMessage(packetId++,
                                 FinalizePlayerUpgradesPacket.class,
@@ -385,6 +385,18 @@ public class PacketHandler {
                                 ServerboundAutoFillRefinementPacket::encode,
                                 ServerboundAutoFillRefinementPacket::decode,
                                 ServerboundAutoFillRefinementPacket::handle);
+
+                INSTANCE.registerMessage(packetId++,
+                                C2SOpenRefiningAnvilPacket.class,
+                                C2SOpenRefiningAnvilPacket::encode,
+                                C2SOpenRefiningAnvilPacket::decode,
+                                C2SOpenRefiningAnvilPacket::handle);
+
+                INSTANCE.registerMessage(packetId++,
+                                C2SOpenGunTablePacket.class,
+                                C2SOpenGunTablePacket::encode,
+                                C2SOpenGunTablePacket::decode,
+                                C2SOpenGunTablePacket::handle);
 
                 TalentsMod.LOGGER.info("Network packets registered");
         }

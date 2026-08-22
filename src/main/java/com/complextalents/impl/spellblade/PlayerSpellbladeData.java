@@ -13,7 +13,7 @@ public class PlayerSpellbladeData implements IPlayerSpellbladeData {
     private boolean imbueCharge = false;
     private int overchargeTicks = 0;
     private boolean overchargeStance = false;
-    private float virtualMana = 0.0f;
+    private boolean freeCast = false;
 
     public void setPlayer(Player player) {
         this.player = player;
@@ -92,15 +92,14 @@ public class PlayerSpellbladeData implements IPlayerSpellbladeData {
     }
 
     @Override
-    public float getVirtualMana() {
-        return virtualMana;
+    public boolean hasFreeCast() {
+        return freeCast;
     }
 
     @Override
-    public void setVirtualMana(float amount) {
-        float oldVal = this.virtualMana;
-        this.virtualMana = Math.max(0.0f, amount);
-        if (Math.abs(oldVal - this.virtualMana) > 0.1f) {
+    public void setFreeCast(boolean freeCast) {
+        if (this.freeCast != freeCast) {
+            this.freeCast = freeCast;
             sync();
         }
     }
@@ -122,7 +121,7 @@ public class PlayerSpellbladeData implements IPlayerSpellbladeData {
         tag.putBoolean("imbue_charge", imbueCharge);
         tag.putInt("overcharge_ticks", overchargeTicks);
         tag.putBoolean("overcharge_stance", overchargeStance);
-        tag.putFloat("virtual_mana", virtualMana);
+        tag.putBoolean("free_cast", freeCast);
         return tag;
     }
 
@@ -141,6 +140,6 @@ public class PlayerSpellbladeData implements IPlayerSpellbladeData {
         this.imbueCharge = nbt.getBoolean("imbue_charge");
         this.overchargeTicks = nbt.getInt("overcharge_ticks");
         this.overchargeStance = nbt.getBoolean("overcharge_stance");
-        this.virtualMana = nbt.getFloat("virtual_mana");
+        this.freeCast = nbt.getBoolean("free_cast");
     }
 }

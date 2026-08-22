@@ -58,6 +58,8 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 @Mod.EventBusSubscriber(modid = TalentsMod.MODID)
 public class SpellbladeEventHandler {
 
+    private static final UUID SPELLBLADE_AP_TO_AD_UUID = UUIDHelper.generateAttributeModifierUUID("spellblade",
+            "ap_to_ad");
     private static final UUID OVERCHARGE_AD_MODIFIER_UUID = UUIDHelper.generateAttributeModifierUUID("spellblade",
             "overcharge_ad");
     private static final UUID EVOCATION_IMPACT_MODIFIER_UUID = UUIDHelper.generateAttributeModifierUUID("spellblade",
@@ -67,8 +69,10 @@ public class SpellbladeEventHandler {
     /**
      * Intercept spell casting for Spellblade players:
      * - Swaps active weapon imbue to cast spell's school.
-     * - Default Imbue Mechanic: grants 6 seconds (120 ticks) of elemental imbue.
-     * - During Overcharge Stance: element switches instantly, imbue is infinite.
+     * - Imbue Grant: 6 seconds (120 ticks) of elemental imbue.
+     * - Overcharge Free Cast Mechanic:
+     *   1. If switching element during Overcharge while current imbue timer is > 50% (> 60 ticks), grant Free Cast.
+     *   2. If Free Cast is active, consume it for this cast (handled in AbstractSpellMixin for 0 mana).
      */
     @SubscribeEvent
     public static void onSpellCast(SpellOnCastEvent event) {
@@ -84,33 +88,31 @@ public class SpellbladeEventHandler {
                 return;
 
             String schoolPath = spell.getSchoolType().getId().getPath();
-            SpellSchool school = SpellSchool.fromString(schoolPath);
-            if (school != null) {
-                // Set active element to cast spell's school
-                SpellbladeData.setActiveElement(serverPlayer, school);
+            SpellSchool newSchool = SpellSchool.fromString(schoolPath);
 
-                // Grant default 6 seconds (120 ticks) of elemental imbue duration
+            SpellSchool currentElement = SpellbladeData.getActiveElement(serverPlayer);
+            int currentTicks = SpellbladeData.getEnhancedAttackTicks(serverPlayer);
+            boolean isOvercharge = SpellbladeData.isOverchargeStance(serverPlayer);
+
+            if (newSchool != null) {
+                // Free Cast Trigger: Switching elemental imbue during Overcharge when timer is > 50% (> 60 ticks)
+                if (isOvercharge && currentElement != null && currentElement != newSchool && currentTicks > 60) {
+                    SpellbladeData.setFreeCast(serverPlayer, true);
+                    ServerLevel level = serverPlayer.serverLevel();
+                    level.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
+                            SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.8f, 1.2f);
+                    level.sendParticles(ParticleTypes.ENCHANTED_HIT, serverPlayer.getX(), serverPlayer.getY() + 1.0, serverPlayer.getZ(),
+                            15, 0.3, 0.5, 0.3, 0.1);
+                }
+
+                // Set active element to cast spell's school and reset 6s imbue duration
+                SpellbladeData.setActiveElement(serverPlayer, newSchool);
                 SpellbladeData.setEnhancedAttackTicks(serverPlayer, 120);
             }
 
-            // Virtual Mana Consumption (usable strictly for spell casting)
-            int manaCost = spell.getManaCost(event.getSpellLevel());
-            if (manaCost > 0) {
-                float virtualMana = SpellbladeData.getVirtualMana(serverPlayer);
-                if (virtualMana > 0) {
-                    float virtualUsed = Math.min(virtualMana, (float) manaCost);
-                    SpellbladeData.setVirtualMana(serverPlayer, virtualMana - virtualUsed);
-
-                    // Refund virtual mana portion to real mana reserve
-                    MagicData magicData = MagicData.getPlayerMagicData(serverPlayer);
-                    if (magicData != null) {
-                        double maxMana = serverPlayer.getAttributeValue(AttributeRegistry.MAX_MANA.get());
-                        if (maxMana <= 0) maxMana = 100.0;
-                        float newMana = (float) Math.min(maxMana, magicData.getMana() + virtualUsed);
-                        magicData.setMana(newMana);
-                        PacketDistributor.sendToPlayer(serverPlayer, new SyncManaPacket(magicData));
-                    }
-                }
+            // Consume Free Cast charge if active for this spell cast
+            if (SpellbladeData.hasFreeCast(serverPlayer)) {
+                SpellbladeData.setFreeCast(serverPlayer, false);
             }
         } catch (Exception ignored) {
         }
@@ -119,8 +121,7 @@ public class SpellbladeEventHandler {
     /**
      * Intercept melee strikes by Spellblade players:
      * - Normal Mode: Mana Weaver Passive restores mana based on inverse attack speed.
-     * - Overcharge Stance Mode: Consumes mana per hit based on raw AD gain and AP bonus magic damage.
-     *   If mana is insufficient, Overcharge Stance automatically deactivates.
+     * - Overcharge Stance Mode: Calculates AP bonus magic damage when elemental imbue is active.
      */
     @SubscribeEvent
     public static void onAttackEntity(AttackEntityEvent event) {
@@ -137,28 +138,7 @@ public class SpellbladeEventHandler {
             attackSpeed = 0.2;
         double weightMult = 1.0 / attackSpeed;
 
-        // 1. Accumulate Virtual Mana Pool (up to 50% of max mana) ONLY during Overcharge Stance
         boolean isStanceOn = SpellbladeData.isOverchargeStance(player);
-        if (isStanceOn) {
-            try {
-                double maxMana = player.getAttributeValue(AttributeRegistry.MAX_MANA.get());
-                if (maxMana <= 0)
-                    maxMana = 100.0;
-                float virtualManaCap = (float) (maxMana * 0.5);
-
-                double baseManaPct = SpellbladeOrigin.BASE_MANA_PER_HIT[originIdx];
-                float virtualGained = (float) (maxMana * baseManaPct * weightMult);
-
-                float currentVirtual = SpellbladeData.getVirtualMana(player);
-                float newVirtual = Math.min(virtualManaCap, currentVirtual + virtualGained);
-                SpellbladeData.setVirtualMana(player, newVirtual);
-            } catch (Exception ignored) {
-            }
-        } else {
-            if (SpellbladeData.getVirtualMana(player) > 0) {
-                SpellbladeData.setVirtualMana(player, 0.0f);
-            }
-        }
 
         if (!isStanceOn) {
             // Normal Mode: Mana Weaver Passive - Restore Mana based on inverse attack speed
@@ -192,8 +172,9 @@ public class SpellbladeEventHandler {
 
                 double bonusMagicDmg = adGain * effectiveAp * SpellbladeOrigin.AP_DAMAGE_GAIN_RATIO[skillIdx];
 
-                double manaDrainCost = SpellbladeOrigin.BASE_MANA_DRAIN_PER_HIT[skillIdx]
-                        + (bonusMagicDmg * SpellbladeOrigin.MANA_DRAIN_DAMAGE_SCALING[skillIdx]);
+                double aquaMult = (activeElement == SpellSchool.AQUA) ? 0.5 : 1.0;
+                double manaDrainCost = (SpellbladeOrigin.BASE_MANA_DRAIN_PER_HIT[skillIdx]
+                        + (bonusMagicDmg * SpellbladeOrigin.MANA_DRAIN_DAMAGE_SCALING[skillIdx])) * aquaMult;
 
                 try {
                     MagicData magicData = MagicData.getPlayerMagicData(player);
@@ -205,7 +186,7 @@ public class SpellbladeEventHandler {
                         magicData.setMana(newMana);
                         PacketDistributor.sendToPlayer(player, new SyncManaPacket(magicData));
 
-                        // Still register hit as enhanced
+                        // Register hit as enhanced
                         player.getPersistentData().putDouble("SpellbladeBonusMagicDmg", bonusMagicDmg);
                         player.getPersistentData().putBoolean("SpellbladeWasStanceHit", true);
                         if (activeElement != null) {
@@ -261,33 +242,6 @@ public class SpellbladeEventHandler {
                     || event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)
                     || event.getSource().isIndirect())
                 return;
-            // 1. Accumulate Virtual Mana Pool (ONLY during Overcharge Stance) & Reduce Spell Cooldowns on melee hit
-            int hitOriginLevel = Math.min(5, Math.max(1, OriginManager.getOriginLevel(player)));
-            int hitOriginIdx = hitOriginLevel - 1;
-            double attackSpeed = player.getAttributeValue(Attributes.ATTACK_SPEED);
-            if (attackSpeed <= 0.2) attackSpeed = 0.2;
-            double weightMult = 1.0 / attackSpeed;
-
-            boolean isStanceActive = SpellbladeData.isOverchargeStance(player);
-            if (isStanceActive) {
-                try {
-                    double maxMana = player.getAttributeValue(AttributeRegistry.MAX_MANA.get());
-                    if (maxMana <= 0) maxMana = 100.0;
-                    float virtualManaCap = (float) (maxMana * 0.5);
-
-                    double baseManaPct = SpellbladeOrigin.BASE_MANA_PER_HIT[hitOriginIdx];
-                    float virtualGained = (float) (maxMana * baseManaPct * weightMult);
-
-                    float currentVirtual = SpellbladeData.getVirtualMana(player);
-                    float newVirtual = Math.min(virtualManaCap, currentVirtual + virtualGained);
-                    SpellbladeData.setVirtualMana(player, newVirtual);
-                } catch (Exception ignored) {}
-            } else {
-                if (SpellbladeData.getVirtualMana(player) > 0) {
-                    SpellbladeData.setVirtualMana(player, 0.0f);
-                }
-            }
-
             // Trigger Impact & Screen Shake feedback (debounced to once per swing)
             long currentGameTime = player.level().getGameTime();
             long lastImpactTick = player.getPersistentData().getLong("SpellbladeLastImpactTick");
@@ -369,6 +323,10 @@ public class SpellbladeEventHandler {
             int skillIdx = skillLevel - 1;
 
             double enhancedMult = isStanceOn ? SpellbladeOrigin.ENHANCED_EFFECT_MULT[skillIdx] : 1.0;
+
+            double attackSpeed = player.getAttributeValue(Attributes.ATTACK_SPEED);
+            if (attackSpeed <= 0.2) attackSpeed = 0.2;
+            double weightMult = 1.0 / attackSpeed;
 
             // Effective AP scaling with School-Specific Spell Power
             double effectiveAp = SpellbladeData.getEffectiveAP(player, activeElement);
@@ -562,12 +520,45 @@ public class SpellbladeEventHandler {
         }
 
         if (player instanceof ServerPlayer serverPlayer) {
-            if (!SpellbladeOrigin.isSpellblade(serverPlayer))
-                return;
+            AttributeInstance adAttr = serverPlayer.getAttribute(Attributes.ATTACK_DAMAGE);
 
+            if (!SpellbladeOrigin.isSpellblade(serverPlayer)) {
+                if (adAttr != null && adAttr.getModifier(SPELLBLADE_AP_TO_AD_UUID) != null) {
+                    adAttr.removeModifier(SPELLBLADE_AP_TO_AD_UUID);
+                }
+                return;
+            }
+
+            // Update AP-to-AD Attribute Modifier (0.10x to 0.30x of BONUS Spell Power as % AD)
+            if (adAttr != null) {
+                int originLevel = Math.min(5, Math.max(1, OriginManager.getOriginLevel(serverPlayer)));
+                double ratio = SpellbladeOrigin.AP_TO_AD_RATIO[originLevel - 1];
+                double spellPower = serverPlayer.getAttributeValue(AttributeRegistry.SPELL_POWER.get());
+                double bonusSpellPower = Math.max(0.0, spellPower - 1.0);
+                double bonusAd = bonusSpellPower * ratio;
+
+                AttributeModifier currentMod = adAttr.getModifier(SPELLBLADE_AP_TO_AD_UUID);
+                if (currentMod == null || Math.abs(currentMod.getAmount() - bonusAd) > 0.001) {
+                    if (currentMod != null) {
+                        adAttr.removeModifier(SPELLBLADE_AP_TO_AD_UUID);
+                    }
+                    adAttr.addTransientModifier(new AttributeModifier(SPELLBLADE_AP_TO_AD_UUID, "Spellblade AP to AD", bonusAd, AttributeModifier.Operation.MULTIPLY_TOTAL));
+                }
+            }
+
+            // Decrement imbue duration and trigger Free Cast when imbue expires naturally in Overcharge
             int enhancedTicks = SpellbladeData.getEnhancedAttackTicks(serverPlayer);
             if (enhancedTicks > 0) {
-                SpellbladeData.setEnhancedAttackTicks(serverPlayer, enhancedTicks - 1);
+                int nextTicks = enhancedTicks - 1;
+                SpellbladeData.setEnhancedAttackTicks(serverPlayer, nextTicks);
+                if (nextTicks == 0 && SpellbladeData.isOverchargeStance(serverPlayer)) {
+                    SpellbladeData.setFreeCast(serverPlayer, true);
+                    ServerLevel level = serverPlayer.serverLevel();
+                    level.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
+                            SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.8f, 1.2f);
+                    level.sendParticles(ParticleTypes.ENCHANTED_HIT, serverPlayer.getX(), serverPlayer.getY() + 1.0, serverPlayer.getZ(),
+                            15, 0.3, 0.5, 0.3, 0.1);
+                }
             }
         }
     }

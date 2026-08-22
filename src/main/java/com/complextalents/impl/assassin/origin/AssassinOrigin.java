@@ -67,11 +67,9 @@ public class AssassinOrigin {
                 .cost(StatType.FLAT_AD, 1)
                 .cost(StatType.PERCENT_AD, 2)
                 .cost(StatType.AP, 4)
-                .cost(StatType.ARMOR_PEN, 1)
                 .cost(StatType.LUCK_CRIT, 1)
                 .cost(StatType.MAX_HP, 5)
                 .cost(StatType.MAX_MANA, 4)
-                .cost(StatType.HEAL_AND_SHIELD, 4)
                 .cost(StatType.CDR, 3)
                 .spellMasteryCostMultiplier(3.0) // Assassin terrible with spells, 300% cost
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ELDRITCH, -1.0)

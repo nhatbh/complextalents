@@ -67,8 +67,8 @@ public class CombatPowerCalculator {
 
                 if (type == StatType.LUCK_CRIT) {
                     cpTotal += (rank * type.getYieldPerRank() * 10.0);
-                } else if (type == StatType.ARMOR_PEN) {
-                    cpTotal += (rank * type.getYieldPerRank() * 8.0);
+                } else if (type == StatType.MAGIC_EFFECTIVENESS) {
+                    cpTotal += (rank * type.getYieldPerRank() * 100.0 * 8.0);
                 } else if (type == StatType.AP) {
                     cpTotal += (rank * type.getYieldPerRank() * 100.0 * 10.0);
                 } else if (type == StatType.CDR) {

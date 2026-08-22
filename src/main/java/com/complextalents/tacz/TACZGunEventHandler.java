@@ -93,131 +93,112 @@ public class TACZGunEventHandler {
 
         float newBaseAmount = (float) (event.getBaseAmount() * damageMult);
 
-        // Target Exhaustion Check for SMG & LMG mechanics
-        LivingEntity victim = event.getHurtEntity() instanceof LivingEntity livingVictim ? livingVictim : null;
-        boolean isTargetExhausted = victim != null && PoiseAPI.isExhausted(victim);
-
-        if (isTargetExhausted) {
-            if (gunType == GunType.SMG) {
-                // SMG: 1.5x damage boost against exhausted targets
-                newBaseAmount *= 1.5f;
-            } else if (gunType == GunType.MG && victim != null && !victim.level().isClientSide) {
-                // LMG: Inflict suppression for 1 second (20 ticks) to delay poise recovery
-                net.minecraft.world.effect.MobEffect suppressionEffect = net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS.getValue(net.minecraft.resources.ResourceLocation.tryParse("basedefensev2:suppression"));
-                if (suppressionEffect != null) {
-                    victim.addEffect(new MobEffectInstance(suppressionEffect, 20, 0, false, false));
-                }
-            }
-        }
-
+        float rawHitDamage = newBaseAmount * (event.isHeadShot() ? event.getHeadshotMultiplier() : 1.0f);
         event.setBaseAmount(newBaseAmount);
 
-        // 2. Headshot Multiplier
-        if (event.isHeadShot()) {
-            double hsMult = GunAttributes.getValue(attacker, GunAttributeType.HEADSHOT_MULTIPLIER, gunType);
-            event.setHeadshotMultiplier((float) (event.getHeadshotMultiplier() * hsMult));
-        }
+        // Target Exhaustion Check for LMG suppression mechanic
+        LivingEntity victim = event.getHurtEntity() instanceof LivingEntity livingVictim ? livingVictim : null;
 
         // 3. Poise API Integration & Mitigation
         if (victim != null && !victim.level().isClientSide && PoiseAPI.hasPoise(victim)) {
             // Prevent double-processing by basedefensev2's generic EntityStrengthEventHandler
             victim.getPersistentData().putBoolean("SkipStrengthDamage", true);
 
-            if (!isTargetExhausted) {
-                double distance = attacker.distanceTo(victim);
+            double distance = attacker.distanceTo(victim);
+            boolean isTargetExhausted = PoiseAPI.isExhausted(victim);
 
-                // Determine final gun penetration (pierce count)
-                int basePierce = 0;
-                CommonGunIndex index = TimelessAPI.getCommonGunIndex(event.getGunId()).orElse(null);
-                if (index != null && index.getGunData() != null && index.getGunData().getBulletData() != null) {
-                    basePierce = index.getGunData().getBulletData().getPierce();
+            // 1. Calculate Pre-mitigated Base Damage (Apotheosis Armor Formula)
+            float effectiveArmor = (float) victim.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR);
+            float preMitigatedDamage = rawHitDamage * (50.0f / (50.0f + Math.max(0.0f, effectiveArmor)));
+
+            // 2. Firearm Poise Damage Path
+            int basePierce = 0;
+            CommonGunIndex index = TimelessAPI.getCommonGunIndex(event.getGunId()).orElse(null);
+            if (index != null && index.getGunData() != null && index.getGunData().getBulletData() != null) {
+                basePierce = index.getGunData().getBulletData().getPierce();
+            }
+            double pierceMult = GunAttributes.getValue(attacker, GunAttributeType.PIERCE_MULTIPLIER, gunType);
+            int finalPierce = (int) Math.round(basePierce * pierceMult);
+            float penetrationFactor = (float) (1.0 + (finalPierce * 0.10));
+
+            float basePoiseDamage = preMitigatedDamage * 0.40f * penetrationFactor;
+            float headshotMult = 1.0f;
+            float bodyMult = 0.4f;
+
+            switch (gunType) {
+                case PISTOL -> {
+                    headshotMult = 0.70f;
+                    bodyMult = 0.35f;
                 }
-                double pierceMult = GunAttributes.getValue(attacker, GunAttributeType.PIERCE_MULTIPLIER, gunType);
-                int finalPierce = (int) Math.round(basePierce * pierceMult);
-
-                // Penetration Factor: Scales poise damage linearly (+10% per pierce tier)
-                float penetrationFactor = (float) (1.0 + (finalPierce * 0.10));
-
-                // Baseline Poise Damage (Capped at 0.40x post-mitigated damage)
-                float postDamage = event.getAmount();
-                float basePoiseDamage = postDamage * 0.40f * penetrationFactor;
-
-                // Archetype Poise Factor
-                float archetypePoiseMult = 1.0f;
-                switch (gunType) {
-                    case PISTOL:
-                        archetypePoiseMult = 1.0f;
-                        break;
-                    case SHOTGUN:
-                        // Shotgun: Close-range outlier (2.0x at <= 8m, falling off to 0.3x at >= 20m)
-                        if (distance <= 8.0) {
-                            archetypePoiseMult = 2.0f;
-                        } else if (distance >= 20.0) {
-                            archetypePoiseMult = 0.3f;
-                        } else {
-                            float t = (float) ((distance - 8.0) / (20.0 - 8.0));
-                            archetypePoiseMult = 2.0f - t * (2.0f - 0.3f);
-                        }
-                        break;
-                    case MG: // LMG
-                    case SMG:
-                        // Heavily penalized poise damage for high RPM / spray weapons
-                        archetypePoiseMult = 0.2f;
-                        break;
-                    case RIFLE:
-                        archetypePoiseMult = 1.0f;
-                        break;
-                    case SNIPER:
-                        // Penalty if too close (< 10 blocks)
-                        archetypePoiseMult = distance < 10.0 ? 0.3f : 1.0f;
-                        break;
-                    default:
-                        archetypePoiseMult = 1.0f;
-                        break;
+                case RIFLE -> {
+                    headshotMult = 0.80f;
+                    bodyMult = 0.40f;
                 }
-
-                float unNerfedPoiseDamage = basePoiseDamage * archetypePoiseMult;
-                float finalPoiseDamage = unNerfedPoiseDamage;
-
-                // Non-headshot poise damage penalty: PISTOL = 0.5x, SHOTGUN = 1.0x (exempt), others = 0.2x
-                if (!event.isHeadShot()) {
-                    float penalty = 0.2f;
-                    if (gunType == GunType.SHOTGUN) {
-                        penalty = 1.0f;
-                    } else if (gunType == GunType.PISTOL) {
-                        penalty = 0.5f;
-                    }
-                    finalPoiseDamage *= penalty;
+                case SHOTGUN -> {
+                    float shotgunMult = (distance <= 8.0) ? 0.80f : (distance >= 20.0 ? 0.30f : 0.80f - (float) ((distance - 8.0) / 12.0) * 0.50f);
+                    headshotMult = shotgunMult;
+                    bodyMult = shotgunMult;
                 }
-
-                // Record initial poise states before hit is applied
-                float currentPoise = PoiseAPI.getCurrentPoise(victim);
-                boolean isAlreadyExhausted = PoiseAPI.isExhausted(victim);
-
-                // Apply poise damage via PoiseAPI
-                DamageSource source = event.getDamageSource(GunDamageSourcePart.ARMOR_PIERCING);
-                if (source == null) {
-                    source = victim.damageSources().mobAttack(attacker);
+                case MG -> {
+                    headshotMult = 0.30f;
+                    bodyMult = 0.15f;
                 }
-
-                PoiseAPI.damagePoise(victim, finalPoiseDamage, attacker, source, true);
-
-                // Calculate the un-nerfed poise damage that would be applied to determine mitigation
-                float calculatedUnNerfedDamage = unNerfedPoiseDamage;
-                if (attacker.getAttributes().hasAttribute(com.nhatbh.basedefensev2.strength.ModAttributes.STRENGTH_DAMAGE_MULTIPLIER.get())) {
-                    calculatedUnNerfedDamage *= attacker.getAttributeValue(com.nhatbh.basedefensev2.strength.ModAttributes.STRENGTH_DAMAGE_MULTIPLIER.get());
+                case SMG -> {
+                    headshotMult = 0.30f;
+                    bodyMult = 0.15f;
                 }
-                if (victim.getAttributes().hasAttribute(com.nhatbh.basedefensev2.strength.ModAttributes.STRENGTH_DAMAGE_TAKEN_MULTIPLIER.get())) {
-                    calculatedUnNerfedDamage *= victim.getAttributeValue(com.nhatbh.basedefensev2.strength.ModAttributes.STRENGTH_DAMAGE_TAKEN_MULTIPLIER.get());
+                case SNIPER -> {
+                    float sniperDistFactor = distance < 10.0 ? 0.3f : 1.0f;
+                    headshotMult = 2.50f * sniperDistFactor;
+                    bodyMult = 0.30f * sniperDistFactor;
                 }
-
-                // Apply shield damage mitigation if target was not already exhausted
-                // and the un-nerfed poise damage would not have exhausted them (nerf should not increase target survivability)
-                if (!isAlreadyExhausted && (currentPoise - calculatedUnNerfedDamage > 0.0f)) {
-                    float mitigatedDamage = PoiseAPI.calculateMitigatedDamage(victim, newBaseAmount);
-                    event.setBaseAmount(mitigatedDamage);
+                default -> {
+                    headshotMult = 1.00f;
+                    bodyMult = 0.40f;
                 }
             }
+
+            float finalPoiseDamage = basePoiseDamage * (event.isHeadShot() ? headshotMult : bodyMult);
+
+            // 3. Firearm Vitality Damage Path (Subtle Scaled Vitality Multiplier)
+            float vitalityMult = 1.00f;
+            if (gunType == GunType.SMG && isTargetExhausted) {
+                vitalityMult = 1.20f; // SMG: +20% subtle execution boost when exhausted
+            } else if (gunType == GunType.SNIPER && event.isHeadShot()) {
+                vitalityMult = 1.25f; // Sniper: +25% subtle headshot execution boost
+            } else if (gunType == GunType.SHOTGUN) {
+                vitalityMult = (distance <= 8.0) ? 1.10f : (distance >= 20.0 ? 0.85f : 1.10f - (float) ((distance - 8.0) / 12.0) * 0.25f);
+            }
+            float finalVitalityDamage = preMitigatedDamage * vitalityMult;
+
+            // 4. LMG Suppression Mechanic
+            if (gunType == GunType.MG && isTargetExhausted) {
+                net.minecraft.world.effect.MobEffect suppressionEffect = net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS.getValue(net.minecraft.resources.ResourceLocation.tryParse("basedefensev2:suppression"));
+                if (suppressionEffect != null) {
+                    victim.addEffect(new MobEffectInstance(suppressionEffect, 20, 0, false, false));
+                }
+            }
+
+            // 5. Accumulate Gun Mastery Damage from Poise / Vitality Pipeline
+            if (attacker instanceof ServerPlayer player) {
+                if (gunType != null && !gunType.isGlobal() && gunType != GunType.RPG) {
+                    float damageToAccumulate = isTargetExhausted ? finalVitalityDamage : finalPoiseDamage;
+                    if (damageToAccumulate > 0) {
+                        player.getCapability(GunMasteryDataProvider.GUN_MASTERY_DATA).ifPresent(data -> {
+                            data.addAccumulatedDamage(gunType, damageToAccumulate);
+                        });
+                    }
+                }
+            }
+
+            // 6. Single Entry-Point API Call to Poise & Boss Vitality Pipeline with "TACZ" sourceMod identifier
+            DamageSource source = event.getDamageSource(GunDamageSourcePart.ARMOR_PIERCING);
+            if (source == null) {
+                source = victim.damageSources().mobAttack(attacker);
+            }
+
+            PoiseAPI.damagePoise(victim, finalPoiseDamage, finalVitalityDamage, attacker, source, true, "TACZ");
+            event.setBaseAmount(0.0001f);
         }
     }
 
@@ -339,22 +320,7 @@ public class TACZGunEventHandler {
         }
     }
 
-    @SubscribeEvent
-    public static void onEntityHurtByGunPost(EntityHurtByGunEvent.Post event) {
-        if (event.getLogicalSide().isClient()) return;
-        LivingEntity attacker = event.getAttacker();
-        if (attacker instanceof ServerPlayer player) {
-            GunType gunType = GunType.fromGunId(event.getGunId());
-            if (gunType != null && !gunType.isGlobal() && gunType != GunType.RPG) {
-                float damageDealt = event.getAmount();
-                if (damageDealt > 0) {
-                    player.getCapability(com.complextalents.gunmastery.capability.GunMasteryDataProvider.GUN_MASTERY_DATA).ifPresent(data -> {
-                        data.addAccumulatedDamage(gunType, damageDealt);
-                    });
-                }
-            }
-        }
-    }
+
 
 
     private static String getRandomOriginGunMessage(ResourceLocation originId, Player player) {

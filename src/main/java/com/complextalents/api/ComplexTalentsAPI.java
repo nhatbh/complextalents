@@ -13,6 +13,8 @@ import com.complextalents.api.origin.IOriginAPI;
 import com.complextalents.api.skill.ISkillAPI;
 import com.complextalents.api.spellmastery.ISpellMasteryAPI;
 import com.complextalents.api.stats.IStatsAPI;
+import com.complextalents.api.summoning.ISummoningAPI;
+import com.complextalents.api.impl.SummoningAPIImpl;
 import com.complextalents.api.weaponmastery.IWeaponMasteryAPI;
 
 /**
@@ -28,6 +30,7 @@ public class ComplexTalentsAPI {
     private static final ISpellMasteryAPI SPELL_MASTERY_API = new SpellMasteryAPIImpl();
     private static final IWeaponMasteryAPI WEAPON_MASTERY_API = new WeaponMasteryAPIImpl();
     private static final ICaseAPI CASE_API = new CaseAPIImpl();
+    private static final ISummoningAPI SUMMONING_API = new SummoningAPIImpl();
 
     private ComplexTalentsAPI() {
     }
@@ -86,5 +89,13 @@ public class ComplexTalentsAPI {
      */
     public static ICaseAPI getCaseAPI() {
         return CASE_API;
+    }
+
+    /**
+     * Gets the Summoning System API.
+     * Allows querying summons, friendly summons, and owners.
+     */
+    public static ISummoningAPI getSummoningAPI() {
+        return SUMMONING_API;
     }
 }

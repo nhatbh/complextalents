@@ -56,6 +56,15 @@ public class StatsTabUI {
         List<Button> buttons = new ArrayList<>();
         update();
 
+        // Build Refining Anvil button (opens Refining Anvil menu directly)
+        Button anvilBtn = Button.builder(Component.empty(),
+                (btn) -> com.complextalents.network.PacketHandler.sendToServer(new com.complextalents.network.C2SOpenRefiningAnvilPacket()))
+                .pos(xOffset + 465, yOffset + 9)
+                .size(20, 20)
+                .tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal("Open Refining Anvil")))
+                .build();
+        buttons.add(anvilBtn);
+
         // Stats on left side
         for (StatEntryData entry : statEntries) {
             int entryX = xOffset + 5;
@@ -241,6 +250,10 @@ public class StatsTabUI {
     }
 
     public void renderLabels(GuiGraphics guiGraphics, net.minecraft.client.gui.Font font, int xOffset, int yOffset, int mouseX, int mouseY) {
+        // Render Refining Anvil icon on top of anvil button
+        net.minecraft.world.item.ItemStack anvilStack = new net.minecraft.world.item.ItemStack(com.complextalents.item.ModItems.REFINING_ANVIL.get());
+        guiGraphics.renderItem(anvilStack, xOffset + 467, yOffset + 11);
+
         // Render stat entries on left
         player.getCapability(GeneralStatsDataProvider.STATS_DATA).ifPresent(data -> {
             for (StatEntryData entry : statEntries) {
@@ -254,7 +267,9 @@ public class StatsTabUI {
                 // Yield per rank info
                 double yieldPerRank = entry.type.getYieldPerRank();
                 String yieldLabel;
-                if (yieldPerRank < 1.0) {
+                if (entry.type == StatType.MAGIC_EFFECTIVENESS) {
+                    yieldLabel = formatNumber(yieldPerRank * 100.0) + "/rank";
+                } else if (yieldPerRank < 1.0) {
                     yieldLabel = String.format("%.0f%%", yieldPerRank * 100) + "/rank";
                 } else {
                     yieldLabel = formatNumber(yieldPerRank) + "/rank";
@@ -268,8 +283,15 @@ public class StatsTabUI {
                 double currentValue = entry.realRank * yieldPerRank;
                 double pendingDiff = entry.pendingRank * yieldPerRank;
 
-                String currentFormatted = yieldPerRank < 1.0 ? formatPercent(currentValue) : formatNumber(currentValue);
-                String diffFormatted = yieldPerRank < 1.0 ? formatPercent(pendingDiff) : formatNumber(pendingDiff);
+                String currentFormatted;
+                String diffFormatted;
+                if (entry.type == StatType.MAGIC_EFFECTIVENESS) {
+                    currentFormatted = formatNumber(currentValue * 100.0);
+                    diffFormatted = formatNumber(pendingDiff * 100.0);
+                } else {
+                    currentFormatted = yieldPerRank < 1.0 ? formatPercent(currentValue) : formatNumber(currentValue);
+                    diffFormatted = yieldPerRank < 1.0 ? formatPercent(pendingDiff) : formatNumber(pendingDiff);
+                }
 
                 String valueStr;
                 if (entry.pendingRank > 0) {
