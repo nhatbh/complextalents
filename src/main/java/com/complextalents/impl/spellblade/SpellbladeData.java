@@ -160,6 +160,8 @@ public class SpellbladeData {
             case ELDRITCH -> AttributeRegistry.ELDRITCH_SPELL_POWER.get();
             case AQUA -> ForgeRegistries.ATTRIBUTES.getValue(ResourceLocation.fromNamespaceAndPath("traveloptics", "aqua_spell_power"));
             case HOLY -> AttributeRegistry.HOLY_SPELL_POWER.get();
+            case ABYSSAL -> ForgeRegistries.ATTRIBUTES.getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "abyssal_spell_power"));
+            case TECHNOMANCY -> ForgeRegistries.ATTRIBUTES.getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "technomancy_spell_power"));
         };
     }
 }

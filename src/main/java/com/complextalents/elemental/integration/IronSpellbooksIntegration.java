@@ -123,6 +123,8 @@ public class IronSpellbooksIntegration {
             case "ender" -> ElementType.ENDER;
             case "eldritch" -> ElementType.ELDRITCH;
             case "blood" -> ElementType.BLOOD;
+            case "abyssal" -> ElementType.ABYSSAL;
+            case "technomancy" -> ElementType.TECHNOMANCY;
             default -> null;
         };
     }

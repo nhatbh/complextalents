@@ -103,6 +103,34 @@ public class StatModifierApplier {
                 updateModifier(player, ModAttributes.SUMMONING_POWER.get(), totalValue,
                         AttributeModifier.Operation.ADDITION, uuid);
                 break;
+            case GUN_DAMAGE:
+                updateModifier(player, com.complextalents.tacz.GunAttributeType.GUN_DAMAGE.get(), totalValue,
+                        AttributeModifier.Operation.MULTIPLY_BASE, uuid);
+                break;
+            case RELOAD_SPEED:
+                updateModifier(player, com.complextalents.tacz.GunAttributeType.RELOAD_SPEED.get(), totalValue,
+                        AttributeModifier.Operation.MULTIPLY_BASE, uuid);
+                break;
+            case FORTITUDE:
+                updateModifier(player, ModAttributes.FORTITUDE.get(), totalValue,
+                        AttributeModifier.Operation.ADDITION, uuid);
+                break;
+            case HEADSHOT_DAMAGE:
+                updateModifier(player, com.complextalents.tacz.GunAttributeType.HEADSHOT_MULTIPLIER.get(), totalValue,
+                        AttributeModifier.Operation.MULTIPLY_BASE, uuid);
+                break;
+            case RECOIL_CONTROL:
+                updateModifier(player, com.complextalents.tacz.GunAttributeType.RECOIL.get(), -totalValue,
+                        AttributeModifier.Operation.MULTIPLY_BASE, uuid);
+                break;
+            case BULLET_PENETRATION:
+                updateModifier(player, com.complextalents.tacz.GunAttributeType.PIERCE_MULTIPLIER.get(), totalValue,
+                        AttributeModifier.Operation.MULTIPLY_BASE, uuid);
+                break;
+            case FIRE_RATE:
+                updateModifier(player, com.complextalents.tacz.GunAttributeType.RPM_MULTIPLIER.get(), totalValue,
+                        AttributeModifier.Operation.MULTIPLY_BASE, uuid);
+                break;
         }
     }
 
@@ -122,8 +150,8 @@ public class StatModifierApplier {
 
     private static void updateModAttribute(Player player, String modId, String attrName, double amount,
             AttributeModifier.Operation operation, UUID uuid) {
-        Attribute attribute = ForgeRegistries.ATTRIBUTES
-                .getValue(ResourceLocation.fromNamespaceAndPath(modId, attrName));
+        Attribute attribute = net.minecraftforge.registries.ForgeRegistries.ATTRIBUTES
+                .getValue(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(modId, attrName));
         if (attribute != null) {
             updateModifier(player, attribute, amount, operation, uuid);
         }

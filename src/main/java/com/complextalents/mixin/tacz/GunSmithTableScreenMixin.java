@@ -1,8 +1,6 @@
 package com.complextalents.mixin.tacz;
 
-import com.complextalents.tacz.GunAttributeType;
-import com.complextalents.tacz.GunAttributes;
-import com.complextalents.tacz.GunType;
+
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAmmoBox;
 import com.tacz.guns.client.gui.GunSmithTableScreen;
@@ -41,7 +39,7 @@ public abstract class GunSmithTableScreenMixin {
             if (player != null && this.selectedRecipe != null) {
                 ItemStack output = this.selectedRecipe.getResult().getResult();
                 if (output.getItem() instanceof IAmmo || output.getItem() instanceof IAmmoBox) {
-                    double multiplier = GunAttributes.getValue(player, GunAttributeType.AMMO_CRAFTING_YIELD, GunType.GLOBAL);
+                    double multiplier = player.getAttributeValue(com.complextalents.registry.ModAttributes.AMMO_CRAFTING_YIELD.get());
                     if (multiplier > 0) {
                         int totalCount = (int) Math.round(baseCount * multiplier);
                         if (totalCount != baseCount) {

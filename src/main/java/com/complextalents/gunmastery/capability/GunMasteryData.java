@@ -60,7 +60,67 @@ public class GunMasteryData implements IGunMasteryData {
         if (type == null || type.isGlobal()) return;
         masteryLevelsMap.put(type, Math.max(0, Math.min(20, level)));
         if (player != null && !player.level().isClientSide) {
+            applyStatRewards();
             sync();
+        }
+    }
+
+    public void applyStatRewards() {
+        if (player == null || player.level().isClientSide) return;
+
+        for (GunType type : GunType.values()) {
+            if (type.isGlobal() || type == GunType.RPG) continue;
+            int level = getMasteryLevel(type);
+
+            switch (type) {
+                case PISTOL -> {
+                    double damage = com.complextalents.gunmastery.GunMasteryManager.getInstance().getStatBonus(type, "gun_damage", level);
+                    updateModifier(com.complextalents.tacz.GunAttributeType.GUN_DAMAGE.get(type), com.complextalents.util.UUIDHelper.generateAttributeModifierUUID("gun_mastery", "pistol_damage"), "Pistol Mastery Damage", damage, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.MULTIPLY_BASE);
+                    double reload = com.complextalents.gunmastery.GunMasteryManager.getInstance().getStatBonus(type, "reload_speed", level);
+                    updateModifier(com.complextalents.tacz.GunAttributeType.RELOAD_SPEED.get(type), com.complextalents.util.UUIDHelper.generateAttributeModifierUUID("gun_mastery", "pistol_reload"), "Pistol Mastery Reload", reload, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.MULTIPLY_BASE);
+                }
+                case SNIPER -> {
+                    double headshot = com.complextalents.gunmastery.GunMasteryManager.getInstance().getStatBonus(type, "headshot_multiplier", level);
+                    updateModifier(com.complextalents.tacz.GunAttributeType.HEADSHOT_MULTIPLIER.get(type), com.complextalents.util.UUIDHelper.generateAttributeModifierUUID("gun_mastery", "sniper_headshot"), "Sniper Mastery Headshot", headshot, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.MULTIPLY_BASE);
+                    double pierce = com.complextalents.gunmastery.GunMasteryManager.getInstance().getStatBonus(type, "pierce_multiplier", level);
+                    updateModifier(com.complextalents.tacz.GunAttributeType.PIERCE_MULTIPLIER.get(type), com.complextalents.util.UUIDHelper.generateAttributeModifierUUID("gun_mastery", "sniper_pierce"), "Sniper Mastery Pierce", pierce, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.MULTIPLY_BASE);
+                }
+                case RIFLE -> {
+                    double damage = com.complextalents.gunmastery.GunMasteryManager.getInstance().getStatBonus(type, "gun_damage", level);
+                    updateModifier(com.complextalents.tacz.GunAttributeType.GUN_DAMAGE.get(type), com.complextalents.util.UUIDHelper.generateAttributeModifierUUID("gun_mastery", "rifle_damage"), "Rifle Mastery Damage", damage, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.MULTIPLY_BASE);
+                    double fort = com.complextalents.gunmastery.GunMasteryManager.getInstance().getStatBonus(type, "fortitude", level);
+                    updateModifier(com.complextalents.registry.ModAttributes.FORTITUDE.get(), com.complextalents.util.UUIDHelper.generateAttributeModifierUUID("gun_mastery", "rifle_fortitude"), "Rifle Mastery Fortitude", fort, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADDITION);
+                }
+                case SHOTGUN -> {
+                    double hipDamage = com.complextalents.gunmastery.GunMasteryManager.getInstance().getStatBonus(type, "hip_fire_damage", level);
+                    updateModifier(com.complextalents.tacz.GunAttributeType.HIP_FIRE_DAMAGE.get(type), com.complextalents.util.UUIDHelper.generateAttributeModifierUUID("gun_mastery", "shotgun_hip_damage"), "Shotgun Mastery Hip Damage", hipDamage, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.MULTIPLY_BASE);
+                    double ammoSave = com.complextalents.gunmastery.GunMasteryManager.getInstance().getStatBonus(type, "ammo_save_chance", level);
+                    updateModifier(com.complextalents.tacz.GunAttributeType.AMMO_SAVE_CHANCE.get(type), com.complextalents.util.UUIDHelper.generateAttributeModifierUUID("gun_mastery", "shotgun_ammo_save"), "Shotgun Mastery Ammo Save", ammoSave, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.MULTIPLY_BASE);
+                }
+                case SMG -> {
+                    double damage = com.complextalents.gunmastery.GunMasteryManager.getInstance().getStatBonus(type, "gun_damage", level);
+                    updateModifier(com.complextalents.tacz.GunAttributeType.GUN_DAMAGE.get(type), com.complextalents.util.UUIDHelper.generateAttributeModifierUUID("gun_mastery", "smg_damage"), "SMG Mastery Damage", damage, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.MULTIPLY_BASE);
+                    double rpm = com.complextalents.gunmastery.GunMasteryManager.getInstance().getStatBonus(type, "rpm_multiplier", level);
+                    updateModifier(com.complextalents.tacz.GunAttributeType.RPM_MULTIPLIER.get(type), com.complextalents.util.UUIDHelper.generateAttributeModifierUUID("gun_mastery", "smg_rpm"), "SMG Mastery RPM", rpm, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.MULTIPLY_BASE);
+                }
+                case MG -> {
+                    double damage = com.complextalents.gunmastery.GunMasteryManager.getInstance().getStatBonus(type, "gun_damage", level);
+                    updateModifier(com.complextalents.tacz.GunAttributeType.GUN_DAMAGE.get(type), com.complextalents.util.UUIDHelper.generateAttributeModifierUUID("gun_mastery", "mg_damage"), "MG Mastery Damage", damage, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.MULTIPLY_BASE);
+                    double mag = com.complextalents.gunmastery.GunMasteryManager.getInstance().getStatBonus(type, "magazine_capacity", level);
+                    updateModifier(com.complextalents.tacz.GunAttributeType.MAGAZINE_CAPACITY.get(type), com.complextalents.util.UUIDHelper.generateAttributeModifierUUID("gun_mastery", "mg_mag_cap"), "MG Mastery Mag Cap", mag, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.MULTIPLY_BASE);
+                }
+            }
+        }
+    }
+
+    private void updateModifier(net.minecraft.world.entity.ai.attributes.Attribute attribute, java.util.UUID uuid, String name, double amount, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation operation) {
+        if (attribute == null || player == null) return;
+        net.minecraft.world.entity.ai.attributes.AttributeInstance instance = player.getAttribute(attribute);
+        if (instance != null) {
+            instance.removeModifier(uuid);
+            if (amount != 0) {
+                instance.addTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(uuid, name, amount, operation));
+            }
         }
     }
 
@@ -140,6 +200,10 @@ public class GunMasteryData implements IGunMasteryData {
                     masteryLevelsMap.put(type, Math.min(20, levelsNbt.getInt(key)));
                 } catch (IllegalArgumentException ignored) {}
             }
+        }
+
+        if (player != null && !player.level().isClientSide) {
+            applyStatRewards();
         }
     }
 }

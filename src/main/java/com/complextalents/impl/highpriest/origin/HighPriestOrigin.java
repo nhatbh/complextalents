@@ -175,6 +175,7 @@ public class HighPriestOrigin {
                 .cost(StatType.SUMMONING_POWER, 1)
                 .spellMasteryCostMultiplier(1.0) // High Priest normal with spells, 100% cost
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ELDRITCH, -1.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ABYSSAL, -1.0)
                 .weaponMasteryCostMultiplier(100.0); // High Priest should NOT use weapons, 10000% cost
     }
 

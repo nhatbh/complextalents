@@ -112,6 +112,8 @@ public class ClassCostMatrix {
             case ENDER -> SpellSchool.ENDER;
             case ELDRITCH -> SpellSchool.ELDRITCH;
             case BLOOD -> SpellSchool.BLOOD;
+            case ABYSSAL -> SpellSchool.ABYSSAL;
+            case TECHNOMANCY -> SpellSchool.TECHNOMANCY;
         };
     }
 

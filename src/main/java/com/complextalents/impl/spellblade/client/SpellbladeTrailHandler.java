@@ -107,6 +107,8 @@ public class SpellbladeTrailHandler {
             case ENDER -> new float[]{0.65f, 0.25f, 0.95f};
             case ELDRITCH -> new float[]{0.55f, 0.15f, 0.85f};
             case HOLY -> new float[]{1.00f, 0.88f, 0.40f};
+            case ABYSSAL -> new float[]{0.15f, 0.05f, 0.25f};
+            case TECHNOMANCY -> new float[]{1.00f, 0.42f, 0.00f};
         };
     }
 }

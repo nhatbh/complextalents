@@ -1,7 +1,7 @@
 package com.complextalents.elemental.integration;
 
+import com.complextalents.elemental.ElementType;
 import com.nhatbh.basedefensev2.api.PoiseAPI;
-import com.nhatbh.basedefensev2.elemental.ElementType;
 import com.nhatbh.basedefensev2.elemental.MobElementService;
 import com.nhatbh.basedefensev2.strength.ModAttributes;
 import io.redspace.ironsspellbooks.api.events.SpellDamageEvent;
@@ -43,7 +43,13 @@ public class SpellShieldInteractionHandler {
             return;
 
         LivingEntity caster = damageSource.getEntity() instanceof LivingEntity living ? living : entity.getKillCredit();
-        ElementType targetElement = MobElementService.getElement(entity);
+        com.nhatbh.basedefensev2.elemental.ElementType baseTarget = MobElementService.getElement(entity);
+        ElementType targetElement = null;
+        if (baseTarget != null) {
+            try {
+                targetElement = ElementType.valueOf(baseTarget.name());
+            } catch (Exception ignored) {}
+        }
 
         float originalDamage = event.getAmount();
         float damage = originalDamage;
@@ -194,6 +200,26 @@ public class SpellShieldInteractionHandler {
                         reactionMsg = String.format("§cLifesteal: +%.1f HP", lifestealAmount);
                     }
                 }
+                case ABYSSAL -> {
+                    poiseDamage = preMitigatedDamage * 0.25f;
+                    float pressureMult = 1.25f;
+                    if (caster instanceof ServerPlayer player
+                            && com.complextalents.impl.darkmage.origin.DarkMageOrigin.isDarkMage(player)) {
+                        int originLevel = Math.min(4,
+                                Math.max(0, com.complextalents.origin.OriginManager.getOriginLevel(player) - 1));
+                        int currentEntropy = com.complextalents.passive.PassiveManager.getPassiveStacks(player, "entropy");
+                        if (currentEntropy > 0) {
+                            pressureMult += (currentEntropy * 0.05f); // +5% per entropy stack
+                        }
+                    }
+                    vitalityDamage = preMitigatedDamage * pressureMult;
+                    reactionMsg = String.format("§1Depth Pressure (%.2fx): %.0f Damage", pressureMult, vitalityDamage);
+                }
+                case TECHNOMANCY -> {
+                    poiseDamage = preMitigatedDamage * 1.40f;
+                    vitalityDamage = preMitigatedDamage;
+                    reactionMsg = String.format("§6Kinetic Overcharge (1.4x): -%.0f Poise", poiseDamage);
+                }
                 default -> {
                 }
             }
@@ -244,7 +270,7 @@ public class SpellShieldInteractionHandler {
         if (element == null)
             return false;
         return switch (element) {
-            case HOLY, EVOCATION, ENDER, ELDRITCH, BLOOD -> true;
+            case HOLY, EVOCATION, ENDER, ELDRITCH, BLOOD, ABYSSAL, TECHNOMANCY -> true;
             default -> false;
         };
     }
@@ -295,6 +321,8 @@ public class SpellShieldInteractionHandler {
             case "evocation" -> ElementType.EVOCATION;
             case "eldritch" -> ElementType.ELDRITCH;
             case "aqua" -> ElementType.AQUA;
+            case "abyssal" -> ElementType.ABYSSAL;
+            case "technomancy" -> ElementType.TECHNOMANCY;
             default -> null;
         };
     }

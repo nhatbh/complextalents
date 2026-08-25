@@ -2,7 +2,6 @@ package com.complextalents.gunmastery;
 
 import com.complextalents.gunmastery.capability.IGunMasteryData;
 import com.complextalents.stats.ClassCostMatrix;
-import com.complextalents.tacz.GunAttributeType;
 import com.complextalents.tacz.GunType;
 import net.minecraft.resources.ResourceLocation;
 
@@ -152,11 +151,11 @@ public class GunMasteryManager {
     }
 
     /**
-     * Calculate stat bonus for a given archetype, attribute, and mastery level.
+     * Calculate stat bonus for a given archetype, stat key, and mastery level.
      * Returns the exact value boost (e.g. +0.80 for +80% Gun Damage).
      */
-    public double getStatBonus(GunType type, GunAttributeType attribute, int level) {
-        if (type == null || attribute == null || level <= 0) return 0.0;
+    public double getStatBonus(GunType type, String statKey, int level) {
+        if (type == null || statKey == null || level <= 0) return 0.0;
         if (type == GunType.RPG || type == GunType.GLOBAL) return 0.0;
 
         int maxLvl = getMaxLevel(type);
@@ -166,43 +165,43 @@ public class GunMasteryManager {
             case PISTOL -> {
                 if (clampedLevel < 1) yield 0.0;
                 double pct = clampedLevel / 20.0;
-                if (attribute == GunAttributeType.GUN_DAMAGE) yield 0.50 * pct;       // +50% Max (at L20)
-                if (attribute == GunAttributeType.RELOAD_SPEED) yield 1.00 * pct;     // +100% Max (at L20)
+                if ("gun_damage".equals(statKey)) yield 0.50 * pct;       // +50% Max (at L20)
+                if ("reload_speed".equals(statKey)) yield 1.00 * pct;     // +100% Max (at L20)
                 yield 0.0;
             }
             case SNIPER -> {
                 if (clampedLevel < 5) yield 0.0;
                 double pct = (clampedLevel - 4) / 16.0;
-                if (attribute == GunAttributeType.HEADSHOT_MULTIPLIER) yield 1.50 * pct; // +150% Max
-                if (attribute == GunAttributeType.PIERCE_MULTIPLIER) yield 0.80 * pct;   // +80% Max (+4 Pierce)
+                if ("headshot_multiplier".equals(statKey)) yield 1.50 * pct; // +150% Max
+                if ("pierce_multiplier".equals(statKey)) yield 0.80 * pct;   // +80% Max (+4 Pierce)
                 yield 0.0;
             }
             case RIFLE -> {
                 if (clampedLevel < 5) yield 0.0;
                 double pct = (clampedLevel - 4) / 16.0;
-                if (attribute == GunAttributeType.GUN_DAMAGE) yield 0.80 * pct;       // +80% Max
-                if (attribute == GunAttributeType.FORTITUDE) yield 1.00 * pct;        // +100% Max (50% Heart Rate Cut)
+                if ("gun_damage".equals(statKey)) yield 0.80 * pct;       // +80% Max
+                if ("fortitude".equals(statKey)) yield 1.00 * pct;        // +100% Max (50% Heart Rate Cut)
                 yield 0.0;
             }
             case SHOTGUN -> {
                 if (clampedLevel < 5) yield 0.0;
                 double pct = (clampedLevel - 4) / 16.0;
-                if (attribute == GunAttributeType.HIP_FIRE_DAMAGE) yield 1.00 * pct;  // +100% Max
-                if (attribute == GunAttributeType.AMMO_SAVE_CHANCE) yield 0.30 * pct; // +30% Max
+                if ("hip_fire_damage".equals(statKey)) yield 1.00 * pct;  // +100% Max
+                if ("ammo_save_chance".equals(statKey)) yield 0.30 * pct; // +30% Max
                 yield 0.0;
             }
             case SMG -> {
                 if (clampedLevel < 5) yield 0.0;
                 double pct = (clampedLevel - 4) / 16.0;
-                if (attribute == GunAttributeType.GUN_DAMAGE) yield 0.50 * pct;       // +50% Max
-                if (attribute == GunAttributeType.RPM_MULTIPLIER) yield 0.50 * pct;   // +50% Max Fire Rate
+                if ("gun_damage".equals(statKey)) yield 0.50 * pct;       // +50% Max
+                if ("rpm_multiplier".equals(statKey)) yield 0.50 * pct;   // +50% Max Fire Rate
                 yield 0.0;
             }
             case MG -> {
                 if (clampedLevel < 5) yield 0.0;
                 double pct = (clampedLevel - 4) / 16.0;
-                if (attribute == GunAttributeType.GUN_DAMAGE) yield 0.60 * pct;       // +60% Max
-                if (attribute == GunAttributeType.MAGAZINE_CAPACITY) yield 1.00 * pct;// +100% Max Mag
+                if ("gun_damage".equals(statKey)) yield 0.60 * pct;       // +60% Max
+                if ("magazine_capacity".equals(statKey)) yield 1.00 * pct;// +100% Max Mag
                 yield 0.0;
             }
             default -> 0.0;

@@ -114,6 +114,7 @@ public class DarkMageOrigin {
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.EVOCATION, 1.0)
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ENDER, 1.0)
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.BLOOD, 1.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ABYSSAL, 1.0)
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ELDRITCH, 2.0)
                 // Primal Elements (3x cost)
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.FIRE, 3.0)

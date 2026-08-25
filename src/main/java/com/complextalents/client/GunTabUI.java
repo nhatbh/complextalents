@@ -426,7 +426,7 @@ public class GunTabUI {
     private String formatStatGainSummary(GunType type, int level) {
         if (level <= 0) return "\u00A78No mastery bonuses yet";
 
-        double dmgBonus = GunMasteryManager.getInstance().getStatBonus(type, com.complextalents.tacz.GunAttributeType.GUN_DAMAGE, level);
+        double dmgBonus = GunMasteryManager.getInstance().getStatBonus(type, "gun_damage", level);
         double primaryBonus = 0.0;
         String primaryName = "";
         double secondaryBonus = 0.0;
@@ -434,31 +434,31 @@ public class GunTabUI {
 
         switch (type) {
             case PISTOL -> {
-                primaryBonus = GunMasteryManager.getInstance().getStatBonus(type, com.complextalents.tacz.GunAttributeType.RELOAD_SPEED, level);
+                primaryBonus = GunMasteryManager.getInstance().getStatBonus(type, "reload_speed", level);
                 primaryName = "Reload Speed";
             }
             case SNIPER -> {
-                primaryBonus = GunMasteryManager.getInstance().getStatBonus(type, com.complextalents.tacz.GunAttributeType.HEADSHOT_MULTIPLIER, level);
+                primaryBonus = GunMasteryManager.getInstance().getStatBonus(type, "headshot_multiplier", level);
                 primaryName = "Headshot Dmg";
-                secondaryBonus = GunMasteryManager.getInstance().getStatBonus(type, com.complextalents.tacz.GunAttributeType.PIERCE_MULTIPLIER, level);
+                secondaryBonus = GunMasteryManager.getInstance().getStatBonus(type, "pierce_multiplier", level);
                 secondaryName = "Pierce";
             }
             case RIFLE -> {
-                primaryBonus = GunMasteryManager.getInstance().getStatBonus(type, com.complextalents.tacz.GunAttributeType.FORTITUDE, level);
+                primaryBonus = GunMasteryManager.getInstance().getStatBonus(type, "fortitude", level);
                 primaryName = "Fortitude";
             }
             case SHOTGUN -> {
-                primaryBonus = GunMasteryManager.getInstance().getStatBonus(type, com.complextalents.tacz.GunAttributeType.HIP_FIRE_DAMAGE, level);
+                primaryBonus = GunMasteryManager.getInstance().getStatBonus(type, "hip_fire_damage", level);
                 primaryName = "Hipfire Dmg";
-                secondaryBonus = GunMasteryManager.getInstance().getStatBonus(type, com.complextalents.tacz.GunAttributeType.AMMO_SAVE_CHANCE, level);
+                secondaryBonus = GunMasteryManager.getInstance().getStatBonus(type, "ammo_save_chance", level);
                 secondaryName = "Ammo Save";
             }
             case SMG -> {
-                primaryBonus = GunMasteryManager.getInstance().getStatBonus(type, com.complextalents.tacz.GunAttributeType.RPM_MULTIPLIER, level);
+                primaryBonus = GunMasteryManager.getInstance().getStatBonus(type, "rpm_multiplier", level);
                 primaryName = "Fire Rate";
             }
             case MG -> {
-                primaryBonus = GunMasteryManager.getInstance().getStatBonus(type, com.complextalents.tacz.GunAttributeType.MAGAZINE_CAPACITY, level);
+                primaryBonus = GunMasteryManager.getInstance().getStatBonus(type, "magazine_capacity", level);
                 primaryName = "Mag Capacity";
             }
         }

@@ -1,0 +1,1382 @@
+{
+  "total_attributes": 344,
+  "dump_timestamp": 1787638332879,
+  "attributes": [
+    {
+      "id": "tacz_attributes:gun_damage",
+      "path": "gun_damage"
+    },
+    {
+      "id": "tacz_attributes:reload_speed",
+      "path": "reload_speed"
+    },
+    {
+      "id": "tacz_attributes:bolt_action_speed",
+      "path": "bolt_action_speed"
+    },
+    {
+      "id": "tacz_attributes:magazine_capacity",
+      "path": "magazine_capacity"
+    },
+    {
+      "id": "tacz_attributes:ammo_save_chance",
+      "path": "ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:ammo_recovery_chance",
+      "path": "ammo_recovery_chance"
+    },
+    {
+      "id": "tacz_attributes:ammo_recovery_amount",
+      "path": "ammo_recovery_amount"
+    },
+    {
+      "id": "tacz_attributes:ammo_recovery_percent",
+      "path": "ammo_recovery_percent"
+    },
+    {
+      "id": "tacz_attributes:reload_ammo_save_chance",
+      "path": "reload_ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:bonus_ammo_chance",
+      "path": "bonus_ammo_chance"
+    },
+    {
+      "id": "tacz_attributes:bonus_ammo_amount",
+      "path": "bonus_ammo_amount"
+    },
+    {
+      "id": "tacz_attributes:bonus_ammo_percent",
+      "path": "bonus_ammo_percent"
+    },
+    {
+      "id": "tacz_attributes:hip_fire_accuracy",
+      "path": "hip_fire_accuracy"
+    },
+    {
+      "id": "tacz_attributes:ads_accuracy",
+      "path": "ads_accuracy"
+    },
+    {
+      "id": "tacz_attributes:hip_fire_damage",
+      "path": "hip_fire_damage"
+    },
+    {
+      "id": "tacz_attributes:ads_damage",
+      "path": "ads_damage"
+    },
+    {
+      "id": "tacz_attributes:auto_damage",
+      "path": "auto_damage"
+    },
+    {
+      "id": "tacz_attributes:semi_damage",
+      "path": "semi_damage"
+    },
+    {
+      "id": "tacz_attributes:burst_damage",
+      "path": "burst_damage"
+    },
+    {
+      "id": "tacz_attributes:auto_accuracy",
+      "path": "auto_accuracy"
+    },
+    {
+      "id": "tacz_attributes:semi_accuracy",
+      "path": "semi_accuracy"
+    },
+    {
+      "id": "tacz_attributes:burst_accuracy",
+      "path": "burst_accuracy"
+    },
+    {
+      "id": "tacz_attributes:recoil",
+      "path": "recoil"
+    },
+    {
+      "id": "tacz_attributes:vertical_recoil",
+      "path": "vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:horizontal_recoil",
+      "path": "horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:ads_recoil",
+      "path": "ads_recoil"
+    },
+    {
+      "id": "tacz_attributes:ads_vertical_recoil",
+      "path": "ads_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:ads_horizontal_recoil",
+      "path": "ads_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:hip_fire_recoil",
+      "path": "hip_fire_recoil"
+    },
+    {
+      "id": "tacz_attributes:hip_fire_vertical_recoil",
+      "path": "hip_fire_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:hip_fire_horizontal_recoil",
+      "path": "hip_fire_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:gun_movement_speed",
+      "path": "gun_movement_speed"
+    },
+    {
+      "id": "tacz_attributes:headshot_multiplier",
+      "path": "headshot_multiplier"
+    },
+    {
+      "id": "tacz_attributes:knockback_multiplier",
+      "path": "knockback_multiplier"
+    },
+    {
+      "id": "tacz_attributes:knockback_base",
+      "path": "knockback_base"
+    },
+    {
+      "id": "tacz_attributes:pierce_multiplier",
+      "path": "pierce_multiplier"
+    },
+    {
+      "id": "tacz_attributes:rpm_multiplier",
+      "path": "rpm_multiplier"
+    },
+    {
+      "id": "tacz_attributes:ads_speed",
+      "path": "ads_speed"
+    },
+    {
+      "id": "tacz_attributes:semi_bullet_amount",
+      "path": "semi_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:auto_bullet_amount",
+      "path": "auto_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:burst_bullet_amount",
+      "path": "burst_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:draw_speed",
+      "path": "draw_speed"
+    },
+    {
+      "id": "tacz_attributes:burst_speed",
+      "path": "burst_speed"
+    },
+    {
+      "id": "tacz_attributes:pistol_damage",
+      "path": "pistol_damage"
+    },
+    {
+      "id": "tacz_attributes:pistol_reload_speed",
+      "path": "pistol_reload_speed"
+    },
+    {
+      "id": "tacz_attributes:pistol_bolt_action_speed",
+      "path": "pistol_bolt_action_speed"
+    },
+    {
+      "id": "tacz_attributes:pistol_magazine_capacity",
+      "path": "pistol_magazine_capacity"
+    },
+    {
+      "id": "tacz_attributes:pistol_ammo_save_chance",
+      "path": "pistol_ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:pistol_ammo_recovery_chance",
+      "path": "pistol_ammo_recovery_chance"
+    },
+    {
+      "id": "tacz_attributes:pistol_ammo_recovery_amount",
+      "path": "pistol_ammo_recovery_amount"
+    },
+    {
+      "id": "tacz_attributes:pistol_ammo_recovery_percent",
+      "path": "pistol_ammo_recovery_percent"
+    },
+    {
+      "id": "tacz_attributes:pistol_reload_ammo_save_chance",
+      "path": "pistol_reload_ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:pistol_bonus_ammo_chance",
+      "path": "pistol_bonus_ammo_chance"
+    },
+    {
+      "id": "tacz_attributes:pistol_bonus_ammo_amount",
+      "path": "pistol_bonus_ammo_amount"
+    },
+    {
+      "id": "tacz_attributes:pistol_bonus_ammo_percent",
+      "path": "pistol_bonus_ammo_percent"
+    },
+    {
+      "id": "tacz_attributes:pistol_hip_fire_accuracy",
+      "path": "pistol_hip_fire_accuracy"
+    },
+    {
+      "id": "tacz_attributes:pistol_ads_accuracy",
+      "path": "pistol_ads_accuracy"
+    },
+    {
+      "id": "tacz_attributes:pistol_hip_fire_damage",
+      "path": "pistol_hip_fire_damage"
+    },
+    {
+      "id": "tacz_attributes:pistol_ads_damage",
+      "path": "pistol_ads_damage"
+    },
+    {
+      "id": "tacz_attributes:pistol_auto_damage",
+      "path": "pistol_auto_damage"
+    },
+    {
+      "id": "tacz_attributes:pistol_semi_damage",
+      "path": "pistol_semi_damage"
+    },
+    {
+      "id": "tacz_attributes:pistol_burst_damage",
+      "path": "pistol_burst_damage"
+    },
+    {
+      "id": "tacz_attributes:pistol_auto_accuracy",
+      "path": "pistol_auto_accuracy"
+    },
+    {
+      "id": "tacz_attributes:pistol_semi_accuracy",
+      "path": "pistol_semi_accuracy"
+    },
+    {
+      "id": "tacz_attributes:pistol_burst_accuracy",
+      "path": "pistol_burst_accuracy"
+    },
+    {
+      "id": "tacz_attributes:pistol_recoil",
+      "path": "pistol_recoil"
+    },
+    {
+      "id": "tacz_attributes:pistol_vertical_recoil",
+      "path": "pistol_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:pistol_horizontal_recoil",
+      "path": "pistol_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:pistol_ads_recoil",
+      "path": "pistol_ads_recoil"
+    },
+    {
+      "id": "tacz_attributes:pistol_ads_vertical_recoil",
+      "path": "pistol_ads_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:pistol_ads_horizontal_recoil",
+      "path": "pistol_ads_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:pistol_hip_fire_recoil",
+      "path": "pistol_hip_fire_recoil"
+    },
+    {
+      "id": "tacz_attributes:pistol_hip_fire_vertical_recoil",
+      "path": "pistol_hip_fire_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:pistol_hip_fire_horizontal_recoil",
+      "path": "pistol_hip_fire_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:pistol_gun_movement_speed",
+      "path": "pistol_gun_movement_speed"
+    },
+    {
+      "id": "tacz_attributes:pistol_headshot_multiplier",
+      "path": "pistol_headshot_multiplier"
+    },
+    {
+      "id": "tacz_attributes:pistol_knockback_multiplier",
+      "path": "pistol_knockback_multiplier"
+    },
+    {
+      "id": "tacz_attributes:pistol_knockback_base",
+      "path": "pistol_knockback_base"
+    },
+    {
+      "id": "tacz_attributes:pistol_pierce_multiplier",
+      "path": "pistol_pierce_multiplier"
+    },
+    {
+      "id": "tacz_attributes:pistol_rpm_multiplier",
+      "path": "pistol_rpm_multiplier"
+    },
+    {
+      "id": "tacz_attributes:pistol_ads_speed",
+      "path": "pistol_ads_speed"
+    },
+    {
+      "id": "tacz_attributes:pistol_semi_bullet_amount",
+      "path": "pistol_semi_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:pistol_auto_bullet_amount",
+      "path": "pistol_auto_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:pistol_burst_bullet_amount",
+      "path": "pistol_burst_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:pistol_draw_speed",
+      "path": "pistol_draw_speed"
+    },
+    {
+      "id": "tacz_attributes:pistol_burst_speed",
+      "path": "pistol_burst_speed"
+    },
+    {
+      "id": "tacz_attributes:sniper_damage",
+      "path": "sniper_damage"
+    },
+    {
+      "id": "tacz_attributes:sniper_reload_speed",
+      "path": "sniper_reload_speed"
+    },
+    {
+      "id": "tacz_attributes:sniper_bolt_action_speed",
+      "path": "sniper_bolt_action_speed"
+    },
+    {
+      "id": "tacz_attributes:sniper_magazine_capacity",
+      "path": "sniper_magazine_capacity"
+    },
+    {
+      "id": "tacz_attributes:sniper_ammo_save_chance",
+      "path": "sniper_ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:sniper_ammo_recovery_chance",
+      "path": "sniper_ammo_recovery_chance"
+    },
+    {
+      "id": "tacz_attributes:sniper_ammo_recovery_amount",
+      "path": "sniper_ammo_recovery_amount"
+    },
+    {
+      "id": "tacz_attributes:sniper_ammo_recovery_percent",
+      "path": "sniper_ammo_recovery_percent"
+    },
+    {
+      "id": "tacz_attributes:sniper_reload_ammo_save_chance",
+      "path": "sniper_reload_ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:sniper_bonus_ammo_chance",
+      "path": "sniper_bonus_ammo_chance"
+    },
+    {
+      "id": "tacz_attributes:sniper_bonus_ammo_amount",
+      "path": "sniper_bonus_ammo_amount"
+    },
+    {
+      "id": "tacz_attributes:sniper_bonus_ammo_percent",
+      "path": "sniper_bonus_ammo_percent"
+    },
+    {
+      "id": "tacz_attributes:sniper_hip_fire_accuracy",
+      "path": "sniper_hip_fire_accuracy"
+    },
+    {
+      "id": "tacz_attributes:sniper_ads_accuracy",
+      "path": "sniper_ads_accuracy"
+    },
+    {
+      "id": "tacz_attributes:sniper_hip_fire_damage",
+      "path": "sniper_hip_fire_damage"
+    },
+    {
+      "id": "tacz_attributes:sniper_ads_damage",
+      "path": "sniper_ads_damage"
+    },
+    {
+      "id": "tacz_attributes:sniper_auto_damage",
+      "path": "sniper_auto_damage"
+    },
+    {
+      "id": "tacz_attributes:sniper_semi_damage",
+      "path": "sniper_semi_damage"
+    },
+    {
+      "id": "tacz_attributes:sniper_burst_damage",
+      "path": "sniper_burst_damage"
+    },
+    {
+      "id": "tacz_attributes:sniper_auto_accuracy",
+      "path": "sniper_auto_accuracy"
+    },
+    {
+      "id": "tacz_attributes:sniper_semi_accuracy",
+      "path": "sniper_semi_accuracy"
+    },
+    {
+      "id": "tacz_attributes:sniper_burst_accuracy",
+      "path": "sniper_burst_accuracy"
+    },
+    {
+      "id": "tacz_attributes:sniper_recoil",
+      "path": "sniper_recoil"
+    },
+    {
+      "id": "tacz_attributes:sniper_vertical_recoil",
+      "path": "sniper_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:sniper_horizontal_recoil",
+      "path": "sniper_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:sniper_ads_recoil",
+      "path": "sniper_ads_recoil"
+    },
+    {
+      "id": "tacz_attributes:sniper_ads_vertical_recoil",
+      "path": "sniper_ads_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:sniper_ads_horizontal_recoil",
+      "path": "sniper_ads_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:sniper_hip_fire_recoil",
+      "path": "sniper_hip_fire_recoil"
+    },
+    {
+      "id": "tacz_attributes:sniper_hip_fire_vertical_recoil",
+      "path": "sniper_hip_fire_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:sniper_hip_fire_horizontal_recoil",
+      "path": "sniper_hip_fire_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:sniper_gun_movement_speed",
+      "path": "sniper_gun_movement_speed"
+    },
+    {
+      "id": "tacz_attributes:sniper_headshot_multiplier",
+      "path": "sniper_headshot_multiplier"
+    },
+    {
+      "id": "tacz_attributes:sniper_knockback_multiplier",
+      "path": "sniper_knockback_multiplier"
+    },
+    {
+      "id": "tacz_attributes:sniper_knockback_base",
+      "path": "sniper_knockback_base"
+    },
+    {
+      "id": "tacz_attributes:sniper_pierce_multiplier",
+      "path": "sniper_pierce_multiplier"
+    },
+    {
+      "id": "tacz_attributes:sniper_rpm_multiplier",
+      "path": "sniper_rpm_multiplier"
+    },
+    {
+      "id": "tacz_attributes:sniper_ads_speed",
+      "path": "sniper_ads_speed"
+    },
+    {
+      "id": "tacz_attributes:sniper_semi_bullet_amount",
+      "path": "sniper_semi_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:sniper_auto_bullet_amount",
+      "path": "sniper_auto_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:sniper_burst_bullet_amount",
+      "path": "sniper_burst_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:sniper_draw_speed",
+      "path": "sniper_draw_speed"
+    },
+    {
+      "id": "tacz_attributes:sniper_burst_speed",
+      "path": "sniper_burst_speed"
+    },
+    {
+      "id": "tacz_attributes:rifle_damage",
+      "path": "rifle_damage"
+    },
+    {
+      "id": "tacz_attributes:rifle_reload_speed",
+      "path": "rifle_reload_speed"
+    },
+    {
+      "id": "tacz_attributes:rifle_bolt_action_speed",
+      "path": "rifle_bolt_action_speed"
+    },
+    {
+      "id": "tacz_attributes:rifle_magazine_capacity",
+      "path": "rifle_magazine_capacity"
+    },
+    {
+      "id": "tacz_attributes:rifle_ammo_save_chance",
+      "path": "rifle_ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:rifle_ammo_recovery_chance",
+      "path": "rifle_ammo_recovery_chance"
+    },
+    {
+      "id": "tacz_attributes:rifle_ammo_recovery_amount",
+      "path": "rifle_ammo_recovery_amount"
+    },
+    {
+      "id": "tacz_attributes:rifle_ammo_recovery_percent",
+      "path": "rifle_ammo_recovery_percent"
+    },
+    {
+      "id": "tacz_attributes:rifle_reload_ammo_save_chance",
+      "path": "rifle_reload_ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:rifle_bonus_ammo_chance",
+      "path": "rifle_bonus_ammo_chance"
+    },
+    {
+      "id": "tacz_attributes:rifle_bonus_ammo_amount",
+      "path": "rifle_bonus_ammo_amount"
+    },
+    {
+      "id": "tacz_attributes:rifle_bonus_ammo_percent",
+      "path": "rifle_bonus_ammo_percent"
+    },
+    {
+      "id": "tacz_attributes:rifle_hip_fire_accuracy",
+      "path": "rifle_hip_fire_accuracy"
+    },
+    {
+      "id": "tacz_attributes:rifle_ads_accuracy",
+      "path": "rifle_ads_accuracy"
+    },
+    {
+      "id": "tacz_attributes:rifle_hip_fire_damage",
+      "path": "rifle_hip_fire_damage"
+    },
+    {
+      "id": "tacz_attributes:rifle_ads_damage",
+      "path": "rifle_ads_damage"
+    },
+    {
+      "id": "tacz_attributes:rifle_auto_damage",
+      "path": "rifle_auto_damage"
+    },
+    {
+      "id": "tacz_attributes:rifle_semi_damage",
+      "path": "rifle_semi_damage"
+    },
+    {
+      "id": "tacz_attributes:rifle_burst_damage",
+      "path": "rifle_burst_damage"
+    },
+    {
+      "id": "tacz_attributes:rifle_auto_accuracy",
+      "path": "rifle_auto_accuracy"
+    },
+    {
+      "id": "tacz_attributes:rifle_semi_accuracy",
+      "path": "rifle_semi_accuracy"
+    },
+    {
+      "id": "tacz_attributes:rifle_burst_accuracy",
+      "path": "rifle_burst_accuracy"
+    },
+    {
+      "id": "tacz_attributes:rifle_recoil",
+      "path": "rifle_recoil"
+    },
+    {
+      "id": "tacz_attributes:rifle_vertical_recoil",
+      "path": "rifle_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:rifle_horizontal_recoil",
+      "path": "rifle_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:rifle_ads_recoil",
+      "path": "rifle_ads_recoil"
+    },
+    {
+      "id": "tacz_attributes:rifle_ads_vertical_recoil",
+      "path": "rifle_ads_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:rifle_ads_horizontal_recoil",
+      "path": "rifle_ads_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:rifle_hip_fire_recoil",
+      "path": "rifle_hip_fire_recoil"
+    },
+    {
+      "id": "tacz_attributes:rifle_hip_fire_vertical_recoil",
+      "path": "rifle_hip_fire_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:rifle_hip_fire_horizontal_recoil",
+      "path": "rifle_hip_fire_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:rifle_gun_movement_speed",
+      "path": "rifle_gun_movement_speed"
+    },
+    {
+      "id": "tacz_attributes:rifle_headshot_multiplier",
+      "path": "rifle_headshot_multiplier"
+    },
+    {
+      "id": "tacz_attributes:rifle_knockback_multiplier",
+      "path": "rifle_knockback_multiplier"
+    },
+    {
+      "id": "tacz_attributes:rifle_knockback_base",
+      "path": "rifle_knockback_base"
+    },
+    {
+      "id": "tacz_attributes:rifle_pierce_multiplier",
+      "path": "rifle_pierce_multiplier"
+    },
+    {
+      "id": "tacz_attributes:rifle_rpm_multiplier",
+      "path": "rifle_rpm_multiplier"
+    },
+    {
+      "id": "tacz_attributes:rifle_ads_speed",
+      "path": "rifle_ads_speed"
+    },
+    {
+      "id": "tacz_attributes:rifle_semi_bullet_amount",
+      "path": "rifle_semi_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:rifle_auto_bullet_amount",
+      "path": "rifle_auto_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:rifle_burst_bullet_amount",
+      "path": "rifle_burst_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:rifle_draw_speed",
+      "path": "rifle_draw_speed"
+    },
+    {
+      "id": "tacz_attributes:rifle_burst_speed",
+      "path": "rifle_burst_speed"
+    },
+    {
+      "id": "tacz_attributes:shotgun_damage",
+      "path": "shotgun_damage"
+    },
+    {
+      "id": "tacz_attributes:shotgun_reload_speed",
+      "path": "shotgun_reload_speed"
+    },
+    {
+      "id": "tacz_attributes:shotgun_bolt_action_speed",
+      "path": "shotgun_bolt_action_speed"
+    },
+    {
+      "id": "tacz_attributes:shotgun_magazine_capacity",
+      "path": "shotgun_magazine_capacity"
+    },
+    {
+      "id": "tacz_attributes:shotgun_ammo_save_chance",
+      "path": "shotgun_ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:shotgun_ammo_recovery_chance",
+      "path": "shotgun_ammo_recovery_chance"
+    },
+    {
+      "id": "tacz_attributes:shotgun_ammo_recovery_amount",
+      "path": "shotgun_ammo_recovery_amount"
+    },
+    {
+      "id": "tacz_attributes:shotgun_ammo_recovery_percent",
+      "path": "shotgun_ammo_recovery_percent"
+    },
+    {
+      "id": "tacz_attributes:shotgun_reload_ammo_save_chance",
+      "path": "shotgun_reload_ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:shotgun_bonus_ammo_chance",
+      "path": "shotgun_bonus_ammo_chance"
+    },
+    {
+      "id": "tacz_attributes:shotgun_bonus_ammo_amount",
+      "path": "shotgun_bonus_ammo_amount"
+    },
+    {
+      "id": "tacz_attributes:shotgun_bonus_ammo_percent",
+      "path": "shotgun_bonus_ammo_percent"
+    },
+    {
+      "id": "tacz_attributes:shotgun_hip_fire_accuracy",
+      "path": "shotgun_hip_fire_accuracy"
+    },
+    {
+      "id": "tacz_attributes:shotgun_ads_accuracy",
+      "path": "shotgun_ads_accuracy"
+    },
+    {
+      "id": "tacz_attributes:shotgun_hip_fire_damage",
+      "path": "shotgun_hip_fire_damage"
+    },
+    {
+      "id": "tacz_attributes:shotgun_ads_damage",
+      "path": "shotgun_ads_damage"
+    },
+    {
+      "id": "tacz_attributes:shotgun_auto_damage",
+      "path": "shotgun_auto_damage"
+    },
+    {
+      "id": "tacz_attributes:shotgun_semi_damage",
+      "path": "shotgun_semi_damage"
+    },
+    {
+      "id": "tacz_attributes:shotgun_burst_damage",
+      "path": "shotgun_burst_damage"
+    },
+    {
+      "id": "tacz_attributes:shotgun_auto_accuracy",
+      "path": "shotgun_auto_accuracy"
+    },
+    {
+      "id": "tacz_attributes:shotgun_semi_accuracy",
+      "path": "shotgun_semi_accuracy"
+    },
+    {
+      "id": "tacz_attributes:shotgun_burst_accuracy",
+      "path": "shotgun_burst_accuracy"
+    },
+    {
+      "id": "tacz_attributes:shotgun_recoil",
+      "path": "shotgun_recoil"
+    },
+    {
+      "id": "tacz_attributes:shotgun_vertical_recoil",
+      "path": "shotgun_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:shotgun_horizontal_recoil",
+      "path": "shotgun_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:shotgun_ads_recoil",
+      "path": "shotgun_ads_recoil"
+    },
+    {
+      "id": "tacz_attributes:shotgun_ads_vertical_recoil",
+      "path": "shotgun_ads_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:shotgun_ads_horizontal_recoil",
+      "path": "shotgun_ads_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:shotgun_hip_fire_recoil",
+      "path": "shotgun_hip_fire_recoil"
+    },
+    {
+      "id": "tacz_attributes:shotgun_hip_fire_vertical_recoil",
+      "path": "shotgun_hip_fire_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:shotgun_hip_fire_horizontal_recoil",
+      "path": "shotgun_hip_fire_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:shotgun_gun_movement_speed",
+      "path": "shotgun_gun_movement_speed"
+    },
+    {
+      "id": "tacz_attributes:shotgun_headshot_multiplier",
+      "path": "shotgun_headshot_multiplier"
+    },
+    {
+      "id": "tacz_attributes:shotgun_knockback_multiplier",
+      "path": "shotgun_knockback_multiplier"
+    },
+    {
+      "id": "tacz_attributes:shotgun_knockback_base",
+      "path": "shotgun_knockback_base"
+    },
+    {
+      "id": "tacz_attributes:shotgun_pierce_multiplier",
+      "path": "shotgun_pierce_multiplier"
+    },
+    {
+      "id": "tacz_attributes:shotgun_rpm_multiplier",
+      "path": "shotgun_rpm_multiplier"
+    },
+    {
+      "id": "tacz_attributes:shotgun_ads_speed",
+      "path": "shotgun_ads_speed"
+    },
+    {
+      "id": "tacz_attributes:shotgun_semi_bullet_amount",
+      "path": "shotgun_semi_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:shotgun_auto_bullet_amount",
+      "path": "shotgun_auto_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:shotgun_burst_bullet_amount",
+      "path": "shotgun_burst_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:shotgun_draw_speed",
+      "path": "shotgun_draw_speed"
+    },
+    {
+      "id": "tacz_attributes:shotgun_burst_speed",
+      "path": "shotgun_burst_speed"
+    },
+    {
+      "id": "tacz_attributes:smg_damage",
+      "path": "smg_damage"
+    },
+    {
+      "id": "tacz_attributes:smg_reload_speed",
+      "path": "smg_reload_speed"
+    },
+    {
+      "id": "tacz_attributes:smg_bolt_action_speed",
+      "path": "smg_bolt_action_speed"
+    },
+    {
+      "id": "tacz_attributes:smg_magazine_capacity",
+      "path": "smg_magazine_capacity"
+    },
+    {
+      "id": "tacz_attributes:smg_ammo_save_chance",
+      "path": "smg_ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:smg_ammo_recovery_chance",
+      "path": "smg_ammo_recovery_chance"
+    },
+    {
+      "id": "tacz_attributes:smg_ammo_recovery_amount",
+      "path": "smg_ammo_recovery_amount"
+    },
+    {
+      "id": "tacz_attributes:smg_ammo_recovery_percent",
+      "path": "smg_ammo_recovery_percent"
+    },
+    {
+      "id": "tacz_attributes:smg_reload_ammo_save_chance",
+      "path": "smg_reload_ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:smg_bonus_ammo_chance",
+      "path": "smg_bonus_ammo_chance"
+    },
+    {
+      "id": "tacz_attributes:smg_bonus_ammo_amount",
+      "path": "smg_bonus_ammo_amount"
+    },
+    {
+      "id": "tacz_attributes:smg_bonus_ammo_percent",
+      "path": "smg_bonus_ammo_percent"
+    },
+    {
+      "id": "tacz_attributes:smg_hip_fire_accuracy",
+      "path": "smg_hip_fire_accuracy"
+    },
+    {
+      "id": "tacz_attributes:smg_ads_accuracy",
+      "path": "smg_ads_accuracy"
+    },
+    {
+      "id": "tacz_attributes:smg_hip_fire_damage",
+      "path": "smg_hip_fire_damage"
+    },
+    {
+      "id": "tacz_attributes:smg_ads_damage",
+      "path": "smg_ads_damage"
+    },
+    {
+      "id": "tacz_attributes:smg_auto_damage",
+      "path": "smg_auto_damage"
+    },
+    {
+      "id": "tacz_attributes:smg_semi_damage",
+      "path": "smg_semi_damage"
+    },
+    {
+      "id": "tacz_attributes:smg_burst_damage",
+      "path": "smg_burst_damage"
+    },
+    {
+      "id": "tacz_attributes:smg_auto_accuracy",
+      "path": "smg_auto_accuracy"
+    },
+    {
+      "id": "tacz_attributes:smg_semi_accuracy",
+      "path": "smg_semi_accuracy"
+    },
+    {
+      "id": "tacz_attributes:smg_burst_accuracy",
+      "path": "smg_burst_accuracy"
+    },
+    {
+      "id": "tacz_attributes:smg_recoil",
+      "path": "smg_recoil"
+    },
+    {
+      "id": "tacz_attributes:smg_vertical_recoil",
+      "path": "smg_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:smg_horizontal_recoil",
+      "path": "smg_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:smg_ads_recoil",
+      "path": "smg_ads_recoil"
+    },
+    {
+      "id": "tacz_attributes:smg_ads_vertical_recoil",
+      "path": "smg_ads_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:smg_ads_horizontal_recoil",
+      "path": "smg_ads_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:smg_hip_fire_recoil",
+      "path": "smg_hip_fire_recoil"
+    },
+    {
+      "id": "tacz_attributes:smg_hip_fire_vertical_recoil",
+      "path": "smg_hip_fire_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:smg_hip_fire_horizontal_recoil",
+      "path": "smg_hip_fire_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:smg_gun_movement_speed",
+      "path": "smg_gun_movement_speed"
+    },
+    {
+      "id": "tacz_attributes:smg_headshot_multiplier",
+      "path": "smg_headshot_multiplier"
+    },
+    {
+      "id": "tacz_attributes:smg_knockback_multiplier",
+      "path": "smg_knockback_multiplier"
+    },
+    {
+      "id": "tacz_attributes:smg_knockback_base",
+      "path": "smg_knockback_base"
+    },
+    {
+      "id": "tacz_attributes:smg_pierce_multiplier",
+      "path": "smg_pierce_multiplier"
+    },
+    {
+      "id": "tacz_attributes:smg_rpm_multiplier",
+      "path": "smg_rpm_multiplier"
+    },
+    {
+      "id": "tacz_attributes:smg_ads_speed",
+      "path": "smg_ads_speed"
+    },
+    {
+      "id": "tacz_attributes:smg_semi_bullet_amount",
+      "path": "smg_semi_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:smg_auto_bullet_amount",
+      "path": "smg_auto_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:smg_burst_bullet_amount",
+      "path": "smg_burst_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:smg_draw_speed",
+      "path": "smg_draw_speed"
+    },
+    {
+      "id": "tacz_attributes:smg_burst_speed",
+      "path": "smg_burst_speed"
+    },
+    {
+      "id": "tacz_attributes:rpg_damage",
+      "path": "rpg_damage"
+    },
+    {
+      "id": "tacz_attributes:rpg_reload_speed",
+      "path": "rpg_reload_speed"
+    },
+    {
+      "id": "tacz_attributes:rpg_bolt_action_speed",
+      "path": "rpg_bolt_action_speed"
+    },
+    {
+      "id": "tacz_attributes:rpg_magazine_capacity",
+      "path": "rpg_magazine_capacity"
+    },
+    {
+      "id": "tacz_attributes:rpg_ammo_save_chance",
+      "path": "rpg_ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:rpg_ammo_recovery_chance",
+      "path": "rpg_ammo_recovery_chance"
+    },
+    {
+      "id": "tacz_attributes:rpg_ammo_recovery_amount",
+      "path": "rpg_ammo_recovery_amount"
+    },
+    {
+      "id": "tacz_attributes:rpg_ammo_recovery_percent",
+      "path": "rpg_ammo_recovery_percent"
+    },
+    {
+      "id": "tacz_attributes:rpg_reload_ammo_save_chance",
+      "path": "rpg_reload_ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:rpg_bonus_ammo_chance",
+      "path": "rpg_bonus_ammo_chance"
+    },
+    {
+      "id": "tacz_attributes:rpg_bonus_ammo_amount",
+      "path": "rpg_bonus_ammo_amount"
+    },
+    {
+      "id": "tacz_attributes:rpg_bonus_ammo_percent",
+      "path": "rpg_bonus_ammo_percent"
+    },
+    {
+      "id": "tacz_attributes:rpg_hip_fire_accuracy",
+      "path": "rpg_hip_fire_accuracy"
+    },
+    {
+      "id": "tacz_attributes:rpg_ads_accuracy",
+      "path": "rpg_ads_accuracy"
+    },
+    {
+      "id": "tacz_attributes:rpg_hip_fire_damage",
+      "path": "rpg_hip_fire_damage"
+    },
+    {
+      "id": "tacz_attributes:rpg_ads_damage",
+      "path": "rpg_ads_damage"
+    },
+    {
+      "id": "tacz_attributes:rpg_auto_damage",
+      "path": "rpg_auto_damage"
+    },
+    {
+      "id": "tacz_attributes:rpg_semi_damage",
+      "path": "rpg_semi_damage"
+    },
+    {
+      "id": "tacz_attributes:rpg_burst_damage",
+      "path": "rpg_burst_damage"
+    },
+    {
+      "id": "tacz_attributes:rpg_auto_accuracy",
+      "path": "rpg_auto_accuracy"
+    },
+    {
+      "id": "tacz_attributes:rpg_semi_accuracy",
+      "path": "rpg_semi_accuracy"
+    },
+    {
+      "id": "tacz_attributes:rpg_burst_accuracy",
+      "path": "rpg_burst_accuracy"
+    },
+    {
+      "id": "tacz_attributes:rpg_recoil",
+      "path": "rpg_recoil"
+    },
+    {
+      "id": "tacz_attributes:rpg_vertical_recoil",
+      "path": "rpg_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:rpg_horizontal_recoil",
+      "path": "rpg_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:rpg_ads_recoil",
+      "path": "rpg_ads_recoil"
+    },
+    {
+      "id": "tacz_attributes:rpg_ads_vertical_recoil",
+      "path": "rpg_ads_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:rpg_ads_horizontal_recoil",
+      "path": "rpg_ads_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:rpg_hip_fire_recoil",
+      "path": "rpg_hip_fire_recoil"
+    },
+    {
+      "id": "tacz_attributes:rpg_hip_fire_vertical_recoil",
+      "path": "rpg_hip_fire_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:rpg_hip_fire_horizontal_recoil",
+      "path": "rpg_hip_fire_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:rpg_gun_movement_speed",
+      "path": "rpg_gun_movement_speed"
+    },
+    {
+      "id": "tacz_attributes:rpg_headshot_multiplier",
+      "path": "rpg_headshot_multiplier"
+    },
+    {
+      "id": "tacz_attributes:rpg_knockback_multiplier",
+      "path": "rpg_knockback_multiplier"
+    },
+    {
+      "id": "tacz_attributes:rpg_knockback_base",
+      "path": "rpg_knockback_base"
+    },
+    {
+      "id": "tacz_attributes:rpg_pierce_multiplier",
+      "path": "rpg_pierce_multiplier"
+    },
+    {
+      "id": "tacz_attributes:rpg_rpm_multiplier",
+      "path": "rpg_rpm_multiplier"
+    },
+    {
+      "id": "tacz_attributes:rpg_ads_speed",
+      "path": "rpg_ads_speed"
+    },
+    {
+      "id": "tacz_attributes:rpg_semi_bullet_amount",
+      "path": "rpg_semi_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:rpg_auto_bullet_amount",
+      "path": "rpg_auto_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:rpg_burst_bullet_amount",
+      "path": "rpg_burst_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:rpg_draw_speed",
+      "path": "rpg_draw_speed"
+    },
+    {
+      "id": "tacz_attributes:rpg_burst_speed",
+      "path": "rpg_burst_speed"
+    },
+    {
+      "id": "tacz_attributes:mg_damage",
+      "path": "mg_damage"
+    },
+    {
+      "id": "tacz_attributes:mg_reload_speed",
+      "path": "mg_reload_speed"
+    },
+    {
+      "id": "tacz_attributes:mg_bolt_action_speed",
+      "path": "mg_bolt_action_speed"
+    },
+    {
+      "id": "tacz_attributes:mg_magazine_capacity",
+      "path": "mg_magazine_capacity"
+    },
+    {
+      "id": "tacz_attributes:mg_ammo_save_chance",
+      "path": "mg_ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:mg_ammo_recovery_chance",
+      "path": "mg_ammo_recovery_chance"
+    },
+    {
+      "id": "tacz_attributes:mg_ammo_recovery_amount",
+      "path": "mg_ammo_recovery_amount"
+    },
+    {
+      "id": "tacz_attributes:mg_ammo_recovery_percent",
+      "path": "mg_ammo_recovery_percent"
+    },
+    {
+      "id": "tacz_attributes:mg_reload_ammo_save_chance",
+      "path": "mg_reload_ammo_save_chance"
+    },
+    {
+      "id": "tacz_attributes:mg_bonus_ammo_chance",
+      "path": "mg_bonus_ammo_chance"
+    },
+    {
+      "id": "tacz_attributes:mg_bonus_ammo_amount",
+      "path": "mg_bonus_ammo_amount"
+    },
+    {
+      "id": "tacz_attributes:mg_bonus_ammo_percent",
+      "path": "mg_bonus_ammo_percent"
+    },
+    {
+      "id": "tacz_attributes:mg_hip_fire_accuracy",
+      "path": "mg_hip_fire_accuracy"
+    },
+    {
+      "id": "tacz_attributes:mg_ads_accuracy",
+      "path": "mg_ads_accuracy"
+    },
+    {
+      "id": "tacz_attributes:mg_hip_fire_damage",
+      "path": "mg_hip_fire_damage"
+    },
+    {
+      "id": "tacz_attributes:mg_ads_damage",
+      "path": "mg_ads_damage"
+    },
+    {
+      "id": "tacz_attributes:mg_auto_damage",
+      "path": "mg_auto_damage"
+    },
+    {
+      "id": "tacz_attributes:mg_semi_damage",
+      "path": "mg_semi_damage"
+    },
+    {
+      "id": "tacz_attributes:mg_burst_damage",
+      "path": "mg_burst_damage"
+    },
+    {
+      "id": "tacz_attributes:mg_auto_accuracy",
+      "path": "mg_auto_accuracy"
+    },
+    {
+      "id": "tacz_attributes:mg_semi_accuracy",
+      "path": "mg_semi_accuracy"
+    },
+    {
+      "id": "tacz_attributes:mg_burst_accuracy",
+      "path": "mg_burst_accuracy"
+    },
+    {
+      "id": "tacz_attributes:mg_recoil",
+      "path": "mg_recoil"
+    },
+    {
+      "id": "tacz_attributes:mg_vertical_recoil",
+      "path": "mg_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:mg_horizontal_recoil",
+      "path": "mg_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:mg_ads_recoil",
+      "path": "mg_ads_recoil"
+    },
+    {
+      "id": "tacz_attributes:mg_ads_vertical_recoil",
+      "path": "mg_ads_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:mg_ads_horizontal_recoil",
+      "path": "mg_ads_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:mg_hip_fire_recoil",
+      "path": "mg_hip_fire_recoil"
+    },
+    {
+      "id": "tacz_attributes:mg_hip_fire_vertical_recoil",
+      "path": "mg_hip_fire_vertical_recoil"
+    },
+    {
+      "id": "tacz_attributes:mg_hip_fire_horizontal_recoil",
+      "path": "mg_hip_fire_horizontal_recoil"
+    },
+    {
+      "id": "tacz_attributes:mg_gun_movement_speed",
+      "path": "mg_gun_movement_speed"
+    },
+    {
+      "id": "tacz_attributes:mg_headshot_multiplier",
+      "path": "mg_headshot_multiplier"
+    },
+    {
+      "id": "tacz_attributes:mg_knockback_multiplier",
+      "path": "mg_knockback_multiplier"
+    },
+    {
+      "id": "tacz_attributes:mg_knockback_base",
+      "path": "mg_knockback_base"
+    },
+    {
+      "id": "tacz_attributes:mg_pierce_multiplier",
+      "path": "mg_pierce_multiplier"
+    },
+    {
+      "id": "tacz_attributes:mg_rpm_multiplier",
+      "path": "mg_rpm_multiplier"
+    },
+    {
+      "id": "tacz_attributes:mg_ads_speed",
+      "path": "mg_ads_speed"
+    },
+    {
+      "id": "tacz_attributes:mg_semi_bullet_amount",
+      "path": "mg_semi_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:mg_auto_bullet_amount",
+      "path": "mg_auto_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:mg_burst_bullet_amount",
+      "path": "mg_burst_bullet_amount"
+    },
+    {
+      "id": "tacz_attributes:mg_draw_speed",
+      "path": "mg_draw_speed"
+    },
+    {
+      "id": "tacz_attributes:mg_burst_speed",
+      "path": "mg_burst_speed"
+    }
+  ]
+}

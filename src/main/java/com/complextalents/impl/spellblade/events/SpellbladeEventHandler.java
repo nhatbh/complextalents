@@ -698,6 +698,8 @@ public class SpellbladeEventHandler {
             case ENDER -> ChatFormatting.DARK_PURPLE;
             case ELDRITCH -> ChatFormatting.DARK_PURPLE;
             case HOLY -> ChatFormatting.GOLD;
+            case ABYSSAL -> ChatFormatting.DARK_GRAY;
+            case TECHNOMANCY -> ChatFormatting.GOLD;
         };
     }
 
@@ -714,6 +716,8 @@ public class SpellbladeEventHandler {
             case ENDER -> 0x9366BF;
             case ELDRITCH -> 0x8A2BE2;
             case HOLY -> 0xFFFFE0;
+            case ABYSSAL -> 0x1A0B2E;
+            case TECHNOMANCY -> 0xFF6A00;
         };
     }
 }

@@ -13,14 +13,17 @@ public enum ElementType {
     EVOCATION,
     ENDER,
     ELDRITCH,
-    BLOOD;
+    BLOOD,
+    ABYSSAL,
+    TECHNOMANCY;
 
     public boolean canReactWith(ElementType other) {
         if (other == null || this == other) return false;
         // Non-primal elemental schools do not undergo standard elemental reactions
         if (this == ENDER || other == ENDER || this == HOLY || other == HOLY ||
             this == EVOCATION || other == EVOCATION || this == ELDRITCH || other == ELDRITCH ||
-            this == BLOOD || other == BLOOD) return false;
+            this == BLOOD || other == BLOOD || this == ABYSSAL || other == ABYSSAL ||
+            this == TECHNOMANCY || other == TECHNOMANCY) return false;
 
         return switch (this) {
             case FIRE -> other == AQUA || other == ICE || other == LIGHTNING || other == NATURE;

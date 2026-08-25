@@ -71,6 +71,26 @@ public class ModAttributes {
             ).setSyncable(true)
     );
 
+    public static final RegistryObject<Attribute> FORTITUDE = ATTRIBUTES.register(
+            "fortitude",
+            () -> new RangedAttribute(
+                    "attribute.complextalents.fortitude",
+                    1.0,
+                    0.0,
+                    100.0
+            ).setSyncable(true)
+    );
+
+    public static final RegistryObject<Attribute> AMMO_CRAFTING_YIELD = ATTRIBUTES.register(
+            "ammo_crafting_yield",
+            () -> new RangedAttribute(
+                    "attribute.complextalents.ammo_crafting_yield",
+                    1.0,
+                    0.0,
+                    100.0
+            ).setSyncable(true)
+    );
+
     public static void register(IEventBus modEventBus) {
         ATTRIBUTES.register(modEventBus);
     }
@@ -82,5 +102,7 @@ public class ModAttributes {
         event.add(EntityType.PLAYER, HEAL_AND_SHIELD_POWER.get());
         event.add(EntityType.PLAYER, SUMMONING_POWER.get());
         event.add(EntityType.PLAYER, MAGIC_EFFECTIVENESS.get());
+        event.add(EntityType.PLAYER, FORTITUDE.get());
+        event.add(EntityType.PLAYER, AMMO_CRAFTING_YIELD.get());
     }
 }

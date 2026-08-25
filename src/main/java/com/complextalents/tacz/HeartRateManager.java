@@ -39,7 +39,7 @@ public class HeartRateManager {
      * health.
      */
     public static float getGainFactor(Player player) {
-        double fortitude = GunAttributes.getValue(player, GunAttributeType.FORTITUDE, GunType.GLOBAL);
+        double fortitude = player.getAttributeValue(com.complextalents.registry.ModAttributes.FORTITUDE.get());
         return (float) (1.0 / Math.max(0.01, fortitude));
     }
 

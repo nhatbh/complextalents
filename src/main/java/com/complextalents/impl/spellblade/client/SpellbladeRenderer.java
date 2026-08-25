@@ -194,6 +194,8 @@ public class SpellbladeRenderer implements OriginRenderer {
             case ENDER -> 0xFF9366BF;
             case ELDRITCH -> 0xFF8A2BE2;
             case HOLY -> 0xFFFFFFE0;
+            case ABYSSAL -> 0xFF1A0B2E;
+            case TECHNOMANCY -> 0xFFFF6A00;
         };
     }
 }

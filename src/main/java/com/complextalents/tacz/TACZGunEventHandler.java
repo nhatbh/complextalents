@@ -49,12 +49,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Handles all combat, accuracy, recoil, speed, magazine, ammo, and Poise API event integrations for TACZ guns.
+ * Handles all combat, accuracy, recoil, speed, magazine, ammo, and Poise API
+ * event integrations for TACZ guns.
  */
 public class TACZGunEventHandler {
 
     private static final Map<UUID, Long> LAST_GUN_WARNING_TIME = new ConcurrentHashMap<>();
-    private static final ResourceLocation MARKSMAN_ORIGIN_ID = ResourceLocation.fromNamespaceAndPath("complextalents", "marksman");
+    private static final ResourceLocation MARKSMAN_ORIGIN_ID = ResourceLocation.fromNamespaceAndPath("complextalents",
+            "marksman");
 
     @SubscribeEvent
     public static void onEntityHurtByGun(EntityHurtByGunEvent.Pre event) {
@@ -63,45 +65,15 @@ public class TACZGunEventHandler {
 
         GunType gunType = GunType.fromGunId(event.getGunId());
 
-        IGunOperator operator = IGunOperator.fromLivingEntity(attacker);
-        boolean isAiming = operator != null && operator.getSynIsAiming();
-
         ItemStack mainStack = attacker.getMainHandItem();
         IGun iGun = IGun.getIGunOrNull(mainStack);
-        FireMode fireMode = iGun != null ? iGun.getFireMode(mainStack) : FireMode.UNKNOWN;
 
-        // 1. Base Damage Multipliers & Refinement Mainstat Bonus
-        double damageMult = GunAttributes.getValue(attacker, GunAttributeType.GUN_DAMAGE, gunType);
-        if (mainStack != null && !mainStack.isEmpty()) {
-            int totalXp = com.complextalents.gunmastery.GunRefinementManager.getRefineXp(mainStack);
-            int cumRank = com.complextalents.gunmastery.GunRefinementManager.getRankFromXp(totalXp, 20);
-            double mainstatBonus = com.complextalents.gunmastery.GunRefinementManager.getMainstatDamageBonus(cumRank);
-            damageMult *= (1.0 + mainstatBonus);
-        }
-
-        if (isAiming) {
-            damageMult *= GunAttributes.getValue(attacker, GunAttributeType.ADS_DAMAGE, gunType);
-        } else {
-            damageMult *= GunAttributes.getValue(attacker, GunAttributeType.HIP_FIRE_DAMAGE, gunType);
-        }
-
-        if (fireMode == FireMode.SEMI) {
-            damageMult *= GunAttributes.getValue(attacker, GunAttributeType.SEMI_DAMAGE, gunType);
-        } else if (fireMode == FireMode.AUTO) {
-            damageMult *= GunAttributes.getValue(attacker, GunAttributeType.AUTO_DAMAGE, gunType);
-        } else if (fireMode == FireMode.BURST) {
-            damageMult *= GunAttributes.getValue(attacker, GunAttributeType.BURST_DAMAGE, gunType);
-        }
-
-        float newBaseAmount = (float) (event.getBaseAmount() * damageMult);
-
-        float rawHitDamage = newBaseAmount * (event.isHeadShot() ? event.getHeadshotMultiplier() : 1.0f);
-        event.setBaseAmount(newBaseAmount);
+        float rawHitDamage = event.getAmount();
 
         // Target Exhaustion Check for LMG suppression mechanic
         LivingEntity victim = event.getHurtEntity() instanceof LivingEntity livingVictim ? livingVictim : null;
 
-        // 3. Poise API Integration & Mitigation
+        // 2. Poise API Integration & Mitigation
         if (victim != null && !victim.level().isClientSide && PoiseAPI.hasPoise(victim)) {
             // Prevent double-processing by basedefensev2's generic EntityStrengthEventHandler
             victim.getPersistentData().putBoolean("SkipStrengthDamage", true);
@@ -109,18 +81,16 @@ public class TACZGunEventHandler {
             double distance = attacker.distanceTo(victim);
             boolean isTargetExhausted = PoiseAPI.isExhausted(victim);
 
-            // 1. Calculate Pre-mitigated Base Damage (Apotheosis Armor Formula)
+            // Calculate Pre-mitigated Base Damage (Apotheosis Armor Formula)
             float effectiveArmor = (float) victim.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR);
             float preMitigatedDamage = rawHitDamage * (50.0f / (50.0f + Math.max(0.0f, effectiveArmor)));
 
-            // 2. Firearm Poise Damage Path
-            int basePierce = 0;
+            // Firearm Poise Damage Path
+            int finalPierce = 0;
             CommonGunIndex index = TimelessAPI.getCommonGunIndex(event.getGunId()).orElse(null);
             if (index != null && index.getGunData() != null && index.getGunData().getBulletData() != null) {
-                basePierce = index.getGunData().getBulletData().getPierce();
+                finalPierce = index.getGunData().getBulletData().getPierce();
             }
-            double pierceMult = GunAttributes.getValue(attacker, GunAttributeType.PIERCE_MULTIPLIER, gunType);
-            int finalPierce = (int) Math.round(basePierce * pierceMult);
             float penetrationFactor = (float) (1.0 + (finalPierce * 0.10));
 
             float basePoiseDamage = preMitigatedDamage * 0.40f * penetrationFactor;
@@ -162,18 +132,18 @@ public class TACZGunEventHandler {
 
             float finalPoiseDamage = basePoiseDamage * (event.isHeadShot() ? headshotMult : bodyMult);
 
-            // 3. Firearm Vitality Damage Path (Subtle Scaled Vitality Multiplier)
+            // Firearm Vitality Damage Path
             float vitalityMult = 1.00f;
             if (gunType == GunType.SMG && isTargetExhausted) {
-                vitalityMult = 1.20f; // SMG: +20% subtle execution boost when exhausted
+                vitalityMult = 1.20f;
             } else if (gunType == GunType.SNIPER && event.isHeadShot()) {
-                vitalityMult = 1.25f; // Sniper: +25% subtle headshot execution boost
+                vitalityMult = 1.25f;
             } else if (gunType == GunType.SHOTGUN) {
                 vitalityMult = (distance <= 8.0) ? 1.10f : (distance >= 20.0 ? 0.85f : 1.10f - (float) ((distance - 8.0) / 12.0) * 0.25f);
             }
             float finalVitalityDamage = preMitigatedDamage * vitalityMult;
 
-            // Scaled boss vitality damage penalty based on gun refinement cumulative level (60% penalty at Lv 0 -> 0% penalty at Lv 20)
+            // Scaled boss vitality damage penalty based on gun refinement cumulative level
             if (BossAPI.isBoss(victim)) {
                 int totalXp = com.complextalents.gunmastery.GunRefinementManager.getRefineXp(mainStack);
                 int cumRank = com.complextalents.gunmastery.GunRefinementManager.getRankFromXp(totalXp, 20);
@@ -182,15 +152,16 @@ public class TACZGunEventHandler {
                 finalVitalityDamage *= bossVitalityMult;
             }
 
-            // 4. LMG Suppression Mechanic
+            // LMG Suppression Mechanic
             if (gunType == GunType.MG && isTargetExhausted) {
-                net.minecraft.world.effect.MobEffect suppressionEffect = net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS.getValue(net.minecraft.resources.ResourceLocation.tryParse("basedefensev2:suppression"));
+                net.minecraft.world.effect.MobEffect suppressionEffect = net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS
+                        .getValue(net.minecraft.resources.ResourceLocation.tryParse("basedefensev2:suppression"));
                 if (suppressionEffect != null) {
                     victim.addEffect(new MobEffectInstance(suppressionEffect, 20, 0, false, false));
                 }
             }
 
-            // 5. Accumulate Gun Mastery Damage from Poise / Vitality Pipeline
+            // Accumulate Gun Mastery Damage from Poise / Vitality Pipeline
             if (attacker instanceof ServerPlayer player) {
                 if (gunType != null && !gunType.isGlobal() && gunType != GunType.RPG) {
                     ResourceLocation gunRes = iGun != null ? iGun.getGunId(mainStack) : null;
@@ -206,7 +177,7 @@ public class TACZGunEventHandler {
                 }
             }
 
-            // 6. Single Entry-Point API Call to Poise & Boss Vitality Pipeline with "TACZ" sourceMod identifier and ammoType
+            // Single Entry-Point API Call to Poise & Boss Vitality Pipeline with "TACZ" sourceMod identifier
             DamageSource source = event.getDamageSource(GunDamageSourcePart.ARMOR_PIERCING);
             if (source == null) {
                 source = victim.damageSources().mobAttack(attacker);
@@ -223,33 +194,6 @@ public class TACZGunEventHandler {
 
             PoiseAPI.damagePoise(victim, finalPoiseDamage, finalVitalityDamage, attacker, source, true, "TACZ", 100, ammoType);
             event.setBaseAmount(0.0001f);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onEntityKillByGun(EntityKillByGunEvent event) {
-        LivingEntity attacker = event.getAttacker();
-        if (attacker == null || attacker.level().isClientSide) return;
-
-        GunType gunType = GunType.fromGunId(event.getGunId());
-
-        double recoveryChance = GunAttributes.getValue(attacker, GunAttributeType.AMMO_RECOVERY_CHANCE, gunType);
-        if (recoveryChance > 0.0 && attacker.getRandom().nextDouble() < recoveryChance) {
-            ItemStack mainStack = attacker.getMainHandItem();
-            IGun iGun = IGun.getIGunOrNull(mainStack);
-            if (iGun != null) {
-                int flatAmount = (int) Math.round(GunAttributes.getValue(attacker, GunAttributeType.AMMO_RECOVERY_AMOUNT, gunType));
-                double percentAmount = GunAttributes.getValue(attacker, GunAttributeType.AMMO_RECOVERY_PERCENT, gunType);
-
-                CommonGunIndex gunIndex = TimelessAPI.getCommonGunIndex(iGun.getGunId(mainStack)).orElse(null);
-                int maxAmmo = gunIndex != null ? gunIndex.getGunData().getAmmoAmount() : 30;
-
-                int recovered = flatAmount + (int) Math.round(maxAmmo * percentAmount);
-                if (recovered > 0) {
-                    int currentAmmo = iGun.getCurrentAmmoCount(mainStack);
-                    iGun.setCurrentAmmoCount(mainStack, Math.min(maxAmmo, currentAmmo + recovered));
-                }
-            }
         }
     }
 
@@ -285,10 +229,7 @@ public class TACZGunEventHandler {
                 Long lastTime = LAST_GUN_WARNING_TIME.get(player.getUUID());
                 if (lastTime == null || now - lastTime > 2000) {
                     LAST_GUN_WARNING_TIME.put(player.getUUID(), now);
-
-                    // Trigger inspect animation when confused non-Marksman attempts to fire
                     triggerInspectAnimation(player);
-
                     String msgKey = getRandomOriginGunMessage(originId, player);
                     player.displayClientMessage(Component.translatable(msgKey), true);
                 }
@@ -333,19 +274,7 @@ public class TACZGunEventHandler {
                 }
             }
         }
-
-        if (event.getLogicalSide().isClient()) return;
-        if (iGun == null) return;
-
-        // Server-side Ammo Save Chance
-        double saveChance = GunAttributes.getValue(shooter, GunAttributeType.AMMO_SAVE_CHANCE, gunType);
-        if (saveChance > 0.0 && shooter.getRandom().nextDouble() < saveChance) {
-            iGun.setCurrentAmmoCount(stack, iGun.getCurrentAmmoCount(stack) + 1);
-        }
     }
-
-
-
 
     private static String getRandomOriginGunMessage(ResourceLocation originId, Player player) {
         if (originId != null) {
@@ -396,34 +325,6 @@ public class TACZGunEventHandler {
     }
 
     @SubscribeEvent
-    public static void onGunFinishReload(GunFinishReloadEvent event) {
-        if (event.getLogicalSide().isClient()) return;
-
-        ItemStack stack = event.getGunItemStack();
-        IGun iGun = IGun.getIGunOrNull(stack);
-        if (iGun == null) return;
-
-        LivingEntity shooter = getShooterFromStack(stack);
-        if (shooter == null) return;
-
-        GunType gunType = GunType.fromItemStack(stack);
-
-        double bonusChance = GunAttributes.getValue(shooter, GunAttributeType.BONUS_AMMO_CHANCE, gunType);
-        if (bonusChance > 0.0 && shooter.getRandom().nextDouble() < bonusChance) {
-            int flatBonus = (int) Math.round(GunAttributes.getValue(shooter, GunAttributeType.BONUS_AMMO_AMOUNT, gunType));
-            double percentBonus = GunAttributes.getValue(shooter, GunAttributeType.BONUS_AMMO_PERCENT, gunType);
-
-            CommonGunIndex gunIndex = TimelessAPI.getCommonGunIndex(iGun.getGunId(stack)).orElse(null);
-            int baseCapacity = gunIndex != null ? gunIndex.getGunData().getAmmoAmount() : 30;
-
-            int bonusCount = flatBonus + (int) Math.round(baseCapacity * percentBonus);
-            if (bonusCount > 0) {
-                iGun.setCurrentAmmoCount(stack, iGun.getCurrentAmmoCount(stack) + bonusCount);
-            }
-        }
-    }
-
-    @SubscribeEvent
     public static void onAttachmentProperty(AttachmentPropertyEvent event) {
         ItemStack stack = event.getGunItem();
         IGun iGun = IGun.getIGunOrNull(stack);
@@ -438,42 +339,7 @@ public class TACZGunEventHandler {
         GunType gunType = GunType.fromItemStack(stack);
         AttachmentCacheProperty cache = event.getCacheProperty();
 
-        IGunOperator operator = IGunOperator.fromLivingEntity(shooter);
-        boolean isAiming = operator != null && operator.getSynIsAiming();
-        FireMode fireMode = iGun.getFireMode(stack);
-
-        // 0. Damage Multiplier (Refinement Mainstat + Mastery Gun Damage Bonus)
-        java.util.LinkedList<com.tacz.guns.resource.pojo.data.gun.ExtraDamage.DistanceDamagePair> damageList = cache.getCache(GunProperties.DAMAGE);
-        if (damageList != null && !damageList.isEmpty()) {
-            double damageMult = GunAttributes.getValue(shooter, GunAttributeType.GUN_DAMAGE, gunType);
-            if (stack != null && !stack.isEmpty()) {
-                int totalXp = com.complextalents.gunmastery.GunRefinementManager.getRefineXp(stack);
-                int cumRank = com.complextalents.gunmastery.GunRefinementManager.getRankFromXp(totalXp, 20);
-                double mainstatBonus = com.complextalents.gunmastery.GunRefinementManager.getMainstatDamageBonus(cumRank);
-                damageMult *= (1.0 + mainstatBonus);
-            }
-            if (damageMult != 1.0) {
-                java.util.LinkedList<com.tacz.guns.resource.pojo.data.gun.ExtraDamage.DistanceDamagePair> newDamageList = new java.util.LinkedList<>();
-                for (com.tacz.guns.resource.pojo.data.gun.ExtraDamage.DistanceDamagePair pair : damageList) {
-                    newDamageList.add(new com.tacz.guns.resource.pojo.data.gun.ExtraDamage.DistanceDamagePair(pair.getDistance(), (float) (pair.getDamage() * damageMult)));
-                }
-                cache.setCache(GunProperties.DAMAGE, newDamageList);
-            }
-        }
-
-        // 0b. Headshot Multiplier
-        Float headshotMult = cache.getCache(GunProperties.HEADSHOT_MULTIPLIER);
-        if (headshotMult != null) {
-            double hsBonus = GunAttributes.getValue(shooter, GunAttributeType.HEADSHOT_MULTIPLIER, gunType);
-            if (hsBonus != 1.0) {
-                cache.setCache(GunProperties.HEADSHOT_MULTIPLIER, (float) (headshotMult * hsBonus));
-            }
-        }
-
-        double shotgunSpreadMult = gunType == GunType.SHOTGUN ? 1.5 : 1.0;
-        float heartRateInaccMult = shooter instanceof Player player ? HeartRateManager.getInaccuracyMultiplier(player) : 1.0f;
-
-        // Realistic movement inaccuracy penalties
+        // Preserved Realistic Movement Inaccuracy Penalty System per Gun Archetype
         double movePenalty = switch (gunType) {
             case SNIPER -> 7.0;  // 7.0x penalty for moving with Sniper Rifle
             case MG -> 4.5;      // 4.5x penalty for Machine Gun (LMG)
@@ -485,16 +351,12 @@ public class TACZGunEventHandler {
         };
 
         final double finalMovePenalty = shooter.isSprinting() ? movePenalty * 1.5 : movePenalty;
+        double shotgunSpreadMult = gunType == GunType.SHOTGUN ? 1.5 : 1.0;
+        float heartRateInaccMult = shooter instanceof Player player ? HeartRateManager.getInaccuracyMultiplier(player) : 1.0f;
 
+        float baseFactor = (float) (shotgunSpreadMult * heartRateInaccMult);
         Map<InaccuracyType, Float> inaccuracy = cache.getCache(GunProperties.INACCURACY);
         if (inaccuracy != null) {
-            double hipAcc = GunAttributes.getValue(shooter, GunAttributeType.HIP_FIRE_ACCURACY, gunType);
-            double modeAcc = 1.0;
-            if (fireMode == FireMode.SEMI) modeAcc = GunAttributes.getValue(shooter, GunAttributeType.SEMI_ACCURACY, gunType);
-            else if (fireMode == FireMode.AUTO) modeAcc = GunAttributes.getValue(shooter, GunAttributeType.AUTO_ACCURACY, gunType);
-            else if (fireMode == FireMode.BURST) modeAcc = GunAttributes.getValue(shooter, GunAttributeType.BURST_ACCURACY, gunType);
-
-            double baseFactor = (1.0 / Math.max(0.0001, (hipAcc * modeAcc))) * shotgunSpreadMult * heartRateInaccMult;
             Map<InaccuracyType, Float> newInacc = new EnumMap<>(InaccuracyType.class);
             inaccuracy.forEach((k, v) -> {
                 double mult = baseFactor;
@@ -512,74 +374,9 @@ public class TACZGunEventHandler {
 
         Map<InaccuracyType, Float> aimInaccuracy = cache.getCache(GunProperties.AIM_INACCURACY);
         if (aimInaccuracy != null) {
-            double adsAcc = GunAttributes.getValue(shooter, GunAttributeType.ADS_ACCURACY, gunType);
-            double modeAcc = 1.0;
-            if (fireMode == FireMode.SEMI) modeAcc = GunAttributes.getValue(shooter, GunAttributeType.SEMI_ACCURACY, gunType);
-            else if (fireMode == FireMode.AUTO) modeAcc = GunAttributes.getValue(shooter, GunAttributeType.AUTO_ACCURACY, gunType);
-            else if (fireMode == FireMode.BURST) modeAcc = GunAttributes.getValue(shooter, GunAttributeType.BURST_ACCURACY, gunType);
-
-            double baseFactor = (1.0 / Math.max(0.0001, (adsAcc * modeAcc))) * shotgunSpreadMult * heartRateInaccMult;
             Map<InaccuracyType, Float> newAimInacc = new EnumMap<>(InaccuracyType.class);
-            aimInaccuracy.forEach((k, v) -> {
-                newAimInacc.put(k, (float) (v * baseFactor));
-            });
+            aimInaccuracy.forEach((k, v) -> newAimInacc.put(k, (float) (v * baseFactor)));
             cache.setCache(GunProperties.AIM_INACCURACY, newAimInacc);
-        }
-
-        // 2. Recoil
-        ParameterizedCachePair<Float, Float> recoil = cache.getCache(GunProperties.RECOIL);
-        if (recoil != null) {
-            double genRecoil = GunAttributes.getValue(shooter, GunAttributeType.RECOIL, gunType);
-            double pitchRecoil = GunAttributes.getValue(shooter, GunAttributeType.RECOIL_PITCH, gunType);
-            double yawRecoil = GunAttributes.getValue(shooter, GunAttributeType.RECOIL_YAW, gunType);
-
-            if (isAiming) {
-                genRecoil *= GunAttributes.getValue(shooter, GunAttributeType.ADS_RECOIL, gunType);
-                pitchRecoil *= GunAttributes.getValue(shooter, GunAttributeType.ADS_RECOIL_PITCH, gunType);
-                yawRecoil *= GunAttributes.getValue(shooter, GunAttributeType.ADS_RECOIL_YAW, gunType);
-            } else {
-                genRecoil *= GunAttributes.getValue(shooter, GunAttributeType.HIP_FIRE_RECOIL, gunType);
-                pitchRecoil *= GunAttributes.getValue(shooter, GunAttributeType.HIP_FIRE_RECOIL_PITCH, gunType);
-                yawRecoil *= GunAttributes.getValue(shooter, GunAttributeType.HIP_FIRE_RECOIL_YAW, gunType);
-            }
-
-            float pitchFactor = (float) (1.0 / Math.max(0.0001, (genRecoil * pitchRecoil)));
-            float yawFactor = (float) (1.0 / Math.max(0.0001, (genRecoil * yawRecoil)));
-
-            float defaultPitch = recoil.left() != null ? recoil.left().getDefaultValue() : 1.0f;
-            float defaultYaw = recoil.right() != null ? recoil.right().getDefaultValue() : 1.0f;
-
-            cache.setCache(GunProperties.RECOIL, ParameterizedCachePair.of(defaultPitch * pitchFactor, defaultYaw * yawFactor));
-        }
-
-        // 3. RPM
-        Integer rpm = cache.getCache(GunProperties.ROUNDS_PER_MINUTE);
-        if (rpm != null) {
-            double rpmMult = GunAttributes.getValue(shooter, GunAttributeType.RPM_MULTIPLIER, gunType);
-            cache.setCache(GunProperties.ROUNDS_PER_MINUTE, (int) Math.round(rpm * rpmMult));
-        }
-
-        // 4. ADS Speed
-        Float adsTime = cache.getCache(GunProperties.ADS_TIME);
-        if (adsTime != null) {
-            double adsSpeedMult = GunAttributes.getValue(shooter, GunAttributeType.ADS_SPEED, gunType);
-            cache.setCache(GunProperties.ADS_TIME, (float) (adsTime / Math.max(0.0001, adsSpeedMult)));
-        }
-
-        // 5. Pierce
-        Integer pierce = cache.getCache(GunProperties.PIERCE);
-        if (pierce != null) {
-            double pierceMult = GunAttributes.getValue(shooter, GunAttributeType.PIERCE_MULTIPLIER, gunType);
-            cache.setCache(GunProperties.PIERCE, (int) Math.round(pierce * pierceMult));
-        }
-
-        // 6. Knockback (-80% for non-shotgun weapons to prevent kiting)
-        Float knockback = cache.getCache(GunProperties.KNOCKBACK);
-        if (knockback != null) {
-            double kbMult = GunAttributes.getValue(shooter, GunAttributeType.KNOCKBACK_MULTIPLIER, gunType);
-            double kbBase = GunAttributes.getValue(shooter, GunAttributeType.KNOCKBACK_BASE, gunType);
-            double kitingPenalty = gunType == GunType.SHOTGUN ? 1.0 : 0.20;
-            cache.setCache(GunProperties.KNOCKBACK, (float) (((knockback + kbBase) * kbMult) * kitingPenalty));
         }
     }
 
@@ -599,8 +396,6 @@ public class TACZGunEventHandler {
 
         IGunOperator operator = IGunOperator.fromLivingEntity(player);
         if (operator == null) return;
-        ShooterDataHolder data = operator.getDataHolder();
-        if (data == null) return;
 
         ItemStack mainStack = player.getMainHandItem();
         IGun iGun = IGun.getIGunOrNull(mainStack);
@@ -608,34 +403,7 @@ public class TACZGunEventHandler {
 
         GunType gunType = GunType.fromItemStack(mainStack);
 
-        // 1. Reload Speed
-        if (data.reloadStateType != null && data.reloadStateType.isReloading()) {
-            double reloadSpeed = GunAttributes.getValue(player, GunAttributeType.RELOAD_SPEED, gunType);
-            if (reloadSpeed != 1.0 && reloadSpeed > 0.0) {
-                long extraElapsedMs = (long) ((reloadSpeed - 1.0) * 50.0);
-                data.reloadTimestamp -= extraElapsedMs;
-            }
-        }
-
-        // 2. Bolt Action Speed
-        if (data.isBolting) {
-            double boltSpeed = GunAttributes.getValue(player, GunAttributeType.BOLT_ACTION_SPEED, gunType);
-            if (boltSpeed != 1.0 && boltSpeed > 0.0) {
-                long extraElapsedMs = (long) ((boltSpeed - 1.0) * 50.0);
-                data.boltTimestamp -= extraElapsedMs;
-            }
-        }
-
-        // 3. Draw Speed
-        if (data.drawTimestamp > 0) {
-            double drawSpeed = GunAttributes.getValue(player, GunAttributeType.DRAW_SPEED, gunType);
-            if (drawSpeed != 1.0 && drawSpeed > 0.0) {
-                long extraElapsedMs = (long) ((drawSpeed - 1.0) * 50.0);
-                data.drawTimestamp -= extraElapsedMs;
-            }
-        }
-
-        // 4. ADS Movement Slowness Penalty
+        // ADS Movement Slowness Penalty
         if (operator.getSynIsAiming() && !player.level().isClientSide) {
             int slownessAmplifier = switch (gunType) {
                 case SNIPER -> 3; // Slowness IV (~75% movement speed reduction)
@@ -676,7 +444,8 @@ public class TACZGunEventHandler {
     }
 
     private static LivingEntity getShooterFromStack(ItemStack stack) {
-        if (ServerLifecycleHooks.getCurrentServer() == null) return null;
+        if (ServerLifecycleHooks.getCurrentServer() == null)
+            return null;
         for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
             if (player.getMainHandItem() == stack || player.getOffhandItem() == stack) {
                 return player;
@@ -690,14 +459,18 @@ public class TACZGunEventHandler {
         @SubscribeEvent
         public static void onItemTooltip(ItemTooltipEvent event) {
             ItemStack stack = event.getItemStack();
-            if (stack.isEmpty()) return;
+            if (stack.isEmpty())
+                return;
 
             IGun iGun = IGun.getIGunOrNull(stack);
-            ResourceLocation gunRes = iGun != null ? iGun.getGunId(stack) : net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(stack.getItem());
-            if (gunRes == null) return;
+            ResourceLocation gunRes = iGun != null ? iGun.getGunId(stack)
+                    : net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(stack.getItem());
+            if (gunRes == null)
+                return;
 
             GunClassificationManager.GunEntry entry = GunClassificationManager.getGunEntry(gunRes);
-            if (entry == null && iGun == null) return;
+            if (entry == null && iGun == null)
+                return;
             if (entry != null && entry.tier <= 0) {
                 event.getToolTip().add(Component.empty());
                 event.getToolTip().add(Component.literal("\u00A7c\u00A7l✦ Creative Only Weapon"));
@@ -709,7 +482,8 @@ public class TACZGunEventHandler {
             if ((gunType == null || gunType == GunType.GLOBAL) && entry != null) {
                 gunType = entry.getGunType();
             }
-            if (gunType == null || gunType == GunType.GLOBAL) return;
+            if (gunType == null || gunType == GunType.GLOBAL)
+                return;
 
             int tier = entry != null ? entry.tier : 1;
             String rankName = entry != null ? entry.rank : "Recruit";
@@ -728,13 +502,17 @@ public class TACZGunEventHandler {
             String symbol = getTierSymbol(tier);
 
             event.getToolTip().add(Component.empty());
-            event.getToolTip().add(Component.literal("\u00A7b\u00A7l" + symbol + " Gun Mastery: \u00A7f" + gunType.getDisplayName()));
-            event.getToolTip().add(Component.literal("  \u00A77✦ Weapon Tier: " + rankColor + rankName + " \u00A78(Tier " + tier + ")"));
+            event.getToolTip().add(
+                    Component.literal("\u00A7b\u00A7l" + symbol + " Gun Mastery: \u00A7f" + gunType.getDisplayName()));
+            event.getToolTip().add(Component
+                    .literal("  \u00A77✦ Weapon Tier: " + rankColor + rankName + " \u00A78(Tier " + tier + ")"));
 
             if (playerLevel >= requiredLevel) {
-                event.getToolTip().add(Component.literal("  \u00A7a✔ Wield Requirement: " + rankColor + "L." + requiredLevel + " \u00A77(Your Level: L." + playerLevel + ")"));
+                event.getToolTip().add(Component.literal("  \u00A7a✔ Wield Requirement: " + rankColor + "L."
+                        + requiredLevel + " \u00A77(Your Level: L." + playerLevel + ")"));
             } else {
-                event.getToolTip().add(Component.literal("  \u00A7c✖ Required Gun Mastery: " + rankColor + "L." + requiredLevel + " \u00A77(Your Level: L." + playerLevel + ")"));
+                event.getToolTip().add(Component.literal("  \u00A7c✖ Required Gun Mastery: " + rankColor + "L."
+                        + requiredLevel + " \u00A77(Your Level: L." + playerLevel + ")"));
             }
 
             // --- Firearm Refinement Section ---
@@ -744,7 +522,8 @@ public class TACZGunEventHandler {
                 net.minecraft.world.inventory.Slot resultSlot = anvilMenu.getSlot(10);
                 if (resultSlot != null && resultSlot.hasItem()) {
                     ItemStack res = resultSlot.getItem();
-                    if (res == stack || ItemStack.matches(res, stack) || (res.hasTag() && stack.hasTag() && res.getTag().equals(stack.getTag()))) {
+                    if (res == stack || ItemStack.matches(res, stack)
+                            || (res.hasTag() && stack.hasTag() && res.getTag().equals(stack.getTag()))) {
                         isAnvilPreview = true;
                         if (anvilMenu.getSlot(0).hasItem()) {
                             inputGunStack = anvilMenu.getSlot(0).getItem();
@@ -754,7 +533,8 @@ public class TACZGunEventHandler {
             }
 
             int totalXp = com.complextalents.gunmastery.GunRefinementManager.getRefineXp(stack);
-            int baseRank = com.complextalents.gunmastery.GunRefinementManager.getBaseCumulativeLevelForStartingTier(tier);
+            int baseRank = com.complextalents.gunmastery.GunRefinementManager
+                    .getBaseCumulativeLevelForStartingTier(tier);
             int cumRank = com.complextalents.gunmastery.GunRefinementManager.getRankFromXp(totalXp, 20);
 
             if (cumRank > baseRank) {
@@ -765,32 +545,43 @@ public class TACZGunEventHandler {
                 String refTierName = com.complextalents.gunmastery.GunRefinementManager.getTierNameForTier(displayTier);
 
                 event.getToolTip().add(Component.empty());
-                event.getToolTip().add(Component.literal("\u00A7d\u00A7l" + refCrest + " Refinement: " + refColor + refTierName + " (+" + refineRank + ") \u00A78[Lv." + cumRank + "/20]"));
+                event.getToolTip().add(Component.literal("\u00A7d\u00A7l" + refCrest + " Refinement: " + refColor
+                        + refTierName + " (+" + refineRank + ") \u00A78[Lv." + cumRank + "/20]"));
 
-                double mainstatBonus = com.complextalents.gunmastery.GunRefinementManager.getMainstatDamageBonus(cumRank);
+                double mainstatBonus = com.complextalents.gunmastery.GunRefinementManager
+                        .getMainstatDamageBonus(cumRank);
                 if (mainstatBonus > 0.0) {
-                    event.getToolTip().add(Component.literal("  \u00A77└ Base Firearm Damage: \u00A7a+" + String.format("%.1f%%", mainstatBonus * 100.0)));
+                    event.getToolTip().add(Component.literal("  \u00A77└ Base Firearm Damage: \u00A7a+"
+                            + String.format("%.1f%%", mainstatBonus * 100.0)));
                 }
 
                 if (isAnvilPreview && !inputGunStack.isEmpty()) {
-                    var inputSubstatResult = com.complextalents.gunmastery.GunRefinementManager.calculateSubstats(inputGunStack);
+                    var inputSubstatResult = com.complextalents.gunmastery.GunRefinementManager
+                            .calculateSubstats(inputGunStack);
                     for (var entrySet : inputSubstatResult.values.entrySet()) {
                         if (entrySet.getValue() > 0.0) {
-                            event.getToolTip().add(Component.literal("  \u00A77└ " + entrySet.getKey().getDisplayName() + ": \u00A7b" + entrySet.getKey().formatValue(entrySet.getValue())));
+                            event.getToolTip().add(Component.literal("  \u00A77└ " + entrySet.getKey().getDisplayName()
+                                    + ": \u00A7b" + entrySet.getKey().formatValue(entrySet.getValue())));
                         }
                     }
-                    event.getToolTip().add(Component.literal("  \u00A77└ \u00A7e[Random Substat Upgrade]\u00A77: \u00A7b+???"));
+                    event.getToolTip()
+                            .add(Component.literal("  \u00A77└ \u00A7e[Random Substat Upgrade]\u00A77: \u00A7b+???"));
 
                     if (net.minecraft.client.gui.screens.Screen.hasControlDown()) {
                         event.getToolTip().add(Component.literal("  \u00A7e\u00A7o[ Refinement History Log ]"));
                         for (int i = 0; i < inputSubstatResult.history.size(); i++) {
                             event.getToolTip().add(Component.literal("   " + inputSubstatResult.history.get(i)));
                         }
-                        int inputCumRank = com.complextalents.gunmastery.GunRefinementManager.getRankFromXp(com.complextalents.gunmastery.GunRefinementManager.getRefineXp(inputGunStack), 20);
+                        int inputCumRank = com.complextalents.gunmastery.GunRefinementManager.getRankFromXp(
+                                com.complextalents.gunmastery.GunRefinementManager.getRefineXp(inputGunStack), 20);
                         for (int i = inputCumRank; i < cumRank; i++) {
                             int previewLvl = i + 1;
-                            int previewTier = com.complextalents.gunmastery.GunRefinementManager.getTierForCumulativeLevel(previewLvl);
-                            String previewCrest = com.complextalents.gunmastery.GunRefinementManager.getTierColor(previewTier) + com.complextalents.gunmastery.GunRefinementManager.getTierCrestIcon(previewTier) + "\u00A7r\u00A77";
+                            int previewTier = com.complextalents.gunmastery.GunRefinementManager
+                                    .getTierForCumulativeLevel(previewLvl);
+                            String previewCrest = com.complextalents.gunmastery.GunRefinementManager
+                                    .getTierColor(previewTier)
+                                    + com.complextalents.gunmastery.GunRefinementManager.getTierCrestIcon(previewTier)
+                                    + "\u00A7r\u00A77";
                             event.getToolTip().add(Component.literal("   " + previewCrest + " +??? ???"));
                         }
                     } else {
@@ -800,7 +591,8 @@ public class TACZGunEventHandler {
                     var substatResult = com.complextalents.gunmastery.GunRefinementManager.calculateSubstats(stack);
                     for (var entrySet : substatResult.values.entrySet()) {
                         if (entrySet.getValue() > 0.0) {
-                            event.getToolTip().add(Component.literal("  \u00A77└ " + entrySet.getKey().getDisplayName() + ": \u00A7b" + entrySet.getKey().formatValue(entrySet.getValue())));
+                            event.getToolTip().add(Component.literal("  \u00A77└ " + entrySet.getKey().getDisplayName()
+                                    + ": \u00A7b" + entrySet.getKey().formatValue(entrySet.getValue())));
                         }
                     }
 

@@ -1,8 +1,6 @@
 package com.complextalents.mixin.tacz;
 
-import com.complextalents.tacz.GunAttributeType;
-import com.complextalents.tacz.GunAttributes;
-import com.complextalents.tacz.GunType;
+
 import com.tacz.guns.api.item.IAmmo;
 import com.tacz.guns.api.item.IAmmoBox;
 import com.tacz.guns.crafting.GunSmithTableIngredient;
@@ -105,7 +103,7 @@ public abstract class GunSmithTableMenuMixin {
             // Spawn output ammo items with dynamic attribute yield multiplier
             Level level = player.level();
             if (!level.isClientSide) {
-                double multiplier = GunAttributes.getValue(player, GunAttributeType.AMMO_CRAFTING_YIELD, GunType.GLOBAL);
+                double multiplier = player.getAttributeValue(com.complextalents.registry.ModAttributes.AMMO_CRAFTING_YIELD.get());
                 if (multiplier < 0) {
                     multiplier = 1.0;
                 }

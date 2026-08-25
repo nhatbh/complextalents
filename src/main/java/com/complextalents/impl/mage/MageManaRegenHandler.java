@@ -82,6 +82,8 @@ public class MageManaRegenHandler {
             case "ender" -> com.complextalents.elemental.ElementType.ENDER;
             case "eldritch" -> com.complextalents.elemental.ElementType.ELDRITCH;
             case "blood" -> com.complextalents.elemental.ElementType.BLOOD;
+            case "abyssal" -> com.complextalents.elemental.ElementType.ABYSSAL;
+            case "technomancy" -> com.complextalents.elemental.ElementType.TECHNOMANCY;
             default -> null;
         };
     }

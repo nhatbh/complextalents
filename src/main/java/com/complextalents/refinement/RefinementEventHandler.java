@@ -13,6 +13,8 @@ public class RefinementEventHandler {
 
     private static final java.util.UUID REFINEMENT_AD_UUID = UUIDHelper.generateAttributeModifierUUID("refinement",
             "weapon_refinement_attack_damage");
+    private static final java.util.UUID GUN_REFINEMENT_DAMAGE_UUID = UUIDHelper.generateAttributeModifierUUID("refinement",
+            "gun_refinement_damage_bonus");
 
     @SubscribeEvent
     public static void onItemAttributeModifier(net.minecraftforge.event.ItemAttributeModifierEvent event) {
@@ -21,6 +23,89 @@ public class RefinementEventHandler {
         ItemStack stack = event.getItemStack();
         if (stack.isEmpty())
             return;
+
+        // Apply Gun Refinement Mainstat & Substat Bonuses via tacz_attributes native attributes
+        if (com.tacz.guns.api.item.IGun.getIGunOrNull(stack) != null) {
+            com.complextalents.tacz.GunType gunType = com.complextalents.tacz.GunType.fromItemStack(stack);
+
+            // 1. Mainstat Bonus (% Gun Damage)
+            int totalXp = com.complextalents.gunmastery.GunRefinementManager.getRefineXp(stack);
+            int cumRank = com.complextalents.gunmastery.GunRefinementManager.getRankFromXp(totalXp, 20);
+            double mainstatBonus = com.complextalents.gunmastery.GunRefinementManager.getMainstatDamageBonus(cumRank);
+            if (mainstatBonus > 0.0) {
+                net.minecraft.world.entity.ai.attributes.Attribute gunDamageAttr = com.complextalents.tacz.GunAttributeType.GUN_DAMAGE.get(gunType);
+                if (gunDamageAttr != null) {
+                    event.addModifier(gunDamageAttr, new net.minecraft.world.entity.ai.attributes.AttributeModifier(
+                            GUN_REFINEMENT_DAMAGE_UUID,
+                            "Gun Refinement Damage Bonus",
+                            mainstatBonus,
+                            net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.MULTIPLY_BASE));
+                }
+            }
+
+            // 2. Substat Bonuses
+            com.complextalents.gunmastery.GunRefinementManager.SubstatResult gunSubstats = com.complextalents.gunmastery.GunRefinementManager.calculateSubstats(stack);
+            for (java.util.Map.Entry<com.complextalents.gunmastery.GunRefinementManager.GunSubstatType, Double> entry : gunSubstats.values.entrySet()) {
+                com.complextalents.gunmastery.GunRefinementManager.GunSubstatType subType = entry.getKey();
+                double val = entry.getValue();
+                if (val <= 0) continue;
+
+                com.complextalents.tacz.GunAttributeType attrType = switch (subType) {
+                    case GUN_DAMAGE -> com.complextalents.tacz.GunAttributeType.GUN_DAMAGE;
+                    case HEADSHOT_MULTIPLIER -> com.complextalents.tacz.GunAttributeType.HEADSHOT_MULTIPLIER;
+                    case KNOCKBACK_MULTIPLIER -> com.complextalents.tacz.GunAttributeType.KNOCKBACK_MULTIPLIER;
+                    case KNOCKBACK_BASE -> com.complextalents.tacz.GunAttributeType.KNOCKBACK_BASE;
+                    case PIERCE_MULTIPLIER -> com.complextalents.tacz.GunAttributeType.PIERCE_MULTIPLIER;
+                    case RPM_MULTIPLIER -> com.complextalents.tacz.GunAttributeType.RPM_MULTIPLIER;
+                    case RELOAD_SPEED -> com.complextalents.tacz.GunAttributeType.RELOAD_SPEED;
+                    case DRAW_SPEED -> com.complextalents.tacz.GunAttributeType.DRAW_SPEED;
+                    case ADS_SPEED -> com.complextalents.tacz.GunAttributeType.ADS_SPEED;
+                    case GUN_MOVEMENT_SPEED -> com.complextalents.tacz.GunAttributeType.GUN_MOVEMENT_SPEED;
+                    case RECOIL -> com.complextalents.tacz.GunAttributeType.RECOIL;
+                    case VERTICAL_RECOIL -> com.complextalents.tacz.GunAttributeType.VERTICAL_RECOIL;
+                    case HORIZONTAL_RECOIL -> com.complextalents.tacz.GunAttributeType.HORIZONTAL_RECOIL;
+                    case ADS_RECOIL -> com.complextalents.tacz.GunAttributeType.ADS_RECOIL;
+                    case ADS_VERTICAL_RECOIL -> com.complextalents.tacz.GunAttributeType.ADS_VERTICAL_RECOIL;
+                    case ADS_HORIZONTAL_RECOIL -> com.complextalents.tacz.GunAttributeType.ADS_HORIZONTAL_RECOIL;
+                    case HIP_FIRE_RECOIL -> com.complextalents.tacz.GunAttributeType.HIP_FIRE_RECOIL;
+                    case HIP_FIRE_VERTICAL_RECOIL -> com.complextalents.tacz.GunAttributeType.HIP_FIRE_VERTICAL_RECOIL;
+                    case HIP_FIRE_HORIZONTAL_RECOIL -> com.complextalents.tacz.GunAttributeType.HIP_FIRE_HORIZONTAL_RECOIL;
+                    case ADS_ACCURACY -> com.complextalents.tacz.GunAttributeType.ADS_ACCURACY;
+                    case HIP_FIRE_ACCURACY -> com.complextalents.tacz.GunAttributeType.HIP_FIRE_ACCURACY;
+                    case ADS_DAMAGE -> com.complextalents.tacz.GunAttributeType.ADS_DAMAGE;
+                    case HIP_FIRE_DAMAGE -> com.complextalents.tacz.GunAttributeType.HIP_FIRE_DAMAGE;
+                    case AMMO_SAVE_CHANCE -> com.complextalents.tacz.GunAttributeType.AMMO_SAVE_CHANCE;
+                    case RELOAD_AMMO_SAVE_CHANCE -> com.complextalents.tacz.GunAttributeType.RELOAD_AMMO_SAVE_CHANCE;
+                    case AMMO_RECOVERY_CHANCE -> com.complextalents.tacz.GunAttributeType.AMMO_RECOVERY_CHANCE;
+                    case AMMO_RECOVERY_AMOUNT -> com.complextalents.tacz.GunAttributeType.AMMO_RECOVERY_AMOUNT;
+                    case AMMO_RECOVERY_PERCENT -> com.complextalents.tacz.GunAttributeType.AMMO_RECOVERY_PERCENT;
+                    case BONUS_AMMO_CHANCE -> com.complextalents.tacz.GunAttributeType.BONUS_AMMO_CHANCE;
+                    case BONUS_AMMO_AMOUNT -> com.complextalents.tacz.GunAttributeType.BONUS_AMMO_AMOUNT;
+                    case BONUS_AMMO_PERCENT -> com.complextalents.tacz.GunAttributeType.BONUS_AMMO_PERCENT;
+                    case MAGAZINE_CAPACITY -> com.complextalents.tacz.GunAttributeType.MAGAZINE_CAPACITY;
+                    case BOLT_ACTION_SPEED -> com.complextalents.tacz.GunAttributeType.BOLT_ACTION_SPEED;
+                    case BURST_SPEED -> com.complextalents.tacz.GunAttributeType.BURST_SPEED;
+                    case BURST_DAMAGE -> com.complextalents.tacz.GunAttributeType.BURST_DAMAGE;
+                    case BURST_ACCURACY -> com.complextalents.tacz.GunAttributeType.BURST_ACCURACY;
+                    case AUTO_DAMAGE -> com.complextalents.tacz.GunAttributeType.AUTO_DAMAGE;
+                    case AUTO_ACCURACY -> com.complextalents.tacz.GunAttributeType.AUTO_ACCURACY;
+                    case SEMI_DAMAGE -> com.complextalents.tacz.GunAttributeType.SEMI_DAMAGE;
+                    case SEMI_ACCURACY -> com.complextalents.tacz.GunAttributeType.SEMI_ACCURACY;
+                };
+
+                net.minecraft.world.entity.ai.attributes.Attribute targetAttr = attrType.get(gunType);
+                if (targetAttr != null) {
+                    java.util.UUID subUuid = UUIDHelper.generateAttributeModifierUUID("refinement", "gun_substat_" + subType.getKey().toLowerCase());
+                    boolean isRecoil = subType.name().contains("RECOIL");
+                    double modVal = isRecoil ? -val : val;
+                    event.addModifier(targetAttr, new net.minecraft.world.entity.ai.attributes.AttributeModifier(
+                            subUuid,
+                            "Gun Substat " + subType.getDisplayName(),
+                            modVal,
+                            net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.MULTIPLY_BASE));
+                }
+            }
+        }
 
         int startingTier = WeaponMasteryManager.getInstance().getWeaponTier(stack);
         if (startingTier <= 0)

@@ -18,7 +18,9 @@ public enum SpellSchool {
     EVOCATION("irons_spellbooks", "evocation"),
     ENDER("irons_spellbooks", "ender"),
     ELDRITCH("irons_spellbooks", "eldritch"),
-    BLOOD("irons_spellbooks", "blood");
+    BLOOD("irons_spellbooks", "blood"),
+    ABYSSAL("irons_spellbooks", "abyssal"),
+    TECHNOMANCY("irons_spellbooks", "technomancy");
 
     private final ResourceLocation location;
 

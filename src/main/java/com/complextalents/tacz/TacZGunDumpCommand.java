@@ -48,6 +48,60 @@ public class TacZGunDumpCommand {
                 .requires(src -> src.hasPermission(GunMasteryCommand.OP_LEVEL))
                 .executes(TacZGunDumpCommand::executeDump)
         );
+        dispatcher.register(Commands.literal("dumptaczattrs")
+                .requires(src -> src.hasPermission(GunMasteryCommand.OP_LEVEL))
+                .executes(TacZGunDumpCommand::executeAttrDump)
+        );
+    }
+
+    public static int executeAttrDump(CommandContext<CommandSourceStack> ctx) {
+        CommandSourceStack source = ctx.getSource();
+
+        JsonArray attrsArray = new JsonArray();
+        int totalAttrs = 0;
+
+        for (Map.Entry<net.minecraft.resources.ResourceKey<net.minecraft.world.entity.ai.attributes.Attribute>, net.minecraft.world.entity.ai.attributes.Attribute> entry : net.minecraftforge.registries.ForgeRegistries.ATTRIBUTES.getEntries()) {
+            ResourceLocation loc = entry.getKey().location();
+            if (loc.getNamespace().equals("tacz_attributes")) {
+                JsonObject attrJson = new JsonObject();
+                attrJson.addProperty("id", loc.toString());
+                attrJson.addProperty("path", loc.getPath());
+                attrsArray.add(attrJson);
+                totalAttrs++;
+            }
+        }
+
+        JsonObject root = new JsonObject();
+        root.addProperty("total_attributes", totalAttrs);
+        root.addProperty("dump_timestamp", System.currentTimeMillis());
+        root.add("attributes", attrsArray);
+
+        File outputDir = new File("config/complextalents");
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
+
+        File configFile = new File(outputDir, "tacz_attributes_dump.json");
+        File rootFile = new File("tacz_attributes_dump.json");
+
+        try {
+            String jsonStr = GSON.toJson(root);
+            try (FileWriter writer = new FileWriter(configFile, StandardCharsets.UTF_8)) {
+                writer.write(jsonStr);
+            }
+            try (FileWriter writer = new FileWriter(rootFile, StandardCharsets.UTF_8)) {
+                writer.write(jsonStr);
+            }
+
+            String msg = "\u00A7aDumped \u00A7e" + totalAttrs + " \u00A7atacz_attributes to \u00A7f" + configFile.getPath() + "\u00A7a & \u00A7f" + rootFile.getName();
+            LOGGER.info("[TacZ Attr Dump] " + msg);
+            source.sendSuccess(() -> Component.literal(msg), true);
+            return totalAttrs;
+        } catch (IOException e) {
+            LOGGER.error("Failed to write TacZ attribute dump JSON", e);
+            source.sendFailure(Component.literal("\u00A7cFailed to write JSON dump file: " + e.getMessage()));
+            return 0;
+        }
     }
 
     public static int executeDump(CommandContext<CommandSourceStack> ctx) {

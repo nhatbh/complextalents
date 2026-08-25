@@ -90,8 +90,10 @@ public class ElementalMageOrigin {
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.BLOOD, 3.0)
                 // Holy (No affinity: 5x cost)
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.HOLY, 5.0)
-                // Eldritch (Dark Mage Exclusive: -1.0)
+                // Eldritch & Abyssal (Dark Mage Exclusive: -1.0)
                 .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ELDRITCH, -1.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.ABYSSAL, -1.0)
+                .schoolSpellMasteryCostMultiplier(com.complextalents.spellmastery.SpellSchool.TECHNOMANCY, 2.0)
                 .weaponMasteryCostMultiplier(3.0);
 
         // Register Harmonic Convergence Skill

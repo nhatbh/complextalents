@@ -12,8 +12,7 @@ public class TACZModule {
     public static void init(IEventBus modEventBus) {
         TalentsMod.LOGGER.info("Initializing TACZ Gun Integration Module (264 Gun Attributes)...");
 
-        // Register DeferredRegister for 264 attributes
-        GunAttributes.register(modEventBus);
+        // Attribute registration is managed by tacz_attributes
 
         // Register Forge event handlers
         MinecraftForge.EVENT_BUS.register(TACZGunEventHandler.class);
