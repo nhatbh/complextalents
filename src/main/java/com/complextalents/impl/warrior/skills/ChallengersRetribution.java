@@ -125,26 +125,11 @@ public class ChallengersRetribution {
         if (!(playerObj instanceof ServerPlayer player))
             return;
 
-        // Calculate Shield HP
-        double points = OriginManager.getResource(player);
-        WarriorOriginHandler.StyleRank rank = WarriorOriginHandler.StyleRank.getRank(points);
-
         double baseHp = context != null ? context.getStat("baseHp") : 25.0;
-        // Rank Multipliers: D (1.0x - No penalty), C (1.1x), B (1.2x), A (1.3x), S
-        // (1.4x), SS (1.5x), SSS (1.6x)
-        double rankMult = switch (rank) {
-            case D -> 1.0;
-            case C -> 1.1;
-            case B -> 1.2;
-            case A -> 1.3;
-            case S -> 1.4;
-            case SS -> 1.5;
-            case SSS -> 1.6;
-        };
 
         // Base Max HP is 20. Shield scales with player's Max HP ratio.
         double maxHpRatio = Math.max(1.0, player.getMaxHealth() / 20.0);
-        double shieldHp = (baseHp * maxHpRatio) * rankMult;
+        double shieldHp = baseHp * maxHpRatio;
 
         ACTIVE_SHIELDS.put(player.getUUID(), new ShieldData(shieldHp));
 
@@ -293,9 +278,6 @@ public class ChallengersRetribution {
                 double amount = event.getAmount();
                 data.absorbedDamage += amount;
                 data.health -= amount;
-
-                // Award style points for blocking
-                WarriorOriginHandler.addStylePoints(player, 20.0);
 
                 player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                         SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, 0.8f, 0.8f);

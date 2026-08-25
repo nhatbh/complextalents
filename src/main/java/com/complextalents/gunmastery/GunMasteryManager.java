@@ -96,11 +96,29 @@ public class GunMasteryManager {
      * Check if a non-pistol archetype can be unlocked.
      * Unlocking requires Pistol level >= 5 (Trooper L5).
      */
-    public boolean canUnlockArchetype(GunType type, IGunMasteryData data) {
+    public boolean canUnlockArchetype(GunType type, IGunMasteryData data, int originLevel) {
         if (type == GunType.PISTOL) return true;
         if (type == GunType.RPG || type == GunType.GLOBAL) return false;
         if (data == null) return false;
-        return data.getMasteryLevel(GunType.PISTOL) >= 5;
+        if (data.getMasteryLevel(GunType.PISTOL) < 5) return false;
+        if (data.getMasteryLevel(type) >= 5) return true; // Already unlocked
+
+        int k = 0;
+        for (Map.Entry<GunType, Integer> entry : data.getAllMasteryLevels().entrySet()) {
+            GunType otherType = entry.getKey();
+            if (otherType != GunType.PISTOL && otherType != GunType.RPG && otherType != GunType.GLOBAL && otherType != type) {
+                if (entry.getValue() != null && entry.getValue() >= 5) {
+                    k++;
+                }
+            }
+        }
+
+        int maxSlots = originLevel < 3 ? 1 : (originLevel < 5 ? 2 : 3);
+        return k < maxSlots;
+    }
+
+    public boolean canUnlockArchetype(GunType type, IGunMasteryData data) {
+        return canUnlockArchetype(type, data, 1);
     }
 
     /**
@@ -116,7 +134,7 @@ public class GunMasteryManager {
 
     /**
      * Get SP cost for upgrading a specific gun archetype to its next level, accounting for
-     * origin multiplier and specialization multiplier (x1, x2, x3, x4, x5, x6) for non-pistol investments.
+     * origin multiplier without ramping cost penalties per additional archetype.
      */
     public int getSPCostForNextLevel(GunType type, int currentLevel, Map<GunType, Integer> masteryLevels, ResourceLocation originId) {
         double originMult = ClassCostMatrix.getGunMasteryCostMultiplier(originId);
@@ -125,25 +143,7 @@ public class GunMasteryManager {
         int nextLevel = getNextLevel(type, currentLevel);
         int baseCost = getBaseSPCost(nextLevel);
 
-        if (type == GunType.PISTOL) {
-            return (int) Math.round(baseCost * originMult);
-        }
-
-        // Count k = number of other non-pistol archetypes invested in (level >= 5)
-        int k = 0;
-        if (masteryLevels != null) {
-            for (Map.Entry<GunType, Integer> entry : masteryLevels.entrySet()) {
-                GunType otherType = entry.getKey();
-                if (otherType != GunType.PISTOL && otherType != GunType.RPG && otherType != GunType.GLOBAL && otherType != type) {
-                    if (entry.getValue() != null && entry.getValue() >= 5) {
-                        k++;
-                    }
-                }
-            }
-        }
-
-        double multiplier = (1 + k) * originMult;
-        return (int) Math.round(baseCost * multiplier);
+        return (int) Math.round(baseCost * originMult);
     }
 
     public int getSPCostForNextLevel(GunType type, int currentLevel, IGunMasteryData data, ResourceLocation originId) {

@@ -262,7 +262,8 @@ public class GunTabUI {
                 guiGraphics.drawString(font, "\u00A7a\u2714 MASTERED", barX + 22, barY + 2, 0xFF00FF88, false);
             } else if (!archetypeUnlocked) {
                 guiGraphics.fill(barX, barY, barX + barW, barY + barH, 0xFF1C0C0C);
-                guiGraphics.drawString(font, "\u00A7cReq. Pistol L.5", barX + 10, barY + 2, 0xFFFF5555, false);
+                String lockMsg = getUnlockLockMessage(type);
+                guiGraphics.drawString(font, lockMsg, barX + 10, barY + 2, 0xFFFF5555, false);
             } else {
                 double pct = requiredDamage > 0 ? Math.min(accumulated / requiredDamage, 1.0) : 1.0;
 
@@ -309,10 +310,21 @@ public class GunTabUI {
     private boolean isArchetypeUnlocked(GunType type) {
         if (type == GunType.PISTOL) return true;
         AtomicReference<Boolean> unlocked = new AtomicReference<>(false);
+        int originLevel = ClientOriginData.getOriginLevel();
         player.getCapability(GunMasteryDataProvider.GUN_MASTERY_DATA).ifPresent(data -> {
-            unlocked.set(GunMasteryManager.getInstance().canUnlockArchetype(type, data));
+            unlocked.set(GunMasteryManager.getInstance().canUnlockArchetype(type, data, originLevel));
         });
         return unlocked.get();
+    }
+
+    private String getUnlockLockMessage(GunType type) {
+        if (type == GunType.PISTOL) return "";
+        int pistolLvl = getRealLevel(GunType.PISTOL);
+        if (pistolLvl < 5) return "\u00A7cReq. Pistol L.5";
+        int originLevel = ClientOriginData.getOriginLevel();
+        if (originLevel < 3) return "\u00A7cReq. Origin L.3";
+        if (originLevel < 5) return "\u00A7cReq. Origin L.5";
+        return "\u00A7cMax Slots (3/3)";
     }
 
     private int getPending(GunType type) {

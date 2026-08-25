@@ -49,8 +49,13 @@ public class PlayerProgressionScreen extends Screen {
     private int screenY;
 
     public PlayerProgressionScreen(Player player) {
+        this(player, 0);
+    }
+
+    public PlayerProgressionScreen(Player player, int initialTab) {
         super(Component.literal("Character Progression"));
         this.player = player;
+        this.currentTab = initialTab;
         this.cart = new UpgradeCart(player);
         this.cart.setOnChangeCallback(this::onCartChanged);
 

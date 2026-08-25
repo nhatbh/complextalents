@@ -1,5 +1,6 @@
 package com.complextalents.tacz;
 
+import com.nhatbh.basedefensev2.api.BossAPI;
 import com.nhatbh.basedefensev2.api.PoiseAPI;
 import com.nhatbh.basedefensev2.registry.ModEffects;
 import com.tacz.guns.api.GunProperties;
@@ -14,6 +15,7 @@ import com.tacz.guns.api.event.common.GunShootEvent;
 import com.tacz.guns.api.item.IGun;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.api.modifier.ParameterizedCachePair;
+import com.tacz.guns.entity.EntityKineticBullet;
 import com.tacz.guns.entity.shooter.ShooterDataHolder;
 import com.tacz.guns.resource.index.CommonGunIndex;
 import com.tacz.guns.resource.modifier.AttachmentCacheProperty;
@@ -135,7 +137,7 @@ public class TACZGunEventHandler {
                     bodyMult = 0.40f;
                 }
                 case SHOTGUN -> {
-                    float shotgunMult = (distance <= 8.0) ? 0.80f : (distance >= 20.0 ? 0.30f : 0.80f - (float) ((distance - 8.0) / 12.0) * 0.50f);
+                    float shotgunMult = (distance <= 8.0) ? 1.20f : (distance >= 20.0 ? 0.30f : 1.20f - (float) ((distance - 8.0) / 12.0) * 0.90f);
                     headshotMult = shotgunMult;
                     bodyMult = shotgunMult;
                 }
@@ -171,6 +173,15 @@ public class TACZGunEventHandler {
             }
             float finalVitalityDamage = preMitigatedDamage * vitalityMult;
 
+            // Scaled boss vitality damage penalty based on gun refinement cumulative level (60% penalty at Lv 0 -> 0% penalty at Lv 20)
+            if (BossAPI.isBoss(victim)) {
+                int totalXp = com.complextalents.gunmastery.GunRefinementManager.getRefineXp(mainStack);
+                int cumRank = com.complextalents.gunmastery.GunRefinementManager.getRankFromXp(totalXp, 20);
+                float progress = Math.min(1.0f, Math.max(0.0f, cumRank / 20.0f));
+                float bossVitalityMult = 0.40f + (0.60f * progress);
+                finalVitalityDamage *= bossVitalityMult;
+            }
+
             // 4. LMG Suppression Mechanic
             if (gunType == GunType.MG && isTargetExhausted) {
                 net.minecraft.world.effect.MobEffect suppressionEffect = net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS.getValue(net.minecraft.resources.ResourceLocation.tryParse("basedefensev2:suppression"));
@@ -182,22 +193,35 @@ public class TACZGunEventHandler {
             // 5. Accumulate Gun Mastery Damage from Poise / Vitality Pipeline
             if (attacker instanceof ServerPlayer player) {
                 if (gunType != null && !gunType.isGlobal() && gunType != GunType.RPG) {
-                    float damageToAccumulate = isTargetExhausted ? finalVitalityDamage : finalPoiseDamage;
-                    if (damageToAccumulate > 0) {
-                        player.getCapability(GunMasteryDataProvider.GUN_MASTERY_DATA).ifPresent(data -> {
-                            data.addAccumulatedDamage(gunType, damageToAccumulate);
-                        });
+                    ResourceLocation gunRes = iGun != null ? iGun.getGunId(mainStack) : null;
+                    GunClassificationManager.GunEntry entry = gunRes != null ? GunClassificationManager.getGunEntry(gunRes) : null;
+                    if (entry == null || entry.tier > 0) {
+                        float damageToAccumulate = isTargetExhausted ? finalVitalityDamage : finalPoiseDamage;
+                        if (damageToAccumulate > 0) {
+                            player.getCapability(GunMasteryDataProvider.GUN_MASTERY_DATA).ifPresent(data -> {
+                                data.addAccumulatedDamage(gunType, damageToAccumulate);
+                            });
+                        }
                     }
                 }
             }
 
-            // 6. Single Entry-Point API Call to Poise & Boss Vitality Pipeline with "TACZ" sourceMod identifier
+            // 6. Single Entry-Point API Call to Poise & Boss Vitality Pipeline with "TACZ" sourceMod identifier and ammoType
             DamageSource source = event.getDamageSource(GunDamageSourcePart.ARMOR_PIERCING);
             if (source == null) {
                 source = victim.damageSources().mobAttack(attacker);
             }
 
-            PoiseAPI.damagePoise(victim, finalPoiseDamage, finalVitalityDamage, attacker, source, true, "TACZ");
+            net.minecraft.world.entity.Entity bulletEntity = event.getBullet();
+            String ammoType = null;
+            if (bulletEntity instanceof EntityKineticBullet bullet) {
+                ResourceLocation ammoLoc = bullet.getAmmoId();
+                if (ammoLoc != null) {
+                    ammoType = ammoLoc.toString();
+                }
+            }
+
+            PoiseAPI.damagePoise(victim, finalPoiseDamage, finalVitalityDamage, attacker, source, true, "TACZ", 100, ammoType);
             event.setBaseAmount(0.0001f);
         }
     }
@@ -674,6 +698,12 @@ public class TACZGunEventHandler {
 
             GunClassificationManager.GunEntry entry = GunClassificationManager.getGunEntry(gunRes);
             if (entry == null && iGun == null) return;
+            if (entry != null && entry.tier <= 0) {
+                event.getToolTip().add(Component.empty());
+                event.getToolTip().add(Component.literal("\u00A7c\u00A7l✦ Creative Only Weapon"));
+                event.getToolTip().add(Component.literal("  \u00A77Mastery & Refinement disabled."));
+                return;
+            }
 
             GunType gunType = GunType.fromItemStack(stack);
             if ((gunType == null || gunType == GunType.GLOBAL) && entry != null) {

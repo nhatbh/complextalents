@@ -77,6 +77,8 @@ public class GunAttributes {
         return reg != null ? reg.get() : null;
     }
 
+    public static final double[] AMMO_YIELD_SCALING = new double[]{ 0.25, 0.40, 0.60, 0.80, 1.00 };
+
     /**
      * Computes the combined value of an attribute for an entity (Global * Archetype or Global + Archetype).
      */
@@ -91,12 +93,16 @@ public class GunAttributes {
 
         double masteryBonus = 0.0;
         if (entity instanceof Player player) {
-            // Marksman Adrenaline Mode Skill Bonuses: Faster reload & increased headshot damage
-            if (com.complextalents.impl.marksman.data.MarksmanAdrenalineData.isActive(player)) {
-                if (attrType == GunAttributeType.RELOAD_SPEED) {
-                    masteryBonus += 0.60; // 60% faster reload speed during Adrenaline
-                } else if (attrType == GunAttributeType.HEADSHOT_MULTIPLIER) {
-                    masteryBonus += 0.75; // +75% bonus headshot damage multiplier during Adrenaline
+            // Marksman Ammo Crafting Yield Bonus based on Origin Level (25% to 100%)
+            if (attrType == GunAttributeType.AMMO_CRAFTING_YIELD) {
+                var originOpt = player.getCapability(com.complextalents.origin.capability.OriginDataProvider.ORIGIN_DATA);
+                if (originOpt.isPresent() && originOpt.orElse(null).getActiveOrigin() != null) {
+                    net.minecraft.resources.ResourceLocation originId = originOpt.orElse(null).getActiveOrigin();
+                    if (com.complextalents.impl.marksman.origin.MarksmanOrigin.ID.equals(originId)) {
+                        int originLevel = originOpt.orElse(null).getOriginLevel();
+                        int index = Math.min(Math.max(1, originLevel), AMMO_YIELD_SCALING.length) - 1;
+                        masteryBonus += AMMO_YIELD_SCALING[index];
+                    }
                 }
             }
 

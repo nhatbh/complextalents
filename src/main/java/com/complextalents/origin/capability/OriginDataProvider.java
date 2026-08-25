@@ -18,12 +18,16 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Forge capability provider for player origin data.
  */
 @Mod.EventBusSubscriber(modid = TalentsMod.MODID)
 public class OriginDataProvider implements ICapabilitySerializable<CompoundTag> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OriginDataProvider.class);
 
     public static final Capability<IPlayerOriginData> ORIGIN_DATA = CapabilityManager.get(
             new CapabilityToken<>() {}
@@ -32,28 +36,46 @@ public class OriginDataProvider implements ICapabilitySerializable<CompoundTag> 
     public static final ResourceLocation IDENTIFIER =
             ResourceLocation.fromNamespaceAndPath(TalentsMod.MODID, "origin_data");
 
-    private final IPlayerOriginData instance;
+    private final Player player;
+    private IPlayerOriginData instance;
     private final LazyOptional<IPlayerOriginData> lazy;
 
+    public OriginDataProvider(Player player) {
+        this.player = player;
+        this.instance = null;
+        this.lazy = LazyOptional.of(this::getOrFetchData);
+    }
+
     public OriginDataProvider(IPlayerOriginData instance) {
+        this.player = null;
         this.instance = instance;
         this.lazy = LazyOptional.of(() -> instance);
+    }
+
+    private IPlayerOriginData getOrFetchData() {
+        if (this.instance == null && this.player != null) {
+            if (this.player instanceof ServerPlayer serverPlayer) {
+                var pod = PlayerPersistentData.get(serverPlayer.getServer()).getOriginData(serverPlayer.getGameProfile().getName());
+                pod.setPlayer(serverPlayer);
+                this.instance = pod;
+                LOGGER.info("[ORIGIN LAZY-LOAD] Player {} ({}) - retrieved origin: activeOrigin={}, level={}",
+                        serverPlayer.getGameProfile().getName(),
+                        serverPlayer.getUUID(),
+                        pod.getActiveOrigin(),
+                        pod.getOriginLevel());
+            } else {
+                this.instance = new PlayerOriginData();
+            }
+        }
+        return this.instance;
     }
 
     @SubscribeEvent
     public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof Player player) {
-            final PlayerOriginData instance;
-            if (player instanceof ServerPlayer serverPlayer) {
-                instance = PlayerPersistentData.get(serverPlayer.getServer()).getOriginData(serverPlayer.getUUID());
-                instance.setPlayer(serverPlayer);
-            } else {
-                instance = new PlayerOriginData();
+            if (!event.getCapabilities().containsKey(IDENTIFIER)) {
+                event.addCapability(IDENTIFIER, new OriginDataProvider(player));
             }
-
-            LazyOptional<IPlayerOriginData> lazyOptional = LazyOptional.of(() -> instance);
-            OriginDataProvider provider = new OriginDataProvider(instance);
-            event.addCapability(IDENTIFIER, provider);
         }
     }
 
@@ -65,11 +87,11 @@ public class OriginDataProvider implements ICapabilitySerializable<CompoundTag> 
 
     @Override
     public CompoundTag serializeNBT() {
-        return ((PlayerOriginData) instance).serializeNBT();
+        return ((PlayerOriginData) getOrFetchData()).serializeNBT();
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        ((PlayerOriginData) instance).deserializeNBT(nbt);
+        ((PlayerOriginData) getOrFetchData()).deserializeNBT(nbt);
     }
 }

@@ -3,8 +3,8 @@
         "id": 1,
         "item_id": "maxstuff:af2011",
         "archetype": "PISTOL",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 2,
@@ -24,50 +24,50 @@
         "id": 4,
         "item_id": "maxstuff:ak9",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 5,
         "item_id": "maxstuff:vityas",
         "archetype": "SMG",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 6,
         "item_id": "tacz:deagle",
         "archetype": "PISTOL",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 7,
         "item_id": "tacz:psg1",
         "archetype": "SNIPER",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 8,
         "item_id": "maxstuff:ak63e",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 9,
         "item_id": "tacz:dp28",
         "archetype": "MG",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 10,
         "item_id": "tacz:l1a1",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "General",
+        "tier": 5
     },
     {
         "id": 11,
@@ -87,43 +87,43 @@
         "id": 13,
         "item_id": "tacz:mosin",
         "archetype": "SNIPER",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 14,
         "item_id": "maxstuff:m1_garand",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 15,
         "item_id": "tacz:g3ka4",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 16,
         "item_id": "maxstuff:honey_badger",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 17,
         "item_id": "tacz:m240b",
         "archetype": "MG",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 18,
         "item_id": "tacz:m4burst",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 19,
@@ -143,15 +143,15 @@
         "id": 21,
         "item_id": "maxstuff:beowulf_tcr",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 22,
         "item_id": "maxstuff:vector9",
         "archetype": "SMG",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 23,
@@ -171,8 +171,8 @@
         "id": 25,
         "item_id": "tacz:mg3",
         "archetype": "MG",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 26,
@@ -192,8 +192,8 @@
         "id": 28,
         "item_id": "maxstuff:aks74u",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 29,
@@ -206,8 +206,8 @@
         "id": 30,
         "item_id": "tacz:benm4",
         "archetype": "SHOTGUN",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 31,
@@ -241,15 +241,15 @@
         "id": 35,
         "item_id": "maxstuff:dragonuv_svd",
         "archetype": "SNIPER",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 36,
         "item_id": "tacz:mac11",
         "archetype": "PISTOL",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 37,
@@ -262,71 +262,71 @@
         "id": 38,
         "item_id": "tacz:mac10",
         "archetype": "PISTOL",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 39,
         "item_id": "tacz:grizzly",
         "archetype": "PISTOL",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 40,
         "item_id": "tacz:hk_g3",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 41,
         "item_id": "tacz:nagant1891",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 42,
         "item_id": "tacz:pkm",
         "archetype": "MG",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 43,
         "item_id": "maxstuff:m1_garand_tac",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 44,
         "item_id": "tacz:augs",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 45,
         "item_id": "maxstuff:rpk_74",
         "archetype": "MG",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 46,
         "item_id": "maxstuff:hk417",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 47,
         "item_id": "tacz:lupara",
         "archetype": "SHOTGUN",
-        "rank": "General",
-        "tier": 5
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 48,
@@ -360,15 +360,15 @@
         "id": 52,
         "item_id": "tacz:ar18",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 53,
         "item_id": "maxstuff:beowulf_ecr",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 54,
@@ -381,15 +381,15 @@
         "id": 55,
         "item_id": "tacz:intervention",
         "archetype": "SNIPER",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 56,
         "item_id": "tacz:m60",
         "archetype": "MG",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 57,
@@ -409,15 +409,15 @@
         "id": 59,
         "item_id": "maxstuff:scar_pdw",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 60,
         "item_id": "maxstuff:deagle_12g",
         "archetype": "PISTOL",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 61,
@@ -430,22 +430,22 @@
         "id": 62,
         "item_id": "tacz:mp5k",
         "archetype": "SMG",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 63,
         "item_id": "tacz:rpk",
         "archetype": "MG",
-        "rank": "General",
-        "tier": 5
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 64,
         "item_id": "maxstuff:aks74ub",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 65,
@@ -458,8 +458,8 @@
         "id": 66,
         "item_id": "tacz:cz75s",
         "archetype": "PISTOL",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Recruit",
+        "tier": 1
     },
     {
         "id": 67,
@@ -472,8 +472,8 @@
         "id": 68,
         "item_id": "maxstuff:thunderbird_short",
         "archetype": "PISTOL",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 69,
@@ -486,8 +486,8 @@
         "id": 70,
         "item_id": "tacz:minigun",
         "archetype": "MG",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 71,
@@ -500,8 +500,8 @@
         "id": 72,
         "item_id": "tacz:l85a1",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 73,
@@ -514,22 +514,22 @@
         "id": 74,
         "item_id": "tacz:l85a3",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 75,
         "item_id": "maxstuff:sks_wooden",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 76,
         "item_id": "tacz:qbz_95",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 77,
@@ -542,15 +542,15 @@
         "id": 78,
         "item_id": "tacz:timeless50",
         "archetype": "PISTOL",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 79,
         "item_id": "tacz:m70",
         "archetype": "SNIPER",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 80,
@@ -563,8 +563,8 @@
         "id": 81,
         "item_id": "maxstuff:ak74m",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 82,
@@ -584,15 +584,15 @@
         "id": 84,
         "item_id": "maxstuff:z15_a",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 85,
         "item_id": "maxstuff:m17",
         "archetype": "PISTOL",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Recruit",
+        "tier": 1
     },
     {
         "id": 86,
@@ -605,29 +605,29 @@
         "id": 87,
         "item_id": "tacz:ak101",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 88,
         "item_id": "tacz:m500a",
         "archetype": "SHOTGUN",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 89,
         "item_id": "tacz:ak103",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 90,
         "item_id": "maxstuff:brn10",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 91,
@@ -640,8 +640,8 @@
         "id": 92,
         "item_id": "maxstuff:ar10b",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 93,
@@ -661,22 +661,22 @@
         "id": 95,
         "item_id": "tacz:m1887",
         "archetype": "SHOTGUN",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 96,
         "item_id": "tacz:rsh12",
         "archetype": "PISTOL",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 97,
         "item_id": "tacz:hk416d",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 98,
@@ -689,8 +689,8 @@
         "id": 99,
         "item_id": "maxstuff:db_short_tactical",
         "archetype": "SHOTGUN",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 100,
@@ -717,8 +717,8 @@
         "id": 103,
         "item_id": "tacz:l403a1",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 104,
@@ -731,29 +731,29 @@
         "id": 105,
         "item_id": "tacz:1881",
         "archetype": "SNIPER",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 106,
         "item_id": "tacz:arka",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 107,
         "item_id": "tacz:m40a1",
         "archetype": "SNIPER",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 108,
         "item_id": "maxstuff:mojave223",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 109,
@@ -766,8 +766,8 @@
         "id": 110,
         "item_id": "tacz:vss",
         "archetype": "SNIPER",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 111,
@@ -787,8 +787,8 @@
         "id": 113,
         "item_id": "tacz:sw15",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 114,
@@ -808,8 +808,8 @@
         "id": 116,
         "item_id": "maxstuff:ak19",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 117,
@@ -829,8 +829,8 @@
         "id": 119,
         "item_id": "tacz:m4a1",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 120,
@@ -850,15 +850,15 @@
         "id": 122,
         "item_id": "tacz:1873",
         "archetype": "SNIPER",
-        "rank": "General",
-        "tier": 5
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 123,
         "item_id": "tacz:vsk",
         "archetype": "SNIPER",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 124,
@@ -885,15 +885,15 @@
         "id": 127,
         "item_id": "maxstuff:ak22",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 128,
         "item_id": "tacz:m16",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 129,
@@ -913,8 +913,8 @@
         "id": 131,
         "item_id": "tacz:g3a3",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 132,
@@ -927,15 +927,15 @@
         "id": 133,
         "item_id": "tacz:akm",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 134,
         "item_id": "tacz:cz75",
         "archetype": "PISTOL",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Recruit",
+        "tier": 1
     },
     {
         "id": 135,
@@ -955,8 +955,8 @@
         "id": 137,
         "item_id": "tacz:m2",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 138,
@@ -990,22 +990,22 @@
         "id": 142,
         "item_id": "tacz:l4a1",
         "archetype": "MG",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 143,
         "item_id": "tacz:m9",
         "archetype": "PISTOL",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Recruit",
+        "tier": 1
     },
     {
         "id": 144,
         "item_id": "tacz:m21",
         "archetype": "SNIPER",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 145,
@@ -1018,29 +1018,29 @@
         "id": 146,
         "item_id": "maxstuff:ak15",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 147,
         "item_id": "tacz:auga3",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 148,
         "item_id": "maxstuff:glock_54",
         "archetype": "PISTOL",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 149,
         "item_id": "maxstuff:ak12",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 150,
@@ -1053,8 +1053,8 @@
         "id": 151,
         "item_id": "maxstuff:aa50beowulf",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "General",
+        "tier": 5
     },
     {
         "id": 152,
@@ -1067,8 +1067,8 @@
         "id": 153,
         "item_id": "tacz:shorty",
         "archetype": "SHOTGUN",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 154,
@@ -1088,15 +1088,15 @@
         "id": 156,
         "item_id": "maxstuff:saiga12",
         "archetype": "SHOTGUN",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 157,
         "item_id": "maxstuff:sks_golden",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 158,
@@ -1116,43 +1116,43 @@
         "id": 160,
         "item_id": "tacz:m1897",
         "archetype": "SHOTGUN",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 161,
         "item_id": "tacz:smle",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 162,
         "item_id": "tacz:hk_mk23",
         "archetype": "PISTOL",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 163,
         "item_id": "tacz:m1895",
         "archetype": "PISTOL",
-        "rank": "Recruit",
-        "tier": 1
+        "rank": "General",
+        "tier": 5
     },
     {
         "id": 164,
         "item_id": "tacz:m870l",
         "archetype": "SHOTGUN",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 165,
         "item_id": "tacz:p90",
         "archetype": "SMG",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 166,
@@ -1172,29 +1172,29 @@
         "id": 168,
         "item_id": "tacz:m37",
         "archetype": "SHOTGUN",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 169,
         "item_id": "tacz:sks_tactical",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 170,
         "item_id": "maxstuff:thunderbird",
         "archetype": "PISTOL",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 171,
         "item_id": "tacz:hk5",
         "archetype": "SMG",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 172,
@@ -1207,8 +1207,8 @@
         "id": 173,
         "item_id": "tacz:ump45",
         "archetype": "SMG",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 174,
@@ -1221,29 +1221,29 @@
         "id": 175,
         "item_id": "tacz:m16a4",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 176,
         "item_id": "tacz:m16a3",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 177,
         "item_id": "tacz:fn_evolys",
         "archetype": "MG",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 178,
         "item_id": "maxstuff:db_50",
         "archetype": "SHOTGUN",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "General",
+        "tier": 5
     },
     {
         "id": 179,
@@ -1256,22 +1256,22 @@
         "id": 180,
         "item_id": "maxstuff:ak74",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 181,
         "item_id": "maxstuff:mrad",
         "archetype": "SNIPER",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 182,
         "item_id": "maxstuff:m231",
         "archetype": "MG",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 183,
@@ -1284,8 +1284,8 @@
         "id": 184,
         "item_id": "tacz:stg44",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 185,
@@ -1298,43 +1298,43 @@
         "id": 186,
         "item_id": "tacz:db_short",
         "archetype": "SHOTGUN",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 187,
         "item_id": "tacz:mini14",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 188,
         "item_id": "tacz:aug",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 189,
         "item_id": "tacz:p38",
         "archetype": "PISTOL",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Recruit",
+        "tier": 1
     },
     {
         "id": 190,
         "item_id": "maxstuff:rpk_74m",
         "archetype": "MG",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 191,
         "item_id": "maxstuff:mk23",
         "archetype": "PISTOL",
-        "rank": "Recruit",
-        "tier": 1
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 192,
@@ -1361,15 +1361,15 @@
         "id": 195,
         "item_id": "maxstuff:potassium_power",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 196,
         "item_id": "maxstuff:qbz_97",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 197,
@@ -1382,8 +1382,8 @@
         "id": 198,
         "item_id": "tacz:mag10",
         "archetype": "SHOTGUN",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 199,
@@ -1403,15 +1403,15 @@
         "id": 201,
         "item_id": "tacz:ai_awp",
         "archetype": "SNIPER",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 202,
         "item_id": "maxstuff:hk416c",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 203,
@@ -1431,15 +1431,15 @@
         "id": 205,
         "item_id": "tacz:m16a2",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 206,
         "item_id": "tacz:m16a1",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 207,
@@ -1452,36 +1452,36 @@
         "id": 208,
         "item_id": "tacz:g18",
         "archetype": "PISTOL",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 209,
         "item_id": "tacz:mg08",
         "archetype": "MG",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 210,
         "item_id": "tacz:z70",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 211,
         "item_id": "tacz:p35",
         "archetype": "PISTOL",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 212,
         "item_id": "maxstuff:ump9",
         "archetype": "SMG",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 213,
@@ -1494,8 +1494,8 @@
         "id": 214,
         "item_id": "maxstuff:ak109",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 215,
@@ -1508,8 +1508,8 @@
         "id": 216,
         "item_id": "maxstuff:mk11",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 217,
@@ -1522,15 +1522,15 @@
         "id": 218,
         "item_id": "maxstuff:aug_a3_para",
         "archetype": "SMG",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 219,
         "item_id": "maxstuff:hk_mp5sd",
         "archetype": "SMG",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 220,
@@ -1543,22 +1543,22 @@
         "id": 221,
         "item_id": "tacz:type_81",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 222,
         "item_id": "tacz:m1187",
         "archetype": "SHOTGUN",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 223,
         "item_id": "tacz:g21",
         "archetype": "PISTOL",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 224,
@@ -1585,22 +1585,22 @@
         "id": 227,
         "item_id": "tacz:vector45",
         "archetype": "SMG",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 228,
         "item_id": "tacz:lonetrail",
         "archetype": "PISTOL",
-        "rank": "Recruit",
-        "tier": 1
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 229,
         "item_id": "tacz:sr15",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 230,
@@ -1613,29 +1613,29 @@
         "id": 231,
         "item_id": "tacz:usp45",
         "archetype": "PISTOL",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 232,
         "item_id": "tacz:mp5sd",
         "archetype": "SMG",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 233,
         "item_id": "tacz:auto5",
         "archetype": "SHOTGUN",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 234,
         "item_id": "tacz:4570",
         "archetype": "SNIPER",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 235,
@@ -1648,8 +1648,8 @@
         "id": 236,
         "item_id": "maxstuff:mk18",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 237,
@@ -1662,29 +1662,29 @@
         "id": 238,
         "item_id": "tacz:qbz_191",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 239,
         "item_id": "tacz:pp19_01",
         "archetype": "SMG",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 240,
         "item_id": "tacz:scar_l",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 241,
         "item_id": "maxstuff:ar10",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 242,
@@ -1697,22 +1697,22 @@
         "id": 243,
         "item_id": "tacz:scar_h",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 244,
         "item_id": "tacz:bren",
         "archetype": "MG",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 245,
         "item_id": "maxstuff:ar18",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 246,
@@ -1725,22 +1725,22 @@
         "id": 247,
         "item_id": "tacz:b93r",
         "archetype": "PISTOL",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 248,
         "item_id": "maxstuff:db_short_d",
         "archetype": "SHOTGUN",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 249,
         "item_id": "maxstuff:rpk16",
         "archetype": "MG",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 250,
@@ -1781,8 +1781,8 @@
         "id": 255,
         "item_id": "maxstuff:hk_g33",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 256,
@@ -1802,29 +1802,29 @@
         "id": 258,
         "item_id": "maxstuff:genesis12_dragons_breath",
         "archetype": "SHOTGUN",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "General",
+        "tier": 5
     },
     {
         "id": 259,
         "item_id": "tacz:gew98",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 260,
         "item_id": "tacz:m107",
         "archetype": "SNIPER",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 261,
         "item_id": "maxstuff:colt_933",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 262,
@@ -1837,8 +1837,8 @@
         "id": 263,
         "item_id": "tacz:l96a1",
         "archetype": "SNIPER",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 264,
@@ -1858,29 +1858,29 @@
         "id": 266,
         "item_id": "maxstuff:ar762",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 267,
         "item_id": "tacz:ptr91",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 268,
         "item_id": "maxstuff:ak_alpha",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 269,
         "item_id": "tacz:hk_mp5a5",
         "archetype": "SMG",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 270,
@@ -1893,29 +1893,29 @@
         "id": 271,
         "item_id": "tacz:m1921",
         "archetype": "SMG",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 272,
         "item_id": "tacz:m88",
         "archetype": "SHOTGUN",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 273,
         "item_id": "tacz:gak47",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 274,
         "item_id": "tacz:m82a1",
         "archetype": "SNIPER",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 275,
@@ -1928,8 +1928,8 @@
         "id": 276,
         "item_id": "tacz:m27rwk",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 277,
@@ -1963,22 +1963,22 @@
         "id": 281,
         "item_id": "tacz:deagle_golden",
         "archetype": "PISTOL",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 282,
         "item_id": "maxstuff:dragonuv_svds",
         "archetype": "SNIPER",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 283,
         "item_id": "maxstuff:xm177",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 284,
@@ -1998,22 +1998,22 @@
         "id": 286,
         "item_id": "maxstuff:dragonuv_svdm",
         "archetype": "SNIPER",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 287,
         "item_id": "tacz:brn16a1",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 288,
         "item_id": "maxstuff:aug_a3",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 289,
@@ -2054,22 +2054,22 @@
         "id": 294,
         "item_id": "maxstuff:aug_a2",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 295,
         "item_id": "tacz:ak47",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 296,
         "item_id": "tacz:m95",
         "archetype": "SNIPER",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 297,
@@ -2089,71 +2089,71 @@
         "id": 299,
         "item_id": "tacz:ak74m",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 300,
         "item_id": "tacz:mk48",
         "archetype": "MG",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 301,
         "item_id": "tacz:psak47",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 302,
         "item_id": "maxstuff:ak107",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 303,
         "item_id": "tacz:hk33",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 304,
         "item_id": "tacz:m1919",
         "archetype": "MG",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 305,
         "item_id": "maxstuff:ak108",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 306,
         "item_id": "tacz:m1918",
         "archetype": "MG",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "General",
+        "tier": 5
     },
     {
         "id": 307,
         "item_id": "tacz:940",
         "archetype": "SHOTGUN",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 308,
         "item_id": "tacz:pp19",
         "archetype": "SMG",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 309,
@@ -2166,15 +2166,15 @@
         "id": 310,
         "item_id": "tacz:sawedoff",
         "archetype": "SHOTGUN",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 311,
         "item_id": "tacz:g36k",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 312,
@@ -2187,15 +2187,15 @@
         "id": 313,
         "item_id": "maxstuff:g36",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 314,
         "item_id": "tacz:saiga",
         "archetype": "SHOTGUN",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 315,
@@ -2208,36 +2208,36 @@
         "id": 316,
         "item_id": "tacz:p08",
         "archetype": "PISTOL",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Recruit",
+        "tier": 1
     },
     {
         "id": 317,
         "item_id": "tacz:xm177",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 318,
         "item_id": "tacz:g36c",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 319,
         "item_id": "maxstuff:glock_18c",
         "archetype": "PISTOL",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 320,
         "item_id": "maxstuff:mk18_burst",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 321,
@@ -2257,8 +2257,8 @@
         "id": 323,
         "item_id": "maxstuff:mk18_mjolnir",
         "archetype": "SNIPER",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "General",
+        "tier": 5
     },
     {
         "id": 324,
@@ -2271,43 +2271,43 @@
         "id": 325,
         "item_id": "tacz:m1944",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 326,
         "item_id": "tacz:ppk",
         "archetype": "PISTOL",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 327,
         "item_id": "maxstuff:blicky",
         "archetype": "PISTOL",
-        "rank": "General",
-        "tier": 5
+        "rank": "Creative Only",
+        "tier": 0
     },
     {
         "id": 328,
         "item_id": "maxstuff:sr16",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 329,
         "item_id": "tacz:m60e4",
         "archetype": "MG",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 330,
         "item_id": "maxstuff:mk18_auto",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 331,
@@ -2320,43 +2320,43 @@
         "id": 332,
         "item_id": "tacz:frolovka",
         "archetype": "SHOTGUN",
-        "rank": "General",
-        "tier": 5
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 333,
         "item_id": "maxstuff:genesis12",
         "archetype": "SHOTGUN",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 334,
         "item_id": "maxstuff:mp7",
         "archetype": "SMG",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 335,
         "item_id": "tacz:ak74",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 336,
         "item_id": "tacz:mk14",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 337,
         "item_id": "tacz:pps",
         "archetype": "SMG",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 338,
@@ -2369,8 +2369,8 @@
         "id": 339,
         "item_id": "tacz:l22a1",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 340,
@@ -2383,8 +2383,8 @@
         "id": 341,
         "item_id": "tacz:mk18",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 342,
@@ -2397,43 +2397,43 @@
         "id": 343,
         "item_id": "maxstuff:ar57",
         "archetype": "SMG",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 344,
         "item_id": "maxstuff:udp9",
         "archetype": "SMG",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 345,
         "item_id": "maxstuff:sap6",
         "archetype": "SHOTGUN",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 346,
         "item_id": "tacz:m1014",
         "archetype": "SHOTGUN",
-        "rank": "General",
-        "tier": 5
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 347,
         "item_id": "tacz:m1938",
         "archetype": "RIFLE",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Captain",
+        "tier": 4
     },
     {
         "id": 348,
         "item_id": "tacz:m1a1",
         "archetype": "SMG",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 349,
@@ -2446,43 +2446,43 @@
         "id": 350,
         "item_id": "tacz:skorpion",
         "archetype": "SMG",
-        "rank": "Trooper",
-        "tier": 2
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 351,
         "item_id": "tacz:m9a4",
         "archetype": "PISTOL",
-        "rank": "Recruit",
-        "tier": 1
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 352,
         "item_id": "maxstuff:m16a3",
         "archetype": "RIFLE",
-        "rank": "Sergeant",
-        "tier": 3
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 353,
         "item_id": "tacz:ata",
         "archetype": "SHOTGUN",
-        "rank": "General",
-        "tier": 5
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 354,
         "item_id": "tacz:famas",
         "archetype": "RIFLE",
-        "rank": "Captain",
-        "tier": 4
+        "rank": "Trooper",
+        "tier": 2
     },
     {
         "id": 355,
         "item_id": "maxstuff:mk47",
         "archetype": "RIFLE",
-        "rank": "General",
-        "tier": 5
+        "rank": "Sergeant",
+        "tier": 3
     },
     {
         "id": 356,
@@ -2502,7 +2502,7 @@
         "id": 358,
         "item_id": "tacz:no3",
         "archetype": "PISTOL",
-        "rank": "Recruit",
-        "tier": 1
+        "rank": "Sergeant",
+        "tier": 3
     }
 ]

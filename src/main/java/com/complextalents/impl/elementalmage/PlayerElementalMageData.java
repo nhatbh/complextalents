@@ -27,7 +27,8 @@ public class PlayerElementalMageData implements IPlayerElementalMageData {
     @Override
     public boolean addEcho(ElementalReaction reaction, ElementType element) {
         // Block echo accumulation if Convergence is active (locked)
-        if (lockedHarmonyMultiplier > 0.0f || (player != null && player.hasEffect(com.complextalents.elemental.effects.ElementalEffects.HARMONIC_CONVERGENCE.get()))) {
+        if (lockedHarmonyMultiplier > 0.0f || (player != null && player
+                .hasEffect(com.complextalents.elemental.effects.ElementalEffects.HARMONIC_CONVERGENCE.get()))) {
             return false;
         }
 
@@ -87,7 +88,8 @@ public class PlayerElementalMageData implements IPlayerElementalMageData {
 
     @Override
     public void setApexElement(ElementType element) {
-        boolean isConvergenceActive = lockedHarmonyMultiplier > 0.0f || (player != null && player.hasEffect(com.complextalents.elemental.effects.ElementalEffects.HARMONIC_CONVERGENCE.get()));
+        boolean isConvergenceActive = lockedHarmonyMultiplier > 0.0f || (player != null
+                && player.hasEffect(com.complextalents.elemental.effects.ElementalEffects.HARMONIC_CONVERGENCE.get()));
         if (isConvergenceActive && element != null) {
             return;
         }

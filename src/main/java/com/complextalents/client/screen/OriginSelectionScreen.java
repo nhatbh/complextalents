@@ -64,7 +64,11 @@ public class OriginSelectionScreen extends Screen {
         if (selectedIndex >= 0 && selectedIndex < origins.size()) {
             Origin selected = origins.get(selectedIndex);
             PacketHandler.sendToServer(new SelectOriginPacket(selected.getId()));
-            this.onClose();
+            if (this.minecraft != null && this.minecraft.player != null) {
+                this.minecraft.setScreen(new PlayerProgressionScreen(this.minecraft.player, 5));
+            } else {
+                this.onClose();
+            }
         }
     }
 

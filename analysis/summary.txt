@@ -1,0 +1,411 @@
+==========================================================================================
+  FIREARM MASTERY TIER ASSIGNMENT + ROLE ANALYSIS SUMMARY
+==========================================================================================
+
+──────────────────────────────────────────────────────────────────────────────────────────
+  PISTOL  (48 guns)
+──────────────────────────────────────────────────────────────────────────────────────────
+  Tier         Gun                             Score     TTKs     DPS  BurstDPS    pbDPS      Role  Flags
+  ----------------------------------------------------------------------------------------
+  Recruit      mustang                          17.4    57.4     6.6      16.9     14.1         ~  WEAK_TTK, WEAK_TTK
+  Recruit      cph                              19.6    51.1     7.5      17.5     15.6         ~  
+  Recruit      g44                              20.9    47.9     7.9      10.6     18.1        XX  
+  Recruit      m51                              22.2    45.1     8.1      13.2     19.5        XX  
+  Recruit      1851_navy                        22.4    44.8     4.0       5.1      0.0        XX  
+  Recruit      c96                              25.0    40.0     9.3      16.6     18.4        XX  
+  Recruit      p38                              25.5    39.2     9.4      19.4     22.1        XX  
+  Recruit      p08                              27.8    36.0    10.2      17.0     30.8        XX  
+  Recruit      tt33                             32.5    30.8    11.8      28.7     23.2         ~  
+  Recruit      cz75                             36.1    27.7    13.6      30.7     28.3         ~  
+  Recruit      m17                              37.6    26.6    14.3      19.7     33.5        XX  
+  Recruit      cz75s                            38.7    25.9    14.6      18.2     35.9        XX  
+  Recruit      pm                               39.5    25.3    15.1      21.6     32.6        XX  
+  Recruit      m9                               42.1    23.8    15.5      20.9     37.2        XX  
+  Trooper      c96                              43.8    22.9    15.2      32.9     34.9        XX  
+  Trooper      b93r                             44.8    22.3    16.8      18.9     37.3        XX  
+  Trooper      glock_bulpup                     47.4    21.1    17.9      20.3     37.6        XX  
+  Trooper      m9a4                             48.4    20.6    18.0      20.9     40.1        XX  
+  Trooper      p35                              50.1    19.9    18.0      24.2     38.8        XX  
+  Trooper      glock_17                         50.6    19.8    19.4      23.0     41.1        XX  
+  Trooper      m1911a1                          50.8    19.7    14.0      43.9    137.3        XX  
+  Trooper      m1911                            50.8    19.7    13.3      32.2    110.2        XX  
+  Trooper      g19                              52.6    19.0    19.2      24.4     40.3        XX  
+  Trooper      lonetrail                        53.8    18.6     5.6     258.7      0.0        ok  
+  Trooper      mac11                            66.5    15.1    25.4      42.4     44.5        XX  
+  Trooper      g21                              70.2    14.2    18.4      28.2     25.4         ~  
+  Trooper      grizzly                          70.9    14.1    11.8      33.2      0.0        ok  
+  Sergeant     p320                             74.1    13.5    18.1      41.3     17.8        ok  
+  Sergeant     ppk                              74.3    13.4    14.6      48.2      0.0        ok  
+  Sergeant     deagle_12g                       78.1    12.8    29.7      49.1     52.4        XX  
+  Sergeant     glock_18c                        78.4    12.8    29.1      58.7     59.0         ~  
+  Sergeant     g18                              79.4    12.6    29.9      57.4     60.3        XX  
+  Sergeant     no3                              80.0    12.5    10.0      17.2      0.0         ~  
+  Sergeant     glock_54                         82.0    12.2    29.3      30.8    108.5        XX  
+  Sergeant     hk_mk23                          87.3    11.4    16.1      27.9      0.0         ~  
+  Sergeant     usp45                            90.9    11.0    16.8      38.1      0.0         ~  
+  Sergeant     mac10                            92.6    10.8    35.3      52.5    170.6        XX  
+  Sergeant     mk23                            103.6     9.7    22.0      44.3    360.0        XX  
+  Captain      deagle_golden                   105.3     9.5    17.9      39.4      0.0         ~  
+  Captain      timeless50                      107.0     9.3    15.0      30.8      0.0         ~  
+  Captain      af2011                          108.6     9.2    26.6      63.3    251.3        XX  
+  Captain      deagle                          198.0     5.0    23.0      41.3      0.0         ~  
+  Captain      thunderbird_short               317.5     3.1    35.4     125.1      0.0        ok  
+  Captain      rsh12                           333.3     3.0    36.1      36.1      0.0        XX  
+  Captain      thunderbird                     339.0     3.0    34.7     129.1      0.0        ok  
+  General      m1895                           666.7     1.5    72.5      76.5      0.0        XX  
+  General      deagle_50bmg                   5000.0     0.2   799.5     799.5      0.0        XX  
+  General      blicky                         10000.0     0.1   960.6     960.6      0.0        XX  
+
+  Tier summary:
+    [Recruit   ]  n=14  avg_role=33.9  ok=0 ~=4 XX=10  ⚠weak=1
+    [Trooper   ]  n=13  avg_role=36.1  ok=2 ~=1 XX=10
+    [Sergeant  ]  n=11  avg_role=40.8  ok=2 ~=4 XX=5
+    [Captain   ]  n= 7  avg_role=51.3  ok=2 ~=3 XX=2
+    [General   ]  n= 3  avg_role=35.3  ok=0 ~=0 XX=3
+
+──────────────────────────────────────────────────────────────────────────────────────────
+  RIFLE  (129 guns)
+──────────────────────────────────────────────────────────────────────────────────────────
+  Tier         Gun                             Score     TTKs     DPS  BurstDPS    pbDPS      Role  Flags
+  ----------------------------------------------------------------------------------------
+  Trooper      potassium_power                  16.7    59.9     2.3       3.8      0.0         ~  WEAK_TTK, WEAK_TTK
+  Trooper      m1907                            29.6    33.8    11.1      23.4     25.2         ~  
+  Trooper      adar2                            47.7    20.9    17.7      27.4     35.3         ~  
+  Trooper      1522                             49.4    20.2    18.6      22.0     32.7         ~  
+  Trooper      m16a2                            56.5    17.7    20.8      28.6     35.6         ~  
+  Trooper      m1                               57.0    17.6    21.0      30.3     89.4        XX  
+  Trooper      m16a2                            64.3    15.6    24.1      26.4     35.3         ~  
+  Trooper      m4burst                          64.5    15.5    23.9      26.9     33.9         ~  
+  Trooper      m16a4                            64.5    15.5    23.9      27.3     33.9         ~  
+  Trooper      arp                              64.9    15.4    24.2      24.5     36.4         ~  
+  Trooper      sr15                             69.9    14.3    26.2      27.3     39.1         ~  
+  Trooper      z15                              71.4    14.0    26.3      27.4     39.2         ~  
+  Trooper      m16a3                            73.5    13.6    27.4      53.2     44.5         ~  
+  Trooper      xm177                            74.1    13.5    27.3      53.2     44.1         ~  
+  Trooper      ak_delta                         76.3    13.1    27.2      35.1     36.4         ~  
+  Trooper      m2                               76.9    13.0    28.8      65.6    179.5         ~  
+  Trooper      ar762                            80.0    12.5    28.9      35.1     40.7         ~  
+  Trooper      pa15                             80.3    12.4    23.6      23.6     86.2        XX  
+  Trooper      ak74m                            81.3    12.3    30.4      38.3     41.9         ~  
+  Trooper      g36                              82.0    12.2    31.0      49.2     39.1         ~  
+  Trooper      ak74                             82.3    12.2    30.4      39.6     40.4         ~  
+  Trooper      ak74                             82.3    12.2    31.0      40.0     42.8         ~  
+  Trooper      aug                              82.6    12.1    31.1      46.2     40.3         ~  
+  Trooper      aug_a2                           82.6    12.1    31.1      45.3     40.4         ~  
+  Trooper      aug_a3                           84.0    11.9    31.1      46.9     40.1         ~  
+  Trooper      mk18_burst                       84.4    11.8    31.6      38.0     44.5         ~  
+  Trooper      aks74ub                          84.8    11.8    32.0      42.9     43.1         ~  
+  Trooper      ak12                             84.8    11.8    32.1      42.1     44.1         ~  
+  Trooper      aks74u                           85.1    11.8    32.1      42.8     43.6         ~  
+  Trooper      ak74m                            85.1    11.8    31.7      42.0     42.0         ~  
+  Trooper      ak19                             85.8    11.7    31.7      43.6     41.3         ~  
+  Trooper      g36c                             86.2    11.6    32.9      49.8     42.5         ~  
+  Trooper      ar18                             86.6    11.6    32.2      51.9     40.4         ~  
+  Trooper      g36k                             87.0    11.5    32.8      49.7     42.2         ~  
+  Trooper      hk_g33                           87.3    11.4    32.7      55.6     40.0         ~  
+  Trooper      qbz_95                           88.1    11.3    33.4      45.0     45.3         ~  
+  Trooper      hk33                             88.1    11.3    32.5      55.2     39.6         ~  
+  Trooper      ak63e                            89.7    11.2    33.6      46.3    140.0        XX  
+  Trooper      honey_badger                     91.7    10.9    34.3      53.4     43.4         ~  
+  Trooper      ar15                             91.7    10.9    35.2      32.8     96.9        XX  
+  Trooper      m16                              93.9    10.7    34.9      51.4    162.0        XX  
+  Trooper      ak108                            94.8    10.6    35.8      53.2     46.3         ~  
+  Trooper      qbz_191                          95.2    10.5    35.6      51.0     46.8         ~  
+  Trooper      scar_15p                         95.7    10.4    34.7      33.0     94.8        XX  
+  Trooper      ak107                            96.2    10.4    36.9      55.6     48.1         ~  
+  Trooper      colt_933                         96.6    10.3    36.6      48.1     49.4         ~  
+  Trooper      l403a1                           97.6    10.2    36.8      48.2     49.4         ~  
+  Trooper      m4a1                             98.0    10.2    37.2      48.1     49.4         ~  
+  Trooper      m16a1                            99.0    10.1    37.4      58.5    175.7        XX  
+  Trooper      mk18_auto                        99.0    10.1    36.9      48.1     49.4         ~  
+  Trooper      ar18                             99.5    10.1    35.9      60.3    165.9        XX  
+  Trooper      mojave223                        99.5    10.1    37.9      50.8     50.4         ~  
+  Trooper      mk18                             99.5    10.1    36.9      49.8     48.1         ~  
+  Trooper      famas                            99.5    10.1    36.1      69.9     41.5        ok  
+  Sergeant     hk416d                          102.0     9.8    38.7      56.2     50.1         ~  
+  Sergeant     m27rwk                          102.6     9.8    38.7      56.2     50.1         ~  
+  Sergeant     z15_a                           105.8     9.4    39.0      56.5     50.5         ~  
+  Sergeant     sr16                            105.8     9.4    38.6      55.5     48.9         ~  
+  Sergeant     sks_tactical                    108.7     9.2    20.2      61.3      0.0        ok  
+  Sergeant     hk416c                          110.5     9.1    41.3      62.6     52.1         ~  
+  Sergeant     augs                            113.6     8.8    33.0      40.1    132.2        XX  
+  Sergeant     g3ka4                           115.6     8.7    31.1      43.5    130.9        XX  
+  Sergeant     hk_g3                           115.6     8.7    31.1      43.4    130.9        XX  
+  Sergeant     g3a3                            115.6     8.7    30.7      42.4    131.1        XX  
+  Sergeant     ak101                           116.3     8.6    42.4      42.8    128.1        XX  
+  Sergeant     sw15                            117.0     8.6    34.0      39.6    131.6        XX  
+  Sergeant     brn16a1                         119.8     8.3    33.5      42.0    137.7        XX  
+  Sergeant     qbz_97                          122.7     8.2    44.2      49.7    145.8        XX  
+  Sergeant     scar_sbr                        123.3     8.1    46.3      49.5    135.5        XX  
+  Sergeant     mini14                          124.2     8.1    40.1      46.1    120.0        XX  
+  Sergeant     gak47                           124.2     8.1    46.0      50.0    140.5        XX  
+  Sergeant     l85a1                           125.0     8.0    46.7      50.0    148.6        XX  
+  Sergeant     ak103                           125.0     8.0    46.0      49.1    146.4        XX  
+  Sergeant     l22a1                           125.2     8.0    46.5      50.1    149.0        XX  
+  Sergeant     spr15hb                         125.8     8.0    23.4      38.1      0.0         ~  
+  Sergeant     ak47                            128.2     7.8    46.3      50.8    153.5        XX  
+  Sergeant     sr15                            131.6     7.6    32.5      44.5    180.6         ~  
+  Sergeant     akm                             132.4     7.5    45.5      53.4    148.9        XX  
+  Sergeant     type_81                         132.4     7.5    47.3      53.6    154.4        XX  
+  Sergeant     arka                            133.3     7.5    50.1      51.5    147.0        XX  
+  Sergeant     scar_l                          133.3     7.5    50.1      52.3    153.4        XX  
+  Sergeant     l85a3                           137.9     7.2    51.5      60.2    169.7        XX  
+  Sergeant     ak15                            139.9     7.2    51.5      58.3    184.3        XX  
+  Sergeant     mk47                            139.9     7.2    49.9      65.7    205.4        XX  
+  Sergeant     xm177                           141.8     7.0    52.7      61.5    178.5        XX  
+  Sergeant     scar_pdw                        143.9     7.0    52.5      61.6    179.6        XX  
+  Sergeant     m1_garand_tac                   147.1     6.8    24.2      39.2      0.0         ~  
+  Sergeant     m16a3                           147.1     6.8    55.1      65.1    203.6        XX  
+  Sergeant     ar10b                           149.2     6.7    28.7      53.3      0.0         ~  
+  Sergeant     mk18                            149.2     6.7    54.6      67.9    199.0        XX  
+  Captain      brn10                           152.7     6.5    29.4      52.0      0.0         ~  
+  Captain      fn_fal                          152.7     6.5    27.7      50.5      0.0         ~  
+  Captain      ar10                            152.7     6.5    32.8      49.5    390.0        XX  
+  Captain      sks_wooden                      153.8     6.5    25.4      64.4      0.0        ok  
+  Captain      ak109                           160.0     6.2    58.2      73.7    224.4        XX  
+  Captain      m1_garand                       161.3     6.2    25.0      42.1      0.0         ~  
+  Captain      ak_alpha                        161.3     6.2    57.2      74.9    216.0        XX  
+  Captain      stg44                           162.6     6.2    40.7      66.6    268.7         ~  
+  Captain      mk11                            163.9     6.1    31.5      51.4      0.0         ~  
+  Captain      hk417                           168.1     6.0    42.1      70.4    271.4        XX  
+  Captain      auga3                           169.5     5.9    49.8      85.5    282.1        XX  
+  Captain      ak22                            183.5     5.5    48.3      87.6     23.1        XX  
+  Captain      ak9                             186.9     5.3    53.3      76.2    295.1        XX  
+  Captain      mk14                            188.7     5.3    33.0      65.4      0.0        ok  
+  Captain      scar_h                          194.2     5.2    41.7      80.6    420.0         ~  
+  Captain      gew98                           202.0     5.0    23.2      23.2      0.0         ~  
+  Captain      sks_golden                      210.5     4.8    35.6     101.0      0.0        ok  
+  Captain      m1944                           222.2     4.5    27.9      27.9      0.0         ~  
+  Captain      m1938                           222.2     4.5    27.9      27.9      0.0         ~  
+  Captain      smle                            238.1     4.2    25.1      25.1      0.0         ~  
+  Captain      psak47                          238.1     4.2    51.2      51.2    390.0        XX  
+  Captain      z70                             246.9     4.0    52.3      52.3    390.0        XX  
+  Captain      beowulf_ecr                     250.0     4.0    32.7      81.6      0.0        ok  
+  Captain      beowulf_tcr                     266.7     3.8    45.3     139.8      0.0        ok  
+  Captain      ptr91                           298.5     3.4    52.6      52.6      0.0         ~  
+  Captain      nagant1891                      333.3     3.0    36.6      36.6      0.0         ~  
+  General      ak308                           377.4     2.6    70.2      70.2      0.0         ~  
+  General      l1a1                            416.7     2.4    58.4      58.4      0.0         ~  
+  General      asval                           526.3     1.9   112.0     112.0    405.0        XX  
+  General      fal                             588.2     1.7    73.8      73.8      0.0         ~  
+  General      m1918a2                         689.7     1.4    94.7      94.7      0.0         ~  
+  General      bm59                            800.0     1.2   116.4     116.4      0.0         ~  
+  General      m14                             909.1     1.1   125.7     125.7      0.0         ~  
+  General      aa50beowulf                     952.4     1.1   105.2     105.2      0.0         ~  
+  General      avt40                          1176.5     0.8   140.6     143.4      0.0         ~  
+  General      avs36                          1176.5     0.8   140.8     140.8      0.0         ~  
+  General      fg42                           1250.0     0.8   158.6     158.6      0.0         ~  
+  General      aug_a5                         1250.0     0.8   151.8     155.5      0.0         ~  
+  General      ms16                           1333.3     0.8   166.1     166.1      0.0         ~  
+
+  Tier summary:
+    [Trooper   ]  n=54  avg_role=47.8  ok=1 ~=45 XX=8  ⚠weak=1
+    [Sergeant  ]  n=36  avg_role=39.8  ok=1 ~=9 XX=26
+    [Captain   ]  n=26  avg_role=49.6  ok=5 ~=12 XX=9
+    [General   ]  n=13  avg_role=48.9  ok=0 ~=12 XX=1
+
+──────────────────────────────────────────────────────────────────────────────────────────
+  SMG  (44 guns)
+──────────────────────────────────────────────────────────────────────────────────────────
+  Tier         Gun                             Score     TTKs     DPS  BurstDPS    pbDPS      Role  Flags
+  ----------------------------------------------------------------------------------------
+  Trooper      uzicar                           16.7    59.8     1.9       6.1      0.0        XX  WEAK_TTK, WEAK_TTK
+  Trooper      nailgun                          17.5    57.2     3.2       6.1      0.0        XX  WEAK_TTK, WEAK_TTK
+  Trooper      luty                             18.9    53.0     7.2      11.5     41.4         ~  
+  Trooper      hk_mp5k                          21.1    47.4     8.0      14.6     41.1         ~  
+  Trooper      uzi                              22.1    45.3     8.3      11.6     39.4         ~  
+  Trooper      sp5                              23.7    42.2     9.0       8.2     74.1         ~  
+  Trooper      saiga9                           24.7    40.5     9.3       8.2     76.5         ~  
+  Trooper      vecar                            25.1    39.8     8.1      13.2     34.3         ~  
+  Trooper      mp18                             25.5    39.2     9.7       9.2     82.1         ~  
+  Trooper      mp5sd                            27.2    36.8    10.3      12.2    122.0         ~  
+  Trooper      vector45                         27.6    36.2    10.3      23.1     47.7        ok  
+  Trooper      ps90                             27.8    36.0    10.6       8.3     74.1         ~  
+  Trooper      hk_mp5a5                         28.9    34.6    11.0      14.2    126.3         ~  
+  Trooper      hk_mp5sd                         29.9    33.5    11.4      15.4     42.3         ~  
+  Trooper      mp5k                             30.1    33.2    11.4      15.3    157.5         ~  
+  Trooper      vector9                          30.4    33.0    11.5      18.9     49.7         ~  
+  Trooper      pps                              30.9    32.4    11.5      12.2    112.6         ~  
+  Trooper      hk5                              31.1    32.1    11.7      13.3    122.5         ~  
+  Sergeant     skorpion                         31.3    31.9    11.7      19.5     46.8         ~  
+  Sergeant     colt_mars                        31.9    31.3    12.3      15.2    144.0         ~  
+  Sergeant     m3a1                             32.3    30.9    11.6      11.3    103.5         ~  
+  Sergeant     ro635                            32.4    30.9    12.3      18.8     54.8         ~  
+  Sergeant     p90                              33.4    29.9    12.7      12.7    115.1         ~  
+  Sergeant     aug_a3_para                      34.0    29.4    12.9      15.9     42.6         ~  
+  Sergeant     sten                             34.4    29.1    12.7      12.2    114.0         ~  
+  Sergeant     mp40                             36.6    27.3    13.5      13.0    121.5         ~  
+  Sergeant     m1a1                             36.7    27.2    13.4      22.4    203.1         ~  
+  Sergeant     ump9                             36.8    27.2    13.8      18.7    174.2         ~  
+  Sergeant     aks74u                           37.3    26.8    13.9      16.7     45.8         ~  
+  Sergeant     m1921                            38.5    26.0    13.2      27.1     43.8         ~  
+  Sergeant     udp9                             38.8    25.8    14.5      25.1     57.6         ~  
+  Captain      vityas                           39.4    25.4    14.8      18.7    174.9         ~  
+  Captain      z80                              41.4    24.1    15.3      18.6     51.2         ~  
+  Captain      honey                            41.6    24.1    15.5      19.0     51.1         ~  
+  Captain      hk53                             41.8    23.9    15.1      20.7    198.8         ~  
+  Captain      mp7                              43.0    23.2    16.2      17.3    160.9         ~  
+  Captain      ar57                             44.2    22.6    16.9      16.6    173.0         ~  
+  Captain      pp19_01                          44.6    22.4    15.7      21.6     41.2         ~  
+  Captain      ump45                            44.6    22.4    15.4      21.2    205.2         ~  
+  Captain      pp19                             77.8    12.9    25.6      21.9    226.8         ~  
+  General      ppsh41                           91.7    10.9    27.1      36.9    414.7         ~  
+  General      sr3m                            181.8     5.5    18.7      38.8      0.0        XX  
+  General      9a91                            190.5     5.2    15.3      32.7      0.0        XX  
+  General      bih                             232.6     4.3    16.6      56.4      0.0        XX  
+
+  Tier summary:
+    [Trooper   ]  n=18  avg_role=53.0  ok=1 ~=15 XX=2  ⚠weak=2
+    [Sergeant  ]  n=13  avg_role=57.0  ok=0 ~=13 XX=0
+    [Captain   ]  n= 9  avg_role=52.8  ok=0 ~=9 XX=0
+    [General   ]  n= 4  avg_role=24.3  ok=0 ~=1 XX=3
+
+──────────────────────────────────────────────────────────────────────────────────────────
+  MG  (33 guns)
+──────────────────────────────────────────────────────────────────────────────────────────
+  Tier         Gun                             Score     TTKs     DPS  BurstDPS    pbDPS      Role  Flags
+  ----------------------------------------------------------------------------------------
+  Trooper      rpk74                            35.2    28.4    12.9      14.8     41.4        XX  
+  Trooper      rpk74m                           35.5    28.2    13.0      15.3     41.4        XX  
+  Trooper      rpk_74                           43.3    23.1    15.4      18.7     32.4         ~  
+  Trooper      m231                             44.2    22.6    16.2      29.7     46.8        XX  
+  Trooper      rpk16                            44.5    22.4    16.0      19.8     34.0         ~  
+  Trooper      l86a1                            45.2    22.1    15.6      19.9     40.8         ~  
+  Trooper      aug_hbar                         46.5    21.5    16.5      17.8    140.8        XX  
+  Trooper      quatro15                         49.4    20.2    16.9      13.6    115.3        XX  
+  Trooper      l110a1                           50.6    19.8    18.5      18.1    144.6         ~  
+  Trooper      m249                             51.0    19.6    18.3      18.1    140.2         ~  
+  Trooper      rpk_74m                          52.8    18.9    18.1      19.4    143.1        XX  
+  Trooper      mk48                             61.0    16.4    15.4      23.1    240.0         ~  
+  Trooper      rpk                              61.5    16.2    15.5      24.2    241.0         ~  
+  Sergeant     mg36                             68.7    14.6    25.1      18.9    150.4         ~  
+  Sergeant     aughb                            76.3    13.1    12.5      24.7      0.0        ok  
+  Sergeant     scar_hamr                        90.5    11.1    23.4      24.0    334.7         ~  
+  Sergeant     m60e4                           101.5     9.8    19.5      19.5      0.0        ok  
+  Sergeant     m60                             108.7     9.2    22.5      22.5    315.0        ok  
+  Sergeant     m1919                           123.5     8.1    23.3      23.3      0.0        ok  
+  Sergeant     minigun                         166.7     6.0    58.0      58.0    259.1         ~  
+  Sergeant     mg08                            307.7     3.2    25.1      25.1      0.0        ok  
+  Sergeant     fn_evolys                       344.8     2.9    32.8      32.8      0.0        ok  
+  Sergeant     m240b                           400.0     2.5    38.2      38.2      0.0        ok  
+  Captain      bren                            434.8     2.3    33.4      33.4      0.0        ok  
+  Captain      l7a2                            454.6     2.2    41.5      41.5      0.0        ok  
+  Captain      pkm                             465.1     2.1    33.2      33.2      0.0        ok  
+  Captain      l4a1                            487.8     2.0    34.7      34.7      0.0        ok  
+  Captain      lewis                           714.3     1.4    50.4      50.4      0.0        ok  
+  Captain      mg3                             714.3     1.4    50.8      50.8      0.0        ok  
+  Captain      dp28                            769.2     1.3    50.4      50.4      0.0        ok  
+  General      dp28                            833.3     1.2    52.4      52.4      0.0        ok  
+  General      m1918                           833.3     1.2    42.9      42.9      0.0        ok  
+  General      mg42                           1333.3     0.8    76.3      76.3      0.0        ok  
+
+  Tier summary:
+    [Trooper   ]  n=13  avg_role=42.5  ok=0 ~=7 XX=6
+    [Sergeant  ]  n=10  avg_role=76.5  ok=7 ~=3 XX=0
+    [Captain   ]  n= 7  avg_role=85.9  ok=7 ~=0 XX=0
+    [General   ]  n= 3  avg_role=83.1  ok=3 ~=0 XX=0
+
+──────────────────────────────────────────────────────────────────────────────────────────
+  SHOTGUN  (33 guns)
+──────────────────────────────────────────────────────────────────────────────────────────
+  Tier         Gun                             Score     TTKs     DPS  BurstDPS    pbDPS      Role  Flags
+  ----------------------------------------------------------------------------------------
+  Trooper      db_short                         23.0    43.4     8.8     351.1     15.3         ~  
+  Trooper      db_long                          24.2    41.3     9.2      36.6     16.9         ~  
+  Trooper      db_short_tactical                24.4    41.1     9.2     172.1     19.7         ~  
+  Trooper      db_long_d                        24.6    40.7     8.0      28.9     15.6         ~  
+  Trooper      frolovka                         25.3    39.5     9.6       9.6     15.2        XX  
+  Trooper      ata                              25.6    39.1     9.7      61.4     17.9         ~  
+  Trooper      shorty                           27.0    37.0    10.3      17.2     21.0        XX  
+  Trooper      db_short_d                       28.9    34.6     9.4     165.9     18.5        ok  
+  Trooper      lupara                           29.3    34.1    11.2      54.1     21.0         ~  
+  Trooper      sawedoff                         30.4    32.9    11.6      14.5     21.0        XX  
+  Trooper      m37                              31.6    31.7    11.9      14.2     25.2        XX  
+  Trooper      m870l                            34.6    28.9    13.2      13.3     26.9        XX  
+  Trooper      m870t                            36.8    27.1    14.1      13.5     24.8        XX  
+  Sergeant     m500a                            38.3    26.1    14.5      13.8     28.2        XX  
+  Sergeant     m870                             38.3    26.1    14.5      13.7     28.5        XX  
+  Sergeant     m88                              42.2    23.7    16.0      13.7     28.3        XX  
+  Sergeant     sap6                             42.5    23.5    16.1      11.8     40.6        XX  
+  Sergeant     m1187                            49.8    20.1    18.9     253.4     40.3         ~  
+  Sergeant     m1887                            50.1    19.9    18.9      16.3     29.4        XX  
+  Sergeant     m1897                            52.9    18.9    20.0      17.9     38.8        XX  
+  Sergeant     saiga12                          69.0    14.5    26.2      96.3     51.0         ~  
+  Sergeant     mag10                            73.0    13.7    27.6     352.0     69.0        ok  
+  Sergeant     saiga                            75.2    13.3    28.5      75.9     44.6         ~  
+  Captain      auto5                            84.8    11.8    32.1      63.6     66.5        XX  
+  Captain      aa12                             87.3    11.4    33.2      75.9    180.0        XX  
+  Captain      940                             112.4     8.9    42.8      51.4    126.2        XX  
+  Captain      benm4                           125.0     8.0    47.8      63.6    159.1        XX  
+  Captain      m1014                           125.0     8.0    47.4      64.4    155.9        XX  
+  Captain      genesis12_fl                    172.4     5.8    65.0     132.0    308.5        XX  
+  Captain      genesis12                       172.4     5.8    65.8     124.4    418.7        XX  
+  General      genesis12_dragons_breath        177.0     5.7    64.6     127.2    413.6        XX  
+  General      spas_12                         181.8     5.5    68.6      95.2    308.0        XX  
+  General      db_50                           270.3     3.7    29.2     119.8      0.0        XX  
+
+  Tier summary:
+    [Trooper   ]  n=13  avg_role=46.1  ok=1 ~=6 XX=6
+    [Sergeant  ]  n=10  avg_role=39.3  ok=1 ~=3 XX=6
+    [Captain   ]  n= 7  avg_role=33.5  ok=0 ~=0 XX=7
+    [General   ]  n= 3  avg_role=29.9  ok=0 ~=0 XX=3
+
+──────────────────────────────────────────────────────────────────────────────────────────
+  SNIPER  (46 guns)
+──────────────────────────────────────────────────────────────────────────────────────────
+  Tier         Gun                             Score     TTKs     DPS  BurstDPS    pbDPS      Role  Flags
+  ----------------------------------------------------------------------------------------
+  Trooper      mini_fix                         29.2    34.2    18.8      18.0     22.6        XX  
+  Trooper      kar98                            36.2    27.6    22.1      30.7     24.1        XX  
+  Trooper      springfield1873                  44.0    22.8    20.7      20.7   1312.5         ~  
+  Trooper      1873                             78.4    12.8    46.7      55.0     37.8        XX  
+  Trooper      m700                             79.7    12.6    41.7      49.2    100.0        XX  
+  Trooper      kar98                            83.7    11.9    43.9      51.3    100.3        XX  
+  Trooper      ai_awp                           84.4    11.8    47.2      47.2     57.5        XX  
+  Trooper      ai_aws                           84.4    11.8    49.2      49.2     60.0        XX  
+  Trooper      m40a1                            88.1    11.3    44.9      55.7    108.7        XX  
+  Trooper      vss                              88.1    11.3    63.7     271.3     50.5         ~  
+  Trooper      gew96                            91.7    10.9    52.3      52.1     90.9        XX  
+  Trooper      m70                             101.0     9.9    50.6      62.4   1400.0         ~  
+  Trooper      kar98k                          108.1     9.2    60.9      62.5     60.4        XX  
+  Trooper      m1903                           108.1     9.2    60.9      62.5     60.4        XX  
+  Trooper      msr                             111.1     9.0    62.6      62.6     88.8        XX  
+  Trooper      l42a1                           111.1     9.0    58.1      58.1   2025.0         ~  
+  Trooper      mosin                           117.0     8.6    66.3      66.4     68.7        XX  
+  Trooper      psg1                            148.2     6.8    92.6     197.9    207.6        XX  
+  Sergeant     m21                             149.2     6.7    84.5     155.2     40.6        XX  
+  Sergeant     svt_40                          152.7     6.5    89.6     160.1    236.6        XX  
+  Sergeant     no4                             158.7     6.3    74.8      74.8   1500.0         ~  
+  Sergeant     l96a1                           166.7     6.0    88.1      88.1   1750.0         ~  
+  Sergeant     hk_sl8                          168.1     6.0   106.5     225.9    266.8        XX  
+  Sergeant     vsk                             170.9     5.8   125.1     229.4    269.9        XX  
+  Sergeant     dragonuv_svd                    177.0     5.7   112.0     362.2     54.1         ~  
+  Sergeant     dragonuv_svds                   177.0     5.7   108.1     361.6     49.2         ~  
+  Sergeant     dragonuv_svdm                   177.0     5.7   108.1     363.1     49.2         ~  
+  Sergeant     tac338                          185.2     5.4   100.9      82.2   2250.0         ~  
+  Sergeant     m1g                             196.1     5.1   113.0     253.8    300.0        XX  
+  Sergeant     4570                            215.1     4.7   104.4     104.4   1800.0         ~  
+  Sergeant     1881                            222.2     4.5   108.0     108.0   1800.0         ~  
+  Sergeant     ai_awp                          222.2     4.5   114.7     114.7   2100.0         ~  
+  Captain      sr25                            241.0     4.2   143.7     545.1    553.7         ~  
+  Captain      m110                            241.0     4.2   143.7     545.1    550.0         ~  
+  Captain      mrad                            256.4     3.9   130.7     130.7      0.0        XX  
+  Captain      ar338                           266.7     3.8   145.5     584.1    742.6         ~  
+  Captain      intervention                    370.4     2.7   160.1     160.1      0.0        XX  
+  Captain      dragunov                        416.7     2.4   225.9     229.3    401.3        XX  
+  Captain      m82a1                           416.7     2.4   226.7     226.7   1875.0         ~  
+  Captain      m107                            512.8     1.9   278.8     278.8   1875.0        XX  
+  Captain      m95                             512.8     1.9   336.4     336.4   4687.5        XX  
+  General      scar_ssr                        666.7     1.5   347.2     347.2    700.0        XX  
+  General      mk18_mjolnir                    833.3     1.2   424.8     424.8   2250.0        XX  
+  General      gm6_lynx                       1111.1     0.9   562.1     562.1      0.0        XX  
+  General      m82a2                          3333.3     0.3  2195.8    2195.8   3875.0        XX  
+  General      excaliber                      6666.7     0.1  3849.3    3849.3      0.0        XX  
+
+  Tier summary:
+    [Trooper   ]  n=18  avg_role=27.0  ok=0 ~=4 XX=14
+    [Sergeant  ]  n=14  avg_role=46.8  ok=0 ~=9 XX=5
+    [Captain   ]  n= 9  avg_role=30.3  ok=0 ~=4 XX=5
+    [General   ]  n= 5  avg_role=14.1  ok=0 ~=0 XX=5
+
+==========================================================================================

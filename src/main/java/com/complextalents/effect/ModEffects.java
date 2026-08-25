@@ -23,6 +23,7 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> TIDAL_EROSION = MOB_EFFECTS.register("tidal_erosion", com.complextalents.impl.spellblade.effect.TidalErosionEffect::new);
     public static final RegistryObject<MobEffect> ADRENALINE = MOB_EFFECTS.register("adrenaline", com.complextalents.impl.marksman.effect.AdrenalineEffect::new);
     public static final RegistryObject<MobEffect> DISMISSED = MOB_EFFECTS.register("dismissed", com.complextalents.impl.marksman.effect.DismissedEffect::new);
+    public static final RegistryObject<MobEffect> DASH_INVULNERABLE = MOB_EFFECTS.register("dash_invulnerable", com.complextalents.impl.marksman.effect.DashInvulnerableEffect::new);
     public static final RegistryObject<MobEffect> SUMMONERS_FATIGUE = MOB_EFFECTS.register("summoners_fatigue", com.complextalents.summoning.effect.SummonersFatigueEffect::new);
 
     public static void register(IEventBus eventBus) {

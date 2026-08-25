@@ -1,8 +1,6 @@
 package com.complextalents.impl.marksman.client;
 
 import com.complextalents.TalentsMod;
-import com.complextalents.effect.ModEffects;
-import com.complextalents.impl.marksman.data.MarksmanAdrenalineData;
 import com.complextalents.impl.marksman.origin.MarksmanOrigin;
 import com.complextalents.impl.marksman.skill.RelentlessPursuitSkill;
 import com.complextalents.origin.client.ClientOriginData;
@@ -10,7 +8,6 @@ import com.complextalents.origin.client.OriginRenderer;
 import com.complextalents.skill.client.ClientSkillData;
 import com.complextalents.tacz.HeartRateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -21,28 +18,38 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGuiEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.joml.Matrix4f;
 
 /**
  * Custom Origin HUD renderer for Marksman origin.
- * 1. Left Arc: Adrenaline Duration.
- * 2. Right Segmented Arcs: 2 Dismiss Charges.
- * 3. Dismissed State: Temporarily enters F1 mode (hides GUI & hands) with a subtle purple screen overlay and suppressed camera bobbing.
- * 4. Minimalist Skill HUD: Numbers only.
- * 5. BPM Monitor: Hidden during Adrenaline mode, original format outside Adrenaline mode.
+ * Low-profile design matching High Priest & Warrior HUD style:
+ * 1. Low-profile Mobility Arc on left side of crosshair (25px-28px radius, 120° sweep).
+ * 2. Scaled text label ("Mobility: X/100") & skill cooldown timer.
+ * 3. Dynamic Heart Rate (BPM) Monitor when holding a TACZ gun.
  */
 public class MarksmanRenderer implements OriginRenderer {
 
-    private float smoothAdrenalineProgress = 0.0f;
+    private static final float ARC_INNER_RADIUS = 25.0f;
+    private static final float ARC_OUTER_RADIUS = 28.0f;
+    private static final float ARC_LENGTH = 80f;
+    private static final float MOBILITY_BOTTOM_ANGLE = 220f;
+
+    private static final int MOBILITY_BG_COLOR = 0x33000000;     // ~20% Opacity Background
+    private static final int MOBILITY_LOW_COLOR = 0x558899A6;    // ~33% Opacity Slate Gray (< 50 Mobility)
+    private static final int MOBILITY_READY_COLOR = 0x5500E5FF;  // ~33% Opacity Cyan (50+ Mobility)
+    private static final int MOBILITY_FULL_COLOR = 0x5500FFCC;   // ~33% Opacity Bright Cyan (100 Mobility)
+    private static final int MOBILITY_DIVIDER_COLOR = 0x44000000; // ~27% Opacity Divider
+
+    private float smoothMobility = 0.0f;
+    private static String cachedMobilityText = "";
+    private static int lastMobilityValue = -1;
+    private static int lastCooldownSeconds = -1;
+    private static String cachedCooldownText = "";
 
     @Mod.EventBusSubscriber(modid = TalentsMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
     public static class ClientTickHandler {
@@ -52,11 +59,6 @@ public class MarksmanRenderer implements OriginRenderer {
             Minecraft mc = Minecraft.getInstance();
             Player player = mc.player;
             if (player == null) return;
-
-            // Suppress movement bobbing while Dismissed is active for a smooth hovering feel
-            if (player.hasEffect(ModEffects.DISMISSED.get())) {
-                player.walkDist = player.walkDistO;
-            }
 
             if (!ClientOriginData.hasOrigin()) return;
             ResourceLocation activeOrigin = ClientOriginData.getOriginId();
@@ -70,37 +72,6 @@ public class MarksmanRenderer implements OriginRenderer {
                 HeartRateManager.tickHeartRate(player);
             }
         }
-
-        @SubscribeEvent
-        public static void onRenderGuiPre(RenderGuiEvent.Pre event) {
-            Minecraft mc = Minecraft.getInstance();
-            Player player = mc.player;
-            if (player != null && player.hasEffect(ModEffects.DISMISSED.get())) {
-                // Render subtle purple screen overlay tint before hiding HUD
-                GuiGraphics graphics = event.getGuiGraphics();
-                int screenWidth = event.getWindow().getGuiScaledWidth();
-                int screenHeight = event.getWindow().getGuiScaledHeight();
-
-                long time = System.currentTimeMillis();
-                float pulse = (float) ((Math.sin(time / 100.0) + 1.0) / 2.0);
-                int alphaByte = (int) (30 + pulse * 18); // Subtler purple tint (~12% - 18% opacity)
-                int purpleOverlay = (alphaByte << 24) | 0x8800FF;
-                graphics.fill(0, 0, screenWidth, screenHeight, purpleOverlay);
-
-                // Cancel GUI rendering to force F1 mode HUD hide
-                event.setCanceled(true);
-            }
-        }
-
-        @SubscribeEvent
-        public static void onRenderHand(RenderHandEvent event) {
-            Minecraft mc = Minecraft.getInstance();
-            Player player = mc.player;
-            if (player != null && player.hasEffect(ModEffects.DISMISSED.get())) {
-                // Cancel first-person hand & item rendering to force F1 mode hand hide
-                event.setCanceled(true);
-            }
-        }
     }
 
     @Override
@@ -109,8 +80,6 @@ public class MarksmanRenderer implements OriginRenderer {
         if (mc.screen != null) return;
         Player player = mc.player;
         if (player == null || player.isSpectator()) return;
-
-        // Note: Purple overlay & GUI cancellation during Dismissed is handled in onRenderGuiPre
 
         if (!ClientOriginData.hasOrigin()) return;
         ResourceLocation activeOrigin = ClientOriginData.getOriginId();
@@ -122,116 +91,107 @@ public class MarksmanRenderer implements OriginRenderer {
         int centerY = screenHeight / 2;
         Font font = mc.font;
 
-        if (ClientAdrenalineFXHandler.isActive()) {
-            float maxSecs = ClientAdrenalineFXHandler.getMaxSecs();
-            float remSecs = ClientAdrenalineFXHandler.getRemainingSecs();
-            float targetProgress = Math.min(1.0f, Math.max(0.0f, remSecs / Math.max(0.1f, maxSecs)));
+        float targetMobility = ClientAdrenalineFXHandler.getDismissResource();
+        smoothMobility = Mth.lerp(0.2f, smoothMobility, targetMobility);
 
-            smoothAdrenalineProgress = Mth.lerp(0.15f, smoothAdrenalineProgress, targetProgress);
+        RenderSystem.enableBlend();
+        renderMobilityArc(graphics, centerX, centerY);
+        RenderSystem.disableBlend();
 
-            float cx = centerX;
-            float cy = centerY;
-            float rInner = 16.0f;
-            float rOuter = 20.0f;
+        renderLabels(graphics, font, centerX, centerY);
+        renderHeartRate(graphics, font, player, mc, centerX, centerY);
+    }
 
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.setShader(GameRenderer::getPositionColorShader);
+    private void renderMobilityArc(GuiGraphics graphics, int centerX, int centerY) {
+        float mobility = Math.min(100.0f, Math.max(0.0f, smoothMobility));
+        int numSegments = 2;
+        float segmentAngleLength = ARC_LENGTH / numSegments;
 
-            Matrix4f matrix = graphics.pose().last().pose();
-            Tesselator tesselator = Tesselator.getInstance();
-            BufferBuilder bufferBuilder = tesselator.getBuilder();
-
-            // 1. LEFT ARC: Adrenaline Duration (-150° to -40°)
-            float leftStart = -150.0f;
-            float leftSweep = 110.0f;
-            float filledLeftSweep = leftSweep * smoothAdrenalineProgress;
-
-            drawArcSegment(tesselator, bufferBuilder, matrix, cx, cy, rInner, rOuter, leftStart, leftSweep, 0x44440000);
-
-            if (smoothAdrenalineProgress > 0.001f) {
-                long time = System.currentTimeMillis();
-                int r = 255, g = 30, b = 30;
-                if (remSecs <= 3.0f) {
-                    float pulse = (float) ((Math.sin(time / 100.0) + 1.0) / 2.0);
-                    g = (int) (30 + pulse * 60);
-                    b = (int) (30 + pulse * 60);
-                }
-                int arcColor = (240 << 24) | (r << 16) | (g << 8) | b;
-                drawArcSegment(tesselator, bufferBuilder, matrix, cx, cy, rInner, rOuter, leftStart, filledLeftSweep, arcColor);
-            }
-
-            // 2. RIGHT SEGMENTED ARCS: 2 Dismiss Charges (Charge 1: 30° to 80°, Charge 2: 95° to 145°)
-            float dismissRes = ClientAdrenalineFXHandler.getDismissResource();
-            int usedCount = ClientAdrenalineFXHandler.getDismissCount();
-
-            // Segment 1 (Charge 1)
-            float seg1Start = 30.0f;
-            float seg1Sweep = 50.0f;
-            float seg1Progress = usedCount >= 1 ? 0.0f : Math.min(1.0f, dismissRes / 100.0f);
-
-            int seg1Bg = usedCount >= 1 ? 0x33222222 : 0x55002233;
-            drawArcSegment(tesselator, bufferBuilder, matrix, cx, cy, rInner, rOuter, seg1Start, seg1Sweep, seg1Bg);
-
-            if (seg1Progress > 0.001f) {
-                boolean ready1 = seg1Progress >= 1.0f;
-                long time = System.currentTimeMillis();
-                int color1;
-                if (ready1) {
-                    float pulse = (float) ((Math.sin(time / 120.0) + 1.0) / 2.0);
-                    int cyanG = (int) (200 + pulse * 55);
-                    color1 = (240 << 24) | (0 << 16) | (cyanG << 8) | 255;
-                } else {
-                    color1 = (200 << 24) | (0 << 16) | (180 << 8) | 220;
-                }
-                drawArcSegment(tesselator, bufferBuilder, matrix, cx, cy, rInner, rOuter, seg1Start, seg1Sweep * seg1Progress, color1);
-            }
-
-            // Segment 2 (Charge 2)
-            float seg2Start = 95.0f;
-            float seg2Sweep = 50.0f;
-            float seg2Progress = usedCount >= 2 ? 0.0f : (usedCount == 1 ? Math.min(1.0f, dismissRes / 100.0f) : Math.min(1.0f, Math.max(0.0f, (dismissRes - 100.0f) / 100.0f)));
-
-            int seg2Bg = usedCount >= 2 ? 0x33222222 : 0x55002233;
-            drawArcSegment(tesselator, bufferBuilder, matrix, cx, cy, rInner, rOuter, seg2Start, seg2Sweep, seg2Bg);
-
-            if (seg2Progress > 0.001f) {
-                boolean ready2 = seg2Progress >= 1.0f;
-                long time = System.currentTimeMillis();
-                int color2;
-                if (ready2) {
-                    float pulse = (float) ((Math.sin(time / 120.0) + 1.0) / 2.0);
-                    int cyanG = (int) (200 + pulse * 55);
-                    color2 = (240 << 24) | (0 << 16) | (cyanG << 8) | 255;
-                } else {
-                    color2 = (200 << 24) | (0 << 16) | (180 << 8) | 220;
-                }
-                drawArcSegment(tesselator, bufferBuilder, matrix, cx, cy, rInner, rOuter, seg2Start, seg2Sweep * seg2Progress, color2);
-            }
-
-            RenderSystem.disableBlend();
-
-            // Render ONLY raw remaining duration number below crosshair
-            String durNum = String.format("%d", (int) Math.ceil(remSecs));
-            int numX = centerX - (font.width(durNum) / 2);
-            graphics.drawString(font, durNum, numX, centerY + 16, 0xFFFFFF, true);
-
-            // Hide BPM display entirely while in Adrenaline mode!
-            return;
-
-        } else {
-            smoothAdrenalineProgress = 0.0f;
-
-            // Outside Adrenaline Mode: Render ONLY raw cooldown number (No text label!)
-            double cooldown = ClientSkillData.getCooldownRemaining(RelentlessPursuitSkill.ID);
-            if (cooldown > 0) {
-                String cdNum = String.format("%d", (int) Math.ceil(cooldown));
-                int cdX = centerX - (font.width(cdNum) / 2);
-                graphics.drawString(font, cdNum, cdX, centerY + 16, 0xAAAAAA, true);
-            }
+        // Draw empty background arc
+        for (int i = 0; i < numSegments; i++) {
+            float startAngle = MOBILITY_BOTTOM_ANGLE - (i * segmentAngleLength);
+            drawArcSegment(graphics, centerX, centerY, ARC_INNER_RADIUS, ARC_OUTER_RADIUS,
+                    startAngle - segmentAngleLength + 0.8f, startAngle,
+                    6, MOBILITY_BG_COLOR);
         }
 
-        // Heart Rate Monitor: Restored original format with "♥" and "BPM" string (Outside Adrenaline Mode)
+        // Fill color based on mobility level
+        int fillColor;
+        if (mobility >= 100.0f) {
+            fillColor = MOBILITY_FULL_COLOR;
+        } else if (mobility >= 50.0f) {
+            fillColor = MOBILITY_READY_COLOR;
+        } else {
+            fillColor = MOBILITY_LOW_COLOR;
+        }
+
+        // Draw filled segments
+        for (int i = 0; i < numSegments; i++) {
+            int segmentStartVal = i * 50;
+            int segmentEndVal = (i + 1) * 50;
+
+            if (mobility <= segmentStartVal) break;
+
+            float fillFraction = 1.0f;
+            if (mobility < segmentEndVal) {
+                fillFraction = (mobility - segmentStartVal) / 50.0f;
+            }
+
+            float startAngle = MOBILITY_BOTTOM_ANGLE - (i * segmentAngleLength);
+            float endAngle = startAngle - (segmentAngleLength * fillFraction) + (fillFraction >= 1.0f ? 0.8f : 0.0f);
+
+            drawArcSegment(graphics, centerX, centerY, ARC_INNER_RADIUS, ARC_OUTER_RADIUS,
+                    endAngle, startAngle,
+                    6, fillColor);
+        }
+
+        // Draw single divider at 50 Mobility mark (i = 1)
+        for (int i = 1; i < numSegments; i++) {
+            float dividerAngle = MOBILITY_BOTTOM_ANGLE - (i * segmentAngleLength);
+            drawThickLine(graphics, centerX, centerY, ARC_INNER_RADIUS, ARC_OUTER_RADIUS, dividerAngle,
+                    MOBILITY_DIVIDER_COLOR);
+        }
+    }
+
+    private void renderLabels(GuiGraphics graphics, Font font, int centerX, int centerY) {
+        int mobilityInt = (int) smoothMobility;
+        if (mobilityInt != lastMobilityValue) {
+            lastMobilityValue = mobilityInt;
+            cachedMobilityText = mobilityInt + "/100";
+        }
+
+        int textWidth = font.width(cachedMobilityText);
+        int textX = (int) (centerX - ARC_OUTER_RADIUS - 8 - textWidth * 0.7f);
+        int textY = centerY - 3;
+
+        int textColor = smoothMobility >= 50.0f ? 0x7700E5FF : 0x77AAAAAA;
+
+        graphics.pose().pushPose();
+        graphics.pose().scale(0.7f, 0.7f, 0.7f);
+        graphics.drawString(font, cachedMobilityText, (int) (textX / 0.7f), (int) (textY / 0.7f), textColor);
+        graphics.pose().popPose();
+
+        // Skill Cooldown Timer
+        double cooldown = ClientSkillData.getCooldownRemaining(RelentlessPursuitSkill.ID);
+        if (cooldown > 0) {
+            int cdSecInt = (int) (cooldown * 10);
+            if (cdSecInt != lastCooldownSeconds) {
+                lastCooldownSeconds = cdSecInt;
+                cachedCooldownText = String.format("%.1fs", cooldown);
+            }
+
+            int cdWidth = font.width(cachedCooldownText);
+            int cdX = (int) (centerX - ARC_OUTER_RADIUS - 8 - cdWidth * 0.6f);
+            int cdY = centerY + 5;
+
+            graphics.pose().pushPose();
+            graphics.pose().scale(0.6f, 0.6f, 0.6f);
+            graphics.drawString(font, cachedCooldownText, (int) (cdX / 0.6f), (int) (cdY / 0.6f), 0x77AAAAAA);
+            graphics.pose().popPose();
+        }
+    }
+
+    private void renderHeartRate(GuiGraphics graphics, Font font, Player player, Minecraft mc, int centerX, int centerY) {
         ItemStack mainStack = player.getMainHandItem();
         ItemStack offStack = player.getOffhandItem();
         if (IGun.getIGunOrNull(mainStack) == null && IGun.getIGunOrNull(offStack) == null) {
@@ -254,11 +214,11 @@ public class MarksmanRenderer implements OriginRenderer {
 
         int bpmColor;
         if (bpm < 90.0f) {
-            bpmColor = 0x55FF55; // Calm Green
+            bpmColor = 0x55FF55;
         } else if (bpm < 135.0f) {
-            bpmColor = 0xFFFF55; // Elevated Yellow
+            bpmColor = 0xFFFF55;
         } else {
-            bpmColor = 0xFF3333; // Panic Red
+            bpmColor = 0xFF3333;
         }
 
         String bpmText = String.format("%d BPM", (int) bpm);
@@ -274,31 +234,97 @@ public class MarksmanRenderer implements OriginRenderer {
         graphics.drawString(font, bpmText, x + 12, y + 1, bpmColor, true);
     }
 
-    private void drawArcSegment(Tesselator tesselator, BufferBuilder bufferBuilder, Matrix4f matrix, float cx, float cy, 
-                                float rInner, float rOuter, float startAngleDeg, float sweepAngleDeg, int color) {
-        int segments = Math.max(6, (int) (Math.abs(sweepAngleDeg) / 3.0f));
-        float startRad = (float) Math.toRadians(startAngleDeg - 90);
-        float sweepRad = (float) Math.toRadians(sweepAngleDeg);
-
+    private void drawThickLine(GuiGraphics graphics, float cx, float cy, float innerRadius, float outerRadius,
+                                float angleDegrees, int color) {
         int a = (color >> 24) & 0xFF;
         int r = (color >> 16) & 0xFF;
         int g = (color >> 8) & 0xFF;
         int b = color & 0xFF;
 
-        bufferBuilder.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
-        for (int i = 0; i <= segments; i++) {
-            float angle = startRad + (sweepRad * (i / (float) segments));
-            float cos = (float) Math.cos(angle);
-            float sin = (float) Math.sin(angle);
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.enableDepthTest();
 
-            float xOuter = cx + rOuter * cos;
-            float yOuter = cy + rOuter * sin;
-            float xInner = cx + rInner * cos;
-            float yInner = cy + rInner * sin;
+        Tesselator tesselator = Tesselator.getInstance();
+        var buf = tesselator.getBuilder();
 
-            bufferBuilder.vertex(matrix, xOuter, yOuter, 0).color(r, g, b, a).endVertex();
-            bufferBuilder.vertex(matrix, xInner, yInner, 0).color(r, g, b, a).endVertex();
+        buf.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
+
+        double rad = Math.toRadians(angleDegrees);
+        float cos = (float) Math.cos(rad);
+        float sin = (float) Math.sin(rad);
+
+        float thickness = 3.0f;
+
+        float perpCos = -sin * thickness;
+        float perpSin = cos * thickness;
+
+        float x1 = cx + cos * innerRadius + perpCos;
+        float y1 = cy + sin * innerRadius + perpSin;
+        float x2 = cx + cos * outerRadius + perpCos;
+        float y2 = cy + sin * outerRadius + perpSin;
+        float x3 = cx + cos * innerRadius - perpCos;
+        float y3 = cy + sin * innerRadius - perpSin;
+        float x4 = cx + cos * outerRadius - perpCos;
+        float y4 = cy + sin * outerRadius - perpSin;
+
+        buf.vertex(x1, y1, 0).color(r, g, b, a).endVertex();
+        buf.vertex(x3, y3, 0).color(r, g, b, a).endVertex();
+        buf.vertex(x2, y2, 0).color(r, g, b, a).endVertex();
+
+        buf.vertex(x3, y3, 0).color(r, g, b, a).endVertex();
+        buf.vertex(x4, y4, 0).color(r, g, b, a).endVertex();
+        buf.vertex(x2, y2, 0).color(r, g, b, a).endVertex();
+
+        tesselator.end();
+    }
+
+    private void drawArcSegment(GuiGraphics graphics, float cx, float cy, float innerRadius, float outerRadius,
+                                float startAngle, float endAngle, int segments, int color) {
+        int a = (color >> 24) & 0xFF;
+        int r = (color >> 16) & 0xFF;
+        int g = (color >> 8) & 0xFF;
+        int b = color & 0xFF;
+
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.enableDepthTest();
+
+        Tesselator tesselator = Tesselator.getInstance();
+        var buf = tesselator.getBuilder();
+
+        buf.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
+
+        float angleStep = (endAngle - startAngle) / segments;
+
+        for (int i = 0; i < segments; i++) {
+            float a1 = startAngle + angleStep * i;
+            float a2 = startAngle + angleStep * (i + 1);
+
+            double rad1 = Math.toRadians(a1);
+            double rad2 = Math.toRadians(a2);
+
+            float cos1 = (float) Math.cos(rad1);
+            float sin1 = (float) Math.sin(rad1);
+            float cos2 = (float) Math.cos(rad2);
+            float sin2 = (float) Math.sin(rad2);
+
+            float outer1x = cx + cos1 * outerRadius;
+            float outer1y = cy + sin1 * outerRadius;
+            float outer2x = cx + cos2 * outerRadius;
+            float outer2y = cy + sin2 * outerRadius;
+            float inner1x = cx + cos1 * innerRadius;
+            float inner1y = cy + sin1 * innerRadius;
+            float inner2x = cx + cos2 * innerRadius;
+            float inner2y = cy + sin2 * innerRadius;
+
+            buf.vertex(outer1x, outer1y, 0).color(r, g, b, a).endVertex();
+            buf.vertex(inner1x, inner1y, 0).color(r, g, b, a).endVertex();
+            buf.vertex(outer2x, outer2y, 0).color(r, g, b, a).endVertex();
+
+            buf.vertex(inner1x, inner1y, 0).color(r, g, b, a).endVertex();
+            buf.vertex(inner2x, inner2y, 0).color(r, g, b, a).endVertex();
+            buf.vertex(outer2x, outer2y, 0).color(r, g, b, a).endVertex();
         }
+
         tesselator.end();
     }
 }

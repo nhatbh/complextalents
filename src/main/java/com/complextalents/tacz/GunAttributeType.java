@@ -58,7 +58,8 @@ public enum GunAttributeType {
     RELOAD_AMMO_SAVE_CHANCE("reload_ammo_save_chance", "Reload Ammo Save Chance", 0.0, 0.0, 1.0, Operation.ADDITIVE),
     BONUS_AMMO_CHANCE("bonus_ammo_chance", "Bonus Loaded Ammo Chance", 0.0, 0.0, 1.0, Operation.ADDITIVE),
     BONUS_AMMO_AMOUNT("bonus_ammo_amount", "Bonus Loaded Ammo Amount", 0.0, 0.0, 1000.0, Operation.ADDITIVE),
-    BONUS_AMMO_PERCENT("bonus_ammo_percent", "Bonus Loaded Ammo Percent", 0.0, 0.0, 5.0, Operation.ADDITIVE);
+    BONUS_AMMO_PERCENT("bonus_ammo_percent", "Bonus Loaded Ammo Percent", 0.0, 0.0, 5.0, Operation.ADDITIVE),
+    AMMO_CRAFTING_YIELD("ammo_crafting_yield", "Ammo Crafting Yield Multiplier", 1.0, 0.0, 100.0, Operation.MULTIPLICATIVE);
 
     public enum Operation {
         MULTIPLICATIVE,

@@ -73,6 +73,12 @@ public class PacketHandler {
                                 com.complextalents.impl.marksman.network.S2CKillBannerPacket::decode,
                                 com.complextalents.impl.marksman.network.S2CKillBannerPacket::handle);
 
+                INSTANCE.registerMessage(packetId++,
+                                com.complextalents.network.warrior.S2CWarriorParryPacket.class,
+                                com.complextalents.network.warrior.S2CWarriorParryPacket::encode,
+                                com.complextalents.network.warrior.S2CWarriorParryPacket::decode,
+                                com.complextalents.network.warrior.S2CWarriorParryPacket::handle);
+
 
                 INSTANCE.registerMessage(packetId++,
                                 SpawnReactionTextPacket.class,

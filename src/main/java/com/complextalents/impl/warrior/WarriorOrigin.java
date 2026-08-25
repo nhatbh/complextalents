@@ -42,7 +42,7 @@ public class WarriorOrigin {
                 .passiveSkill("Da Thép (Iron Skin)",
                         "Tăng giáp cơ bản nhận được theo cấp độ nhân vật từ +0.30 đến +1.20 giáp cho mỗi cấp (dựa trên cấp Đấu Sĩ).")
                 .passiveSkill("Đỡ Đòn Hoàn Hảo & Tinh Thông Vũ Khí",
-                        "Khi đỡ đòn hoàn hảo (Perfect Parry), hoàn lại 100% Thể Lực và xóa phạt Thủ. Đồng thời kích hoạt hiệu ứng theo Nhánh Vũ Khí (Kiếm Thánh: +15-35% Sát Thương; Bá Vương: Sóng bộc phá đẩy lùi; Tử Thần: 100% Chí Mạng; Cuồng Chiến: +20-40% Tốc Độ Đánh; Tiên Phong: +25-65% ST Poise; Quyền Thủ: +20-40% Tốc Độ Di Chuyển).")
+                        "Khi đỡ đòn hoàn hảo (Perfect Parry), hoàn lại 100% Thể Lực, xóa phạt Thủ và kích hoạt hiệu ứng theo Nhánh Vũ Khí (Kiếm Thánh: +15-35% Sát Thương; Bá Vương: Sóng bộc phá; Tử Thần: 100% Chí Mạng; Cuồng Chiến: +20-40% Tốc Độ Đánh; Tiên Phong: +25-65% ST Poise; Quyền Thủ: +20-40% Tốc Độ Di Chuyển).")
                 .activeSkill("Khiêu Chiến & Phản Trảm",
                         "Giơ khiên hấp thụ sát thương và khiêu khích kẻ địch xung quanh, sau đó nhả khiên để phản lại sát thương diện rộng bằng 100% đến 200% lượng sát thương đã hấp thụ.",
                         null)
@@ -69,7 +69,7 @@ public class WarriorOrigin {
 
         ClassCostMatrix.defineCosts(ID)
                 .cost(StatType.FLAT_AD, 2)
-                .cost(StatType.PERCENT_AD, 1)
+                .cost(StatType.PERCENT_AD, 2)
                 .cost(StatType.AP, 4)
                 .cost(StatType.LUCK_CRIT, 3)
                 .cost(StatType.MAX_HP, 2)

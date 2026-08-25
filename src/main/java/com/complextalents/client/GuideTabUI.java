@@ -25,16 +25,18 @@ public class GuideTabUI {
     public List<Button> buildWidgets(Screen screen, int xOffset, int yOffset) {
         List<Button> buttons = new ArrayList<>();
         String[] categoryKeys = {
+            "guide.complextalents.category.how_to_play",
             "guide.complextalents.category.mechanics",
             "guide.complextalents.category.stages",
             "guide.complextalents.category.mastery",
             "guide.complextalents.category.refinement",
             "guide.complextalents.category.spellshield",
             "guide.complextalents.category.reactions",
-            "guide.complextalents.category.stats"
+            "guide.complextalents.category.stats",
+            "guide.complextalents.category.adaptive_armor"
         };
 
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 9; i++) {
             final int pageIdx = i;
             Button btn = Button.builder(Component.translatable(categoryKeys[i]), (button) -> {
                 this.selectedPage = pageIdx;
@@ -43,8 +45,8 @@ public class GuideTabUI {
                     pps.refresh();
                 }
             })
-            .pos(xOffset + 12, yOffset + 15 + (i * 24))
-            .size(110, 20)
+            .pos(xOffset + 12, yOffset + 15 + (i * 22))
+            .size(110, 18)
             .build();
             btn.active = (pageIdx != selectedPage);
             buttons.add(btn);
@@ -83,6 +85,19 @@ public class GuideTabUI {
         List<Component> list = new ArrayList<>();
         switch (page) {
             case 0:
+                list.add(Component.translatable("guide.complextalents.how_to_play.p1"));
+                list.add(Component.literal(""));
+                list.add(Component.translatable("guide.complextalents.how_to_play.p2"));
+                list.add(Component.literal(""));
+                list.add(Component.translatable("guide.complextalents.how_to_play.p3"));
+                list.add(Component.literal(""));
+                list.add(Component.translatable("guide.complextalents.how_to_play.p4"));
+                list.add(Component.literal(""));
+                list.add(Component.translatable("guide.complextalents.how_to_play.p5"));
+                list.add(Component.literal(""));
+                list.add(Component.translatable("guide.complextalents.how_to_play.p6"));
+                break;
+            case 1:
                 list.add(Component.translatable("guide.complextalents.mechanics.p1"));
                 list.add(Component.literal(""));
                 list.add(Component.translatable("guide.complextalents.mechanics.p2"));
@@ -91,14 +106,14 @@ public class GuideTabUI {
                 list.add(Component.literal(""));
                 list.add(Component.translatable("guide.complextalents.mechanics.p4"));
                 break;
-            case 1:
+            case 2:
                 list.add(Component.translatable("guide.complextalents.stages.p1"));
                 list.add(Component.literal(""));
                 list.add(Component.translatable("guide.complextalents.stages.p2"));
                 list.add(Component.literal(""));
                 list.add(Component.translatable("guide.complextalents.stages.p3"));
                 break;
-            case 2:
+            case 3:
                 list.add(Component.translatable("guide.complextalents.mastery.intro"));
                 list.add(Component.literal(""));
                 list.add(Component.translatable("guide.complextalents.mastery.melee.title"));
@@ -131,7 +146,7 @@ public class GuideTabUI {
                 list.add(Component.translatable("guide.complextalents.mastery.spell.bullet4"));
                 list.add(Component.translatable("guide.complextalents.mastery.spell.bullet5"));
                 break;
-            case 3:
+            case 4:
                 list.add(Component.translatable("guide.complextalents.refinement.intro"));
                 list.add(Component.literal(""));
                 list.add(Component.translatable("guide.complextalents.refinement.melee.title"));
@@ -149,7 +164,7 @@ public class GuideTabUI {
                 list.add(Component.translatable("guide.complextalents.refinement.magic.bullet2"));
                 list.add(Component.translatable("guide.complextalents.refinement.magic.bullet3"));
                 break;
-            case 4:
+            case 5:
                 list.add(Component.translatable("guide.complextalents.spellshield.intro"));
                 list.add(Component.literal(""));
                 list.add(Component.translatable("guide.complextalents.spellshield.elemental.title"));
@@ -167,7 +182,7 @@ public class GuideTabUI {
                 list.add(Component.translatable("guide.complextalents.spellshield.arcane.eldritch"));
                 list.add(Component.translatable("guide.complextalents.spellshield.arcane.blood"));
                 break;
-            case 5:
+            case 6:
                 list.add(Component.translatable("guide.complextalents.reactions.intro"));
                 list.add(Component.literal(""));
                 list.add(Component.translatable("guide.complextalents.reactions.vaporize"));
@@ -190,7 +205,7 @@ public class GuideTabUI {
                 list.add(Component.literal(""));
                 list.add(Component.translatable("guide.complextalents.reactions.overgrowth"));
                 break;
-            case 6:
+            case 7:
                 list.add(Component.translatable("guide.complextalents.stats.intro"));
                 list.add(Component.literal(""));
                 list.add(Component.translatable("guide.complextalents.stats.flat_ad"));
@@ -227,6 +242,17 @@ public class GuideTabUI {
                 list.add(Component.literal(""));
                 list.add(Component.translatable("guide.complextalents.stats.luck_crit"));
                 break;
+            case 8:
+                list.add(Component.translatable("guide.complextalents.adaptive_armor.p1"));
+                list.add(Component.literal(""));
+                list.add(Component.translatable("guide.complextalents.adaptive_armor.p1_window"));
+                list.add(Component.literal(""));
+                list.add(Component.translatable("guide.complextalents.adaptive_armor.p2"));
+                list.add(Component.literal(""));
+                list.add(Component.translatable("guide.complextalents.adaptive_armor.p3"));
+                list.add(Component.literal(""));
+                list.add(Component.translatable("guide.complextalents.adaptive_armor.p4"));
+                break;
         }
         return list;
     }
@@ -257,13 +283,15 @@ public class GuideTabUI {
         // Render Title
         String titleKey = "";
         switch (selectedPage) {
-            case 0 -> titleKey = "guide.complextalents.mechanics.title";
-            case 1 -> titleKey = "guide.complextalents.stages.title";
-            case 2 -> titleKey = "guide.complextalents.mastery.title";
-            case 3 -> titleKey = "guide.complextalents.refinement.title";
-            case 4 -> titleKey = "guide.complextalents.spellshield.title";
-            case 5 -> titleKey = "guide.complextalents.reactions.title";
-            case 6 -> titleKey = "guide.complextalents.stats.title";
+            case 0 -> titleKey = "guide.complextalents.how_to_play.title";
+            case 1 -> titleKey = "guide.complextalents.mechanics.title";
+            case 2 -> titleKey = "guide.complextalents.stages.title";
+            case 3 -> titleKey = "guide.complextalents.mastery.title";
+            case 4 -> titleKey = "guide.complextalents.refinement.title";
+            case 5 -> titleKey = "guide.complextalents.spellshield.title";
+            case 6 -> titleKey = "guide.complextalents.reactions.title";
+            case 7 -> titleKey = "guide.complextalents.stats.title";
+            case 8 -> titleKey = "guide.complextalents.adaptive_armor.title";
         }
         g.drawString(font, Component.translatable(titleKey), rightX + 10, yOffset + 15, 0xFFFFFF, false);
         g.fill(rightX + 10, yOffset + 27, rightX + 350, yOffset + 28, 0xFF3D4258);

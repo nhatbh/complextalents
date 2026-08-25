@@ -1,0 +1,5342 @@
+{
+  "PISTOL": [
+    {
+      "gun_id": "maxstuff:af2011",
+      "gun_name": "af2011",
+      "tier": "Captain",
+      "ttk": 9.21,
+      "dps": 26.6,
+      "burst_dps": 63.3,
+      "role_score": 25.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 0.0,
+        "burst_ratio": 69.0,
+        "poise_break_time": 5.4
+      }
+    },
+    {
+      "gun_id": "tacz:deagle",
+      "gun_name": "deagle",
+      "tier": "Captain",
+      "ttk": 5.05,
+      "dps": 23.0,
+      "burst_dps": 41.3,
+      "role_score": 48.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 39.8,
+        "poise_break_time": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:glock_17",
+      "gun_name": "glock_17",
+      "tier": "Trooper",
+      "ttk": 19.75,
+      "dps": 19.4,
+      "burst_dps": 23.0,
+      "role_score": 24.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 30.6,
+        "burst_ratio": 9.3,
+        "poise_break_time": 34.4
+      }
+    },
+    {
+      "gun_id": "tacz:m51",
+      "gun_name": "m51",
+      "tier": "Recruit",
+      "ttk": 45.1,
+      "dps": 8.1,
+      "burst_dps": 13.2,
+      "role_score": 28.5,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 25.3,
+        "burst_ratio": 31.5,
+        "poise_break_time": 28.8
+      }
+    },
+    {
+      "gun_id": "tacz:mac11",
+      "gun_name": "mac11",
+      "tier": "Trooper",
+      "ttk": 15.05,
+      "dps": 25.4,
+      "burst_dps": 42.4,
+      "role_score": 39.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 43.2,
+        "burst_ratio": 33.5,
+        "poise_break_time": 40.8
+      }
+    },
+    {
+      "gun_id": "tacz:mac10",
+      "gun_name": "mac10",
+      "tier": "Sergeant",
+      "ttk": 10.8,
+      "dps": 35.3,
+      "burst_dps": 52.5,
+      "role_score": 14.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 2.5,
+        "burst_ratio": 24.4,
+        "poise_break_time": 15.2
+      }
+    },
+    {
+      "gun_id": "tacz:grizzly",
+      "gun_name": "grizzly",
+      "tier": "Trooper",
+      "ttk": 14.1,
+      "dps": 11.8,
+      "burst_dps": 33.2,
+      "role_score": 66.7,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 90.7,
+        "poise_break_time": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:glock_bulpup",
+      "gun_name": "glock_bulpup",
+      "tier": "Trooper",
+      "ttk": 21.1,
+      "dps": 17.9,
+      "burst_dps": 20.3,
+      "role_score": 23.6,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 31.3,
+        "burst_ratio": 6.7,
+        "poise_break_time": 34.2
+      }
+    },
+    {
+      "gun_id": "tacz:pm",
+      "gun_name": "pm",
+      "tier": "Recruit",
+      "ttk": 25.3,
+      "dps": 15.1,
+      "burst_dps": 21.6,
+      "role_score": 27.9,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 29.5,
+        "burst_ratio": 21.5,
+        "poise_break_time": 33.6
+      }
+    },
+    {
+      "gun_id": "maxstuff:deagle_12g",
+      "gun_name": "deagle_12g",
+      "tier": "Sergeant",
+      "ttk": 12.8,
+      "dps": 29.7,
+      "burst_dps": 49.1,
+      "role_score": 38.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 42.4,
+        "burst_ratio": 32.7,
+        "poise_break_time": 40.2
+      }
+    },
+    {
+      "gun_id": "tacz:cz75s",
+      "gun_name": "cz75s",
+      "tier": "Recruit",
+      "ttk": 25.85,
+      "dps": 14.6,
+      "burst_dps": 18.2,
+      "role_score": 21.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 22.7,
+        "burst_ratio": 12.3,
+        "poise_break_time": 29.6
+      }
+    },
+    {
+      "gun_id": "maxstuff:thunderbird_short",
+      "gun_name": "thunderbird_short",
+      "tier": "Captain",
+      "ttk": 3.15,
+      "dps": 35.4,
+      "burst_dps": 125.1,
+      "role_score": 70.0,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 100.0,
+        "poise_break_time": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:timeless50",
+      "gun_name": "timeless50",
+      "tier": "Captain",
+      "ttk": 9.35,
+      "dps": 15.0,
+      "burst_dps": 30.8,
+      "role_score": 53.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 52.7,
+        "poise_break_time": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:m17",
+      "gun_name": "m17",
+      "tier": "Recruit",
+      "ttk": 26.6,
+      "dps": 14.3,
+      "burst_dps": 19.7,
+      "role_score": 24.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 25.4,
+        "burst_ratio": 18.9,
+        "poise_break_time": 31.1
+      }
+    },
+    {
+      "gun_id": "tacz:rsh12",
+      "gun_name": "rsh12",
+      "tier": "Captain",
+      "ttk": 3.0,
+      "dps": 36.1,
+      "burst_dps": 36.1,
+      "role_score": 35.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 0.0,
+        "poise_break_time": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:g44",
+      "gun_name": "g44",
+      "tier": "Recruit",
+      "ttk": 47.9,
+      "dps": 7.9,
+      "burst_dps": 10.6,
+      "role_score": 27.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 28.3,
+        "burst_ratio": 17.1,
+        "poise_break_time": 37.3
+      }
+    },
+    {
+      "gun_id": "tacz:m1911a1",
+      "gun_name": "m1911a1",
+      "tier": "Trooper",
+      "ttk": 19.7,
+      "dps": 14.0,
+      "burst_dps": 43.9,
+      "role_score": 36.6,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 0.0,
+        "burst_ratio": 100.0,
+        "poise_break_time": 5.4
+      }
+    },
+    {
+      "gun_id": "tacz:mustang",
+      "gun_name": "mustang",
+      "tier": "Recruit",
+      "ttk": 57.4,
+      "dps": 6.6,
+      "burst_dps": 16.9,
+      "role_score": 47.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": true,
+      "dim_scores": {
+        "phase_balance": 30.3,
+        "burst_ratio": 78.0,
+        "poise_break_time": 33.1
+      }
+    },
+    {
+      "gun_id": "tacz:cz75",
+      "gun_name": "cz75",
+      "tier": "Recruit",
+      "ttk": 27.7,
+      "dps": 13.6,
+      "burst_dps": 30.7,
+      "role_score": 43.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 31.7,
+        "burst_ratio": 62.9,
+        "poise_break_time": 34.0
+      }
+    },
+    {
+      "gun_id": "tacz:m9",
+      "gun_name": "m9",
+      "tier": "Recruit",
+      "ttk": 23.75,
+      "dps": 15.5,
+      "burst_dps": 20.9,
+      "role_score": 23.7,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 24.9,
+        "burst_ratio": 17.4,
+        "poise_break_time": 29.5
+      }
+    },
+    {
+      "gun_id": "maxstuff:glock_54",
+      "gun_name": "glock_54",
+      "tier": "Sergeant",
+      "ttk": 12.2,
+      "dps": 29.3,
+      "burst_dps": 30.8,
+      "role_score": 10.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 9.9,
+        "burst_ratio": 2.6,
+        "poise_break_time": 19.3
+      }
+    },
+    {
+      "gun_id": "tacz:p320",
+      "gun_name": "p320",
+      "tier": "Sergeant",
+      "ttk": 13.5,
+      "dps": 18.1,
+      "burst_dps": 41.3,
+      "role_score": 67.3,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 64.1,
+        "poise_break_time": 32.8
+      }
+    },
+    {
+      "gun_id": "tacz:cph",
+      "gun_name": "cph",
+      "tier": "Recruit",
+      "ttk": 51.15,
+      "dps": 7.5,
+      "burst_dps": 17.5,
+      "role_score": 44.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 31.5,
+        "burst_ratio": 66.7,
+        "poise_break_time": 35.2
+      }
+    },
+    {
+      "gun_id": "tacz:hk_mk23",
+      "gun_name": "hk_mk23",
+      "tier": "Sergeant",
+      "ttk": 11.45,
+      "dps": 16.1,
+      "burst_dps": 27.9,
+      "role_score": 47.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 36.6,
+        "poise_break_time": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:m1895",
+      "gun_name": "m1895",
+      "tier": "General",
+      "ttk": 1.5,
+      "dps": 72.5,
+      "burst_dps": 76.5,
+      "role_score": 36.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 2.8,
+        "poise_break_time": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:thunderbird",
+      "gun_name": "thunderbird",
+      "tier": "Captain",
+      "ttk": 2.95,
+      "dps": 34.7,
+      "burst_dps": 129.1,
+      "role_score": 70.0,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 100.0,
+        "poise_break_time": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:c96",
+      "gun_name": "c96",
+      "tier": "Trooper",
+      "ttk": 22.85,
+      "dps": 15.2,
+      "burst_dps": 32.9,
+      "role_score": 39.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 28.7,
+        "burst_ratio": 58.2,
+        "poise_break_time": 28.8
+      }
+    },
+    {
+      "gun_id": "tacz:p38",
+      "gun_name": "p38",
+      "tier": "Recruit",
+      "ttk": 39.25,
+      "dps": 9.4,
+      "burst_dps": 19.4,
+      "role_score": 36.6,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 25.8,
+        "burst_ratio": 53.2,
+        "poise_break_time": 29.7
+      }
+    },
+    {
+      "gun_id": "maxstuff:mk23",
+      "gun_name": "mk23",
+      "tier": "Sergeant",
+      "ttk": 9.65,
+      "dps": 22.0,
+      "burst_dps": 44.3,
+      "role_score": 18.4,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 0.0,
+        "burst_ratio": 50.7,
+        "poise_break_time": 2.2
+      }
+    },
+    {
+      "gun_id": "maxstuff:1851_navy",
+      "gun_name": "1851_navy",
+      "tier": "Recruit",
+      "ttk": 44.75,
+      "dps": 4.0,
+      "burst_dps": 5.1,
+      "role_score": 39.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 13.7,
+        "poise_break_time": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:deagle_50bmg",
+      "gun_name": "deagle_50bmg",
+      "tier": "General",
+      "ttk": 0.2,
+      "dps": 799.5,
+      "burst_dps": 799.5,
+      "role_score": 35.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 0.0,
+        "poise_break_time": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:g19",
+      "gun_name": "g19",
+      "tier": "Trooper",
+      "ttk": 19.0,
+      "dps": 19.2,
+      "burst_dps": 24.4,
+      "role_score": 26.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 32.5,
+        "burst_ratio": 13.5,
+        "poise_break_time": 33.5
+      }
+    },
+    {
+      "gun_id": "tacz:g18",
+      "gun_name": "g18",
+      "tier": "Sergeant",
+      "ttk": 12.6,
+      "dps": 29.9,
+      "burst_dps": 57.4,
+      "role_score": 38.5,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 33.8,
+        "burst_ratio": 46.0,
+        "poise_break_time": 35.1
+      }
+    },
+    {
+      "gun_id": "tacz:p35",
+      "gun_name": "p35",
+      "tier": "Trooper",
+      "ttk": 19.95,
+      "dps": 18.0,
+      "burst_dps": 24.2,
+      "role_score": 27.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 31.7,
+        "burst_ratio": 17.2,
+        "poise_break_time": 32.9
+      }
+    },
+    {
+      "gun_id": "tacz:g21",
+      "gun_name": "g21",
+      "tier": "Trooper",
+      "ttk": 14.25,
+      "dps": 18.4,
+      "burst_dps": 28.2,
+      "role_score": 46.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 81.9,
+        "burst_ratio": 26.6,
+        "poise_break_time": 28.1
+      }
+    },
+    {
+      "gun_id": "tacz:lonetrail",
+      "gun_name": "lonetrail",
+      "tier": "Trooper",
+      "ttk": 18.6,
+      "dps": 5.6,
+      "burst_dps": 258.7,
+      "role_score": 70.0,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 100.0,
+        "poise_break_time": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:usp45",
+      "gun_name": "usp45",
+      "tier": "Sergeant",
+      "ttk": 11.0,
+      "dps": 16.8,
+      "burst_dps": 38.1,
+      "role_score": 57.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 63.4,
+        "poise_break_time": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:b93r",
+      "gun_name": "b93r",
+      "tier": "Trooper",
+      "ttk": 22.3,
+      "dps": 16.8,
+      "burst_dps": 18.9,
+      "role_score": 21.9,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 28.6,
+        "burst_ratio": 6.2,
+        "poise_break_time": 32.4
+      }
+    },
+    {
+      "gun_id": "tacz:tt33",
+      "gun_name": "tt33",
+      "tier": "Recruit",
+      "ttk": 30.8,
+      "dps": 11.8,
+      "burst_dps": 28.7,
+      "role_score": 48.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 36.8,
+        "burst_ratio": 71.6,
+        "poise_break_time": 34.3
+      }
+    },
+    {
+      "gun_id": "maxstuff:c96",
+      "gun_name": "c96",
+      "tier": "Recruit",
+      "ttk": 39.95,
+      "dps": 9.3,
+      "burst_dps": 16.6,
+      "role_score": 37.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 36.2,
+        "burst_ratio": 39.2,
+        "poise_break_time": 35.8
+      }
+    },
+    {
+      "gun_id": "tacz:deagle_golden",
+      "gun_name": "deagle_golden",
+      "tier": "Captain",
+      "ttk": 9.5,
+      "dps": 17.9,
+      "burst_dps": 39.4,
+      "role_score": 56.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 60.1,
+        "poise_break_time": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:m1911",
+      "gun_name": "m1911",
+      "tier": "Trooper",
+      "ttk": 19.7,
+      "dps": 13.3,
+      "burst_dps": 32.2,
+      "role_score": 26.6,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 0.0,
+        "burst_ratio": 71.1,
+        "poise_break_time": 5.8
+      }
+    },
+    {
+      "gun_id": "tacz:p08",
+      "gun_name": "p08",
+      "tier": "Recruit",
+      "ttk": 35.95,
+      "dps": 10.2,
+      "burst_dps": 17.0,
+      "role_score": 24.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 15.4,
+        "burst_ratio": 33.3,
+        "poise_break_time": 23.2
+      }
+    },
+    {
+      "gun_id": "maxstuff:glock_18c",
+      "gun_name": "glock_18c",
+      "tier": "Sergeant",
+      "ttk": 12.75,
+      "dps": 29.1,
+      "burst_dps": 58.7,
+      "role_score": 40.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 33.7,
+        "burst_ratio": 50.9,
+        "poise_break_time": 34.7
+      }
+    },
+    {
+      "gun_id": "tacz:ppk",
+      "gun_name": "ppk",
+      "tier": "Sergeant",
+      "ttk": 13.45,
+      "dps": 14.6,
+      "burst_dps": 48.2,
+      "role_score": 70.0,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 100.0,
+        "poise_break_time": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:blicky",
+      "gun_name": "blicky",
+      "tier": "General",
+      "ttk": 0.1,
+      "dps": 960.6,
+      "burst_dps": 960.6,
+      "role_score": 35.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 0.0,
+        "poise_break_time": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:m9a4",
+      "gun_name": "m9a4",
+      "tier": "Trooper",
+      "ttk": 20.65,
+      "dps": 18.0,
+      "burst_dps": 20.9,
+      "role_score": 22.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 28.5,
+        "burst_ratio": 8.1,
+        "poise_break_time": 31.8
+      }
+    },
+    {
+      "gun_id": "tacz:no3",
+      "gun_name": "no3",
+      "tier": "Sergeant",
+      "ttk": 12.5,
+      "dps": 10.0,
+      "burst_dps": 17.2,
+      "role_score": 47.6,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "burst_ratio": 36.0,
+        "poise_break_time": 0.0
+      }
+    }
+  ],
+  "SNIPER": [
+    {
+      "gun_id": "tacz:psg1",
+      "gun_name": "psg1",
+      "tier": "Trooper",
+      "ttk": 6.75,
+      "dps": 92.6,
+      "burst_dps": 197.9,
+      "role_score": 27.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 22.0,
+        "poise_break_time": 28.6,
+        "burst_ratio": 37.9
+      }
+    },
+    {
+      "gun_id": "tacz:mosin",
+      "gun_name": "mosin",
+      "tier": "Trooper",
+      "ttk": 8.55,
+      "dps": 66.3,
+      "burst_dps": 66.4,
+      "role_score": 20.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 67.7,
+        "burst_ratio": 0.1
+      }
+    },
+    {
+      "gun_id": "tacz:kar98k",
+      "gun_name": "kar98k",
+      "tier": "Trooper",
+      "ttk": 9.25,
+      "dps": 60.9,
+      "burst_dps": 62.5,
+      "role_score": 20.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 66.4,
+        "burst_ratio": 0.9
+      }
+    },
+    {
+      "gun_id": "tacz:dragunov",
+      "gun_name": "dragunov",
+      "tier": "Captain",
+      "ttk": 2.4,
+      "dps": 225.9,
+      "burst_dps": 229.3,
+      "role_score": 14.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 7.9,
+        "poise_break_time": 35.7,
+        "burst_ratio": 0.5
+      }
+    },
+    {
+      "gun_id": "tacz:springfield1873",
+      "gun_name": "springfield1873",
+      "tier": "Trooper",
+      "ttk": 22.75,
+      "dps": 20.7,
+      "burst_dps": 20.7,
+      "role_score": 56.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 20.4,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:mini_fix",
+      "gun_name": "mini_fix",
+      "tier": "Trooper",
+      "ttk": 34.2,
+      "dps": 18.8,
+      "burst_dps": 18.0,
+      "role_score": 17.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 2.5,
+        "poise_break_time": 52.6,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:dragonuv_svd",
+      "gun_name": "dragonuv_svd",
+      "tier": "Sergeant",
+      "ttk": 5.65,
+      "dps": 112.0,
+      "burst_dps": 362.2,
+      "role_score": 44.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 100.0,
+        "burst_ratio": 74.5
+      }
+    },
+    {
+      "gun_id": "maxstuff:msr",
+      "gun_name": "msr",
+      "tier": "Trooper",
+      "ttk": 9.0,
+      "dps": 62.6,
+      "burst_dps": 62.6,
+      "role_score": 18.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 2.1,
+        "poise_break_time": 57.1,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:excaliber",
+      "gun_name": "excaliber",
+      "tier": "General",
+      "ttk": 0.15,
+      "dps": 3849.3,
+      "burst_dps": 3849.3,
+      "role_score": 0.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:intervention",
+      "gun_name": "intervention",
+      "tier": "Captain",
+      "ttk": 2.7,
+      "dps": 160.1,
+      "burst_dps": 160.1,
+      "role_score": 0.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:m1903",
+      "gun_name": "m1903",
+      "tier": "Trooper",
+      "ttk": 9.25,
+      "dps": 60.9,
+      "burst_dps": 62.5,
+      "role_score": 20.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 66.4,
+        "burst_ratio": 0.9
+      }
+    },
+    {
+      "gun_id": "tacz:svt_40",
+      "gun_name": "svt_40",
+      "tier": "Sergeant",
+      "ttk": 6.55,
+      "dps": 89.6,
+      "burst_dps": 160.1,
+      "role_score": 35.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 5.8,
+        "poise_break_time": 90.5,
+        "burst_ratio": 26.2
+      }
+    },
+    {
+      "gun_id": "tacz:m70",
+      "gun_name": "m70",
+      "tier": "Trooper",
+      "ttk": 9.9,
+      "dps": 50.6,
+      "burst_dps": 62.4,
+      "role_score": 56.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 17.3,
+        "burst_ratio": 7.8
+      }
+    },
+    {
+      "gun_id": "tacz:kar98",
+      "gun_name": "kar98",
+      "tier": "Trooper",
+      "ttk": 11.95,
+      "dps": 43.9,
+      "burst_dps": 51.3,
+      "role_score": 17.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 15.2,
+        "poise_break_time": 28.7,
+        "burst_ratio": 5.6
+      }
+    },
+    {
+      "gun_id": "tacz:hk_sl8",
+      "gun_name": "hk_sl8",
+      "tier": "Sergeant",
+      "ttk": 5.95,
+      "dps": 106.5,
+      "burst_dps": 225.9,
+      "role_score": 27.9,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 25.8,
+        "poise_break_time": 25.2,
+        "burst_ratio": 37.4
+      }
+    },
+    {
+      "gun_id": "tacz:1881",
+      "gun_name": "1881",
+      "tier": "Sergeant",
+      "ttk": 4.5,
+      "dps": 108.0,
+      "burst_dps": 108.0,
+      "role_score": 58.6,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 28.6,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:m40a1",
+      "gun_name": "m40a1",
+      "tier": "Trooper",
+      "ttk": 11.35,
+      "dps": 44.9,
+      "burst_dps": 55.7,
+      "role_score": 19.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 17.1,
+        "poise_break_time": 29.6,
+        "burst_ratio": 8.0
+      }
+    },
+    {
+      "gun_id": "tacz:vss",
+      "gun_name": "vss",
+      "tier": "Trooper",
+      "ttk": 11.35,
+      "dps": 63.7,
+      "burst_dps": 271.3,
+      "role_score": 46.6,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 88.7,
+        "burst_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:kar98",
+      "gun_name": "kar98",
+      "tier": "Trooper",
+      "ttk": 27.6,
+      "dps": 22.1,
+      "burst_dps": 30.7,
+      "role_score": 18.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.6,
+        "poise_break_time": 50.5,
+        "burst_ratio": 13.0
+      }
+    },
+    {
+      "gun_id": "tacz:l42a1",
+      "gun_name": "l42a1",
+      "tier": "Trooper",
+      "ttk": 9.0,
+      "dps": 58.1,
+      "burst_dps": 58.1,
+      "role_score": 57.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 23.8,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:1873",
+      "gun_name": "1873",
+      "tier": "Trooper",
+      "ttk": 12.75,
+      "dps": 46.7,
+      "burst_dps": 55.0,
+      "role_score": 21.9,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 68.9,
+        "burst_ratio": 5.9
+      }
+    },
+    {
+      "gun_id": "tacz:vsk",
+      "gun_name": "vsk",
+      "tier": "Sergeant",
+      "ttk": 5.85,
+      "dps": 125.1,
+      "burst_dps": 229.4,
+      "role_score": 36.5,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 1.9,
+        "poise_break_time": 100.0,
+        "burst_ratio": 27.8
+      }
+    },
+    {
+      "gun_id": "maxstuff:gm6_lynx",
+      "gun_name": "gm6_lynx",
+      "tier": "General",
+      "ttk": 0.9,
+      "dps": 562.1,
+      "burst_dps": 562.1,
+      "role_score": 0.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:m1g",
+      "gun_name": "m1g",
+      "tier": "Sergeant",
+      "ttk": 5.1,
+      "dps": 113.0,
+      "burst_dps": 253.8,
+      "role_score": 27.4,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 25.5,
+        "poise_break_time": 21.0,
+        "burst_ratio": 41.5
+      }
+    },
+    {
+      "gun_id": "tacz:m21",
+      "gun_name": "m21",
+      "tier": "Sergeant",
+      "ttk": 6.7,
+      "dps": 84.5,
+      "burst_dps": 155.2,
+      "role_score": 32.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 88.5,
+        "burst_ratio": 27.9
+      }
+    },
+    {
+      "gun_id": "maxstuff:ai_awp",
+      "gun_name": "ai_awp",
+      "tier": "Trooper",
+      "ttk": 11.85,
+      "dps": 47.2,
+      "burst_dps": 47.2,
+      "role_score": 16.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 1.0,
+        "poise_break_time": 54.2,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:ai_aws",
+      "gun_name": "ai_aws",
+      "tier": "Trooper",
+      "ttk": 11.85,
+      "dps": 49.2,
+      "burst_dps": 49.2,
+      "role_score": 16.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 1.0,
+        "poise_break_time": 54.2,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:m700",
+      "gun_name": "m700",
+      "tier": "Trooper",
+      "ttk": 12.55,
+      "dps": 41.7,
+      "burst_dps": 49.2,
+      "role_score": 17.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 16.9,
+        "poise_break_time": 27.3,
+        "burst_ratio": 6.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:mrad",
+      "gun_name": "mrad",
+      "tier": "Captain",
+      "ttk": 3.9,
+      "dps": 130.7,
+      "burst_dps": 130.7,
+      "role_score": 0.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:m82a2",
+      "gun_name": "m82a2",
+      "tier": "General",
+      "ttk": 0.3,
+      "dps": 2195.8,
+      "burst_dps": 2195.8,
+      "role_score": 22.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 2.8,
+        "poise_break_time": 71.4,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:scar_ssr",
+      "gun_name": "scar_ssr",
+      "tier": "General",
+      "ttk": 1.5,
+      "dps": 347.2,
+      "burst_dps": 347.2,
+      "role_score": 14.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 11.4,
+        "poise_break_time": 28.6,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:ar338",
+      "gun_name": "ar338",
+      "tier": "Captain",
+      "ttk": 3.75,
+      "dps": 145.5,
+      "burst_dps": 584.1,
+      "role_score": 53.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 60.8,
+        "poise_break_time": 11.4,
+        "burst_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "tacz:ai_awp",
+      "gun_name": "ai_awp",
+      "tier": "Sergeant",
+      "ttk": 4.5,
+      "dps": 114.7,
+      "burst_dps": 114.7,
+      "role_score": 64.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 47.3,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:tac338",
+      "gun_name": "tac338",
+      "tier": "Sergeant",
+      "ttk": 5.4,
+      "dps": 100.9,
+      "burst_dps": 82.2,
+      "role_score": 60.7,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 35.7,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:4570",
+      "gun_name": "4570",
+      "tier": "Sergeant",
+      "ttk": 4.65,
+      "dps": 104.4,
+      "burst_dps": 104.4,
+      "role_score": 58.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 27.6,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:sr25",
+      "gun_name": "sr25",
+      "tier": "Captain",
+      "ttk": 4.15,
+      "dps": 143.7,
+      "burst_dps": 545.1,
+      "role_score": 44.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 41.7,
+        "poise_break_time": 15.5,
+        "burst_ratio": 93.1
+      }
+    },
+    {
+      "gun_id": "tacz:gew96",
+      "gun_name": "gew96",
+      "tier": "Trooper",
+      "ttk": 10.9,
+      "dps": 52.3,
+      "burst_dps": 52.1,
+      "role_score": 19.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 4.8,
+        "poise_break_time": 56.4,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:m107",
+      "gun_name": "m107",
+      "tier": "Captain",
+      "ttk": 1.95,
+      "dps": 278.8,
+      "burst_dps": 278.8,
+      "role_score": 39.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 58.4,
+        "poise_break_time": 33.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:l96a1",
+      "gun_name": "l96a1",
+      "tier": "Sergeant",
+      "ttk": 6.0,
+      "dps": 88.1,
+      "burst_dps": 88.1,
+      "role_score": 60.7,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 35.7,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:m82a1",
+      "gun_name": "m82a1",
+      "tier": "Captain",
+      "ttk": 2.4,
+      "dps": 226.7,
+      "burst_dps": 226.7,
+      "role_score": 46.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 72.3,
+        "poise_break_time": 35.7,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:m110",
+      "gun_name": "m110",
+      "tier": "Captain",
+      "ttk": 4.15,
+      "dps": 143.7,
+      "burst_dps": 545.1,
+      "role_score": 43.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 41.3,
+        "poise_break_time": 15.5,
+        "burst_ratio": 93.1
+      }
+    },
+    {
+      "gun_id": "maxstuff:dragonuv_svds",
+      "gun_name": "dragonuv_svds",
+      "tier": "Sergeant",
+      "ttk": 5.65,
+      "dps": 108.1,
+      "burst_dps": 361.6,
+      "role_score": 45.6,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 100.0,
+        "burst_ratio": 78.2
+      }
+    },
+    {
+      "gun_id": "maxstuff:dragonuv_svdm",
+      "gun_name": "dragonuv_svdm",
+      "tier": "Sergeant",
+      "ttk": 5.65,
+      "dps": 108.1,
+      "burst_dps": 363.1,
+      "role_score": 45.7,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 100.0,
+        "burst_ratio": 78.6
+      }
+    },
+    {
+      "gun_id": "tacz:m95",
+      "gun_name": "m95",
+      "tier": "Captain",
+      "ttk": 1.95,
+      "dps": 336.4,
+      "burst_dps": 336.4,
+      "role_score": 30.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 100.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:mk18_mjolnir",
+      "gun_name": "mk18_mjolnir",
+      "tier": "General",
+      "ttk": 1.2,
+      "dps": 424.8,
+      "burst_dps": 424.8,
+      "role_score": 33.5,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 45.6,
+        "poise_break_time": 35.7,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:no4",
+      "gun_name": "no4",
+      "tier": "Sergeant",
+      "ttk": 6.3,
+      "dps": 74.8,
+      "burst_dps": 74.8,
+      "role_score": 57.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 23.8,
+        "burst_ratio": 0.0
+      }
+    }
+  ],
+  "RIFLE": [
+    {
+      "gun_id": "maxstuff:ak9",
+      "gun_name": "ak9",
+      "tier": "Captain",
+      "ttk": 5.35,
+      "dps": 53.3,
+      "burst_dps": 76.2,
+      "role_score": 34.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 4.3,
+        "execute_ratio": 100.0,
+        "burst_ratio": 28.6
+      }
+    },
+    {
+      "gun_id": "maxstuff:ak63e",
+      "gun_name": "ak63e",
+      "tier": "Trooper",
+      "ttk": 11.15,
+      "dps": 33.6,
+      "burst_dps": 46.3,
+      "role_score": 37.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 11.9,
+        "execute_ratio": 100.0,
+        "burst_ratio": 25.2
+      }
+    },
+    {
+      "gun_id": "tacz:l1a1",
+      "gun_name": "l1a1",
+      "tier": "General",
+      "ttk": 2.4,
+      "dps": 58.4,
+      "burst_dps": 58.4,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:m1_garand",
+      "gun_name": "m1_garand",
+      "tier": "Captain",
+      "ttk": 6.2,
+      "dps": 25.0,
+      "burst_dps": 42.1,
+      "role_score": 61.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 45.6
+      }
+    },
+    {
+      "gun_id": "tacz:g3ka4",
+      "gun_name": "g3ka4",
+      "tier": "Sergeant",
+      "ttk": 8.65,
+      "dps": 31.1,
+      "burst_dps": 43.5,
+      "role_score": 37.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 11.2,
+        "execute_ratio": 100.0,
+        "burst_ratio": 26.6
+      }
+    },
+    {
+      "gun_id": "maxstuff:honey_badger",
+      "gun_name": "honey_badger",
+      "tier": "Trooper",
+      "ttk": 10.9,
+      "dps": 34.3,
+      "burst_dps": 53.4,
+      "role_score": 54.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 71.6,
+        "execute_ratio": 39.5,
+        "burst_ratio": 37.1
+      }
+    },
+    {
+      "gun_id": "tacz:m4burst",
+      "gun_name": "m4burst",
+      "tier": "Trooper",
+      "ttk": 15.5,
+      "dps": 23.9,
+      "burst_dps": 26.9,
+      "role_score": 43.5,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 56.8,
+        "execute_ratio": 52.1,
+        "burst_ratio": 8.4
+      }
+    },
+    {
+      "gun_id": "maxstuff:beowulf_tcr",
+      "gun_name": "beowulf_tcr",
+      "tier": "Captain",
+      "ttk": 3.75,
+      "dps": 45.3,
+      "burst_dps": 139.8,
+      "role_score": 75.0,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:aks74u",
+      "gun_name": "aks74u",
+      "tier": "Trooper",
+      "ttk": 11.75,
+      "dps": 32.1,
+      "burst_dps": 42.8,
+      "role_score": 48.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 62.0,
+        "execute_ratio": 47.1,
+        "burst_ratio": 22.2
+      }
+    },
+    {
+      "gun_id": "tacz:hk_g3",
+      "gun_name": "hk_g3",
+      "tier": "Sergeant",
+      "ttk": 8.65,
+      "dps": 31.1,
+      "burst_dps": 43.4,
+      "role_score": 37.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 11.2,
+        "execute_ratio": 100.0,
+        "burst_ratio": 26.4
+      }
+    },
+    {
+      "gun_id": "tacz:nagant1891",
+      "gun_name": "nagant1891",
+      "tier": "Captain",
+      "ttk": 3.0,
+      "dps": 36.6,
+      "burst_dps": 36.6,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:m1_garand_tac",
+      "gun_name": "m1_garand_tac",
+      "tier": "Sergeant",
+      "ttk": 6.8,
+      "dps": 24.2,
+      "burst_dps": 39.2,
+      "role_score": 60.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 41.3
+      }
+    },
+    {
+      "gun_id": "tacz:augs",
+      "gun_name": "augs",
+      "tier": "Sergeant",
+      "ttk": 8.8,
+      "dps": 33.0,
+      "burst_dps": 40.1,
+      "role_score": 33.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 10.5,
+        "execute_ratio": 100.0,
+        "burst_ratio": 14.3
+      }
+    },
+    {
+      "gun_id": "maxstuff:hk417",
+      "gun_name": "hk417",
+      "tier": "Captain",
+      "ttk": 5.95,
+      "dps": 42.1,
+      "burst_dps": 70.4,
+      "role_score": 38.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 3.5,
+        "execute_ratio": 100.0,
+        "burst_ratio": 44.8
+      }
+    },
+    {
+      "gun_id": "tacz:ar18",
+      "gun_name": "ar18",
+      "tier": "Trooper",
+      "ttk": 10.05,
+      "dps": 35.9,
+      "burst_dps": 60.3,
+      "role_score": 38.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 3.9,
+        "execute_ratio": 100.0,
+        "burst_ratio": 45.3
+      }
+    },
+    {
+      "gun_id": "maxstuff:beowulf_ecr",
+      "gun_name": "beowulf_ecr",
+      "tier": "Captain",
+      "ttk": 4.0,
+      "dps": 32.7,
+      "burst_dps": 81.6,
+      "role_score": 74.9,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 99.7
+      }
+    },
+    {
+      "gun_id": "tacz:ar15",
+      "gun_name": "ar15",
+      "tier": "Trooper",
+      "ttk": 10.9,
+      "dps": 35.2,
+      "burst_dps": 32.8,
+      "role_score": 33.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 16.0,
+        "execute_ratio": 100.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:scar_pdw",
+      "gun_name": "scar_pdw",
+      "tier": "Sergeant",
+      "ttk": 6.95,
+      "dps": 52.5,
+      "burst_dps": 61.6,
+      "role_score": 33.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 10.4,
+        "execute_ratio": 100.0,
+        "burst_ratio": 11.6
+      }
+    },
+    {
+      "gun_id": "maxstuff:aks74ub",
+      "gun_name": "aks74ub",
+      "tier": "Trooper",
+      "ttk": 11.8,
+      "dps": 32.0,
+      "burst_dps": 42.9,
+      "role_score": 48.7,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 62.9,
+        "execute_ratio": 46.3,
+        "burst_ratio": 22.7
+      }
+    },
+    {
+      "gun_id": "tacz:m1907",
+      "gun_name": "m1907",
+      "tier": "Trooper",
+      "ttk": 33.8,
+      "dps": 11.1,
+      "burst_dps": 23.4,
+      "role_score": 55.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 23.7,
+        "execute_ratio": 100.0,
+        "burst_ratio": 73.9
+      }
+    },
+    {
+      "gun_id": "tacz:avt40",
+      "gun_name": "avt40",
+      "tier": "General",
+      "ttk": 0.85,
+      "dps": 140.6,
+      "burst_dps": 143.4,
+      "role_score": 50.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 1.3
+      }
+    },
+    {
+      "gun_id": "tacz:l85a1",
+      "gun_name": "l85a1",
+      "tier": "Sergeant",
+      "ttk": 8.0,
+      "dps": 46.7,
+      "burst_dps": 50.0,
+      "role_score": 32.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 12.0,
+        "execute_ratio": 100.0,
+        "burst_ratio": 4.7
+      }
+    },
+    {
+      "gun_id": "tacz:l85a3",
+      "gun_name": "l85a3",
+      "tier": "Sergeant",
+      "ttk": 7.25,
+      "dps": 51.5,
+      "burst_dps": 60.2,
+      "role_score": 33.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 10.9,
+        "execute_ratio": 100.0,
+        "burst_ratio": 11.3
+      }
+    },
+    {
+      "gun_id": "maxstuff:sks_wooden",
+      "gun_name": "sks_wooden",
+      "tier": "Captain",
+      "ttk": 6.5,
+      "dps": 25.4,
+      "burst_dps": 64.4,
+      "role_score": 75.0,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "tacz:qbz_95",
+      "gun_name": "qbz_95",
+      "tier": "Trooper",
+      "ttk": 11.35,
+      "dps": 33.4,
+      "burst_dps": 45.0,
+      "role_score": 48.7,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 62.3,
+        "execute_ratio": 46.9,
+        "burst_ratio": 23.2
+      }
+    },
+    {
+      "gun_id": "tacz:pa15",
+      "gun_name": "pa15",
+      "tier": "Trooper",
+      "ttk": 12.45,
+      "dps": 23.6,
+      "burst_dps": 23.6,
+      "role_score": 31.4,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 12.9,
+        "execute_ratio": 100.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:ak74m",
+      "gun_name": "ak74m",
+      "tier": "Trooper",
+      "ttk": 12.3,
+      "dps": 30.4,
+      "burst_dps": 38.3,
+      "role_score": 46.7,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 60.6,
+        "execute_ratio": 48.4,
+        "burst_ratio": 17.3
+      }
+    },
+    {
+      "gun_id": "maxstuff:z15_a",
+      "gun_name": "z15_a",
+      "tier": "Sergeant",
+      "ttk": 9.45,
+      "dps": 39.0,
+      "burst_dps": 56.5,
+      "role_score": 52.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 68.9,
+        "execute_ratio": 41.4,
+        "burst_ratio": 29.9
+      }
+    },
+    {
+      "gun_id": "tacz:ak101",
+      "gun_name": "ak101",
+      "tier": "Sergeant",
+      "ttk": 8.6,
+      "dps": 42.4,
+      "burst_dps": 42.8,
+      "role_score": 31.9,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 13.6,
+        "execute_ratio": 100.0,
+        "burst_ratio": 0.6
+      }
+    },
+    {
+      "gun_id": "tacz:ak103",
+      "gun_name": "ak103",
+      "tier": "Sergeant",
+      "ttk": 8.0,
+      "dps": 46.0,
+      "burst_dps": 49.1,
+      "role_score": 32.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 12.0,
+        "execute_ratio": 100.0,
+        "burst_ratio": 4.5
+      }
+    },
+    {
+      "gun_id": "maxstuff:brn10",
+      "gun_name": "brn10",
+      "tier": "Captain",
+      "ttk": 6.55,
+      "dps": 29.4,
+      "burst_dps": 52.0,
+      "role_score": 62.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 51.2
+      }
+    },
+    {
+      "gun_id": "maxstuff:ar10b",
+      "gun_name": "ar10b",
+      "tier": "Sergeant",
+      "ttk": 6.7,
+      "dps": 28.7,
+      "burst_dps": 53.3,
+      "role_score": 64.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 57.1
+      }
+    },
+    {
+      "gun_id": "tacz:avs36",
+      "gun_name": "avs36",
+      "tier": "General",
+      "ttk": 0.85,
+      "dps": 140.8,
+      "burst_dps": 140.8,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:hk416d",
+      "gun_name": "hk416d",
+      "tier": "Sergeant",
+      "ttk": 9.8,
+      "dps": 38.7,
+      "burst_dps": 56.2,
+      "role_score": 51.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 67.6,
+        "execute_ratio": 42.4,
+        "burst_ratio": 30.1
+      }
+    },
+    {
+      "gun_id": "tacz:asval",
+      "gun_name": "asval",
+      "tier": "General",
+      "ttk": 1.9,
+      "dps": 112.0,
+      "burst_dps": 112.0,
+      "role_score": 34.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 19.6,
+        "execute_ratio": 100.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:l403a1",
+      "gun_name": "l403a1",
+      "tier": "Trooper",
+      "ttk": 10.25,
+      "dps": 36.8,
+      "burst_dps": 48.2,
+      "role_score": 48.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 62.9,
+        "execute_ratio": 46.3,
+        "burst_ratio": 20.7
+      }
+    },
+    {
+      "gun_id": "tacz:arka",
+      "gun_name": "arka",
+      "tier": "Sergeant",
+      "ttk": 7.5,
+      "dps": 50.1,
+      "burst_dps": 51.5,
+      "role_score": 32.4,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 13.8,
+        "execute_ratio": 100.0,
+        "burst_ratio": 1.9
+      }
+    },
+    {
+      "gun_id": "maxstuff:mojave223",
+      "gun_name": "mojave223",
+      "tier": "Trooper",
+      "ttk": 10.05,
+      "dps": 37.9,
+      "burst_dps": 50.8,
+      "role_score": 48.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 63.6,
+        "execute_ratio": 45.7,
+        "burst_ratio": 22.7
+      }
+    },
+    {
+      "gun_id": "tacz:sw15",
+      "gun_name": "sw15",
+      "tier": "Sergeant",
+      "ttk": 8.55,
+      "dps": 34.0,
+      "burst_dps": 39.6,
+      "role_score": 33.4,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 11.3,
+        "execute_ratio": 100.0,
+        "burst_ratio": 11.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:ak19",
+      "gun_name": "ak19",
+      "tier": "Trooper",
+      "ttk": 11.65,
+      "dps": 31.7,
+      "burst_dps": 43.6,
+      "role_score": 50.6,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 67.4,
+        "execute_ratio": 42.6,
+        "burst_ratio": 25.0
+      }
+    },
+    {
+      "gun_id": "tacz:m4a1",
+      "gun_name": "m4a1",
+      "tier": "Trooper",
+      "ttk": 10.2,
+      "dps": 37.2,
+      "burst_dps": 48.1,
+      "role_score": 48.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 64.7,
+        "execute_ratio": 44.8,
+        "burst_ratio": 19.5
+      }
+    },
+    {
+      "gun_id": "tacz:m14",
+      "gun_name": "m14",
+      "tier": "General",
+      "ttk": 1.1,
+      "dps": 125.7,
+      "burst_dps": 125.7,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:ak22",
+      "gun_name": "ak22",
+      "tier": "Captain",
+      "ttk": 5.45,
+      "dps": 48.3,
+      "burst_dps": 87.6,
+      "role_score": 24.9,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 22.7,
+        "execute_ratio": 0.0,
+        "burst_ratio": 54.2
+      }
+    },
+    {
+      "gun_id": "tacz:m16",
+      "gun_name": "m16",
+      "tier": "Trooper",
+      "ttk": 10.65,
+      "dps": 34.9,
+      "burst_dps": 51.4,
+      "role_score": 34.5,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 3.2,
+        "execute_ratio": 100.0,
+        "burst_ratio": 31.5
+      }
+    },
+    {
+      "gun_id": "maxstuff:ak_delta",
+      "gun_name": "ak_delta",
+      "tier": "Trooper",
+      "ttk": 13.1,
+      "dps": 27.2,
+      "burst_dps": 35.1,
+      "role_score": 48.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 66.1,
+        "execute_ratio": 43.6,
+        "burst_ratio": 19.4
+      }
+    },
+    {
+      "gun_id": "tacz:g3a3",
+      "gun_name": "g3a3",
+      "tier": "Sergeant",
+      "ttk": 8.65,
+      "dps": 30.7,
+      "burst_dps": 42.4,
+      "role_score": 36.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 10.8,
+        "execute_ratio": 100.0,
+        "burst_ratio": 25.4
+      }
+    },
+    {
+      "gun_id": "tacz:akm",
+      "gun_name": "akm",
+      "tier": "Sergeant",
+      "ttk": 7.55,
+      "dps": 45.5,
+      "burst_dps": 53.4,
+      "role_score": 34.4,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 12.9,
+        "execute_ratio": 100.0,
+        "burst_ratio": 11.6
+      }
+    },
+    {
+      "gun_id": "tacz:m1",
+      "gun_name": "m1",
+      "tier": "Trooper",
+      "ttk": 17.55,
+      "dps": 21.0,
+      "burst_dps": 30.3,
+      "role_score": 37.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 9.2,
+        "execute_ratio": 100.0,
+        "burst_ratio": 29.5
+      }
+    },
+    {
+      "gun_id": "tacz:m2",
+      "gun_name": "m2",
+      "tier": "Trooper",
+      "ttk": 13.0,
+      "dps": 28.8,
+      "burst_dps": 65.6,
+      "role_score": 47.5,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 2.5,
+        "execute_ratio": 100.0,
+        "burst_ratio": 85.2
+      }
+    },
+    {
+      "gun_id": "maxstuff:ak15",
+      "gun_name": "ak15",
+      "tier": "Sergeant",
+      "ttk": 7.15,
+      "dps": 51.5,
+      "burst_dps": 58.3,
+      "role_score": 31.6,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 8.9,
+        "execute_ratio": 100.0,
+        "burst_ratio": 8.8
+      }
+    },
+    {
+      "gun_id": "tacz:auga3",
+      "gun_name": "auga3",
+      "tier": "Captain",
+      "ttk": 5.9,
+      "dps": 49.8,
+      "burst_dps": 85.5,
+      "role_score": 38.5,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 3.2,
+        "execute_ratio": 100.0,
+        "burst_ratio": 47.8
+      }
+    },
+    {
+      "gun_id": "maxstuff:ak12",
+      "gun_name": "ak12",
+      "tier": "Trooper",
+      "ttk": 11.8,
+      "dps": 32.1,
+      "burst_dps": 42.1,
+      "role_score": 47.7,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 60.9,
+        "execute_ratio": 48.1,
+        "burst_ratio": 20.8
+      }
+    },
+    {
+      "gun_id": "maxstuff:aa50beowulf",
+      "gun_name": "aa50beowulf",
+      "tier": "General",
+      "ttk": 1.05,
+      "dps": 105.2,
+      "burst_dps": 105.2,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:sks_golden",
+      "gun_name": "sks_golden",
+      "tier": "Captain",
+      "ttk": 4.75,
+      "dps": 35.6,
+      "burst_dps": 101.0,
+      "role_score": 75.0,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "tacz:1522",
+      "gun_name": "1522",
+      "tier": "Trooper",
+      "ttk": 20.25,
+      "dps": 18.6,
+      "burst_dps": 22.0,
+      "role_score": 41.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 38.3,
+        "execute_ratio": 78.3,
+        "burst_ratio": 12.2
+      }
+    },
+    {
+      "gun_id": "tacz:smle",
+      "gun_name": "smle",
+      "tier": "Captain",
+      "ttk": 4.2,
+      "dps": 25.1,
+      "burst_dps": 25.1,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:sks_tactical",
+      "gun_name": "sks_tactical",
+      "tier": "Sergeant",
+      "ttk": 9.2,
+      "dps": 20.2,
+      "burst_dps": 61.3,
+      "role_score": 75.0,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "tacz:m16a4",
+      "gun_name": "m16a4",
+      "tier": "Trooper",
+      "ttk": 15.5,
+      "dps": 23.9,
+      "burst_dps": 27.3,
+      "role_score": 43.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 56.8,
+        "execute_ratio": 52.1,
+        "burst_ratio": 9.5
+      }
+    },
+    {
+      "gun_id": "tacz:m16a3",
+      "gun_name": "m16a3",
+      "tier": "Sergeant",
+      "ttk": 6.8,
+      "dps": 55.1,
+      "burst_dps": 65.1,
+      "role_score": 31.9,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 7.7,
+        "execute_ratio": 100.0,
+        "burst_ratio": 12.1
+      }
+    },
+    {
+      "gun_id": "maxstuff:ak74",
+      "gun_name": "ak74",
+      "tier": "Trooper",
+      "ttk": 12.15,
+      "dps": 30.4,
+      "burst_dps": 39.6,
+      "role_score": 48.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 65.5,
+        "execute_ratio": 44.1,
+        "burst_ratio": 20.2
+      }
+    },
+    {
+      "gun_id": "tacz:stg44",
+      "gun_name": "stg44",
+      "tier": "Captain",
+      "ttk": 6.15,
+      "dps": 40.7,
+      "burst_dps": 66.6,
+      "role_score": 44.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 18.4,
+        "execute_ratio": 100.0,
+        "burst_ratio": 42.4
+      }
+    },
+    {
+      "gun_id": "tacz:fg42",
+      "gun_name": "fg42",
+      "tier": "General",
+      "ttk": 0.8,
+      "dps": 158.6,
+      "burst_dps": 158.6,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:mini14",
+      "gun_name": "mini14",
+      "tier": "Sergeant",
+      "ttk": 8.05,
+      "dps": 40.1,
+      "burst_dps": 46.1,
+      "role_score": 36.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 17.4,
+        "execute_ratio": 100.0,
+        "burst_ratio": 10.0
+      }
+    },
+    {
+      "gun_id": "tacz:aug",
+      "gun_name": "aug",
+      "tier": "Trooper",
+      "ttk": 12.1,
+      "dps": 31.1,
+      "burst_dps": 46.2,
+      "role_score": 52.5,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 67.5,
+        "execute_ratio": 42.5,
+        "burst_ratio": 32.4
+      }
+    },
+    {
+      "gun_id": "maxstuff:potassium_power",
+      "gun_name": "potassium_power",
+      "tier": "Trooper",
+      "ttk": 59.9,
+      "dps": 2.3,
+      "burst_dps": 3.8,
+      "role_score": 60.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": true,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 43.5
+      }
+    },
+    {
+      "gun_id": "maxstuff:qbz_97",
+      "gun_name": "qbz_97",
+      "tier": "Sergeant",
+      "ttk": 8.15,
+      "dps": 44.2,
+      "burst_dps": 49.7,
+      "role_score": 32.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 11.4,
+        "execute_ratio": 100.0,
+        "burst_ratio": 8.3
+      }
+    },
+    {
+      "gun_id": "tacz:fn_fal",
+      "gun_name": "fn_fal",
+      "tier": "Captain",
+      "ttk": 6.55,
+      "dps": 27.7,
+      "burst_dps": 50.5,
+      "role_score": 63.7,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 54.9
+      }
+    },
+    {
+      "gun_id": "maxstuff:hk416c",
+      "gun_name": "hk416c",
+      "tier": "Sergeant",
+      "ttk": 9.05,
+      "dps": 41.3,
+      "burst_dps": 62.6,
+      "role_score": 54.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 71.5,
+        "execute_ratio": 39.5,
+        "burst_ratio": 34.4
+      }
+    },
+    {
+      "gun_id": "maxstuff:z15",
+      "gun_name": "z15",
+      "tier": "Trooper",
+      "ttk": 14.0,
+      "dps": 26.3,
+      "burst_dps": 27.4,
+      "role_score": 41.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 53.5,
+        "execute_ratio": 55.7,
+        "burst_ratio": 2.8
+      }
+    },
+    {
+      "gun_id": "tacz:m16a2",
+      "gun_name": "m16a2",
+      "tier": "Trooper",
+      "ttk": 15.55,
+      "dps": 24.1,
+      "burst_dps": 26.4,
+      "role_score": 42.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 54.1,
+        "execute_ratio": 55.1,
+        "burst_ratio": 6.4
+      }
+    },
+    {
+      "gun_id": "tacz:m16a1",
+      "gun_name": "m16a1",
+      "tier": "Trooper",
+      "ttk": 10.1,
+      "dps": 37.4,
+      "burst_dps": 58.5,
+      "role_score": 35.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 2.7,
+        "execute_ratio": 100.0,
+        "burst_ratio": 37.6
+      }
+    },
+    {
+      "gun_id": "tacz:z70",
+      "gun_name": "z70",
+      "tier": "Captain",
+      "ttk": 4.05,
+      "dps": 52.3,
+      "burst_dps": 52.3,
+      "role_score": 26.6,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 3.3,
+        "execute_ratio": 100.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:ak109",
+      "gun_name": "ak109",
+      "tier": "Captain",
+      "ttk": 6.25,
+      "dps": 58.2,
+      "burst_dps": 73.7,
+      "role_score": 33.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 7.4,
+        "execute_ratio": 100.0,
+        "burst_ratio": 17.8
+      }
+    },
+    {
+      "gun_id": "maxstuff:mk11",
+      "gun_name": "mk11",
+      "tier": "Captain",
+      "ttk": 6.1,
+      "dps": 31.5,
+      "burst_dps": 51.4,
+      "role_score": 60.5,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 42.1
+      }
+    },
+    {
+      "gun_id": "tacz:type_81",
+      "gun_name": "type_81",
+      "tier": "Sergeant",
+      "ttk": 7.55,
+      "dps": 47.3,
+      "burst_dps": 53.6,
+      "role_score": 33.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 12.1,
+        "execute_ratio": 100.0,
+        "burst_ratio": 8.9
+      }
+    },
+    {
+      "gun_id": "maxstuff:scar_sbr",
+      "gun_name": "scar_sbr",
+      "tier": "Sergeant",
+      "ttk": 8.11,
+      "dps": 46.3,
+      "burst_dps": 49.5,
+      "role_score": 33.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 14.1,
+        "execute_ratio": 100.0,
+        "burst_ratio": 4.6
+      }
+    },
+    {
+      "gun_id": "tacz:spr15hb",
+      "gun_name": "spr15hb",
+      "tier": "Sergeant",
+      "ttk": 7.95,
+      "dps": 23.4,
+      "burst_dps": 38.1,
+      "role_score": 60.5,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 41.9
+      }
+    },
+    {
+      "gun_id": "tacz:sr15",
+      "gun_name": "sr15",
+      "tier": "Sergeant",
+      "ttk": 7.6,
+      "dps": 32.5,
+      "burst_dps": 44.5,
+      "role_score": 40.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 18.2,
+        "execute_ratio": 100.0,
+        "burst_ratio": 24.6
+      }
+    },
+    {
+      "gun_id": "maxstuff:mk18",
+      "gun_name": "mk18",
+      "tier": "Trooper",
+      "ttk": 10.05,
+      "dps": 36.9,
+      "burst_dps": 49.8,
+      "role_score": 50.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 67.5,
+        "execute_ratio": 42.5,
+        "burst_ratio": 23.3
+      }
+    },
+    {
+      "gun_id": "tacz:qbz_191",
+      "gun_name": "qbz_191",
+      "tier": "Trooper",
+      "ttk": 10.5,
+      "dps": 35.6,
+      "burst_dps": 51.0,
+      "role_score": 51.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 66.6,
+        "execute_ratio": 43.2,
+        "burst_ratio": 28.8
+      }
+    },
+    {
+      "gun_id": "tacz:scar_l",
+      "gun_name": "scar_l",
+      "tier": "Sergeant",
+      "ttk": 7.5,
+      "dps": 50.1,
+      "burst_dps": 52.3,
+      "role_score": 32.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 12.7,
+        "execute_ratio": 100.0,
+        "burst_ratio": 2.9
+      }
+    },
+    {
+      "gun_id": "maxstuff:ar10",
+      "gun_name": "ar10",
+      "tier": "Captain",
+      "ttk": 6.55,
+      "dps": 32.8,
+      "burst_dps": 49.5,
+      "role_score": 33.5,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 0.0,
+        "execute_ratio": 100.0,
+        "burst_ratio": 33.9
+      }
+    },
+    {
+      "gun_id": "tacz:m1918a2",
+      "gun_name": "m1918a2",
+      "tier": "General",
+      "ttk": 1.45,
+      "dps": 94.7,
+      "burst_dps": 94.7,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:scar_h",
+      "gun_name": "scar_h",
+      "tier": "Captain",
+      "ttk": 5.15,
+      "dps": 41.7,
+      "burst_dps": 80.6,
+      "role_score": 40.5,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 0.0,
+        "execute_ratio": 100.0,
+        "burst_ratio": 62.2
+      }
+    },
+    {
+      "gun_id": "maxstuff:ar18",
+      "gun_name": "ar18",
+      "tier": "Trooper",
+      "ttk": 11.55,
+      "dps": 32.2,
+      "burst_dps": 51.9,
+      "role_score": 56.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 72.3,
+        "execute_ratio": 39.0,
+        "burst_ratio": 40.8
+      }
+    },
+    {
+      "gun_id": "maxstuff:arp",
+      "gun_name": "arp",
+      "tier": "Trooper",
+      "ttk": 15.4,
+      "dps": 24.2,
+      "burst_dps": 24.5,
+      "role_score": 40.5,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 51.7,
+        "execute_ratio": 57.9,
+        "burst_ratio": 0.8
+      }
+    },
+    {
+      "gun_id": "maxstuff:hk_g33",
+      "gun_name": "hk_g33",
+      "tier": "Trooper",
+      "ttk": 11.45,
+      "dps": 32.7,
+      "burst_dps": 55.6,
+      "role_score": 58.5,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 75.3,
+        "execute_ratio": 36.9,
+        "burst_ratio": 46.7
+      }
+    },
+    {
+      "gun_id": "tacz:fal",
+      "gun_name": "fal",
+      "tier": "General",
+      "ttk": 1.7,
+      "dps": 73.8,
+      "burst_dps": 73.8,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:gew98",
+      "gun_name": "gew98",
+      "tier": "Captain",
+      "ttk": 4.95,
+      "dps": 23.2,
+      "burst_dps": 23.2,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:colt_933",
+      "gun_name": "colt_933",
+      "tier": "Trooper",
+      "ttk": 10.35,
+      "dps": 36.6,
+      "burst_dps": 48.1,
+      "role_score": 48.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 62.4,
+        "execute_ratio": 46.8,
+        "burst_ratio": 20.9
+      }
+    },
+    {
+      "gun_id": "maxstuff:ar762",
+      "gun_name": "ar762",
+      "tier": "Trooper",
+      "ttk": 12.5,
+      "dps": 28.9,
+      "burst_dps": 35.1,
+      "role_score": 45.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 59.7,
+        "execute_ratio": 49.3,
+        "burst_ratio": 14.3
+      }
+    },
+    {
+      "gun_id": "tacz:ptr91",
+      "gun_name": "ptr91",
+      "tier": "Captain",
+      "ttk": 3.35,
+      "dps": 52.6,
+      "burst_dps": 52.6,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:ak_alpha",
+      "gun_name": "ak_alpha",
+      "tier": "Captain",
+      "ttk": 6.2,
+      "dps": 57.2,
+      "burst_dps": 74.9,
+      "role_score": 34.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 8.1,
+        "execute_ratio": 100.0,
+        "burst_ratio": 20.6
+      }
+    },
+    {
+      "gun_id": "tacz:gak47",
+      "gun_name": "gak47",
+      "tier": "Sergeant",
+      "ttk": 8.05,
+      "dps": 46.0,
+      "burst_dps": 50.0,
+      "role_score": 33.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 13.4,
+        "execute_ratio": 100.0,
+        "burst_ratio": 5.8
+      }
+    },
+    {
+      "gun_id": "tacz:m27rwk",
+      "gun_name": "m27rwk",
+      "tier": "Sergeant",
+      "ttk": 9.75,
+      "dps": 38.7,
+      "burst_dps": 56.2,
+      "role_score": 51.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 67.3,
+        "execute_ratio": 42.6,
+        "burst_ratio": 30.1
+      }
+    },
+    {
+      "gun_id": "maxstuff:scar_15p",
+      "gun_name": "scar_15p",
+      "tier": "Trooper",
+      "ttk": 10.45,
+      "dps": 34.7,
+      "burst_dps": 33.0,
+      "role_score": 33.6,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 17.3,
+        "execute_ratio": 100.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:xm177",
+      "gun_name": "xm177",
+      "tier": "Trooper",
+      "ttk": 13.5,
+      "dps": 27.3,
+      "burst_dps": 53.2,
+      "role_score": 55.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 45.6,
+        "execute_ratio": 66.0,
+        "burst_ratio": 63.2
+      }
+    },
+    {
+      "gun_id": "maxstuff:aug_a5",
+      "gun_name": "aug_a5",
+      "tier": "General",
+      "ttk": 0.8,
+      "dps": 151.8,
+      "burst_dps": 155.5,
+      "role_score": 50.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 1.6
+      }
+    },
+    {
+      "gun_id": "tacz:brn16a1",
+      "gun_name": "brn16a1",
+      "tier": "Sergeant",
+      "ttk": 8.35,
+      "dps": 33.5,
+      "burst_dps": 42.0,
+      "role_score": 34.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 11.1,
+        "execute_ratio": 100.0,
+        "burst_ratio": 16.9
+      }
+    },
+    {
+      "gun_id": "maxstuff:aug_a3",
+      "gun_name": "aug_a3",
+      "tier": "Trooper",
+      "ttk": 11.9,
+      "dps": 31.1,
+      "burst_dps": 46.9,
+      "role_score": 53.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 68.9,
+        "execute_ratio": 41.5,
+        "burst_ratio": 33.9
+      }
+    },
+    {
+      "gun_id": "maxstuff:adar2",
+      "gun_name": "adar2",
+      "tier": "Trooper",
+      "ttk": 20.95,
+      "dps": 17.7,
+      "burst_dps": 27.4,
+      "role_score": 48.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 30.7,
+        "execute_ratio": 95.7,
+        "burst_ratio": 36.5
+      }
+    },
+    {
+      "gun_id": "maxstuff:aug_a2",
+      "gun_name": "aug_a2",
+      "tier": "Trooper",
+      "ttk": 12.1,
+      "dps": 31.1,
+      "burst_dps": 45.3,
+      "role_score": 51.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 67.3,
+        "execute_ratio": 42.6,
+        "burst_ratio": 30.4
+      }
+    },
+    {
+      "gun_id": "tacz:ak47",
+      "gun_name": "ak47",
+      "tier": "Sergeant",
+      "ttk": 7.8,
+      "dps": 46.3,
+      "burst_dps": 50.8,
+      "role_score": 32.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 11.3,
+        "execute_ratio": 100.0,
+        "burst_ratio": 6.5
+      }
+    },
+    {
+      "gun_id": "tacz:bm59",
+      "gun_name": "bm59",
+      "tier": "General",
+      "ttk": 1.25,
+      "dps": 116.4,
+      "burst_dps": 116.4,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:ak74m",
+      "gun_name": "ak74m",
+      "tier": "Trooper",
+      "ttk": 11.75,
+      "dps": 31.7,
+      "burst_dps": 42.0,
+      "role_score": 49.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 65.5,
+        "execute_ratio": 44.1,
+        "burst_ratio": 21.7
+      }
+    },
+    {
+      "gun_id": "tacz:psak47",
+      "gun_name": "psak47",
+      "tier": "Captain",
+      "ttk": 4.2,
+      "dps": 51.2,
+      "burst_dps": 51.2,
+      "role_score": 26.5,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 3.0,
+        "execute_ratio": 100.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:ak107",
+      "gun_name": "ak107",
+      "tier": "Trooper",
+      "ttk": 10.4,
+      "dps": 36.9,
+      "burst_dps": 55.6,
+      "role_score": 52.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 66.2,
+        "execute_ratio": 43.5,
+        "burst_ratio": 33.8
+      }
+    },
+    {
+      "gun_id": "tacz:hk33",
+      "gun_name": "hk33",
+      "tier": "Trooper",
+      "ttk": 11.35,
+      "dps": 32.5,
+      "burst_dps": 55.2,
+      "role_score": 59.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 76.8,
+        "execute_ratio": 36.0,
+        "burst_ratio": 46.6
+      }
+    },
+    {
+      "gun_id": "maxstuff:ak108",
+      "gun_name": "ak108",
+      "tier": "Trooper",
+      "ttk": 10.55,
+      "dps": 35.8,
+      "burst_dps": 53.2,
+      "role_score": 52.6,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 68.0,
+        "execute_ratio": 42.1,
+        "burst_ratio": 32.4
+      }
+    },
+    {
+      "gun_id": "maxstuff:ak308",
+      "gun_name": "ak308",
+      "tier": "General",
+      "ttk": 2.65,
+      "dps": 70.2,
+      "burst_dps": 70.2,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:g36k",
+      "gun_name": "g36k",
+      "tier": "Trooper",
+      "ttk": 11.5,
+      "dps": 32.8,
+      "burst_dps": 49.7,
+      "role_score": 53.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 69.0,
+        "execute_ratio": 41.4,
+        "burst_ratio": 34.3
+      }
+    },
+    {
+      "gun_id": "maxstuff:g36",
+      "gun_name": "g36",
+      "tier": "Trooper",
+      "ttk": 12.2,
+      "dps": 31.0,
+      "burst_dps": 49.2,
+      "role_score": 55.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 70.9,
+        "execute_ratio": 39.9,
+        "burst_ratio": 39.1
+      }
+    },
+    {
+      "gun_id": "tacz:xm177",
+      "gun_name": "xm177",
+      "tier": "Sergeant",
+      "ttk": 7.05,
+      "dps": 52.7,
+      "burst_dps": 61.5,
+      "role_score": 32.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 10.0,
+        "execute_ratio": 100.0,
+        "burst_ratio": 11.1
+      }
+    },
+    {
+      "gun_id": "tacz:g36c",
+      "gun_name": "g36c",
+      "tier": "Trooper",
+      "ttk": 11.6,
+      "dps": 32.9,
+      "burst_dps": 49.8,
+      "role_score": 53.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 67.8,
+        "execute_ratio": 42.3,
+        "burst_ratio": 34.2
+      }
+    },
+    {
+      "gun_id": "maxstuff:mk18_burst",
+      "gun_name": "mk18_burst",
+      "tier": "Trooper",
+      "ttk": 11.85,
+      "dps": 31.6,
+      "burst_dps": 38.0,
+      "role_score": 45.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 58.6,
+        "execute_ratio": 50.4,
+        "burst_ratio": 13.5
+      }
+    },
+    {
+      "gun_id": "tacz:m1944",
+      "gun_name": "m1944",
+      "tier": "Captain",
+      "ttk": 4.5,
+      "dps": 27.9,
+      "burst_dps": 27.9,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:sr16",
+      "gun_name": "sr16",
+      "tier": "Sergeant",
+      "ttk": 9.45,
+      "dps": 38.6,
+      "burst_dps": 55.5,
+      "role_score": 53.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 72.4,
+        "execute_ratio": 38.9,
+        "burst_ratio": 29.2
+      }
+    },
+    {
+      "gun_id": "maxstuff:mk18_auto",
+      "gun_name": "mk18_auto",
+      "tier": "Trooper",
+      "ttk": 10.1,
+      "dps": 36.9,
+      "burst_dps": 48.1,
+      "role_score": 48.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 63.4,
+        "execute_ratio": 45.9,
+        "burst_ratio": 20.2
+      }
+    },
+    {
+      "gun_id": "tacz:ak74",
+      "gun_name": "ak74",
+      "tier": "Trooper",
+      "ttk": 12.15,
+      "dps": 31.0,
+      "burst_dps": 40.0,
+      "role_score": 47.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 59.9,
+        "execute_ratio": 49.0,
+        "burst_ratio": 19.4
+      }
+    },
+    {
+      "gun_id": "tacz:mk14",
+      "gun_name": "mk14",
+      "tier": "Captain",
+      "ttk": 5.3,
+      "dps": 33.0,
+      "burst_dps": 65.4,
+      "role_score": 66.4,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 65.5
+      }
+    },
+    {
+      "gun_id": "maxstuff:sr15",
+      "gun_name": "sr15",
+      "tier": "Trooper",
+      "ttk": 14.3,
+      "dps": 26.2,
+      "burst_dps": 27.3,
+      "role_score": 41.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 52.4,
+        "execute_ratio": 57.0,
+        "burst_ratio": 2.8
+      }
+    },
+    {
+      "gun_id": "tacz:l22a1",
+      "gun_name": "l22a1",
+      "tier": "Sergeant",
+      "ttk": 7.99,
+      "dps": 46.5,
+      "burst_dps": 50.1,
+      "role_score": 32.1,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 11.7,
+        "execute_ratio": 100.0,
+        "burst_ratio": 5.2
+      }
+    },
+    {
+      "gun_id": "tacz:mk18",
+      "gun_name": "mk18",
+      "tier": "Sergeant",
+      "ttk": 6.7,
+      "dps": 54.6,
+      "burst_dps": 67.9,
+      "role_score": 33.5,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 8.9,
+        "execute_ratio": 100.0,
+        "burst_ratio": 16.2
+      }
+    },
+    {
+      "gun_id": "tacz:ms16",
+      "gun_name": "ms16",
+      "tier": "General",
+      "ttk": 0.75,
+      "dps": 166.1,
+      "burst_dps": 166.1,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:m1938",
+      "gun_name": "m1938",
+      "tier": "Captain",
+      "ttk": 4.5,
+      "dps": 27.9,
+      "burst_dps": 27.9,
+      "role_score": 50.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 100.0,
+        "execute_ratio": 0.0,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:m16a3",
+      "gun_name": "m16a3",
+      "tier": "Trooper",
+      "ttk": 13.6,
+      "dps": 27.4,
+      "burst_dps": 53.2,
+      "role_score": 54.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 44.5,
+        "execute_ratio": 67.7,
+        "burst_ratio": 62.8
+      }
+    },
+    {
+      "gun_id": "tacz:famas",
+      "gun_name": "famas",
+      "tier": "Trooper",
+      "ttk": 10.05,
+      "dps": 36.1,
+      "burst_dps": 69.9,
+      "role_score": 66.3,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 86.0,
+        "execute_ratio": 30.8,
+        "burst_ratio": 62.4
+      }
+    },
+    {
+      "gun_id": "maxstuff:mk47",
+      "gun_name": "mk47",
+      "tier": "Sergeant",
+      "ttk": 7.15,
+      "dps": 49.9,
+      "burst_dps": 65.7,
+      "role_score": 33.4,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 6.3,
+        "execute_ratio": 100.0,
+        "burst_ratio": 21.1
+      }
+    },
+    {
+      "gun_id": "maxstuff:m16a2",
+      "gun_name": "m16a2",
+      "tier": "Trooper",
+      "ttk": 17.7,
+      "dps": 20.8,
+      "burst_dps": 28.6,
+      "role_score": 45.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "phase_balance": 41.2,
+        "execute_ratio": 73.1,
+        "burst_ratio": 25.0
+      }
+    }
+  ],
+  "SHOTGUN": [
+    {
+      "gun_id": "maxstuff:db_long_d",
+      "gun_name": "db_long_d",
+      "tier": "Trooper",
+      "ttk": 40.71,
+      "dps": 8.0,
+      "burst_dps": 28.9,
+      "role_score": 52.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 34.1,
+        "burst_ratio": 65.3,
+        "execute_ratio": 73.1
+      }
+    },
+    {
+      "gun_id": "tacz:benm4",
+      "gun_name": "benm4",
+      "tier": "Captain",
+      "ttk": 8.0,
+      "dps": 47.8,
+      "burst_dps": 63.6,
+      "role_score": 31.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 18.6,
+        "burst_ratio": 8.3,
+        "execute_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:m870t",
+      "gun_name": "m870t",
+      "tier": "Trooper",
+      "ttk": 27.15,
+      "dps": 14.1,
+      "burst_dps": 13.5,
+      "role_score": 27.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 35.2,
+        "burst_ratio": 0.0,
+        "execute_ratio": 57.3
+      }
+    },
+    {
+      "gun_id": "tacz:lupara",
+      "gun_name": "lupara",
+      "tier": "Trooper",
+      "ttk": 34.14,
+      "dps": 11.2,
+      "burst_dps": 54.1,
+      "role_score": 61.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 33.1,
+        "burst_ratio": 95.8,
+        "execute_ratio": 64.7
+      }
+    },
+    {
+      "gun_id": "tacz:m500a",
+      "gun_name": "m500a",
+      "tier": "Sergeant",
+      "ttk": 26.1,
+      "dps": 14.5,
+      "burst_dps": 13.8,
+      "role_score": 27.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 31.6,
+        "burst_ratio": 0.0,
+        "execute_ratio": 67.9
+      }
+    },
+    {
+      "gun_id": "tacz:m1887",
+      "gun_name": "m1887",
+      "tier": "Sergeant",
+      "ttk": 19.95,
+      "dps": 18.9,
+      "burst_dps": 16.3,
+      "role_score": 26.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 39.5,
+        "burst_ratio": 0.0,
+        "execute_ratio": 45.3
+      }
+    },
+    {
+      "gun_id": "maxstuff:db_short_tactical",
+      "gun_name": "db_short_tactical",
+      "tier": "Trooper",
+      "ttk": 41.06,
+      "dps": 9.2,
+      "burst_dps": 172.1,
+      "role_score": 63.7,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 29.1,
+        "burst_ratio": 100.0,
+        "execute_ratio": 78.0
+      }
+    },
+    {
+      "gun_id": "tacz:m870",
+      "gun_name": "m870",
+      "tier": "Sergeant",
+      "ttk": 26.1,
+      "dps": 14.5,
+      "burst_dps": 13.7,
+      "role_score": 29.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 36.6,
+        "burst_ratio": 0.0,
+        "execute_ratio": 64.0
+      }
+    },
+    {
+      "gun_id": "tacz:shorty",
+      "gun_name": "shorty",
+      "tier": "Trooper",
+      "ttk": 37.05,
+      "dps": 10.3,
+      "burst_dps": 17.2,
+      "role_score": 34.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 30.4,
+        "burst_ratio": 16.7,
+        "execute_ratio": 73.9
+      }
+    },
+    {
+      "gun_id": "maxstuff:saiga12",
+      "gun_name": "saiga12",
+      "tier": "Sergeant",
+      "ttk": 14.5,
+      "dps": 26.2,
+      "burst_dps": 96.3,
+      "role_score": 51.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 31.9,
+        "burst_ratio": 66.9,
+        "execute_ratio": 68.0
+      }
+    },
+    {
+      "gun_id": "tacz:m1897",
+      "gun_name": "m1897",
+      "tier": "Sergeant",
+      "ttk": 18.91,
+      "dps": 20.0,
+      "burst_dps": 17.9,
+      "role_score": 27.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 31.8,
+        "burst_ratio": 0.0,
+        "execute_ratio": 67.2
+      }
+    },
+    {
+      "gun_id": "tacz:m870l",
+      "gun_name": "m870l",
+      "tier": "Trooper",
+      "ttk": 28.9,
+      "dps": 13.2,
+      "burst_dps": 13.3,
+      "role_score": 28.3,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 30.3,
+        "burst_ratio": 0.2,
+        "execute_ratio": 73.1
+      }
+    },
+    {
+      "gun_id": "maxstuff:genesis12_fl",
+      "gun_name": "genesis12_fl",
+      "tier": "Captain",
+      "ttk": 5.8,
+      "dps": 65.0,
+      "burst_dps": 132.0,
+      "role_score": 34.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 12.9,
+        "burst_ratio": 25.8,
+        "execute_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "tacz:m37",
+      "gun_name": "m37",
+      "tier": "Trooper",
+      "ttk": 31.66,
+      "dps": 11.9,
+      "burst_dps": 14.2,
+      "role_score": 30.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 29.1,
+        "burst_ratio": 4.8,
+        "execute_ratio": 76.9
+      }
+    },
+    {
+      "gun_id": "maxstuff:db_50",
+      "gun_name": "db_50",
+      "tier": "General",
+      "ttk": 3.7,
+      "dps": 29.2,
+      "burst_dps": 119.8,
+      "role_score": 27.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 0.0,
+        "burst_ratio": 77.6,
+        "execute_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:db_short",
+      "gun_name": "db_short",
+      "tier": "Trooper",
+      "ttk": 43.4,
+      "dps": 8.8,
+      "burst_dps": 351.1,
+      "role_score": 62.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 35.7,
+        "burst_ratio": 100.0,
+        "execute_ratio": 56.2
+      }
+    },
+    {
+      "gun_id": "tacz:mag10",
+      "gun_name": "mag10",
+      "tier": "Sergeant",
+      "ttk": 13.7,
+      "dps": 27.6,
+      "burst_dps": 352.0,
+      "role_score": 65.9,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 24.6,
+        "burst_ratio": 100.0,
+        "execute_ratio": 99.0
+      }
+    },
+    {
+      "gun_id": "tacz:spas_12",
+      "gun_name": "spas_12",
+      "tier": "General",
+      "ttk": 5.5,
+      "dps": 68.6,
+      "burst_dps": 95.2,
+      "role_score": 29.5,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 13.6,
+        "burst_ratio": 9.7,
+        "execute_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "tacz:m1187",
+      "gun_name": "m1187",
+      "tier": "Sergeant",
+      "ttk": 20.1,
+      "dps": 18.9,
+      "burst_dps": 253.4,
+      "role_score": 63.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 29.2,
+        "burst_ratio": 100.0,
+        "execute_ratio": 78.6
+      }
+    },
+    {
+      "gun_id": "tacz:auto5",
+      "gun_name": "auto5",
+      "tier": "Captain",
+      "ttk": 11.8,
+      "dps": 32.1,
+      "burst_dps": 63.6,
+      "role_score": 36.9,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 29.7,
+        "burst_ratio": 24.5,
+        "execute_ratio": 74.9
+      }
+    },
+    {
+      "gun_id": "tacz:db_long",
+      "gun_name": "db_long",
+      "tier": "Trooper",
+      "ttk": 41.3,
+      "dps": 9.2,
+      "burst_dps": 36.6,
+      "role_score": 53.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 33.6,
+        "burst_ratio": 74.5,
+        "execute_ratio": 61.2
+      }
+    },
+    {
+      "gun_id": "maxstuff:db_short_d",
+      "gun_name": "db_short_d",
+      "tier": "Trooper",
+      "ttk": 34.65,
+      "dps": 9.4,
+      "burst_dps": 165.9,
+      "role_score": 65.1,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 34.1,
+        "burst_ratio": 100.0,
+        "execute_ratio": 73.8
+      }
+    },
+    {
+      "gun_id": "maxstuff:genesis12_dragons_breath",
+      "gun_name": "genesis12_dragons_breath",
+      "tier": "General",
+      "ttk": 5.65,
+      "dps": 64.6,
+      "burst_dps": 127.2,
+      "role_score": 33.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 10.0,
+        "burst_ratio": 24.2,
+        "execute_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "tacz:m88",
+      "gun_name": "m88",
+      "tier": "Sergeant",
+      "ttk": 23.7,
+      "dps": 16.0,
+      "burst_dps": 13.7,
+      "role_score": 27.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 34.8,
+        "burst_ratio": 0.0,
+        "execute_ratio": 57.9
+      }
+    },
+    {
+      "gun_id": "tacz:aa12",
+      "gun_name": "aa12",
+      "tier": "Captain",
+      "ttk": 11.45,
+      "dps": 33.2,
+      "burst_dps": 75.9,
+      "role_score": 36.4,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 11.5,
+        "burst_ratio": 32.2,
+        "execute_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "tacz:940",
+      "gun_name": "940",
+      "tier": "Captain",
+      "ttk": 8.9,
+      "dps": 42.8,
+      "burst_dps": 51.4,
+      "role_score": 31.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 21.1,
+        "burst_ratio": 5.0,
+        "execute_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "tacz:sawedoff",
+      "gun_name": "sawedoff",
+      "tier": "Trooper",
+      "ttk": 32.85,
+      "dps": 11.6,
+      "burst_dps": 14.5,
+      "role_score": 30.8,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 38.2,
+        "burst_ratio": 6.2,
+        "execute_ratio": 57.1
+      }
+    },
+    {
+      "gun_id": "tacz:saiga",
+      "gun_name": "saiga",
+      "tier": "Sergeant",
+      "ttk": 13.3,
+      "dps": 28.5,
+      "burst_dps": 75.9,
+      "role_score": 41.6,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 39.5,
+        "burst_ratio": 41.6,
+        "execute_ratio": 46.1
+      }
+    },
+    {
+      "gun_id": "tacz:frolovka",
+      "gun_name": "frolovka",
+      "tier": "Trooper",
+      "ttk": 39.53,
+      "dps": 9.6,
+      "burst_dps": 9.6,
+      "role_score": 27.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 39.5,
+        "burst_ratio": 0.0,
+        "execute_ratio": 46.9
+      }
+    },
+    {
+      "gun_id": "maxstuff:genesis12",
+      "gun_name": "genesis12",
+      "tier": "Captain",
+      "ttk": 5.8,
+      "dps": 65.8,
+      "burst_dps": 124.4,
+      "role_score": 32.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 9.7,
+        "burst_ratio": 22.3,
+        "execute_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:sap6",
+      "gun_name": "sap6",
+      "tier": "Sergeant",
+      "ttk": 23.5,
+      "dps": 16.1,
+      "burst_dps": 11.8,
+      "role_score": 31.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 24.5,
+        "burst_ratio": 0.0,
+        "execute_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "tacz:m1014",
+      "gun_name": "m1014",
+      "tier": "Captain",
+      "ttk": 8.0,
+      "dps": 47.4,
+      "burst_dps": 64.4,
+      "role_score": 31.6,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 18.8,
+        "burst_ratio": 9.0,
+        "execute_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "tacz:ata",
+      "gun_name": "ata",
+      "tier": "Trooper",
+      "ttk": 39.08,
+      "dps": 9.7,
+      "burst_dps": 61.4,
+      "role_score": 62.7,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "poise_break_time": 34.0,
+        "burst_ratio": 100.0,
+        "execute_ratio": 62.0
+      }
+    }
+  ],
+  "SMG": [
+    {
+      "gun_id": "maxstuff:vityas",
+      "gun_name": "vityas",
+      "tier": "Captain",
+      "ttk": 25.4,
+      "dps": 14.8,
+      "burst_dps": 18.7,
+      "role_score": 54.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 7.2,
+        "burst_ratio": 13.2
+      }
+    },
+    {
+      "gun_id": "maxstuff:ro635",
+      "gun_name": "ro635",
+      "tier": "Sergeant",
+      "ttk": 30.85,
+      "dps": 12.3,
+      "burst_dps": 18.8,
+      "role_score": 61.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 19.2,
+        "burst_ratio": 26.4
+      }
+    },
+    {
+      "gun_id": "maxstuff:vector9",
+      "gun_name": "vector9",
+      "tier": "Trooper",
+      "ttk": 32.95,
+      "dps": 11.5,
+      "burst_dps": 18.9,
+      "role_score": 62.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 19.5,
+        "burst_ratio": 32.2
+      }
+    },
+    {
+      "gun_id": "maxstuff:saiga9",
+      "gun_name": "saiga9",
+      "tier": "Trooper",
+      "ttk": 40.55,
+      "dps": 9.3,
+      "burst_dps": 8.2,
+      "role_score": 53.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 10.5,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:mp5k",
+      "gun_name": "mp5k",
+      "tier": "Trooper",
+      "ttk": 33.25,
+      "dps": 11.4,
+      "burst_dps": 15.3,
+      "role_score": 55.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 6.5,
+        "burst_ratio": 17.1
+      }
+    },
+    {
+      "gun_id": "tacz:ppsh41",
+      "gun_name": "ppsh41",
+      "tier": "General",
+      "ttk": 10.9,
+      "dps": 27.1,
+      "burst_dps": 36.9,
+      "role_score": 55.0,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 4.6,
+        "burst_ratio": 18.1
+      }
+    },
+    {
+      "gun_id": "tacz:honey",
+      "gun_name": "honey",
+      "tier": "Captain",
+      "ttk": 24.05,
+      "dps": 15.5,
+      "burst_dps": 19.0,
+      "role_score": 54.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 88.7,
+        "poise_break_time": 24.9,
+        "burst_ratio": 11.3
+      }
+    },
+    {
+      "gun_id": "tacz:m3a1",
+      "gun_name": "m3a1",
+      "tier": "Sergeant",
+      "ttk": 30.95,
+      "dps": 11.6,
+      "burst_dps": 11.3,
+      "role_score": 52.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 9.4,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:vecar",
+      "gun_name": "vecar",
+      "tier": "Trooper",
+      "ttk": 39.8,
+      "dps": 8.1,
+      "burst_dps": 13.2,
+      "role_score": 61.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 16.8,
+        "burst_ratio": 31.5
+      }
+    },
+    {
+      "gun_id": "tacz:sp5",
+      "gun_name": "sp5",
+      "tier": "Trooper",
+      "ttk": 42.2,
+      "dps": 9.0,
+      "burst_dps": 8.2,
+      "role_score": 53.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 10.7,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:sr3m",
+      "gun_name": "sr3m",
+      "tier": "General",
+      "ttk": 5.5,
+      "dps": 18.7,
+      "burst_dps": 38.8,
+      "role_score": 10.7,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 0.0,
+        "burst_ratio": 53.7
+      }
+    },
+    {
+      "gun_id": "tacz:uzicar",
+      "gun_name": "uzicar",
+      "tier": "Trooper",
+      "ttk": 59.8,
+      "dps": 1.9,
+      "burst_dps": 6.1,
+      "role_score": 20.0,
+      "verdict": "FAIL",
+      "weak_ttk": true,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 0.0,
+        "burst_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:luty",
+      "gun_name": "luty",
+      "tier": "Trooper",
+      "ttk": 53.0,
+      "dps": 7.2,
+      "burst_dps": 11.5,
+      "role_score": 60.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 14.8,
+        "burst_ratio": 29.9
+      }
+    },
+    {
+      "gun_id": "tacz:p90",
+      "gun_name": "p90",
+      "tier": "Sergeant",
+      "ttk": 29.95,
+      "dps": 12.7,
+      "burst_dps": 12.7,
+      "role_score": 52.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 9.7,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:mp40",
+      "gun_name": "mp40",
+      "tier": "Sergeant",
+      "ttk": 27.3,
+      "dps": 13.5,
+      "burst_dps": 13.0,
+      "role_score": 52.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 9.5,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:hk5",
+      "gun_name": "hk5",
+      "tier": "Trooper",
+      "ttk": 32.1,
+      "dps": 11.7,
+      "burst_dps": 13.3,
+      "role_score": 53.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 8.3,
+        "burst_ratio": 6.8
+      }
+    },
+    {
+      "gun_id": "maxstuff:nailgun",
+      "gun_name": "nailgun",
+      "tier": "Trooper",
+      "ttk": 57.25,
+      "dps": 3.2,
+      "burst_dps": 6.1,
+      "role_score": 9.1,
+      "verdict": "FAIL",
+      "weak_ttk": true,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 0.0,
+        "burst_ratio": 45.3
+      }
+    },
+    {
+      "gun_id": "tacz:ump45",
+      "gun_name": "ump45",
+      "tier": "Captain",
+      "ttk": 22.4,
+      "dps": 15.4,
+      "burst_dps": 21.2,
+      "role_score": 55.6,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 6.3,
+        "burst_ratio": 18.8
+      }
+    },
+    {
+      "gun_id": "tacz:mp18",
+      "gun_name": "mp18",
+      "tier": "Trooper",
+      "ttk": 39.2,
+      "dps": 9.7,
+      "burst_dps": 9.2,
+      "role_score": 53.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 10.4,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:ump9",
+      "gun_name": "ump9",
+      "tier": "Sergeant",
+      "ttk": 27.2,
+      "dps": 13.8,
+      "burst_dps": 18.7,
+      "role_score": 55.7,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 7.0,
+        "burst_ratio": 17.8
+      }
+    },
+    {
+      "gun_id": "maxstuff:aug_a3_para",
+      "gun_name": "aug_a3_para",
+      "tier": "Sergeant",
+      "ttk": 29.4,
+      "dps": 12.9,
+      "burst_dps": 15.9,
+      "role_score": 55.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 90.6,
+        "poise_break_time": 25.5,
+        "burst_ratio": 11.6
+      }
+    },
+    {
+      "gun_id": "maxstuff:hk_mp5sd",
+      "gun_name": "hk_mp5sd",
+      "tier": "Trooper",
+      "ttk": 33.45,
+      "dps": 11.4,
+      "burst_dps": 15.4,
+      "role_score": 60.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 22.9,
+        "burst_ratio": 17.5
+      }
+    },
+    {
+      "gun_id": "tacz:bih",
+      "gun_name": "bih",
+      "tier": "General",
+      "ttk": 4.3,
+      "dps": 16.6,
+      "burst_dps": 56.4,
+      "role_score": 20.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 0.0,
+        "burst_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "tacz:vector45",
+      "gun_name": "vector45",
+      "tier": "Trooper",
+      "ttk": 36.25,
+      "dps": 10.3,
+      "burst_dps": 23.1,
+      "role_score": 67.8,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 17.9,
+        "burst_ratio": 62.1
+      }
+    },
+    {
+      "gun_id": "tacz:mp5sd",
+      "gun_name": "mp5sd",
+      "tier": "Trooper",
+      "ttk": 36.75,
+      "dps": 10.3,
+      "burst_dps": 12.2,
+      "role_score": 54.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 7.5,
+        "burst_ratio": 9.2
+      }
+    },
+    {
+      "gun_id": "tacz:sten",
+      "gun_name": "sten",
+      "tier": "Sergeant",
+      "ttk": 29.05,
+      "dps": 12.7,
+      "burst_dps": 12.2,
+      "role_score": 52.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 9.8,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:pp19_01",
+      "gun_name": "pp19_01",
+      "tier": "Captain",
+      "ttk": 22.41,
+      "dps": 15.7,
+      "burst_dps": 21.6,
+      "role_score": 42.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 59.2,
+        "poise_break_time": 29.8,
+        "burst_ratio": 18.8
+      }
+    },
+    {
+      "gun_id": "tacz:hk53",
+      "gun_name": "hk53",
+      "tier": "Captain",
+      "ttk": 23.9,
+      "dps": 15.1,
+      "burst_dps": 20.7,
+      "role_score": 55.6,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 6.3,
+        "burst_ratio": 18.5
+      }
+    },
+    {
+      "gun_id": "tacz:hk_mp5a5",
+      "gun_name": "hk_mp5a5",
+      "tier": "Trooper",
+      "ttk": 34.65,
+      "dps": 11.0,
+      "burst_dps": 14.2,
+      "role_score": 55.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 7.5,
+        "burst_ratio": 14.5
+      }
+    },
+    {
+      "gun_id": "tacz:9a91",
+      "gun_name": "9a91",
+      "tier": "General",
+      "ttk": 5.25,
+      "dps": 15.3,
+      "burst_dps": 32.7,
+      "role_score": 11.4,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 0.0,
+        "poise_break_time": 0.0,
+        "burst_ratio": 56.9
+      }
+    },
+    {
+      "gun_id": "tacz:m1921",
+      "gun_name": "m1921",
+      "tier": "Sergeant",
+      "ttk": 26.0,
+      "dps": 13.2,
+      "burst_dps": 27.1,
+      "role_score": 58.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 81.9,
+        "poise_break_time": 22.4,
+        "burst_ratio": 52.7
+      }
+    },
+    {
+      "gun_id": "maxstuff:hk_mp5k",
+      "gun_name": "hk_mp5k",
+      "tier": "Trooper",
+      "ttk": 47.35,
+      "dps": 8.0,
+      "burst_dps": 14.6,
+      "role_score": 63.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 16.5,
+        "burst_ratio": 41.2
+      }
+    },
+    {
+      "gun_id": "tacz:pp19",
+      "gun_name": "pp19",
+      "tier": "Captain",
+      "ttk": 12.86,
+      "dps": 25.6,
+      "burst_dps": 21.9,
+      "role_score": 52.7,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 9.1,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:aks74u",
+      "gun_name": "aks74u",
+      "tier": "Sergeant",
+      "ttk": 26.8,
+      "dps": 13.9,
+      "burst_dps": 16.7,
+      "role_score": 54.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 89.0,
+        "poise_break_time": 25.2,
+        "burst_ratio": 10.1
+      }
+    },
+    {
+      "gun_id": "tacz:uzi",
+      "gun_name": "uzi",
+      "tier": "Trooper",
+      "ttk": 45.3,
+      "dps": 8.3,
+      "burst_dps": 11.6,
+      "role_score": 59.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 17.7,
+        "burst_ratio": 19.9
+      }
+    },
+    {
+      "gun_id": "maxstuff:z80",
+      "gun_name": "z80",
+      "tier": "Captain",
+      "ttk": 24.15,
+      "dps": 15.3,
+      "burst_dps": 18.6,
+      "role_score": 54.6,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 90.1,
+        "poise_break_time": 24.5,
+        "burst_ratio": 10.8
+      }
+    },
+    {
+      "gun_id": "maxstuff:mp7",
+      "gun_name": "mp7",
+      "tier": "Captain",
+      "ttk": 23.25,
+      "dps": 16.2,
+      "burst_dps": 17.3,
+      "role_score": 53.3,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 8.6,
+        "burst_ratio": 3.4
+      }
+    },
+    {
+      "gun_id": "tacz:pps",
+      "gun_name": "pps",
+      "tier": "Trooper",
+      "ttk": 32.35,
+      "dps": 11.5,
+      "burst_dps": 12.2,
+      "role_score": 57.7,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 23.7,
+        "burst_ratio": 3.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:colt_mars",
+      "gun_name": "colt_mars",
+      "tier": "Sergeant",
+      "ttk": 31.3,
+      "dps": 12.3,
+      "burst_dps": 15.2,
+      "role_score": 54.6,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 7.5,
+        "burst_ratio": 11.8
+      }
+    },
+    {
+      "gun_id": "maxstuff:ar57",
+      "gun_name": "ar57",
+      "tier": "Captain",
+      "ttk": 22.6,
+      "dps": 16.9,
+      "burst_dps": 16.6,
+      "role_score": 52.6,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 8.8,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:udp9",
+      "gun_name": "udp9",
+      "tier": "Sergeant",
+      "ttk": 25.75,
+      "dps": 14.5,
+      "burst_dps": 25.1,
+      "role_score": 63.5,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 20.7,
+        "burst_ratio": 36.6
+      }
+    },
+    {
+      "gun_id": "tacz:m1a1",
+      "gun_name": "m1a1",
+      "tier": "Sergeant",
+      "ttk": 27.25,
+      "dps": 13.4,
+      "burst_dps": 22.4,
+      "role_score": 63.7,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 23.2,
+        "burst_ratio": 33.6
+      }
+    },
+    {
+      "gun_id": "tacz:ps90",
+      "gun_name": "ps90",
+      "tier": "Trooper",
+      "ttk": 36.0,
+      "dps": 10.6,
+      "burst_dps": 8.3,
+      "role_score": 53.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 12.5,
+        "burst_ratio": 0.0
+      }
+    },
+    {
+      "gun_id": "tacz:skorpion",
+      "gun_name": "skorpion",
+      "tier": "Sergeant",
+      "ttk": 31.95,
+      "dps": 11.7,
+      "burst_dps": 19.5,
+      "role_score": 62.9,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "execute_ratio": 100.0,
+        "poise_break_time": 20.9,
+        "burst_ratio": 33.3
+      }
+    }
+  ],
+  "MG": [
+    {
+      "gun_id": "tacz:dp28",
+      "gun_name": "dp28",
+      "tier": "Captain",
+      "ttk": 1.3,
+      "dps": 50.4,
+      "burst_dps": 50.4,
+      "role_score": 82.9,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 14.5
+      }
+    },
+    {
+      "gun_id": "tacz:lewis",
+      "gun_name": "lewis",
+      "tier": "Captain",
+      "ttk": 1.4,
+      "dps": 50.4,
+      "burst_dps": 50.4,
+      "role_score": 83.6,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 18.2
+      }
+    },
+    {
+      "gun_id": "tacz:m240b",
+      "gun_name": "m240b",
+      "tier": "Sergeant",
+      "ttk": 2.5,
+      "dps": 38.2,
+      "burst_dps": 38.2,
+      "role_score": 90.2,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 50.9
+      }
+    },
+    {
+      "gun_id": "maxstuff:quatro15",
+      "gun_name": "quatro15",
+      "tier": "Trooper",
+      "ttk": 20.25,
+      "dps": 16.9,
+      "burst_dps": 13.6,
+      "role_score": 39.0,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 50.4,
+        "phase_balance": 0.0,
+        "sustain_ratio": 69.1
+      }
+    },
+    {
+      "gun_id": "tacz:mg3",
+      "gun_name": "mg3",
+      "tier": "Captain",
+      "ttk": 1.4,
+      "dps": 50.8,
+      "burst_dps": 50.8,
+      "role_score": 86.9,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 34.5
+      }
+    },
+    {
+      "gun_id": "tacz:l86a1",
+      "gun_name": "l86a1",
+      "tier": "Trooper",
+      "ttk": 22.1,
+      "dps": 15.6,
+      "burst_dps": 19.9,
+      "role_score": 43.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 59.1,
+        "phase_balance": 22.5,
+        "sustain_ratio": 35.3
+      }
+    },
+    {
+      "gun_id": "tacz:pkm",
+      "gun_name": "pkm",
+      "tier": "Captain",
+      "ttk": 2.15,
+      "dps": 33.2,
+      "burst_dps": 33.2,
+      "role_score": 86.9,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 34.5
+      }
+    },
+    {
+      "gun_id": "maxstuff:rpk_74",
+      "gun_name": "rpk_74",
+      "tier": "Trooper",
+      "ttk": 23.1,
+      "dps": 15.4,
+      "burst_dps": 18.7,
+      "role_score": 50.1,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 61.9,
+        "phase_balance": 32.9,
+        "sustain_ratio": 46.4
+      }
+    },
+    {
+      "gun_id": "tacz:m60",
+      "gun_name": "m60",
+      "tier": "Sergeant",
+      "ttk": 9.2,
+      "dps": 22.5,
+      "burst_dps": 22.5,
+      "role_score": 65.8,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 91.7,
+        "phase_balance": 0.0,
+        "sustain_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "tacz:l110a1",
+      "gun_name": "l110a1",
+      "tier": "Trooper",
+      "ttk": 19.75,
+      "dps": 18.5,
+      "burst_dps": 18.1,
+      "role_score": 42.6,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 45.3,
+        "phase_balance": 0.0,
+        "sustain_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "tacz:rpk",
+      "gun_name": "rpk",
+      "tier": "Trooper",
+      "ttk": 16.25,
+      "dps": 15.5,
+      "burst_dps": 24.2,
+      "role_score": 45.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 72.6,
+        "phase_balance": 0.0,
+        "sustain_ratio": 45.5
+      }
+    },
+    {
+      "gun_id": "tacz:minigun",
+      "gun_name": "minigun",
+      "tier": "Sergeant",
+      "ttk": 6.0,
+      "dps": 58.0,
+      "burst_dps": 58.0,
+      "role_score": 47.8,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 52.2,
+        "phase_balance": 5.5,
+        "sustain_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:scar_hamr",
+      "gun_name": "scar_hamr",
+      "tier": "Sergeant",
+      "ttk": 11.05,
+      "dps": 23.4,
+      "burst_dps": 24.0,
+      "role_score": 51.2,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 70.1,
+        "phase_balance": 0.0,
+        "sustain_ratio": 80.9
+      }
+    },
+    {
+      "gun_id": "tacz:mg36",
+      "gun_name": "mg36",
+      "tier": "Sergeant",
+      "ttk": 14.55,
+      "dps": 25.1,
+      "burst_dps": 18.9,
+      "role_score": 43.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 46.7,
+        "phase_balance": 0.0,
+        "sustain_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:dp28",
+      "gun_name": "dp28",
+      "tier": "General",
+      "ttk": 1.2,
+      "dps": 52.4,
+      "burst_dps": 52.4,
+      "role_score": 82.5,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 12.7
+      }
+    },
+    {
+      "gun_id": "tacz:mg42",
+      "gun_name": "mg42",
+      "tier": "General",
+      "ttk": 0.75,
+      "dps": 76.3,
+      "burst_dps": 76.3,
+      "role_score": 84.0,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 20.0
+      }
+    },
+    {
+      "gun_id": "tacz:l4a1",
+      "gun_name": "l4a1",
+      "tier": "Captain",
+      "ttk": 2.05,
+      "dps": 34.7,
+      "burst_dps": 34.7,
+      "role_score": 84.7,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 23.6
+      }
+    },
+    {
+      "gun_id": "tacz:fn_evolys",
+      "gun_name": "fn_evolys",
+      "tier": "Sergeant",
+      "ttk": 2.9,
+      "dps": 32.8,
+      "burst_dps": 32.8,
+      "role_score": 91.6,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 58.2
+      }
+    },
+    {
+      "gun_id": "maxstuff:m231",
+      "gun_name": "m231",
+      "tier": "Trooper",
+      "ttk": 22.6,
+      "dps": 16.2,
+      "burst_dps": 29.7,
+      "role_score": 39.2,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 53.7,
+        "phase_balance": 16.8,
+        "sustain_ratio": 36.7
+      }
+    },
+    {
+      "gun_id": "maxstuff:rpk_74m",
+      "gun_name": "rpk_74m",
+      "tier": "Trooper",
+      "ttk": 18.95,
+      "dps": 18.1,
+      "burst_dps": 19.4,
+      "role_score": 37.4,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 49.6,
+        "phase_balance": 0.0,
+        "sustain_ratio": 63.0
+      }
+    },
+    {
+      "gun_id": "tacz:mg08",
+      "gun_name": "mg08",
+      "tier": "Sergeant",
+      "ttk": 3.25,
+      "dps": 25.1,
+      "burst_dps": 25.1,
+      "role_score": 87.6,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 38.2
+      }
+    },
+    {
+      "gun_id": "tacz:m249",
+      "gun_name": "m249",
+      "tier": "Trooper",
+      "ttk": 19.6,
+      "dps": 18.3,
+      "burst_dps": 18.1,
+      "role_score": 43.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 46.7,
+        "phase_balance": 0.0,
+        "sustain_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "maxstuff:aug_hbar",
+      "gun_name": "aug_hbar",
+      "tier": "Trooper",
+      "ttk": 21.5,
+      "dps": 16.5,
+      "burst_dps": 17.8,
+      "role_score": 34.7,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 46.2,
+        "phase_balance": 0.0,
+        "sustain_ratio": 58.2
+      }
+    },
+    {
+      "gun_id": "tacz:bren",
+      "gun_name": "bren",
+      "tier": "Captain",
+      "ttk": 2.3,
+      "dps": 33.4,
+      "burst_dps": 33.4,
+      "role_score": 85.5,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 27.3
+      }
+    },
+    {
+      "gun_id": "tacz:rpk74",
+      "gun_name": "rpk74",
+      "tier": "Trooper",
+      "ttk": 28.4,
+      "dps": 12.9,
+      "burst_dps": 14.8,
+      "role_score": 37.5,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 51.6,
+        "phase_balance": 13.0,
+        "sustain_ratio": 38.8
+      }
+    },
+    {
+      "gun_id": "maxstuff:rpk16",
+      "gun_name": "rpk16",
+      "tier": "Trooper",
+      "ttk": 22.45,
+      "dps": 16.0,
+      "burst_dps": 19.8,
+      "role_score": 49.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 60.9,
+        "phase_balance": 31.9,
+        "sustain_ratio": 46.8
+      }
+    },
+    {
+      "gun_id": "tacz:rpk74m",
+      "gun_name": "rpk74m",
+      "tier": "Trooper",
+      "ttk": 28.2,
+      "dps": 13.0,
+      "burst_dps": 15.3,
+      "role_score": 37.6,
+      "verdict": "FAIL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 51.9,
+        "phase_balance": 13.3,
+        "sustain_ratio": 38.2
+      }
+    },
+    {
+      "gun_id": "tacz:l7a2",
+      "gun_name": "l7a2",
+      "tier": "Captain",
+      "ttk": 2.2,
+      "dps": 41.5,
+      "burst_dps": 41.5,
+      "role_score": 90.9,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 54.5
+      }
+    },
+    {
+      "gun_id": "tacz:mk48",
+      "gun_name": "mk48",
+      "tier": "Trooper",
+      "ttk": 16.4,
+      "dps": 15.4,
+      "burst_dps": 23.1,
+      "role_score": 52.4,
+      "verdict": "MARGINAL",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 72.4,
+        "phase_balance": 0.0,
+        "sustain_ratio": 80.9
+      }
+    },
+    {
+      "gun_id": "tacz:m1919",
+      "gun_name": "m1919",
+      "tier": "Sergeant",
+      "ttk": 8.1,
+      "dps": 23.3,
+      "burst_dps": 23.3,
+      "role_score": 100.0,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 100.0
+      }
+    },
+    {
+      "gun_id": "tacz:m1918",
+      "gun_name": "m1918",
+      "tier": "General",
+      "ttk": 1.2,
+      "dps": 42.9,
+      "burst_dps": 42.9,
+      "role_score": 82.9,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 14.5
+      }
+    },
+    {
+      "gun_id": "tacz:aughb",
+      "gun_name": "aughb",
+      "tier": "Sergeant",
+      "ttk": 13.1,
+      "dps": 12.5,
+      "burst_dps": 24.7,
+      "role_score": 87.2,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 35.8
+      }
+    },
+    {
+      "gun_id": "tacz:m60e4",
+      "gun_name": "m60e4",
+      "tier": "Sergeant",
+      "ttk": 9.85,
+      "dps": 19.5,
+      "burst_dps": 19.5,
+      "role_score": 100.0,
+      "verdict": "PASS",
+      "weak_ttk": false,
+      "dim_scores": {
+        "pu_dps_share": 100.0,
+        "phase_balance": 100.0,
+        "sustain_ratio": 100.0
+      }
+    }
+  ]
+}

@@ -32,12 +32,35 @@ public class ElementalMageDataProvider implements ICapabilitySerializable<Compou
     private static final ResourceLocation CAPABILITY_ID =
             ResourceLocation.fromNamespaceAndPath(TalentsMod.MODID, "elemental_mage_data");
 
-    private final IPlayerElementalMageData instance;
+    private final Player player;
+    private IPlayerElementalMageData instance;
     private final LazyOptional<IPlayerElementalMageData> lazy;
 
+    public ElementalMageDataProvider(Player player) {
+        this.player = player;
+        this.instance = null;
+        this.lazy = LazyOptional.of(this::getOrFetchData);
+    }
+
     public ElementalMageDataProvider(IPlayerElementalMageData instance) {
+        this.player = null;
         this.instance = instance;
         this.lazy = LazyOptional.of(() -> this.instance);
+    }
+
+    private IPlayerElementalMageData getOrFetchData() {
+        if (this.instance == null && this.player != null) {
+            if (this.player instanceof ServerPlayer serverPlayer) {
+                var data = PlayerPersistentData.get(serverPlayer.getServer()).getElementalData(serverPlayer.getGameProfile().getName());
+                data.setPlayer(serverPlayer);
+                this.instance = data;
+            } else {
+                var data = new PlayerElementalMageData();
+                data.setPlayer(player);
+                this.instance = data;
+            }
+        }
+        return this.instance;
     }
 
     @NotNull
@@ -48,24 +71,20 @@ public class ElementalMageDataProvider implements ICapabilitySerializable<Compou
 
     @Override
     public CompoundTag serializeNBT() {
-        return instance.serializeNBT();
+        return getOrFetchData().serializeNBT();
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        instance.deserializeNBT(nbt);
+        getOrFetchData().deserializeNBT(nbt);
     }
 
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof ServerPlayer player) {
-            var data = PlayerPersistentData.get(player.getServer()).getElementalData(player.getUUID());
-            data.setPlayer(player);
-            event.addCapability(CAPABILITY_ID, new ElementalMageDataProvider(data));
-        } else if (event.getObject() instanceof Player player) {
-            var data = new PlayerElementalMageData();
-            data.setPlayer(player);
-            event.addCapability(CAPABILITY_ID, new ElementalMageDataProvider(data));
+        if (event.getObject() instanceof Player player) {
+            if (!event.getCapabilities().containsKey(CAPABILITY_ID)) {
+                event.addCapability(CAPABILITY_ID, new ElementalMageDataProvider(player));
+            }
         }
     }
 }

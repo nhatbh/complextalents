@@ -16,14 +16,18 @@
     "InscriptionTableMenuMixin",
     "SlotMixin",
     "epicfight.GuardSkillMixin",
+    "epicfight.ExtendableEnumManagerMixin",
     "tacz.InaccuracyTypeMixin",
+    "tacz.GunSmithTableMenuMixin",
     "summoning.EntitySummonMixin",
     "summoning.LivingEntitySummonMixin",
     "summoning.TargetingConditionsSummonMixin",
     "summoning.ProjectileSummonMixin"
   ],
   "server": [],
-  "client": [],
+  "client": [
+    "tacz.GunSmithTableScreenMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

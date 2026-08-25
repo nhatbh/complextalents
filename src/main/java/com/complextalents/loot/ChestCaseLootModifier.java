@@ -3,22 +3,22 @@ package com.complextalents.loot;
 import com.complextalents.caseopening.DynamicCasePoolBuilder;
 import com.complextalents.caseopening.DynamicCasePoolBuilder.CrateRarity;
 import com.complextalents.item.MysteriousLootItem;
+import com.complextalents.leveling.events.xp.XPContext;
+import com.complextalents.leveling.events.xp.XPSource;
+import com.complextalents.leveling.service.LevelingService;
 import com.complextalents.weaponmastery.capability.IWeaponMasteryData.WeaponPath;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.world.level.ChunkPos;
-import com.complextalents.leveling.events.xp.XPContext;
-import com.complextalents.leveling.events.xp.XPSource;
-import com.complextalents.leveling.service.LevelingService;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -60,13 +60,10 @@ public class ChestCaseLootModifier extends LootModifier {
             }
         }
 
-        // 1. Verify this is a chest / container loot context
-        ResourceLocation tableId = context.getQueriedLootTableId();
-        if (tableId == null) return generatedLoot;
-
-        String pathStr = tableId.getPath().toLowerCase();
-        boolean isChestLoot = pathStr.contains("chest") || pathStr.contains("dungeon") || pathStr.contains("vault") || pathStr.contains("crate") || pathStr.contains("storage");
-        if (!isChestLoot) return generatedLoot;
+        // 1. Exclude non-container loot contexts (block drops have BLOCK_STATE, mob kills have DAMAGE_SOURCE)
+        if (context.hasParam(LootContextParams.BLOCK_STATE) || context.hasParam(LootContextParams.DAMAGE_SOURCE)) {
+            return generatedLoot;
+        }
 
         // 2. Get 3D position of chest/container
         Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
@@ -76,32 +73,49 @@ public class ChestCaseLootModifier extends LootModifier {
         double distance = Math.sqrt(origin.x * origin.x + origin.z * origin.z);
         double distanceRatio = Math.min(1.0, distance / MAX_DISTANCE_BLOCKS);
 
-        // 4. Award Chest Loot XP to the player who opened the container
-        Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
-        if (entity instanceof ServerPlayer player) {
-            double xpAmount = 100.0 + (7400.0 * distanceRatio); // 100 XP at spawn -> 7500 XP at 50k blocks
-            ChunkPos chunkPos = new ChunkPos((int) Math.floor(origin.x) >> 4, (int) Math.floor(origin.z) >> 4);
-            XPContext xpContext = XPContext.builder()
-                    .source(XPSource.CHEST_LOOT)
-                    .chunkPos(chunkPos)
-                    .rawAmount(xpAmount)
-                    .metadata("lootTable", tableId.toString())
-                    .metadata("distance", distance)
-                    .build();
-            LevelingService.getInstance().awardXP(player, xpAmount, XPSource.CHEST_LOOT, xpContext);
+        // 4. Award Chest Loot XP to the player who opened the container (at most once per block entity)
+        BlockEntity blockEntity = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
+        boolean shouldAwardXP = true;
+        if (blockEntity != null) {
+            if (blockEntity.getPersistentData().getBoolean("ct_xp_claimed")) {
+                shouldAwardXP = false;
+            } else {
+                blockEntity.getPersistentData().putBoolean("ct_xp_claimed", true);
+            }
+        }
+
+        if (shouldAwardXP) {
+            ServerPlayer player = null;
+            Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
+            if (entity instanceof ServerPlayer sp) {
+                player = sp;
+            } else if (context.getLevel() != null) {
+                player = (ServerPlayer) context.getLevel().getNearestPlayer(origin.x, origin.y, origin.z, 16.0, false);
+            }
+
+            if (player != null) {
+                double xpAmount = 100.0 + (7400.0 * distanceRatio); // 100 XP at spawn -> 7500 XP at 50k blocks
+                ChunkPos chunkPos = new ChunkPos((int) Math.floor(origin.x) >> 4, (int) Math.floor(origin.z) >> 4);
+                XPContext xpContext = XPContext.builder()
+                        .source(XPSource.CHEST_LOOT)
+                        .chunkPos(chunkPos)
+                        .rawAmount(xpAmount)
+                        .metadata("distance", distance)
+                        .build();
+                LevelingService.getInstance().awardXP(player, xpAmount, XPSource.CHEST_LOOT, xpContext);
+            }
         }
 
         // 5. Calculate Distance-Based Drop Chance (10% at spawn -> 35% at 50,000+ blocks out)
         double dropChance = BASE_DROP_CHANCE + ((MAX_DROP_CHANCE - BASE_DROP_CHANCE) * distanceRatio);
-
         if (random.nextDouble() >= dropChance) {
             return generatedLoot;
         }
 
-        // 5. Calculate Distance-Based CrateRarity
+        // 6. Calculate Distance-Based CrateRarity
         CrateRarity chosenRarity = sampleRarityForDistance(distanceRatio, random);
 
-        // 6. 3-Way Roll between Weapon Case, Magic Case, and Gun Case
+        // 7. 3-Way Roll between Weapon Case, Magic Case, and Gun Case
         int crateCategoryChoice = random.nextInt(3);
 
         if (crateCategoryChoice == 0) {

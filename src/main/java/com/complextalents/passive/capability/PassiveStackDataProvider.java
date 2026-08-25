@@ -32,27 +32,41 @@ public class PassiveStackDataProvider implements ICapabilitySerializable<Compoun
     public static final ResourceLocation IDENTIFIER =
             ResourceLocation.fromNamespaceAndPath(TalentsMod.MODID, "passive_stack_data");
 
-    private final IPassiveStackData instance;
+    private final Player player;
+    private IPassiveStackData instance;
     private final LazyOptional<IPassiveStackData> lazy;
 
+    public PassiveStackDataProvider(Player player) {
+        this.player = player;
+        this.instance = null;
+        this.lazy = LazyOptional.of(this::getOrFetchData);
+    }
+
     public PassiveStackDataProvider(IPassiveStackData instance) {
+        this.player = null;
         this.instance = instance;
         this.lazy = LazyOptional.of(() -> instance);
+    }
+
+    private IPassiveStackData getOrFetchData() {
+        if (this.instance == null && this.player != null) {
+            if (this.player instanceof ServerPlayer serverPlayer) {
+                var psd = PlayerPersistentData.get(serverPlayer.getServer()).getPassiveData(serverPlayer.getGameProfile().getName());
+                psd.setPlayer(serverPlayer);
+                this.instance = psd;
+            } else {
+                this.instance = new PassiveStackData();
+            }
+        }
+        return this.instance;
     }
 
     @SubscribeEvent
     public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof Player player) {
-            final PassiveStackData instance;
-            if (player instanceof ServerPlayer serverPlayer) {
-                instance = PlayerPersistentData.get(serverPlayer.getServer()).getPassiveData(serverPlayer.getUUID());
-                instance.setPlayer(serverPlayer);
-            } else {
-                instance = new PassiveStackData();
+            if (!event.getCapabilities().containsKey(IDENTIFIER)) {
+                event.addCapability(IDENTIFIER, new PassiveStackDataProvider(player));
             }
-
-            PassiveStackDataProvider provider = new PassiveStackDataProvider(instance);
-            event.addCapability(IDENTIFIER, provider);
         }
     }
 
@@ -64,11 +78,11 @@ public class PassiveStackDataProvider implements ICapabilitySerializable<Compoun
 
     @Override
     public CompoundTag serializeNBT() {
-        return ((PassiveStackData) instance).serializeNBT();
+        return ((PassiveStackData) getOrFetchData()).serializeNBT();
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        ((PassiveStackData) instance).deserializeNBT(nbt);
+        ((PassiveStackData) getOrFetchData()).deserializeNBT(nbt);
     }
 }

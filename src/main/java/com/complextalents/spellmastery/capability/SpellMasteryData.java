@@ -29,7 +29,8 @@ public class SpellMasteryData implements ISpellMasteryData {
     private final Map<ResourceLocation, Integer> learnedSpells = new HashMap<>(); // SpellID -> Max Level Learned
     private final Map<ResourceLocation, Integer> purchasedMasteryLevels = new HashMap<>(); // SchoolID -> Tier
     private int totalSPSpentOnMastery = 0;
-    private static final UUID MASTERY_SP_REWARD_UUID = UUIDHelper.generateAttributeModifierUUID("spell_mastery", "mastery_buyup_reward");
+    private static final UUID MASTERY_SP_REWARD_UUID = UUIDHelper.generateAttributeModifierUUID("spell_mastery",
+            "mastery_buyup_reward");
 
     public SpellMasteryData() {
         // Default constructor for global storage
@@ -82,7 +83,7 @@ public class SpellMasteryData implements ISpellMasteryData {
                 calculated = 1; // Uncommon unlocked
             }
         }
-        
+
         return Math.max(calculated, purchasedMasteryLevels.getOrDefault(schoolId, 0));
     }
 
@@ -144,16 +145,19 @@ public class SpellMasteryData implements ISpellMasteryData {
     }
 
     private void applySpellPowerReward() {
-        if (player == null || player.level().isClientSide) return;
-        
-        Attribute spellPowerAttr = ForgeRegistries.ATTRIBUTES.getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "spell_power"));
+        if (player == null || player.level().isClientSide)
+            return;
+
+        Attribute spellPowerAttr = ForgeRegistries.ATTRIBUTES
+                .getValue(ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "spell_power"));
         if (spellPowerAttr != null) {
             AttributeInstance instance = player.getAttribute(spellPowerAttr);
             if (instance != null) {
                 instance.removeModifier(MASTERY_SP_REWARD_UUID);
                 double reward = totalSPSpentOnMastery * 0.02;
                 if (reward > 0) {
-                    instance.addTransientModifier(new AttributeModifier(MASTERY_SP_REWARD_UUID, "Mastery Buy-up Reward", reward, AttributeModifier.Operation.ADDITION));
+                    instance.addTransientModifier(new AttributeModifier(MASTERY_SP_REWARD_UUID, "Mastery Buy-up Reward",
+                            reward, AttributeModifier.Operation.ADDITION));
                 }
             }
         }
@@ -182,21 +186,21 @@ public class SpellMasteryData implements ISpellMasteryData {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
-        
+
         CompoundTag spellsNbt = new CompoundTag();
         for (Map.Entry<ResourceLocation, Integer> entry : learnedSpells.entrySet()) {
             spellsNbt.putInt(entry.getKey().toString(), entry.getValue());
         }
         nbt.put("LearnedSpellsMap", spellsNbt);
-        
+
         CompoundTag purchasedNbt = new CompoundTag();
         for (Map.Entry<ResourceLocation, Integer> entry : purchasedMasteryLevels.entrySet()) {
             purchasedNbt.putInt(entry.getKey().toString(), entry.getValue());
         }
         nbt.put("PurchasedMasteryMap", purchasedNbt);
-        
+
         nbt.putInt("TotalSPSpentOnMastery", totalSPSpentOnMastery);
-        
+
         return nbt;
     }
 
@@ -215,7 +219,7 @@ public class SpellMasteryData implements ISpellMasteryData {
                 learnedSpells.put(ResourceLocation.parse(legacySpells.getString(i)), 1); // Assume min level 1
             }
         }
-        
+
         purchasedMasteryLevels.clear();
         if (nbt.contains("PurchasedMasteryMap")) {
             CompoundTag purchasedNbt = nbt.getCompound("PurchasedMasteryMap");
@@ -223,9 +227,9 @@ public class SpellMasteryData implements ISpellMasteryData {
                 purchasedMasteryLevels.put(ResourceLocation.parse(key), purchasedNbt.getInt(key));
             }
         }
-        
+
         totalSPSpentOnMastery = nbt.getInt("TotalSPSpentOnMastery");
-        
+
         if (player != null && !player.level().isClientSide) {
             applySpellPowerReward();
         }

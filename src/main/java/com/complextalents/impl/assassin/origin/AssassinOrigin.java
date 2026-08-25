@@ -65,7 +65,7 @@ public class AssassinOrigin {
 
         ClassCostMatrix.defineCosts(ID)
                 .cost(StatType.FLAT_AD, 1)
-                .cost(StatType.PERCENT_AD, 2)
+                .cost(StatType.PERCENT_AD, 1)
                 .cost(StatType.AP, 4)
                 .cost(StatType.LUCK_CRIT, 1)
                 .cost(StatType.MAX_HP, 5)

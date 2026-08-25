@@ -2,191 +2,76 @@ package com.complextalents.impl.marksman.events;
 
 import com.complextalents.TalentsMod;
 import com.complextalents.effect.ModEffects;
-import com.complextalents.impl.marksman.data.MarksmanAdrenalineData;
-import com.complextalents.impl.marksman.network.S2CKillBannerPacket;
+import com.complextalents.impl.marksman.data.MarksmanResourceData;
 import com.complextalents.impl.marksman.skill.RelentlessPursuitSkill;
-import com.complextalents.network.PacketHandler;
-import com.complextalents.skill.event.SkillCastRequestEvent;
-import com.complextalents.tacz.GunType;
-import com.complextalents.tacz.HeartRateManager;
-import com.tacz.guns.api.event.common.EntityHurtByGunEvent;
-import com.tacz.guns.api.event.common.GunShootEvent;
-import com.tacz.guns.api.event.server.AmmoHitBlockEvent;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
+import com.complextalents.origin.capability.OriginDataProvider;
+import com.complextalents.skill.capability.SkillDataProvider;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.List;
-
 /**
- * Event Handler for Marksman Active Skill: Relentless Pursuit & Segmented Dismiss Mechanics.
+ * Event Handler for Marksman Active Skill: Relentless Pursuit (Tactical Dash & Mobility System).
  */
 @Mod.EventBusSubscriber(modid = TalentsMod.MODID)
 public class RelentlessPursuitEventHandler {
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onSkillCastRequest(SkillCastRequestEvent event) {
-        if (!RelentlessPursuitSkill.ID.equals(event.getSkillId())) {
-            return;
-        }
+    private static final String NBT_MOBILITY_TICK = "marksman_mobility_tick_counter";
 
-        ServerPlayer player = event.getPlayer();
-
-        // Check if player is already in Adrenaline Mode
-        if (MarksmanAdrenalineData.isActive(player)) {
-            event.setCanceled(true); // Intercept standard cast execution
-
-            if (MarksmanAdrenalineData.canDismiss(player)) {
-                // Re-activation at 100 resource: Trigger Dismissed State!
-                player.addEffect(new MobEffectInstance(ModEffects.DISMISSED.get(), 20, 0, false, true, true));
-                player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 20, 0, false, false));
-
-                // Clear targeting from nearby mobs within 32 blocks
-                AABB searchBox = player.getBoundingBox().inflate(32.0);
-                List<Mob> nearbyMobs = player.level().getEntitiesOfClass(Mob.class, searchBox, mob -> mob.getTarget() == player);
-                for (Mob mob : nearbyMobs) {
-                    mob.setTarget(null);
-                }
-
-                // Consume 1 Dismiss Charge (100 resource)
-                MarksmanAdrenalineData.consumeDismissCharge(player);
-
-                // FX: Smoke vanish sound & particle burst
-                ServerLevel level = player.serverLevel();
-                level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                        SoundEvents.ENDER_DRAGON_FLAP, SoundSource.PLAYERS, 0.8f, 1.6f);
-                level.sendParticles(ParticleTypes.SMOKE,
-                        player.getX(), player.getY() + 1.0, player.getZ(),
-                        25, 0.3, 0.5, 0.3, 0.05);
-            } else {
-                float resource = MarksmanAdrenalineData.getDismissResource(player);
-                event.setFailureReason(String.format("%.0f", resource));
-            }
+    /**
+     * 100% Damage Negation while Dash Invulnerability effect is active.
+     */
+    @SubscribeEvent
+    public static void onLivingHurt(LivingHurtEvent event) {
+        LivingEntity entity = event.getEntity();
+        if (entity != null && entity.hasEffect(ModEffects.DASH_INVULNERABLE.get())) {
+            event.setCanceled(true);
         }
     }
 
     /**
-     * Shooting instantly cancels Dismissed state & Invisibility.
+     * Server tick handler for Marksman Mobility passive regeneration.
+     * Regen rate is scaled by Relentless Pursuit skill rank:
+     * R1: 48 ticks (+1 pt / 2.4s) -> R5: 24 ticks (+1 pt / 1.2s)
      */
-    @SubscribeEvent
-    public static void onGunShoot(GunShootEvent event) {
-        LivingEntity shooter = event.getShooter();
-        if (shooter != null && !shooter.level().isClientSide()) {
-            if (shooter.hasEffect(ModEffects.DISMISSED.get())) {
-                shooter.removeEffect(ModEffects.DISMISSED.get());
-                shooter.removeEffect(MobEffects.INVISIBILITY);
-            }
-        }
-    }
-
-    /**
-     * Miss Penalty (-1.0s): Bullet hits terrain/block without hitting an entity.
-     */
-    @SubscribeEvent
-    public static void onAmmoHitBlock(AmmoHitBlockEvent event) {
-        if (event.getLevel().isClientSide()) return;
-
-        if (event.getAmmo() != null && event.getAmmo().getOwner() instanceof ServerPlayer player) {
-            if (MarksmanAdrenalineData.isActive(player)) {
-                MarksmanAdrenalineData.deductDuration(player, 1.0f);
-            }
-        }
-    }
-
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || !(event.player instanceof ServerPlayer player)) {
             return;
         }
 
-        if (MarksmanAdrenalineData.isActive(player)) {
-            // Tick server-side Adrenaline duration
-            MarksmanAdrenalineData.tickServer(player);
-
-            // Lock Heart Rate to resting state (60 BPM)
-            HeartRateManager.setHeartRate(player, HeartRateManager.RESTING_BPM);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onLivingHurt(LivingHurtEvent event) {
-        LivingEntity entity = event.getEntity();
-        if (entity != null && entity.hasEffect(ModEffects.DISMISSED.get())) {
-            event.setCanceled(true); // 100% Invulnerable during Dismissed state
-        }
-
-        // Attacking or dealing damage cancels Dismissed state & Invisibility
-        if (event.getSource().getEntity() instanceof LivingEntity attacker) {
-            if (attacker.hasEffect(ModEffects.DISMISSED.get())) {
-                attacker.removeEffect(ModEffects.DISMISSED.get());
-                attacker.removeEffect(MobEffects.INVISIBILITY);
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void onLivingDeath(LivingDeathEvent event) {
-        if (event.getEntity().level().isClientSide()) return;
-
-        if (event.getSource().getEntity() instanceof ServerPlayer player) {
-            if (MarksmanAdrenalineData.isActive(player)) {
-                // Extend Adrenaline duration (+3.0s, capped at double base duration)
-                MarksmanAdrenalineData.addDuration(player, 3.0f);
-
-                // Dispatch Kill Banner Packet to client
-                int killStreak = MarksmanAdrenalineData.incrementKillCount(player);
-                PacketHandler.sendTo(new S2CKillBannerPacket(killStreak), player);
-            }
-        }
-    }
-
-    /**
-     * Hit Resolution:
-     * - Bodyshot: Deducts -0.5s directly.
-     * - Headshot: Deducts 0.0s (No duration loss) + Grants Dismiss resource.
-     */
-    @SubscribeEvent
-    public static void onEntityHurtByGun(EntityHurtByGunEvent.Pre event) {
-        LivingEntity attacker = event.getAttacker();
-        if (!(attacker instanceof ServerPlayer player) || player.level().isClientSide()) {
+        var originOpt = player.getCapability(OriginDataProvider.ORIGIN_DATA);
+        if (!originOpt.isPresent() || originOpt.orElse(null).getActiveOrigin() == null) {
             return;
         }
 
-        if (!MarksmanAdrenalineData.isActive(player)) {
+        ResourceLocation originId = originOpt.orElse(null).getActiveOrigin();
+        if (!com.complextalents.impl.marksman.origin.MarksmanOrigin.ID.equals(originId)) {
             return;
         }
 
-        if (event.isHeadShot()) {
-            // Headshot: No duration loss (0.0s penalty) + Grant Dismiss resource
-            ItemStack mainStack = player.getMainHandItem();
-            GunType gunType = GunType.fromItemStack(mainStack);
-            float gain = switch (gunType) {
-                case SNIPER -> 25.0f; // 4 headshots per dismiss
-                case SHOTGUN -> 15.0f;
-                case RIFLE -> 12.5f; // 8 headshots per dismiss
-                case PISTOL -> 10.0f; // 10 headshots per dismiss
-                case SMG -> 6.0f;
-                case MG -> 4.0f;
-                default -> 10.0f;
-            };
-            MarksmanAdrenalineData.addDismissResource(player, gain);
-        } else {
-            // Bodyshot: Deduct 0.5s directly
-            MarksmanAdrenalineData.deductDuration(player, 0.5f);
+        // Get Relentless Pursuit skill rank
+        int skillRank = 1;
+        var skillDataOpt = player.getCapability(SkillDataProvider.SKILL_DATA);
+        if (skillDataOpt.isPresent()) {
+            int level = skillDataOpt.resolve().get().getSkillLevel(RelentlessPursuitSkill.ID);
+            skillRank = Math.min(Math.max(1, level), 5);
         }
+
+        int[] intervalTicks = new int[]{ 48, 42, 36, 30, 24 };
+        int requiredTicks = intervalTicks[skillRank - 1];
+
+        CompoundTag nbt = player.getPersistentData();
+        int counter = nbt.getInt(NBT_MOBILITY_TICK) + 1;
+        if (counter >= requiredTicks) {
+            counter = 0;
+            MarksmanResourceData.addMobility(player, 1.0f);
+        }
+        nbt.putInt(NBT_MOBILITY_TICK, counter);
     }
 }

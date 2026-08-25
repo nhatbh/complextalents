@@ -218,7 +218,8 @@ public class FinalizePlayerUpgradesPacket {
                         int requestedLevels = entry.getValue();
                         if (requestedLevels <= 0) continue;
 
-                        if (!com.complextalents.gunmastery.GunMasteryManager.getInstance().canUnlockArchetype(type, gunData)) continue;
+                        int playerOriginLevel = OriginManager.getOriginLevel(player);
+                        if (!com.complextalents.gunmastery.GunMasteryManager.getInstance().canUnlockArchetype(type, gunData, playerOriginLevel)) continue;
 
                         int currentLevel = gunData.getMasteryLevel(type);
                         double accumulatedDamage = gunData.getAccumulatedDamage(type);

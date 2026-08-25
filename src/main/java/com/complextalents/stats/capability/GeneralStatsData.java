@@ -125,7 +125,7 @@ public class GeneralStatsData implements IGeneralStatsData {
         CompoundTag nbt = new CompoundTag();
         nbt.putInt("SkillPoints", skillPoints);
         nbt.putInt("HighestCP", highestCombatPower);
-        
+
         CompoundTag ranksNbt = new CompoundTag();
         for (Map.Entry<StatType, Integer> entry : ranks.entrySet()) {
             ranksNbt.putInt(entry.getKey().name(), entry.getValue());
@@ -137,7 +137,7 @@ public class GeneralStatsData implements IGeneralStatsData {
             originRanksNbt.putInt(entry.getKey().name(), entry.getValue());
         }
         nbt.put("OriginRanks", originRanksNbt);
-        
+
         return nbt;
     }
 
@@ -145,7 +145,7 @@ public class GeneralStatsData implements IGeneralStatsData {
     public void deserializeNBT(CompoundTag nbt) {
         this.skillPoints = nbt.getInt("SkillPoints");
         this.highestCombatPower = nbt.getInt("HighestCP");
-        
+
         this.ranks.clear();
         CompoundTag ranksNbt = nbt.getCompound("Ranks");
         for (StatType type : StatType.values()) {

@@ -1,16 +1,14 @@
 package com.complextalents.impl.marksman.client;
 
 import com.complextalents.TalentsMod;
-import com.complextalents.tacz.HeartRateManager;
-import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import com.tacz.guns.api.entity.IGunOperator;
+import com.tacz.guns.api.item.IGun;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.PostChain;
-import net.minecraft.client.renderer.PostPass;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -19,73 +17,21 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
-import java.lang.reflect.Field;
-import java.util.List;
-
 /**
- * Client Handler for Marksman Adrenaline state shader & mob head reticle image rendering.
- * Native glowing red mob model outlines are handled strictly via EntityMixin while active.
+ * Client Handler for Marksman mob weak point reticle rendering when holding a TACZ gun and Aiming Down Sights (ADS).
  */
 @Mod.EventBusSubscriber(modid = TalentsMod.MODID, value = Dist.CLIENT)
 public class ClientAdrenalineMarkRenderer {
 
-    private static final ResourceLocation RED_MONO_SHADER = ResourceLocation.fromNamespaceAndPath("complextalents", "shaders/post/red_monochromatic.json");
-    private static final ResourceLocation FALLBACK_SHADER = ResourceLocation.fromNamespaceAndPath("minecraft", "shaders/post/desaturate.json");
     private static final ResourceLocation RETICLE_TEXTURE = ResourceLocation.fromNamespaceAndPath("complextalents", "textures/skill/marksman/reticle.png");
 
-    private static boolean shaderActive = false;
-    private static float shaderProgress = 0.0f;
-    private static Field passesField = null;
-
-    static {
-        try {
-            passesField = PostChain.class.getDeclaredField("passes");
-            passesField.setAccessible(true);
-        } catch (Exception ignored) {}
-    }
-
-    @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null) {
-            if (shaderActive) {
-                clearShader(mc);
-            }
-            return;
-        }
-
-        boolean active = ClientAdrenalineFXHandler.isActive();
-
-        if (active) {
-            shaderProgress = Math.min(1.0f, shaderProgress + 0.15f);
-            if (!shaderActive || mc.gameRenderer.currentEffect() == null) {
-                enableShader(mc);
-            }
-        } else {
-            shaderProgress = Math.max(0.0f, shaderProgress - 0.15f);
-
-            if (shaderProgress <= 0.0f && (shaderActive || mc.gameRenderer.currentEffect() != null)) {
-                clearShader(mc);
-            }
-        }
-
-        float cubicEase = shaderProgress * shaderProgress * (3.0f - 2.0f * shaderProgress);
-        updateShaderUniform(mc, cubicEase);
-
-        if (active) {
-            HeartRateManager.setHeartRate(mc.player, HeartRateManager.RESTING_BPM);
-        }
-    }
-
     /**
-     * Renders reticle.png image on target mobs' heads billboarded facing the camera during Adrenaline,
+     * Renders reticle.png image on target mobs' heads billboarded facing the camera when holding a TACZ gun and ADS,
      * offset toward player camera by the mob's bounding box to prevent model obstruction.
      */
     @SubscribeEvent
@@ -97,7 +43,14 @@ public class ClientAdrenalineMarkRenderer {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null) return;
 
-        if (!ClientAdrenalineFXHandler.isActive()) {
+        // Check if player is holding a TACZ gun and Aiming Down Sights
+        if (IGun.getIGunOrNull(mc.player.getMainHandItem()) == null) {
+            return;
+        }
+
+        IGunOperator operator = IGunOperator.fromLivingEntity(mc.player);
+        boolean isAiming = operator.getSynIsAiming() || operator.getSynAimingProgress() > 0.1f;
+        if (!isAiming) {
             return;
         }
 
@@ -146,47 +99,5 @@ public class ClientAdrenalineMarkRenderer {
         vc.vertex(pose, -half, -half, 0.0f).color(255, 255, 255, 255).uv(0.0f, 1.0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(normal, 0.0f, 0.0f, 1.0f).endVertex();
         vc.vertex(pose, half, -half, 0.0f).color(255, 255, 255, 255).uv(1.0f, 1.0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(normal, 0.0f, 0.0f, 1.0f).endVertex();
         vc.vertex(pose, half, half, 0.0f).color(255, 255, 255, 255).uv(1.0f, 0.0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(normal, 0.0f, 0.0f, 1.0f).endVertex();
-    }
-
-    private static void enableShader(Minecraft mc) {
-        try {
-            mc.gameRenderer.loadEffect(RED_MONO_SHADER);
-            shaderActive = true;
-        } catch (Exception e) {
-            try {
-                mc.gameRenderer.loadEffect(FALLBACK_SHADER);
-                shaderActive = true;
-            } catch (Exception ex) {
-                shaderActive = false;
-            }
-        }
-    }
-
-    private static void clearShader(Minecraft mc) {
-        try {
-            if (mc.gameRenderer != null) {
-                mc.gameRenderer.shutdownEffect();
-            }
-        } catch (Exception ignored) {}
-        shaderActive = false;
-        shaderProgress = 0.0f;
-    }
-
-    private static void updateShaderUniform(Minecraft mc, float value) {
-        if (mc.gameRenderer != null && mc.gameRenderer.currentEffect() != null && passesField != null) {
-            try {
-                PostChain chain = mc.gameRenderer.currentEffect();
-                @SuppressWarnings("unchecked")
-                List<PostPass> passes = (List<PostPass>) passesField.get(chain);
-                if (passes != null) {
-                    for (PostPass pass : passes) {
-                        Uniform uniform = pass.getEffect().getUniform("Progress");
-                        if (uniform != null) {
-                            uniform.set(value);
-                        }
-                    }
-                }
-            } catch (Exception ignored) {}
-        }
     }
 }

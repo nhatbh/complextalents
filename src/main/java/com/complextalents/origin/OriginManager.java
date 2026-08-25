@@ -459,32 +459,36 @@ public class OriginManager {
     }
 
     private static void giveMarksmanStarterEquipment(ServerPlayer player) {
-        // 1. Firearm: tacz:modern_kinetic_gun {HasBulletInBarrel: 1, GunFireMode: "BURST", GunId: "maxstuff:mk23", GunCurrentAmmoCount: 5}
+        // 1. Firearm: tacz:modern_kinetic_gun {HasBulletInBarrel: 1, GunFireMode: "SEMI", GunId: "tacz:cz75s", GunCurrentAmmoCount: 16}
         ResourceLocation gunItemId = ResourceLocation.fromNamespaceAndPath("tacz", "modern_kinetic_gun");
         net.minecraft.world.item.Item gunItem = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(gunItemId);
         if (gunItem != null && gunItem != net.minecraft.world.item.Items.AIR) {
             net.minecraft.world.item.ItemStack gunStack = new net.minecraft.world.item.ItemStack(gunItem, 1);
             net.minecraft.nbt.CompoundTag tag = gunStack.getOrCreateTag();
             tag.putByte("HasBulletInBarrel", (byte) 1);
-            tag.putString("GunFireMode", "BURST");
-            tag.putString("GunId", "maxstuff:mk23");
-            tag.putInt("GunCurrentAmmoCount", 5);
+            tag.putString("GunFireMode", "SEMI");
+            tag.putString("GunId", "tacz:cz75s");
+            tag.putInt("GunCurrentAmmoCount", 16);
 
             if (!player.getInventory().add(gunStack)) {
                 player.drop(gunStack, false);
             }
         }
 
-        // 2. Ammunition: tacz:ammo {AmmoId: "tacz:45acp"} * 60
+        // 2. Ammunition: tacz:ammo {AmmoId: "tacz:9mm"} * 90 (60 + 30 rounds)
         ResourceLocation ammoItemId = ResourceLocation.fromNamespaceAndPath("tacz", "ammo");
         net.minecraft.world.item.Item ammoItem = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(ammoItemId);
         if (ammoItem != null && ammoItem != net.minecraft.world.item.Items.AIR) {
-            net.minecraft.world.item.ItemStack ammoStack = new net.minecraft.world.item.ItemStack(ammoItem, 60);
-            net.minecraft.nbt.CompoundTag tag = ammoStack.getOrCreateTag();
-            tag.putString("AmmoId", "tacz:45acp");
+            net.minecraft.world.item.ItemStack ammoStack1 = new net.minecraft.world.item.ItemStack(ammoItem, 60);
+            ammoStack1.getOrCreateTag().putString("AmmoId", "tacz:9mm");
+            if (!player.getInventory().add(ammoStack1)) {
+                player.drop(ammoStack1, false);
+            }
 
-            if (!player.getInventory().add(ammoStack)) {
-                player.drop(ammoStack, false);
+            net.minecraft.world.item.ItemStack ammoStack2 = new net.minecraft.world.item.ItemStack(ammoItem, 30);
+            ammoStack2.getOrCreateTag().putString("AmmoId", "tacz:9mm");
+            if (!player.getInventory().add(ammoStack2)) {
+                player.drop(ammoStack2, false);
             }
         }
     }

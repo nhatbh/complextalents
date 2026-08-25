@@ -77,13 +77,13 @@ public class PlayerDataPersistenceHandler {
 
         if (!event.isWasDeath()) {
             savePlayerData(oldPlayer);
-            LOGGER.info("[CLONE] Dimension change for {}, original data saved", newPlayer.getUUID());
+            LOGGER.info("[CLONE] Dimension change for {}, original data saved", newPlayer.getGameProfile().getName());
         }
 
         // Capabilities are already attached to the NEW entity via Attachment event,
         // which pulls the SAME instances from global storage. We just need to sync.
         syncAllData(newPlayer);
-        LOGGER.info("[CLONE] Restored and synced data for {}", newPlayer.getUUID());
+        LOGGER.info("[CLONE] Restored and synced data for {}", newPlayer.getGameProfile().getName());
     }
 
     @SubscribeEvent
@@ -172,7 +172,7 @@ public class PlayerDataPersistenceHandler {
         });
 
         // Origin specific data handlers
-        UUID playerId = player.getUUID();
+        String playerName = player.getGameProfile().getName();
         PlayerPersistentData persistentData = PlayerPersistentData.get(player.getServer());
 
         // Origin-specific data (Soul, Elemental, Faith) is now persisted automatically 
@@ -183,7 +183,7 @@ public class PlayerDataPersistenceHandler {
         // Generic skill-specific persistence
         player.getCapability(com.complextalents.skill.capability.SkillDataProvider.SKILL_DATA).ifPresent(skillCap -> {
             for (ResourceLocation skillId : skillCap.getAllLearnedSkills()) {
-                CompoundTag skillTag = persistentData.getSkillCustomData(playerId, skillId.toString());
+                CompoundTag skillTag = persistentData.getSkillCustomData(playerName, skillId.toString());
                 if (skillTag != null && !skillTag.isEmpty()) {
                     // This is where individual skills would register their load hooks
                     if (skillId.equals(com.complextalents.impl.warrior.skills.ChallengersRetribution.ID)) {
@@ -195,7 +195,7 @@ public class PlayerDataPersistenceHandler {
     }
 
     private static void savePlayerData(ServerPlayer player) {
-        UUID playerId = player.getUUID();
+        String playerName = player.getGameProfile().getName();
         PlayerPersistentData persistentData = PlayerPersistentData.get(player.getServer());
 
         // Soul, Elemental, and Faith data are now persisted automatically as live objects
@@ -208,7 +208,7 @@ public class PlayerDataPersistenceHandler {
                 if (skillId.equals(com.complextalents.impl.warrior.skills.ChallengersRetribution.ID)) {
                     CompoundTag skillTag = com.complextalents.impl.warrior.skills.ChallengersRetribution.saveData(player);
                     if (!skillTag.isEmpty()) {
-                        persistentData.saveSkillCustomData(playerId, skillId.toString(), skillTag);
+                        persistentData.saveSkillCustomData(playerName, skillId.toString(), skillTag);
                     }
                 }
             }

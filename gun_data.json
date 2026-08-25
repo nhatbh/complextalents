@@ -2285,8 +2285,8 @@
         "id": 327,
         "item_id": "maxstuff:blicky",
         "archetype": "PISTOL",
-        "rank": "General",
-        "tier": 5
+        "rank": "Creative Only",
+        "tier": 0
     },
     {
         "id": 328,

@@ -68,7 +68,7 @@ public class PassiveStackData implements IPassiveStackData {
             sync();
             if (player != null) {
                 MinecraftForge.EVENT_BUS.post(new PassiveStackChangeEvent(
-                    player, stackTypeName, oldValue, clampedCount, PassiveStackChangeEvent.ChangeType.SET));
+                        player, stackTypeName, oldValue, clampedCount, PassiveStackChangeEvent.ChangeType.SET));
             }
         }
     }
@@ -86,7 +86,7 @@ public class PassiveStackData implements IPassiveStackData {
             sync();
             if (player != null) {
                 MinecraftForge.EVENT_BUS.post(new PassiveStackChangeEvent(
-                    player, PassiveStackChangeEvent.ChangeType.RESET));
+                        player, PassiveStackChangeEvent.ChangeType.RESET));
             }
         }
     }
@@ -148,8 +148,8 @@ public class PassiveStackData implements IPassiveStackData {
      */
     private String[] getAllOwnerIds() {
         return new String[] {
-            getOriginId(),
-            getSkillIds()
+                getOriginId(),
+                getSkillIds()
         };
     }
 

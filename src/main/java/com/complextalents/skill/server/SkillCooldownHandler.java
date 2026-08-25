@@ -80,12 +80,8 @@ public class SkillCooldownHandler {
 
         // Check active cooldown
         if (skillData.isOnCooldown(skillId)) {
-            // Bypass cooldown check for Relentless Pursuit while inside Adrenaline mode to allow Dismiss re-casts
-            if (!(com.complextalents.impl.marksman.skill.RelentlessPursuitSkill.ID.equals(skillId) 
-                  && com.complextalents.impl.marksman.data.MarksmanAdrenalineData.isActive(player))) {
-                double remaining = skillData.getCooldown(skillId);
-                return ValidationResult.failure(String.format("Cooldown: %.1fs", remaining));
-            }
+            double remaining = skillData.getCooldown(skillId);
+            return ValidationResult.failure(String.format("Cooldown: %.1fs", remaining));
         }
 
         // Check resource cost

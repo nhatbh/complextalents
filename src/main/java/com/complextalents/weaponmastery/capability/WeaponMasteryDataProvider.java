@@ -2,7 +2,9 @@ package com.complextalents.weaponmastery.capability;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
@@ -23,19 +25,31 @@ public class WeaponMasteryDataProvider implements ICapabilitySerializable<Compou
     public static final Capability<IWeaponMasteryData> WEAPON_MASTERY_DATA = CapabilityManager.get(new CapabilityToken<>() {});
     public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath(TalentsMod.MODID, "weapon_mastery");
 
-    private IWeaponMasteryData weaponMasteryData = null;
-    private final LazyOptional<IWeaponMasteryData> optional = LazyOptional.of(this::createWeaponMasteryData);
-
     private final Player player;
+    private IWeaponMasteryData weaponMasteryData;
+    private final LazyOptional<IWeaponMasteryData> optional;
+
+    public WeaponMasteryDataProvider(Player player) {
+        this.player = player;
+        this.weaponMasteryData = null;
+        this.optional = LazyOptional.of(this::getOrFetchData);
+    }
 
     public WeaponMasteryDataProvider(Player player, IWeaponMasteryData data) {
         this.player = player;
         this.weaponMasteryData = data;
+        this.optional = LazyOptional.of(() -> this.weaponMasteryData);
     }
 
-    private IWeaponMasteryData createWeaponMasteryData() {
-        if (this.weaponMasteryData == null) {
-            this.weaponMasteryData = new WeaponMasteryData(player);
+    private IWeaponMasteryData getOrFetchData() {
+        if (this.weaponMasteryData == null && this.player != null) {
+            if (this.player instanceof ServerPlayer serverPlayer) {
+                var data = PlayerPersistentData.get(serverPlayer.getServer()).getWeaponMasteryData(serverPlayer.getGameProfile().getName());
+                data.setPlayer(serverPlayer);
+                this.weaponMasteryData = data;
+            } else {
+                this.weaponMasteryData = new WeaponMasteryData(player);
+            }
         }
         return this.weaponMasteryData;
     }
@@ -50,25 +64,19 @@ public class WeaponMasteryDataProvider implements ICapabilitySerializable<Compou
 
     @Override
     public CompoundTag serializeNBT() {
-        return createWeaponMasteryData().serializeNBT();
+        return getOrFetchData().serializeNBT();
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        createWeaponMasteryData().deserializeNBT(nbt);
+        getOrFetchData().deserializeNBT(nbt);
     }
 
     @SubscribeEvent
-    public static void attachCapabilities(AttachCapabilitiesEvent<net.minecraft.world.entity.Entity> event) {
-        if (event.getObject() instanceof net.minecraft.server.level.ServerPlayer player) {
+    public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+        if (event.getObject() instanceof Player player) {
             if (!event.getCapabilities().containsKey(IDENTIFIER)) {
-                var data = PlayerPersistentData.get(player.getServer()).getWeaponMasteryData(player.getUUID());
-                data.setPlayer(player);
-                event.addCapability(IDENTIFIER, new WeaponMasteryDataProvider(player, data));
-            }
-        } else if (event.getObject() instanceof Player player) {
-            if (!event.getCapabilities().containsKey(IDENTIFIER)) {
-                event.addCapability(IDENTIFIER, new WeaponMasteryDataProvider(player, new WeaponMasteryData(player)));
+                event.addCapability(IDENTIFIER, new WeaponMasteryDataProvider(player));
             }
         }
     }

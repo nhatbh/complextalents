@@ -91,31 +91,32 @@ public class GunRefinementManager {
     }
 
     /**
-     * Mainstat Gun Damage Bonus % curve scaling across Cumulative Levels 0 to 20 (+450% Max Cap).
+     * Mainstat Gun Damage Bonus % curve scaling across Cumulative Levels 0 to 20 (+200% Max Cap).
+     * Incremental gain accelerates by +1.0% per level (0.5%, 1.5%, 2.5%, ... up to 19.5% at Lv 20).
      */
     public static double getMainstatDamageBonus(int cumulativeLevel) {
         double[] bonuses = {
-            0.00,  // Lv 0: Base (+0%)
-            0.025, // Lv 1: Recruit +1 (+2.5%)
-            0.06,  // Lv 2: Recruit +2 (+6%)
-            0.10,  // Lv 3: Recruit +3 (+10%)
-            0.15,  // Lv 4: Recruit Max (+15%)
-            0.21,  // Lv 5: Trooper +1 (+21%)
-            0.28,  // Lv 6: Trooper +2 (+28%)
-            0.36,  // Lv 7: Trooper +3 (+36%)
-            0.45,  // Lv 8: Trooper Max (+45%)
-            0.56,  // Lv 9: Sergeant +1 (+56%)
-            0.69,  // Lv 10: Sergeant +2 (+69%)
-            0.84,  // Lv 11: Sergeant +3 (+84%)
-            1.00,  // Lv 12: Sergeant Max (+100%)
-            1.20,  // Lv 13: Captain +1 (+120%)
-            1.425, // Lv 14: Captain +2 (+142.5%)
-            1.675, // Lv 15: Captain +3 (+167.5%)
-            1.925, // Lv 16: Captain Max (+192.5%)
-            2.025, // Lv 17: General +1 (+202.5%)
-            2.11,  // Lv 18: General +2 (+211%)
-            2.19,  // Lv 19: General +3 (+219%)
-            2.25   // Lv 20: General Max Pinnacle (+225%)
+            0.000, // Lv 0: Base (+0.0%)
+            0.005, // Lv 1: Recruit +1 (+0.5%, gain +0.5%)
+            0.020, // Lv 2: Recruit +2 (+2.0%, gain +1.5%)
+            0.045, // Lv 3: Recruit +3 (+4.5%, gain +2.5%)
+            0.080, // Lv 4: Recruit Max (+8.0%, gain +3.5%)
+            0.125, // Lv 5: Trooper +1 (+12.5%, gain +4.5%)
+            0.180, // Lv 6: Trooper +2 (+18.0%, gain +5.5%)
+            0.245, // Lv 7: Trooper +3 (+24.5%, gain +6.5%)
+            0.320, // Lv 8: Trooper Max (+32.0%, gain +7.5%)
+            0.405, // Lv 9: Sergeant +1 (+40.5%, gain +8.5%)
+            0.500, // Lv 10: Sergeant +2 (+50.0%, gain +9.5%)
+            0.605, // Lv 11: Sergeant +3 (+60.5%, gain +10.5%)
+            0.720, // Lv 12: Sergeant Max (+72.0%, gain +11.5%)
+            0.845, // Lv 13: Captain +1 (+84.5%, gain +12.5%)
+            0.980, // Lv 14: Captain +2 (+98.0%, gain +13.5%)
+            1.125, // Lv 15: Captain +3 (+112.5%, gain +14.5%)
+            1.280, // Lv 16: Captain Max (+128.0%, gain +15.5%)
+            1.445, // Lv 17: General +1 (+144.5%, gain +16.5%)
+            1.620, // Lv 18: General +2 (+162.0%, gain +17.5%)
+            1.805, // Lv 19: General +3 (+180.5%, gain +18.5%)
+            2.000  // Lv 20: General Max Pinnacle (+200.0%, gain +19.5%)
         };
         int index = Math.max(0, Math.min(bonuses.length - 1, cumulativeLevel));
         return bonuses[index];
