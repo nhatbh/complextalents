@@ -35,6 +35,7 @@ public class LevelArmorHandler {
     private static final UUID LEVEL_TOUGHNESS_UUID = UUIDHelper.generateAttributeModifierUUID("leveling", "player_level_toughness");
     private static final UUID LEVEL_HEALTH_UUID = UUIDHelper.generateAttributeModifierUUID("leveling", "player_level_health");
     private static final UUID MARKSMAN_HEALTH_PENALTY_UUID = UUIDHelper.generateAttributeModifierUUID("origin", "marksman_health_penalty");
+    private static final UUID MARKSMAN_AMMO_YIELD_UUID = UUIDHelper.generateAttributeModifierUUID("origin", "marksman_ammo_crafting_yield");
 
     private static final double ARMOR_PER_LEVEL = 1.2;
     private static final double TOUGHNESS_PER_LEVEL = 0.3;
@@ -109,11 +110,15 @@ public class LevelArmorHandler {
         applyOrUpdateModifier(player, Attributes.ARMOR_TOUGHNESS, LEVEL_TOUGHNESS_UUID, "Level Toughness Bonus", toughnessAmount);
         applyOrUpdateModifier(player, Attributes.MAX_HEALTH, LEVEL_HEALTH_UUID, "Level Max Health Bonus", healthAmount);
 
-        // Apply 50% Max HP total reduction for Marksman origin
+        // Apply 50% Max HP total reduction & Ammo Crafting Yield scaling for Marksman origin
         if (com.complextalents.impl.marksman.origin.MarksmanOrigin.ID.equals(originId)) {
             applyOrUpdateModifier(player, Attributes.MAX_HEALTH, MARKSMAN_HEALTH_PENALTY_UUID, "Marksman Health Penalty", -0.50, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            int originLevel = com.complextalents.origin.OriginManager.getOriginLevel(player);
+            double yieldBonus = origin != null ? origin.getScaledStat("ammoCraftingYield", originLevel) : (0.20 * originLevel);
+            applyOrUpdateModifier(player, com.complextalents.registry.ModAttributes.AMMO_CRAFTING_YIELD.get(), MARKSMAN_AMMO_YIELD_UUID, "Marksman Ammo Yield Bonus", yieldBonus, AttributeModifier.Operation.ADDITION);
         } else {
             removeAttributeModifier(player, Attributes.MAX_HEALTH, MARKSMAN_HEALTH_PENALTY_UUID);
+            removeAttributeModifier(player, com.complextalents.registry.ModAttributes.AMMO_CRAFTING_YIELD.get(), MARKSMAN_AMMO_YIELD_UUID);
         }
 
         if (player.getHealth() > player.getMaxHealth()) {
@@ -130,6 +135,7 @@ public class LevelArmorHandler {
         removeAttributeModifier(player, Attributes.ARMOR_TOUGHNESS, LEVEL_TOUGHNESS_UUID);
         removeAttributeModifier(player, Attributes.MAX_HEALTH, LEVEL_HEALTH_UUID);
         removeAttributeModifier(player, Attributes.MAX_HEALTH, MARKSMAN_HEALTH_PENALTY_UUID);
+        removeAttributeModifier(player, com.complextalents.registry.ModAttributes.AMMO_CRAFTING_YIELD.get(), MARKSMAN_AMMO_YIELD_UUID);
     }
 
     private static void applyOrUpdateModifier(Player player, Attribute attribute, UUID uuid, String name, double amount) {

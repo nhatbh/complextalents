@@ -31,6 +31,7 @@ public class MarksmanOrigin {
                 .baseStat(StatType.GUN_DAMAGE, 2)
                 .baseStat(StatType.FORTITUDE, 2)
                 .baseStat(StatType.LUCK_CRIT, 5)
+                .baseStat(StatType.HEADSHOT_DAMAGE, 10)
                 .upgradableStats(
                         StatType.GUN_DAMAGE,
                         StatType.RELOAD_SPEED,
@@ -54,6 +55,7 @@ public class MarksmanOrigin {
                 .levelArmorCalc(lvl -> lvl <= 1 ? 0.0 : Math.round(Math.pow(lvl - 1, 1.15) * 0.25))
                 .levelToughnessCalc(lvl -> lvl <= 1 ? 0.0 : Math.min(7.5, Math.pow(lvl - 1, 1.1) * 0.06))
                 .levelHealthCalc(lvl -> 0.0)
+                .scaledStat("ammoCraftingYield", "Tỷ Lệ Bào Chế Đạn", new double[] { 0.20, 0.40, 0.60, 0.80, 1.00 })
 
 
                 .renderer(new com.complextalents.impl.marksman.client.MarksmanRenderer())

@@ -17,29 +17,29 @@ public class GunMasteryManager {
     }
 
     // Damage required to unlock each level (1-indexed, index 0 unused)
-    // Level 1: 0, Level 2: 500, Level 3: 1,200, Level 4: 2,200, etc.
+    // Level 1: 0, Level 2: 350, Level 3: 800, Level 4: 1,500, etc.
     private static final double[] REQUIRED_DAMAGE_PER_LEVEL = new double[] {
             0.0,
             0.0,       // Level 1
-            500.0,     // Level 2
-            1200.0,    // Level 3
-            2200.0,    // Level 4 (Recruit cap)
-            3500.0,    // Level 5 (Trooper start)
-            5500.0,    // Level 6
-            8000.0,    // Level 7
-            11000.0,   // Level 8 (Trooper cap)
-            15000.0,   // Level 9 (Sergeant start)
-            20000.0,   // Level 10
-            26000.0,   // Level 11
-            33000.0,   // Level 12 (Sergeant cap)
-            41000.0,   // Level 13 (Captain start)
-            50000.0,   // Level 14
-            60000.0,   // Level 15
-            72000.0,   // Level 16 (Pistol Max Cap)
-            85000.0,   // Level 17 (General start)
-            100000.0,  // Level 18
-            120000.0,  // Level 19
-            150000.0   // Level 20 (General Max Cap)
+            350.0,     // Level 2
+            800.0,     // Level 3
+            1500.0,    // Level 4 (Recruit cap)
+            2400.0,    // Level 5 (Trooper start)
+            3700.0,    // Level 6
+            5400.0,    // Level 7
+            7500.0,    // Level 8 (Trooper cap)
+            10000.0,   // Level 9 (Sergeant start)
+            13500.0,   // Level 10
+            17500.0,   // Level 11
+            22000.0,   // Level 12 (Sergeant cap)
+            27500.0,   // Level 13 (Captain start)
+            33500.0,   // Level 14
+            40000.0,   // Level 15
+            48000.0,   // Level 16 (Captain cap)
+            57000.0,   // Level 17 (General start)
+            67000.0,   // Level 18
+            80000.0,   // Level 19
+            100000.0   // Level 20 (General Max Cap)
     };
 
     /**
